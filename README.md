@@ -1,6 +1,6 @@
 # ROS 2 CI Infrastructure
 
-This branch of the ros2/ros2 repository contains all of the scripts and resources for running batch CI jobs of ROS 2 repositories on a Jenkins build farm.
+This repository contains all of the scripts and resources for running batch CI jobs of ROS 2 repositories on a Jenkins build farm.
 
 ## Setting up on a Jenkins build farm
 
@@ -30,8 +30,8 @@ If successful, it will create three jobs:
 These three jobs are very similar, with minor changes for the differences in the operating systems.
 
 You can also change the default location from which these CI scripts are pulled with options `--ci-scripts-repository` and `--ci-scripts-default-branch`.
-They allow you to change the default location from which to get the CI scripts, which is useful if you have forked ros2/ros2.
-The defaults are `git@github.com:ros2/ros2.git` and `ci_scripts` respectively.
+They allow you to change the default location from which to get the CI scripts, which is useful if you have forked ros2/ci.
+The defaults are `git@github.com:ros2/ci.git` and `master` respectively.
 The branch can be changed when running the job (it's a job parameter) to make it easy to test changes to the CI scripts using a branch on the main repository.
 
 ## Adjusting batch CI jobs
