@@ -196,7 +196,7 @@ def build_and_test(args, job):
 
     print('# BEGIN SUBSECTION: ament build')
     # Now run ament build
-    job.run([
+    ret_build = job.run([
         '"%s"' % job.python, '-u', '"%s"' % ament_py, 'build', '--build-tests',
         '--build-space', '"%s"' % args.buildspace,
         '--install-space', '"%s"' % args.installspace,
@@ -211,7 +211,10 @@ def build_and_test(args, job):
             gcov_flags + ' " -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' +
             gcov_flags + '" -- ']
             if coverage else []), shell=True)
+    info("ament.py build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
+    if ret_build:
+        return ret_build
 
     print('# BEGIN SUBSECTION: ament test')
     # Run tests
@@ -226,6 +229,8 @@ def build_and_test(args, job):
         exit_on_error=False, shell=True)
     info("ament.py test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
+    if ret_test:
+        return ret_test
 
     print('# BEGIN SUBSECTION: ament test_results')
     # Collect the test results
