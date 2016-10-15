@@ -166,14 +166,15 @@ def process_coverage(args, job):
         print(gcda_files)
 
         # Run one gcov command for all gcda files for this package.
-        subprocess.run(['gcov', '--preserve-paths'] + gcda_files, check=True)
+        subprocess.run(
+            ['gcov', '--preserve-paths'] + gcda_files,
+            check=True, cwd=package_build_path)
         # Remove coverage files that did not originate in the workspace
         for cov_file in (f for f in os.listdir(package_build_path)
                          if f.endswith('.gcov')):
             cov_path = cov_file.replace('#', '/')
-            # TODO Better path filter here
-            if not cov_path.beginswith(os.path.abspath(args.workspace)):
-                os.remove(os.path.join(root, cov_file))
+            if not cov_path.startswith(os.path.abspath('.')):
+                os.remove(os.path.join(package_build_path, cov_file))
         # Write one report for the entire package.
         # cobertura plugin looks for files of the regex *coverage.xml
         outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
@@ -183,7 +184,7 @@ def process_coverage(args, job):
         # -output=<outfile>  Pass name of output file
         # -g  use existing .gcov files in the directory
         subprocess.run(
-            ['gcovr', '-e', '/usr', '--xml', '--output=' + outfile, '-g'],
+            ['gcovr', '--object-directory=' + package_build_path, '-e', '/usr', '--xml', '--output=' + outfile, '-g'],
             check=True)
 
     print('# END SUBSECTION')
