@@ -170,8 +170,9 @@ def process_coverage(args, job):
             ['gcov', '--preserve-paths'] + gcda_files,
             check=True, cwd=package_build_path)
         # Remove coverage files that did not originate in the workspace
-        for cov_file in (f for f in os.listdir(package_build_path)
-                         if f.endswith('.gcov')):
+        for cov_file in sorted(os.listdir(package_build_path)):
+            if not cov_file.endswith('.gcov'):
+                continue
             cov_path = cov_file.replace('#', '/')
             if not cov_path.startswith(os.path.abspath('.')):
                 os.remove(os.path.join(package_build_path, cov_file))
