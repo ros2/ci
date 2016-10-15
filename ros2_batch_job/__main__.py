@@ -155,6 +155,7 @@ def process_coverage(args, job):
         [job.python, '-u', ament_py, 'list_packages', args.sourcespace])
     for line in output.decode().splitlines():
         package_name, package_path = line.split(' ', 1)
+        print(package_name)
         package_build_path = os.path.join(args.buildspace, package_name)
         gcda_files = []
         for root, dirs, files in os.walk(package_build_path):
@@ -163,12 +164,11 @@ def process_coverage(args, job):
                         for f in files if f.endswith('.gcda')])
         if len(gcda_files) is 0:
             continue
-        print(gcda_files)
 
         # Run one gcov command for all gcda files for this package.
-        subprocess.run(
-            ['gcov', '--preserve-paths'] + gcda_files,
-            check=True, cwd=package_build_path)
+        cmd = ['gcov', '--preserve-paths'] + gcda_files
+        print(cmd)
+        subprocess.run(cmd, check=True, cwd=package_build_path)
         # Remove coverage files that did not originate in the workspace
         for cov_file in sorted(os.listdir(package_build_path)):
             if not cov_file.endswith('.gcov'):
@@ -176,6 +176,9 @@ def process_coverage(args, job):
             cov_path = cov_file.replace('#', '/')
             if not cov_path.startswith(os.path.abspath('.')):
                 os.remove(os.path.join(package_build_path, cov_file))
+                print('-', cov_file)
+            else:
+                print('+', cov_file)
         # Write one report for the entire package.
         # cobertura plugin looks for files of the regex *coverage.xml
         outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
@@ -184,9 +187,14 @@ def process_coverage(args, job):
         # -xml  Output cobertura xml
         # -output=<outfile>  Pass name of output file
         # -g  use existing .gcov files in the directory
-        subprocess.run(
-            ['gcovr', '--object-directory=' + package_build_path, '-e', '/usr', '--xml', '--output=' + outfile, '-g'],
-            check=True)
+        cmd = [
+            'gcovr',
+            '--object-directory=' + package_build_path,
+            '-e', '/usr',
+            '--xml', '--output=' + outfile,
+            '-g']
+        print(cmd)
+        subprocess.run(cmd, check=True)
 
     print('# END SUBSECTION')
     return 0
