@@ -182,6 +182,7 @@ def process_coverage(args, job):
             'gcovr',
             '--object-directory=' + package_build_path,
             '-k',
+            '-r', os.path.abspath('.'),
             '--xml', '--output=' + outfile,
             '-g']
         print(cmd)
