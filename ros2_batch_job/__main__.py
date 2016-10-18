@@ -126,6 +126,9 @@ def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ro
     parser.add_argument(
         '--coverage', default=False, action='store_true',
         help="enable collection of coverage statistics")
+    parser.add_argument(
+        '--workspace-path', default=None,
+        help="base path of the workspace")
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, ament_build_args = extract_argument_group(argv, '--ament-build-args')
@@ -182,10 +185,27 @@ def process_coverage(args, job):
             'gcovr',
             '--object-directory=' + package_build_path,
             '-k',
+            '-r', os.path.abspath('.'),
             '--xml', '--output=' + outfile,
             '-g']
         print(cmd)
         subprocess.run(cmd, check=True)
+
+    # remove Docker specific base path from coverage files
+    if args.workspace_path:
+        docker_base_path = os.path.dirname(os.path.abspath('.'))
+        for root, dirs, files in os.walk(args.buildspace):
+            for f in sorted(files):
+                if not f.endswith('coverage.xml'):
+                    continue
+                coverage_path = os.path.join(root, f)
+                with open(coverage_path, 'r') as h:
+                    content = h.read()
+                content = content.replace(
+                    '<source>%s/' % docker_base_path,
+                    '<source>%s/' % args.workspace_path)
+                with open(coverage_path, 'w') as h:
+                    h.write(content)
 
     print('# END SUBSECTION')
     return 0

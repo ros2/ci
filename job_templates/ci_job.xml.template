@@ -103,7 +103,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
-export CI_ARGS="--do-venv --force-ansi-color"
+export CI_ARGS="--do-venv --force-ansi-color --workspace-path $WORKSPACE"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi
@@ -177,7 +177,7 @@ tmpd=`mktemp -d`
 mkdir $tmpd/src
 curl -sk https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos -o $tmpd/ros2.repos
 vcs import $tmpd/src --input $tmpd/ros2.repos
-export CI_ARGS="$CI_ARGS --src-mounted"
+export CI_ARGS="$CI_ARGS --src-mounted --workspace-path $tmpd"
 export EXTRA_MOUNT="-v $tmpd/src:/home/rosbuild/ci_scripts/ws/src"
 @[end if]@
 @[if os_name == 'linux']@
@@ -204,7 +204,7 @@ rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
 set "PATH=%PATH:"=%"
-set "CI_ARGS=--force-ansi-color"
+set "CI_ARGS=--force-ansi-color --workspace-path %WORKSPACE%"
 if "%CI_BRANCH_TO_TEST%" NEQ "" (
   set "CI_ARGS=%CI_ARGS% --test-branch %CI_BRANCH_TO_TEST%"
 )
