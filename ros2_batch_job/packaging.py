@@ -94,8 +94,14 @@ def build_and_package(args, job):
     folder_name = 'ros2-' + args.os
     if args.os == 'linux' or args.os == 'osx':
         archive_path = 'ros2-package-%s.tar.bz2' % args.os
+
+        def exclude(filename):
+            if os.path.basename(filename) == 'SOURCES.txt':
+                if os.path.dirname(filename).endswith('.egg-info'):
+                    return True
+            return False
         with tarfile.open(archive_path, 'w:bz2') as h:
-            h.add(args.installspace, arcname=folder_name)
+            h.add(args.installspace, arcname=folder_name, exclude=exclude)
     elif args.os == 'windows':
         archive_path = 'ros2-package-windows.zip'
         # NOTE(esteve): hack to copy our custom built VS2015-compatible OpenCV DLLs
@@ -109,6 +115,9 @@ def build_and_package(args, job):
                     folder_name, os.path.relpath(dirname, start=args.installspace))
                 zf.write(dirname, arcname=arcname)
                 for filename in files:
+                    if os.path.basename(filename) == 'SOURCES.txt':
+                        if dirname.endswith('.egg-info'):
+                            continue
                     filearcname = os.path.join(
                         folder_name, os.path.relpath(dirname, start=args.installspace), filename)
                     zf.write(os.path.join(dirname, filename), arcname=filearcname)
