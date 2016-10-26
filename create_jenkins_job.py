@@ -99,10 +99,12 @@ def main(argv=None):
         'linux-armhf': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
+            'use_connext_default': 'false',
         },
         'linux-aarch64': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
+            'use_connext_default': 'false',
         },
     }
 
