@@ -45,9 +45,9 @@ RUN pip3 install -U setuptools pip virtualenv
 RUN apt-get update && apt-get install -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-RUN apt-get update && apt-get install -y libopensplice64
+RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y libopensplice64; fi
 # Update default domain id.
-RUN sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml
+RUN if test ${PLATFORM} = x86; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
 # Install the RTI dependencies.
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y default-jre-headless; fi
