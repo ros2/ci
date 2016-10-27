@@ -73,6 +73,9 @@ RUN apt-get update && apt-get install -y libboost-chrono-dev libboost-date-time-
 # Install OpenCV.
 RUN apt-get update && apt-get install -y libopencv-dev
 
+# Install build dependencies for class loader.
+RUN apt-get update && apt-get install -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
+
 # Install Git-LFS.
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y git-lfs; fi
 
