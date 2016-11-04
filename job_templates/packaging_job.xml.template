@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.19.2">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.22.4">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -12,7 +12,7 @@
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
-    <org.jenkinsci.plugins.requeuejob.RequeueJobProperty plugin="jobrequeue@@1.0">
+    <org.jenkinsci.plugins.requeuejob.RequeueJobProperty plugin="jobrequeue@@1.1">
       <requeueJob>true</requeueJob>
     </org.jenkinsci.plugins.requeuejob.RequeueJobProperty>
     <hudson.model.ParametersDefinitionProperty>
@@ -66,7 +66,7 @@ choices.remove(cmake_build_type)
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@2.5.2">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.0.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -91,6 +91,7 @@ choices.remove(cmake_build_type)
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
+        <parentCredentials>false</parentCredentials>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     @
 @[end if]</extensions>
@@ -216,7 +217,7 @@ echo "# END SECTION"
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.17">
+    <hudson.tasks.Mailer plugin="mailer@@1.18">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
@@ -224,7 +225,7 @@ echo "# END SECTION"
 @[end if]@
   </publishers>
   <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.4" />
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.7" />
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.4.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>

@@ -6,6 +6,13 @@
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <org.jenkinsci.plugins.requeuejob.RequeueJobProperty plugin="jobrequeue@@1.1">
+      <requeueJob>true</requeueJob>
+    </org.jenkinsci.plugins.requeuejob.RequeueJobProperty>
 @(SNIPPET(
     'property_parameter-definition',
     ci_scripts_default_branch=ci_scripts_default_branch,
@@ -20,13 +27,6 @@
     ament_test_args_default=ament_test_args_default,
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.25">
-      <autoRebuild>false</autoRebuild>
-      <rebuildDisabled>false</rebuildDisabled>
-    </com.sonyericsson.rebuild.RebuildSettings>
-    <org.jenkinsci.plugins.requeuejob.RequeueJobProperty plugin="jobrequeue@@1.0">
-      <requeueJob>true</requeueJob>
-    </org.jenkinsci.plugins.requeuejob.RequeueJobProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <assignedNode>@(label_expression)</assignedNode>
@@ -39,7 +39,7 @@
   <builders/>
   <publishers>
 @[for os_name, os_data in os_specific_data.items()]@
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.29">
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.32">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
