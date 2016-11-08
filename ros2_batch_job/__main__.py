@@ -218,10 +218,11 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: ament build')
     # Now run ament build
     ret_build = job.run([
-        '"%s"' % job.python, '-u', '"%s"' % ament_py, 'build', '--build-tests',
+        '"%s"' % job.python, '-u', '"%s"' % ament_py, 'build',
+        '"%s"' % args.sourcespace,
+        '--build-tests',
         '--build-space', '"%s"' % args.buildspace,
         '--install-space', '"%s"' % args.installspace,
-        '"%s"' % args.sourcespace
     ] + (['--isolated'] if args.isolated else []) +
         (
             ['--cmake-args', '-DCMAKE_BUILD_TYPE=' +
@@ -241,11 +242,11 @@ def build_and_test(args, job):
     # Run tests
     ret_test = job.run([
         '"%s"' % job.python, '-u', '"%s"' % ament_py, 'test',
+        '"%s"' % args.sourcespace,
         '--build-space', '"%s"' % args.buildspace,
         '--install-space', '"%s"' % args.installspace,
         # Skip building and installing, since we just did that successfully.
         '--skip-build', '--skip-install',
-        '"%s"' % args.sourcespace
     ] + (['--isolated'] if args.isolated else []) + args.ament_test_args,
         exit_on_error=False, shell=True)
     info("ament.py test returned: '{0}'".format(ret_test))
