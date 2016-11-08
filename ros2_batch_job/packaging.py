@@ -46,9 +46,10 @@ def build_and_package(args, job):
     # Now run ament build
     cmd = [
         job.python, '-u', ament_py, 'build',
+        '"%s"' % args.sourcespace,
         '--build-space', '"%s"' % args.buildspace,
         '--install-space', '"%s"' % args.installspace,
-        '"%s"' % args.sourcespace]
+    ]
     if args.isolated:
         cmd.append('--isolated')
     if args.cmake_build_type:
@@ -66,10 +67,10 @@ def build_and_package(args, job):
         # Now run ament build only for the bridge
         job.run([
             job.python, '-u', ament_py, 'build',
+            '"%s"' % args.sourcespace,
             '--build-space', '"%s"' % args.buildspace,
             '--install-space', '"%s"' % args.installspace,
-            '--only-packages', 'ros1_bridge', '--',
-            '"%s"' % args.sourcespace,
+            '--only-packages', 'ros1_bridge',
         ] + (['--isolated'] if args.isolated else []) +
             (
                 ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type]
