@@ -68,7 +68,7 @@ def build_and_package(args, job):
             job.python, '-u', ament_py, 'build',
             '--build-space', '"%s"' % args.buildspace,
             '--install-space', '"%s"' % args.installspace,
-            '--only', 'ros1_bridge',
+            '--only-packages', 'ros1_bridge', '--',
             '"%s"' % args.sourcespace,
         ] + (['--isolated'] if args.isolated else []) +
             (
