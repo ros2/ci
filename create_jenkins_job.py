@@ -37,6 +37,8 @@ try:
 except ImportError:
     sys.exit("Could not import symbol from ros_buildfarm, please update ros_buildfarm.")
 
+from ros2_batch_job import DEFAULT_REPOS_URL
+
 template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]
 
@@ -65,6 +67,7 @@ def main(argv=None):
     data = {
         'ci_scripts_repository': args.ci_scripts_repository,
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
+        'default_repos_url': DEFAULT_REPOS_URL,
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'use_connext_default': 'true',

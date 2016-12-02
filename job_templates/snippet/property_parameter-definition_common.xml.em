@@ -15,7 +15,8 @@ To use the default branch on all repositories, use an empty string.</description
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_ROS2_REPOS_URL</name>
-          <description></description>
+          <description>Custom .repos file to use instead of the default (@default_repos_url).
+For example, copy the content of the .repos file to a GitHub Gist, modify it to your needs, and then pass the raw URL here.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>

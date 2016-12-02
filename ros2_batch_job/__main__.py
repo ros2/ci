@@ -31,6 +31,7 @@ assert osrf_pycommon.__file__.startswith(vendor_path), \
      .format(osrf_pycommon.__file__, vendor_path))
 from osrf_pycommon.cli_utils.common import extract_argument_group
 
+from . import DEFAULT_REPOS_URL
 from .util import change_directory
 from .util import remove_folder
 from .util import force_color
@@ -67,7 +68,7 @@ def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ro
         description="Builds the ROS2 repositories as a single batch job")
     parser.add_argument(
         '--repo-file-url',
-        default='https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos',
+        default=DEFAULT_REPOS_URL,
         help="url of the ros2.repos file to fetch and use for the basis of the batch job")
     parser.add_argument(
         '--test-branch', default=None,
