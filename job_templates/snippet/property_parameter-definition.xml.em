@@ -1,25 +1,10 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_BRANCH_TO_TEST</name>
-          <description>Branch to test across the ros2 repositories which have it.
-For example, if you have a few repositories with the &apos;feature&apos; branch.
-Then you can set this to &apos;feature&apos;.
-The repositories with the &apos;feature&apos; branch will be changed to that branch.
-Other repositories will stay on the default branch, usually &apos;master&apos;.
-To use the default branch on all repositories, use an empty string.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_SCRIPTS_BRANCH</name>
-          <description>Branch of ros2/ci repository from which to get the ci scripts.</description>
-          <defaultValue>@ci_scripts_default_branch</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_ROS2_REPOS_URL</name>
-          <description></description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
+@(SNIPPET(
+    'property_parameter-definition_common',
+    ci_scripts_default_branch=ci_scripts_default_branch,
+    cmake_build_type=cmake_build_type,
+))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_WHITESPACE_IN_PATHS</name>
           <description>By setting this to True white space will be inserted into the paths.
@@ -67,22 +52,6 @@ This tests the robustness to whitespace being within the different paths.</descr
           <description>By setting this to true, the build will report test coverage for C/C++ code (currently ignored on non-Linux).</description>
           <defaultValue>@(enable_c_coverage_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>CI_CMAKE_BUILD_TYPE</name>
-          <description>Select the CMake build type.</description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>@cmake_build_type</string>
-@{
-choices = ['None', 'Debug', 'Release', 'RelWithDebInfo']
-choices.remove(cmake_build_type)
-}@
-@[for choice in choices]@
-              <string>@choice</string>
-@[end for]@
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_AMENT_BUILD_ARGS</name>
           <description>Additional arguments passed to 'ament build'.</description>

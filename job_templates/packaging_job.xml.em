@@ -17,26 +17,11 @@
     </org.jenkinsci.plugins.requeuejob.RequeueJobProperty>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_BRANCH_TO_TEST</name>
-          <description>Branch to test across the ros2 repositories which have it.
-For example, if you have a few repositories with the &apos;feature&apos; branch.
-Then you can set this to &apos;feature&apos;.
-The repositories with the &apos;feature&apos; branch will be changed to that branch.
-Other repositories will stay on the default branch, usually &apos;master&apos;.
-To use the default branch on all repositories, use an empty string.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_SCRIPTS_BRANCH</name>
-          <description>Branch of ros2/ci repository from which to get the ci scripts.</description>
-          <defaultValue>@ci_scripts_default_branch</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_ROS2_REPOS_URL</name>
-          <description></description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
+@(SNIPPET(
+    'property_parameter-definition_common',
+    ci_scripts_default_branch=ci_scripts_default_branch,
+    cmake_build_type=cmake_build_type,
+))@
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_USED_RMW_IMPL</name>
           <description/>
@@ -44,22 +29,6 @@ To use the default branch on all repositories, use an empty string.</description
             <a class="string-array">
               <string>FastRTPS</string>
               <string>OpenSplice</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>CI_CMAKE_BUILD_TYPE</name>
-          <description>Select the CMake build type.</description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>@cmake_build_type</string>
-@{
-choices = ['None', 'Debug', 'Release', 'RelWithDebInfo']
-choices.remove(cmake_build_type)
-}@
-@[for choice in choices]@
-              <string>@choice</string>
-@[end for]@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
