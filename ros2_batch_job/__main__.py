@@ -433,7 +433,7 @@ def run(args, build_function):
 
         blacklisted_package_names = [
             'actionlib_msgs',
-            'shape__msgs',
+            'shape_msgs',
             'std_srvs',
             'stereo_msgs',
             'trajectory_msgs',
