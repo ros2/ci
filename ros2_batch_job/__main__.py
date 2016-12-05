@@ -432,7 +432,16 @@ def run(args, build_function):
                 exit_on_error=False)
             print('# END SUBSECTION')
 
-        blacklisted_package_names = []
+        blacklisted_package_names = [
+            'actionlib_msgs',
+            'diagnostic_msgs',
+            'nav_msgs',
+            'shape_msgs',
+            'std_srvs',
+            'stereo_msgs',
+            'trajectory_msgs',
+            'visualization_msgs'
+        ]
         if not args.connext:
             blacklisted_package_names += [
                 'connext_cmake_module',
