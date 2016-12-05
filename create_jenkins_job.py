@@ -37,6 +37,8 @@ try:
 except ImportError:
     sys.exit("Could not import symbol from ros_buildfarm, please update ros_buildfarm.")
 
+from ros2_batch_job import DEFAULT_REPOS_URL
+
 template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]
 
@@ -65,6 +67,7 @@ def main(argv=None):
     data = {
         'ci_scripts_repository': args.ci_scripts_repository,
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
+        'default_repos_url': DEFAULT_REPOS_URL,
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'use_connext_default': 'true',
@@ -121,7 +124,7 @@ def main(argv=None):
         # configure manual triggered job
         job_name = 'ci_' + os_name
         job_data['cmake_build_type'] = 'None'
-        job_config = expand_template('ci_job.xml.template', job_data)
+        job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
         # skip non-manual jobs on ARM for now
@@ -136,7 +139,7 @@ def main(argv=None):
         # configure packaging job
         job_name = 'packaging_' + os_name
         job_data['cmake_build_type'] = 'RelWithDebInfo'
-        job_config = expand_template('packaging_job.xml.template', job_data)
+        job_config = expand_template('packaging_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
         # keeping the paths on Windows shorter
@@ -146,7 +149,7 @@ def main(argv=None):
         if os_name == 'win':
             job_name = job_name[0:-2]
         job_data['cmake_build_type'] = 'Debug'
-        job_config = expand_template('ci_job.xml.template', job_data)
+        job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
         # configure nightly coverage job on Linux only
@@ -154,7 +157,7 @@ def main(argv=None):
             job_name = 'nightly_' + os_name + '_coverage'
             job_data['cmake_build_type'] = 'Debug'
             job_data['enable_c_coverage_default'] = 'true'
-            job_config = expand_template('ci_job.xml.template', job_data)
+            job_config = expand_template('ci_job.xml.em', job_data)
             configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
             job_data['enable_c_coverage_default'] = 'false'
 
@@ -163,7 +166,7 @@ def main(argv=None):
         if os_name == 'win':
             job_name = job_name[0:-4]
         job_data['cmake_build_type'] = 'Release'
-        job_config = expand_template('ci_job.xml.template', job_data)
+        job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
         # configure nightly triggered job with repeated testing
@@ -173,7 +176,7 @@ def main(argv=None):
         job_data['time_trigger_spec'] = '0 12 * * *'
         job_data['cmake_build_type'] = 'None'
         job_data['ament_test_args_default'] = '--retest-until-fail 20 --ctest-args -LE linter'
-        job_config = expand_template('ci_job.xml.template', job_data)
+        job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
     # configure the launch job
@@ -190,7 +193,7 @@ def main(argv=None):
     job_data['label_expression'] = 'master'
     job_data['os_specific_data'] = os_specific_data
     job_data['cmake_build_type'] = 'None'
-    job_config = expand_template('ci_launcher_job.xml.template', job_data)
+    job_config = expand_template('ci_launcher_job.xml.em', job_data)
     configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
 
 
