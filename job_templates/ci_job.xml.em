@@ -144,13 +144,13 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
   if [[ "$CI_AMENT_BUILD_ARGS" != *-- ]]; then
-    CI_AMEND_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
+    CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
   fi
   export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   if [[ "$CI_AMENT_TEST_ARGS" != *-- ]]; then
-    CI_AMEND_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
+    CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
   fi
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
