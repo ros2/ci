@@ -175,7 +175,7 @@ def main(argv=None):
             job_name = job_name[0:-5]
         job_data['time_trigger_spec'] = '0 12 * * *'
         job_data['cmake_build_type'] = 'None'
-        job_data['ament_test_args_default'] = '--retest-until-fail 20 --ctest-args -LE linter'
+        job_data['ament_test_args_default'] = '--retest-until-fail 20 --ctest-args -LE linter -- '
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
