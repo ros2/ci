@@ -227,12 +227,12 @@ def build_and_test(args, job):
     ] + (['--isolated'] if args.isolated else []) +
         (
             ['--cmake-args', '-DCMAKE_BUILD_TYPE=' +
-                args.cmake_build_type + ' -- ']
+                args.cmake_build_type + ' --']
             if args.cmake_build_type else []
         ) + args.ament_build_args +
         (['--ament-cmake-args -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' +
             gcov_flags + ' " -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' +
-            gcov_flags + '" -- ']
+            gcov_flags + '" --']
             if coverage else []), shell=True)
     info("ament.py build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
