@@ -113,6 +113,9 @@ def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ro
             '--ros1-path', default=None,
             help="path of ROS 1 workspace to be sourced")
     parser.add_argument(
+        '--test-bridge', default=False, action='store_true',
+        help='test ros1_bridge')
+    parser.add_argument(
         '--cmake-build-type', default=None,
         help='select the CMake build type')
     parser.add_argument(

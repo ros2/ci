@@ -33,6 +33,11 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CI_TEST_BRIDGE</name>
+          <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
+          <defaultValue>@(test_bridge_default)</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -87,7 +92,8 @@ branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 used_rmw_impl: ${build.buildVariableResolver.resolve('CI_USED_RMW_IMPL')}, <br/>
-cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}\
+cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
+test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}\
 """);]]>
         </command>
       </scriptSource>
@@ -111,6 +117,9 @@ elif [ "${CI_USED_RMW_IMPL}" = "OpenSplice" ]; then
 fi
 if [ -n "${CI_ROS2_REPOS_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
+fi
+if [ "$CI_TEST_BRIDGE" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --test-bridge"
 fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
@@ -159,6 +168,9 @@ if "%CI_USED_RMW_IMPL%" EQU "FastRTPS" (
 if "%CI_ROS2_REPOS_URL%" NEQ "" (
   set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
 )
+if "%CI_TEST_BRIDGE%" == "true" (
+  set "CI_ARGS=%CI_ARGS% --test-bridge"
+)
 if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
   set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
 )
@@ -177,6 +189,12 @@ echo "# END SECTION"
 @(SNIPPET(
     'publisher_warnings',
     os_name=os_name,
+))@
+@(SNIPPET(
+    'publisher_cobertura',
+))@
+@(SNIPPET(
+    'publisher_xunit',
 ))@
     <hudson.tasks.ArtifactArchiver>
       <artifacts>ws/ros2-package-*.*</artifacts>
