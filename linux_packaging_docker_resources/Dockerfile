@@ -58,7 +58,7 @@ RUN apt-get update && apt-get install -y git-lfs
 RUN echo "@today_str"
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-roscpp ros-kinetic-rosmsg
+RUN apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild

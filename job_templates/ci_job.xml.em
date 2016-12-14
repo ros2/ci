@@ -277,111 +277,12 @@ echo "# END SECTION"
     'publisher_warnings',
     os_name=os_name,
 ))@
-    <hudson.plugins.cobertura.CoberturaPublisher plugin="cobertura@@1.9.8">
-      <coberturaReportFile>ws/build*/**/*coverage.xml</coberturaReportFile>
-      <onlyStable>false</onlyStable>
-      <failUnhealthy>false</failUnhealthy>
-      <failUnstable>false</failUnstable>
-      <autoUpdateHealth>false</autoUpdateHealth>
-      <autoUpdateStability>false</autoUpdateStability>
-      <zoomCoverageChart>false</zoomCoverageChart>
-      <maxNumberOfBuilds>0</maxNumberOfBuilds>
-      <failNoReports>false</failNoReports>
-      <healthyTarget>
-        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>8000000</int>
-          </entry>
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>LINE</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>8000000</int>
-          </entry>
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>7000000</int>
-          </entry>
-        </targets>
-      </healthyTarget>
-      <unhealthyTarget>
-        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>0</int>
-          </entry>
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>LINE</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>0</int>
-          </entry>
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>0</int>
-          </entry>
-        </targets>
-      </unhealthyTarget>
-      <failingTarget>
-        <targets class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric">
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>METHOD</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>0</int>
-          </entry>
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>LINE</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>0</int>
-          </entry>
-          <entry>
-            <hudson.plugins.cobertura.targets.CoverageMetric>CONDITIONAL</hudson.plugins.cobertura.targets.CoverageMetric>
-            <int>0</int>
-          </entry>
-        </targets>
-      </failingTarget>
-      <sourceEncoding>ASCII</sourceEncoding>
-    </hudson.plugins.cobertura.CoberturaPublisher>
-    <xunit plugin="xunit@@1.102">
-      <types>
-@[for prefix in ['ws/build', 'work space/build space']]@
-        <CTestType>
-          <pattern>@(prefix)/*/Testing/*/Test.xml</pattern>
-          <skipNoTestFiles>true</skipNoTestFiles>
-          <failIfNotNew>true</failIfNotNew>
-          <deleteOutputFiles>true</deleteOutputFiles>
-          <stopProcessingIfError>true</stopProcessingIfError>
-        </CTestType>
-        <GoogleTestType>
-          <pattern>@(prefix)/*/test_results/**/*.gtest.xml</pattern>
-          <skipNoTestFiles>true</skipNoTestFiles>
-          <failIfNotNew>true</failIfNotNew>
-          <deleteOutputFiles>true</deleteOutputFiles>
-          <stopProcessingIfError>true</stopProcessingIfError>
-        </GoogleTestType>
-        <JUnitType>
-          <pattern>@(prefix)/*/test_results/**/*.xunit.xml</pattern>
-          <skipNoTestFiles>true</skipNoTestFiles>
-          <failIfNotNew>true</failIfNotNew>
-          <deleteOutputFiles>true</deleteOutputFiles>
-          <stopProcessingIfError>true</stopProcessingIfError>
-        </JUnitType>
-@[end for]@
-      </types>
-      <thresholds>
-        <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-          <unstableThreshold>0</unstableThreshold>
-          <unstableNewThreshold></unstableNewThreshold>
-          <failureThreshold></failureThreshold>
-          <failureNewThreshold></failureNewThreshold>
-        </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-        <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-          <unstableThreshold></unstableThreshold>
-          <unstableNewThreshold></unstableNewThreshold>
-          <failureThreshold></failureThreshold>
-          <failureNewThreshold></failureNewThreshold>
-        </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-      </thresholds>
-      <thresholdMode>1</thresholdMode>
-      <extraConfiguration>
-        <testTimeMargin>3000</testTimeMargin>
-      </extraConfiguration>
-    </xunit>
+@(SNIPPET(
+    'publisher_cobertura',
+))@
+@(SNIPPET(
+    'publisher_xunit',
+))@
 @[if mailer_recipients]@
     <hudson.tasks.Mailer plugin="mailer@@1.18">
       <recipients>@(mailer_recipients)</recipients>

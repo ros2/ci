@@ -25,10 +25,10 @@ from .util import info
 
 def main(sysargv=None):
     args = get_args(sysargv=sysargv, skip_white_space_in=True, skip_connext=True, add_ros1=True)
-    return run(args, build_and_package)
+    return run(args, build_and_test_and_package)
 
 
-def build_and_package(args, job):
+def build_and_test_and_package(args, job):
     print('# BEGIN SUBSECTION: ament build')
     # ignore ROS 1 bridge package for now
     ros1_bridge_path = os.path.join(args.sourcespace, 'ros2', 'ros1_bridge')
@@ -68,6 +68,7 @@ def build_and_package(args, job):
         job.run([
             job.python, '-u', ament_py, 'build',
             '"%s"' % args.sourcespace,
+            '--build-tests',
             '--build-space', '"%s"' % args.buildspace,
             '--install-space', '"%s"' % args.installspace,
             '--only-packages', 'ros1_bridge',
@@ -79,6 +80,33 @@ def build_and_package(args, job):
             '--make-flags', '-j1'
         ])
         print('# END SUBSECTION')
+
+        if args.test_bridge:
+            print('# BEGIN SUBSECTION: test ROS 1 bridge')
+            # Now run ament test only for the bridge
+            ret_test = job.run([
+                '"%s"' % job.python, '-u', '"%s"' % ament_py, 'test',
+                '"%s"' % args.sourcespace,
+                '--build-space', '"%s"' % args.buildspace,
+                '--install-space', '"%s"' % args.installspace,
+                '--only-packages', 'ros1_bridge',
+                # Skip building and installing, since we just did that successfully.
+                '--skip-build', '--skip-install',
+            ] + (['--isolated'] if args.isolated else []) + args.ament_test_args,
+                exit_on_error=False, shell=True)
+            info("ament.py test returned: '{0}'".format(ret_test))
+            print('# END SUBSECTION')
+            if ret_test:
+                return ret_test
+
+            print('# BEGIN SUBSECTION: ament test_results')
+            # Collect the test results
+            ret_test_results = job.run(
+                ['"%s"' % job.python, '-u', '"%s"' % ament_py, 'test_results', '"%s"' % args.buildspace],
+                exit_on_error=False, shell=True
+            )
+            info("ament.py test_results returned: '{0}'".format(ret_test_results))
+            print('# END SUBSECTION')
 
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
