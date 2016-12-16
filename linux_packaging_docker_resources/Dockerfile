@@ -57,8 +57,8 @@ RUN apt-get update && apt-get install -y git-lfs
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-# Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg
+# Install build and test dependencies of ros1_bridge.
+RUN apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
