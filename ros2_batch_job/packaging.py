@@ -82,6 +82,10 @@ def build_and_test_and_package(args, job):
         print('# END SUBSECTION')
 
         if args.test_bridge:
+            print('# BEGIN SUBSECTION: install Python packages for ros1_bridge test')
+            job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U', 'catkin_pkg', 'rospkg'], shell=True)
+            print('# END SUBSECTION')
+
             print('# BEGIN SUBSECTION: test ROS 1 bridge')
             # Now run ament test only for the bridge
             ret_test = job.run([
