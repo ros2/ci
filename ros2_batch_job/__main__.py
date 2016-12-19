@@ -60,7 +60,16 @@ gcov_flags = " -fprofile-arcs -ftest-coverage "
 
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
-    return run(args, build_and_test)
+    blacklisted_package_names = [
+        'actionlib_msgs',
+        'nav_msgs',
+        'shape_msgs',
+        'std_srvs',
+        'stereo_msgs',
+        'trajectory_msgs',
+        'visualization_msgs'
+    ]
+    return run(args, build_and_test, blacklisted_package_names=blacklisted_package_names)
 
 
 def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ros1=False):
@@ -274,7 +283,9 @@ def build_and_test(args, job):
     return 0
 
 
-def run(args, build_function):
+def run(args, build_function, blacklisted_package_names=None):
+    if blacklisted_package_names is None:
+        blacklisted_package_names = []
     if args.force_ansi_color:
         force_color()
 
@@ -435,15 +446,6 @@ def run(args, build_function):
                 exit_on_error=False)
             print('# END SUBSECTION')
 
-        blacklisted_package_names = [
-            'actionlib_msgs',
-            'nav_msgs',
-            'shape_msgs',
-            'std_srvs',
-            'stereo_msgs',
-            'trajectory_msgs',
-            'visualization_msgs'
-        ]
         if not args.connext:
             blacklisted_package_names += [
                 'connext_cmake_module',
