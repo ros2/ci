@@ -139,7 +139,7 @@ def main(argv=None):
         # configure packaging job
         job_name = 'packaging_' + os_name
         job_data['cmake_build_type'] = 'RelWithDebInfo'
-        job_data['test_bridge_default'] = 'false'
+        job_data['test_bridge_default'] = 'true'
         job_config = expand_template('packaging_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
