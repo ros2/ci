@@ -50,6 +50,7 @@ pip_dependencies = [
     'pydocstyle',
     'pyflakes',
     'flake8',
+    'flake8-import-order',
     'mock',
     'coverage',
     'EmPy',
