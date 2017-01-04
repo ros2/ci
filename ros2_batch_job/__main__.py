@@ -383,6 +383,8 @@ def run(args, build_function, blacklisted_package_names=None):
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
         job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U'] + pip_dependencies, shell=True)
+        # Show what pip has
+        job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
         print('# END SUBSECTION')
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
