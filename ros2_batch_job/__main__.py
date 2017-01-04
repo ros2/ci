@@ -45,15 +45,15 @@ sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
 pip_dependencies = [
+    'EmPy',
+    'coverage',
+    'flake8',
+    'flake8-import-order',
+    'mock',
     'nose',
     'pep8',
     'pydocstyle',
     'pyflakes',
-    'flake8',
-    'flake8-import-order',
-    'mock',
-    'coverage',
-    'EmPy',
     'vcstool',
 ]
 
