@@ -53,7 +53,7 @@ def build_and_test_and_package(args, job):
     if args.isolated:
         cmd.append('--isolated')
     if args.cmake_build_type:
-        cmd += ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type]
+        cmd += ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
     job.run(cmd)
 
     if ros1_bridge_ignore_marker:
@@ -74,10 +74,10 @@ def build_and_test_and_package(args, job):
             '--only-packages', 'ros1_bridge',
         ] + (['--isolated'] if args.isolated else []) +
             (
-                ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type]
+                ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
                 if args.cmake_build_type else []
             ) + [
-            '--make-flags', '-j1'
+            '--make-flags', '-j1', '--'
         ])
         print('# END SUBSECTION')
 
