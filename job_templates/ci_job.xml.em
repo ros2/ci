@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.22.4">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.25.1">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -31,7 +31,7 @@
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.0.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.0.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -75,7 +75,7 @@
 @[end if]</triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.29">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.30">
       <scriptSource class="hudson.plugins.groovy.StringScriptSource">
         <command><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
@@ -284,7 +284,7 @@ echo "# END SECTION"
     'publisher_xunit',
 ))@
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.18">
+    <hudson.tasks.Mailer plugin="mailer@@1.19">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
@@ -292,8 +292,8 @@ echo "# END SECTION"
 @[end if]@
   </publishers>
   <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.7" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.4.2">
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.8" />
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.4.3">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
 @[if os_name != 'windows']@
