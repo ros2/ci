@@ -45,14 +45,15 @@ sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
 pip_dependencies = [
+    'EmPy',
+    'coverage',
+    'flake8',
+    'flake8-import-order',
+    'mock',
     'nose',
     'pep8',
     'pydocstyle',
     'pyflakes',
-    'flake8',
-    'mock',
-    'coverage',
-    'EmPy',
     'vcstool',
 ]
 
@@ -382,6 +383,8 @@ def run(args, build_function, blacklisted_package_names=None):
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
         job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U'] + pip_dependencies, shell=True)
+        # Show what pip has
+        job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
         print('# END SUBSECTION')
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
