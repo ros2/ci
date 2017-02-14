@@ -38,6 +38,11 @@
           <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
           <defaultValue>@(test_bridge_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_AMENT_TEST_ARGS</name>
+          <description>Additional arguments passed to 'ament test' if testing the bridge.</description>
+          <defaultValue>@(ament_test_args_default)</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -93,7 +98,8 @@ ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 used_rmw_impl: ${build.buildVariableResolver.resolve('CI_USED_RMW_IMPL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
-test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}\
+test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
+ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
 """);]]>
         </command>
       </scriptSource>
@@ -123,6 +129,12 @@ if [ "$CI_TEST_BRIDGE" = "true" ]; then
 fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
+fi
+if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
+  if [[ "$CI_AMENT_TEST_ARGS" != *-- ]]; then
+    CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
+  fi
+  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
 @[if os_name == 'linux']@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
@@ -173,6 +185,12 @@ if "%CI_TEST_BRIDGE%" == "true" (
 )
 if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
   set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
+)
+if "%CI_AMENT_TEST_ARGS%" NEQ "" (
+  if "%CI_AMENT_TEST_ARGS:~-2%" NEQ "--" (
+    set "CI_AMENT_TEST_ARGS=%CI_AMENT_TEST_ARGS% --"
+  )
+  set "CI_ARGS=%CI_ARGS% --ament-test-args %CI_AMENT_TEST_ARGS%"
 )
 echo Using args: %CI_ARGS%
 echo "# END SECTION"
