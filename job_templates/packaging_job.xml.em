@@ -134,7 +134,7 @@ if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   if [[ "$CI_AMENT_TEST_ARGS" != *-- ]]; then
     CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
   fi
-  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS --"
+  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
 @[if os_name == 'linux']@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
@@ -190,7 +190,7 @@ if "%CI_AMENT_TEST_ARGS%" NEQ "" (
   if "%CI_AMENT_TEST_ARGS:~-2%" NEQ "--" (
     set "CI_AMENT_TEST_ARGS=%CI_AMENT_TEST_ARGS% --"
   )
-  set "CI_ARGS=%CI_ARGS% --ament-test-args %CI_AMENT_TEST_ARGS% --"
+  set "CI_ARGS=%CI_ARGS% --ament-test-args %CI_AMENT_TEST_ARGS%"
 )
 echo Using args: %CI_ARGS%
 echo "# END SECTION"
