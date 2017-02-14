@@ -131,7 +131,7 @@ if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  if [[ "$CI_AMENT_TEST_ARGS" != *-- ]]; then
+  if [ "$CI_AMENT_TEST_ARGS" != *-- ]; then
     CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
   fi
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
