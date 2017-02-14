@@ -143,15 +143,25 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  if [ "$CI_AMENT_BUILD_ARGS" != *-- ]; then
-    CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
-  fi
+  case $CI_AMENT_BUILD_ARGS in 
+    *-- )
+      # delimiter is already appended
+      ;;
+    * )
+      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
+      ;;
+  esac
   export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  if [ "$CI_AMENT_TEST_ARGS" != *-- ]; then
-    CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
-  fi
+  case $CI_AMENT_TEST_ARGS in 
+    *-- )
+      # delimiter is already appended
+      ;;
+    * )
+      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
+      ;;
+  esac
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
 echo "Using args: $CI_ARGS"
