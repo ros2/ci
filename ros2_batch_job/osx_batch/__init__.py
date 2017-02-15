@@ -43,7 +43,7 @@ class OSXBatchJob(BatchJob):
         # Show the env
         self.run(['export'], shell=True)
         # Show what brew has
-        self.run(['brew', 'list'])
+        self.run(['brew', 'list', '--version'])
         # Show what pip has
         self.run(['"%s"' % self.python, '-m', 'pip', 'freeze'], shell=True)
 
