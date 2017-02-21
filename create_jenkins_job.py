@@ -77,7 +77,7 @@ def main(argv=None):
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
         'ament_build_args_default': '--parallel',
-        'ament_test_args_default': '--retest-until-pass 5',
+        'ament_test_args_default': '--retest-until-pass 10',
         'enable_c_coverage_default': 'false',
     }
 
