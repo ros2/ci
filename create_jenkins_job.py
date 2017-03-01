@@ -126,9 +126,9 @@ def main(argv=None):
         job_name = 'ci_' + os_name
         job_data['cmake_build_type'] = 'None'
         # For the aarch64 job:
-	#  * do it nightly (because it takes a very long time to run); and
-	#  * don't email on test failures (because there are many, likely
-	#    related to qemu)
+        #  * do it nightly (because it takes a very long time to run); and
+        #  * don't email on test failures (because there are many, likely
+        #    related to qemu)
         if os_name == 'linux-aarch64':
             job_data['time_trigger_spec'] = '0 11 * * *'
             job_data['mailer_recipients'] = 'ros@osrfoundation.org'
