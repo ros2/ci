@@ -125,19 +125,11 @@ def main(argv=None):
         # configure manual triggered job
         job_name = 'ci_' + os_name
         job_data['cmake_build_type'] = 'None'
-        # For the aarch64 job:
-        #  * do it nightly (because it takes a very long time to run); and
-        #  * don't email on test failures (because there are many, likely
-        #    related to qemu)
-        if os_name == 'linux-aarch64':
-            job_data['time_trigger_spec'] = '0 11 * * *'
-            job_data['mailer_recipients'] = 'ros@osrfoundation.org'
-            job_data['dont_notify_every_unstable_build'] = 'true'
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
-        # skip packaging and special nightly jobs on ARM for now
-        if os_name == 'linux-armhf' or os_name == 'linux-aarch64':
+        # skip packaging and nightly jobs on ARM32 for now
+        if os_name == 'linux-armhf':
             continue
 
         # all following jobs are triggered nightly with email notification
@@ -146,11 +138,13 @@ def main(argv=None):
         job_data['mailer_recipients'] = 'ros@osrfoundation.org'
 
         # configure packaging job
-        job_name = 'packaging_' + os_name
-        job_data['cmake_build_type'] = 'RelWithDebInfo'
-        job_data['test_bridge_default'] = 'true'
-        job_config = expand_template('packaging_job.xml.em', job_data)
-        configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
+        # no aarch64 packaging yet
+        if os_name != 'linux-aarch64':
+            job_name = 'packaging_' + os_name
+            job_data['cmake_build_type'] = 'RelWithDebInfo'
+            job_data['test_bridge_default'] = 'true'
+            job_config = expand_template('packaging_job.xml.em', job_data)
+            configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
         # keeping the paths on Windows shorter
         os_name = os_name.replace('windows', 'win')
@@ -159,10 +153,14 @@ def main(argv=None):
         if os_name == 'win':
             job_name = job_name[0:-2]
         job_data['cmake_build_type'] = 'Debug'
+	# For the aarch64 job, don't email on test failures (because there are
+	# many, likely related to qemu).
+        if os_name == 'linux-aarch64':
+            job_data['dont_notify_every_unstable_build'] = 'true'
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
-        # configure nightly coverage job on Linux only
+        # configure nightly coverage job on x86 Linux only
         if os_name == 'linux':
             job_name = 'nightly_' + os_name + '_coverage'
             job_data['cmake_build_type'] = 'Debug'
@@ -172,22 +170,26 @@ def main(argv=None):
             job_data['enable_c_coverage_default'] = 'false'
 
         # configure nightly triggered job
-        job_name = 'nightly_' + os_name + '_release'
-        if os_name == 'win':
-            job_name = job_name[0:-4]
-        job_data['cmake_build_type'] = 'Release'
-        job_config = expand_template('ci_job.xml.em', job_data)
-        configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
+        # no aarch64 Release job yet
+        if os_name != 'linux-aarch64':
+            job_name = 'nightly_' + os_name + '_release'
+            if os_name == 'win':
+                job_name = job_name[0:-4]
+            job_data['cmake_build_type'] = 'Release'
+            job_config = expand_template('ci_job.xml.em', job_data)
+            configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
         # configure nightly triggered job with repeated testing
-        job_name = 'nightly_' + os_name + '_repeated'
-        if os_name == 'win':
-            job_name = job_name[0:-5]
-        job_data['time_trigger_spec'] = '0 12 * * *'
-        job_data['cmake_build_type'] = 'None'
-        job_data['ament_test_args_default'] = '--retest-until-fail 20 --ctest-args -LE linter --'
-        job_config = expand_template('ci_job.xml.em', job_data)
-        configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
+        # no aarch64 repeated job yet
+        if os_name != 'linux-aarch64':
+            job_name = 'nightly_' + os_name + '_repeated'
+            if os_name == 'win':
+                job_name = job_name[0:-5]
+            job_data['time_trigger_spec'] = '0 12 * * *'
+            job_data['cmake_build_type'] = 'None'
+            job_data['ament_test_args_default'] = '--retest-until-fail 20 --ctest-args -LE linter --'
+            job_config = expand_template('ci_job.xml.em', job_data)
+            configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
     # configure the launch job
     os_specific_data = collections.OrderedDict()
