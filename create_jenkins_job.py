@@ -79,6 +79,7 @@ def main(argv=None):
         'ament_build_args_default': '--parallel',
         'ament_test_args_default': '--retest-until-pass 10',
         'enable_c_coverage_default': 'false',
+        'dont_notify_every_unstable_build': 'false',
     }
 
     jenkins = connect(args.jenkins_url)
@@ -124,10 +125,18 @@ def main(argv=None):
         # configure manual triggered job
         job_name = 'ci_' + os_name
         job_data['cmake_build_type'] = 'None'
+        # For the aarch64 job:
+	#  * do it nightly (because it takes a very long time to run); and
+	#  * don't email on test failures (because there are many, likely
+	#    related to qemu)
+        if os_name == 'linux-aarch64':
+            job_data['time_trigger_spec'] = '0 11 * * *'
+            job_data['mailer_recipients'] = 'ros@osrfoundation.org'
+            job_data['dont_notify_every_unstable_build'] = 'true'
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
-        # skip non-manual jobs on ARM for now
+        # skip packaging and special nightly jobs on ARM for now
         if os_name == 'linux-armhf' or os_name == 'linux-aarch64':
             continue
 
