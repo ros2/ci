@@ -125,6 +125,10 @@ def main(argv=None):
         # configure manual triggered job
         job_name = 'ci_' + os_name
         job_data['cmake_build_type'] = 'None'
+	# For the ARM jobs, disable linter tests (because these are already
+	# very slow jobs and because we lint plenty on other jobs).
+        if os_name == 'linux-armhf' or os_name == 'linux-aarch64':
+            job_data['ament_test_args_default'] = '--retest-until-pass 10 --ctest-args -LE linter --'
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
@@ -154,9 +158,12 @@ def main(argv=None):
             job_name = job_name[0:-2]
         job_data['cmake_build_type'] = 'Debug'
 	# For the aarch64 job, don't email on test failures (because there are
-	# many, likely related to qemu).
+	# many, likely related to qemu). Also disable linter tests (because
+	# this is already a very slow job and because we lint plenty on other
+	# jobs).
         if os_name == 'linux-aarch64':
             job_data['dont_notify_every_unstable_build'] = 'true'
+            job_data['ament_test_args_default'] = '--retest-until-pass 10 --ctest-args -LE linter --'
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
