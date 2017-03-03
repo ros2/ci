@@ -296,7 +296,7 @@ echo "# END SECTION"
 @[if mailer_recipients]@
     <hudson.tasks.Mailer plugin="mailer@@1.19">
       <recipients>@(mailer_recipients)</recipients>
-      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>@(dont_notify_every_unstable_build)</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
 @[end if]@
