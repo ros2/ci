@@ -137,7 +137,7 @@ def main(argv=None):
             continue
 
         # all following jobs are triggered nightly with email notification
-        job_data['time_trigger_spec'] = '0 11 * * *'
+        job_data['time_trigger_spec'] = '30 7 * * *'
         # for now, skip emailing about Windows failures
         job_data['mailer_recipients'] = 'ros@osrfoundation.org'
 
@@ -192,7 +192,7 @@ def main(argv=None):
             job_name = 'nightly_' + os_name + '_repeated'
             if os_name == 'win':
                 job_name = job_name[0:-5]
-            job_data['time_trigger_spec'] = '0 12 * * *'
+            job_data['time_trigger_spec'] = '30 7 * * *'
             job_data['cmake_build_type'] = 'None'
             job_data['ament_test_args_default'] = '--retest-until-fail 20 --ctest-args -LE linter --'
             job_config = expand_template('ci_job.xml.em', job_data)
