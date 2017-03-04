@@ -79,7 +79,7 @@ RUN apt-get update && apt-get install -y libopencv-dev
 RUN apt-get update && apt-get install -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
 
 # Install dependencies for robot_model and robot_state_publisher
-RUN apt-get update && apt-get install -y liburdfdom-dev liburdfdom-headers-dev libeigen3-dev
+RUN apt-get update && apt-get install -y libeigen3-dev
 
 # Install Git-LFS.
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y git-lfs; fi
