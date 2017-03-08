@@ -18,14 +18,7 @@ import sys
 import tarfile
 import zipfile
 
-from .__main__ import get_args
-from .__main__ import run
 from .util import info
-
-
-def main(sysargv=None):
-    args = get_args(sysargv=sysargv, skip_white_space_in=True, skip_connext=True, add_ros1=True)
-    return run(args, build_and_test_and_package)
 
 
 def build_and_test_and_package(args, job):
