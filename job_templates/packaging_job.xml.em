@@ -112,7 +112,7 @@ ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
-export CI_ARGS="--do-venv --force-ansi-color"
+export CI_ARGS="--packaging --do-venv --force-ansi-color"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi
@@ -158,14 +158,14 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
-docker build -t ros2_packaging linux_packaging_docker_resources
+docker build --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
 docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache ros2_packaging
 echo "# END SECTION"
 @[else]@
 echo "# BEGIN SECTION: Run packaging script"
-/usr/local/bin/python3 -u run_ros2_packaging.py $CI_ARGS
+/usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
 @[end if]@
 @[elif os_name == 'windows']@
@@ -173,7 +173,7 @@ rmdir /S /Q ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
 set "PATH=%PATH:"=%"
-set "CI_ARGS=--force-ansi-color"
+set "CI_ARGS=--packaging --force-ansi-color"
 if "%CI_BRANCH_TO_TEST%" NEQ "" (
   set "CI_ARGS=%CI_ARGS% --test-branch %CI_BRANCH_TO_TEST%"
 )
@@ -201,7 +201,7 @@ echo Using args: %CI_ARGS%
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Run packaging script"
-python -u run_ros2_packaging.py %CI_ARGS%
+python -u run_ros2_batch.py %CI_ARGS%
 echo "# END SECTION"
 @[else]@
 @{ assert 'Unknown os_name: ' + os_name }@

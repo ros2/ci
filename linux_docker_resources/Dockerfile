@@ -1,5 +1,6 @@
 FROM ubuntu:xenial
 MAINTAINER William Woodall <william@osrfoundation.org>
+ARG BRIDGE=false
 ARG PLATFORM=x86
 
 # Prevent errors from apt-get.
@@ -81,6 +82,12 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y git-lfs
 
 # Install Python3 development files.
 RUN apt-get update && apt-get install -y python3-dev
+
+# automatic invalidation once every day.
+RUN echo "@today_str"
+
+# Install build and test dependencies of ros1_bridge.
+RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild

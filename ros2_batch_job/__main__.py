@@ -32,6 +32,7 @@ assert osrf_pycommon.__file__.startswith(vendor_path), \
 from osrf_pycommon.cli_utils.common import extract_argument_group
 
 from . import DEFAULT_REPOS_URL
+from .packaging import build_and_test_and_package
 from .util import change_directory
 from .util import remove_folder
 from .util import force_color
@@ -61,20 +62,26 @@ gcov_flags = " -fprofile-arcs -ftest-coverage "
 
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
-    blacklisted_package_names = [
-        'actionlib_msgs',
-        'shape_msgs',
-        'std_srvs',
-        'stereo_msgs',
-        'trajectory_msgs',
-        'visualization_msgs'
-    ]
-    return run(args, build_and_test, blacklisted_package_names=blacklisted_package_names)
+    if not args.packaging:
+        blacklisted_package_names = [
+            'actionlib_msgs',
+            'shape_msgs',
+            'std_srvs',
+            'stereo_msgs',
+            'trajectory_msgs',
+            'visualization_msgs'
+        ]
+        return run(args, build_and_test, blacklisted_package_names=blacklisted_package_names)
+    else:
+        return run(args, build_and_test_and_package)
 
 
-def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ros1=False):
+def get_args(sysargv=None):
     parser = argparse.ArgumentParser(
         description="Builds the ROS2 repositories as a single batch job")
+    parser.add_argument(
+        '--packaging', default=False, action='store_true',
+        help='create an archive of the install space')
     parser.add_argument(
         '--repo-file-url',
         default=DEFAULT_REPOS_URL,
@@ -82,26 +89,24 @@ def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ro
     parser.add_argument(
         '--test-branch', default=None,
         help="branch to attempt to checkout before doing batch job")
-    if not skip_white_space_in:
-        parser.add_argument(
-            '--white-space-in', nargs='*', default=None,
-            choices=['sourcespace', 'buildspace', 'installspace', 'workspace'],
-            help="which folder structures in which white space should be added")
+    parser.add_argument(
+        '--white-space-in', nargs='*', default=None,
+        choices=['sourcespace', 'buildspace', 'installspace', 'workspace'],
+        help="which folder structures in which white space should be added")
     parser.add_argument(
         '--do-venv', default=False, action='store_true',
         help="create and use a virtual env in the build process")
     parser.add_argument(
         '--os', default=None, choices=['linux', 'osx', 'windows'])
-    if not skip_connext:
-        parser.add_argument(
-            '--connext', default=False, action='store_true',
-            help="try to build with connext")
-        parser.add_argument(
-            '--disable-connext-static', default=False, action='store_true',
-            help="disable connext static")
-        parser.add_argument(
-            '--disable-connext-dynamic', default=False, action='store_true',
-            help="disable connext dynamic")
+    parser.add_argument(
+        '--connext', default=False, action='store_true',
+        help="try to build with connext")
+    parser.add_argument(
+        '--disable-connext-static', default=False, action='store_true',
+        help="disable connext static")
+    parser.add_argument(
+        '--disable-connext-dynamic', default=False, action='store_true',
+        help="disable connext dynamic")
     parser.add_argument(
         '--osrf-connext-debs', default=False, action='store_true',
         help="use OSRF-built debs for Connext instead of binaries off the RTI website (linux only)")
@@ -117,10 +122,9 @@ def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ro
     parser.add_argument(
         '--force-ansi-color', default=False, action='store_true',
         help="forces this program to output ansi color")
-    if add_ros1:
-        parser.add_argument(
-            '--ros1-path', default=None,
-            help="path of ROS 1 workspace to be sourced")
+    parser.add_argument(
+        '--ros1-path', default=None,
+        help="path of ROS 1 workspace to be sourced")
     parser.add_argument(
         '--test-bridge', default=False, action='store_true',
         help='test ros1_bridge')
@@ -152,14 +156,6 @@ def get_args(sysargv=None, skip_white_space_in=False, skip_connext=False, add_ro
     args = parser.parse_args(argv)
     args.ament_build_args = ament_build_args
     args.ament_test_args = ament_test_args
-    if skip_white_space_in:
-        args.white_space_in = None
-    if skip_connext:
-        args.connext = False
-        args.disable_connext_dynamic = False
-        args.disable_connext_static = False
-    if not add_ros1:
-        args.ros1_path = None
     return args
 
 
