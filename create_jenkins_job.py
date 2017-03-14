@@ -80,6 +80,7 @@ def main(argv=None):
         'ament_test_args_default': '--retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
+        'turtlebot_demo': False,
     }
 
     jenkins = connect(args.jenkins_url)
@@ -214,6 +215,18 @@ def main(argv=None):
     job_data['cmake_build_type'] = 'None'
     job_config = expand_template('ci_launcher_job.xml.em', job_data)
     configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
+
+    # Run the turtlebot job on Linux only for now.
+    os_name = 'linux'
+    turtlebot_job_data = dict(data)
+    turtlebot_job_data['os_name'] = os_name
+    turtlebot_job_data.update(os_configs[os_name])
+    turtlebot_job_data['turtlebot_demo'] = True
+    # Use a turtlebot2_demo-specific repos file by default.
+    turtlebot_job_data['default_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
+    turtlebot_job_data['cmake_build_type'] = 'None'
+    job_config = expand_template('ci_job.xml.em', turtlebot_job_data)
+    configure_job(jenkins, 'ci_turtlebot-demo', job_config, **jenkins_kwargs)
 
 
 if __name__ == '__main__':
