@@ -110,6 +110,11 @@ def main(argv=None):
             'shell_type': 'Shell',
             'use_connext_default': 'false',
         },
+        'turtlebot-demo': {
+            'label_expression': 'linux',
+            'shell_type': 'Shell',
+            'default_repos_url': DEFAULT_REPOS_URL,
+        },
     }
 
     jenkins_kwargs = {}
@@ -134,6 +139,9 @@ def main(argv=None):
 
         # skip packaging and nightly jobs on ARM32 for now
         if os_name == 'linux-armhf':
+            continue
+        # skip packaging and nightly jobs for turtlebot CI
+        if os_name == 'turtlebot-demo':
             continue
 
         # all following jobs are triggered nightly with email notification

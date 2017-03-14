@@ -184,6 +184,8 @@ sed -i 's+^FROM.*$+FROM osrf/ubuntu_arm64:xenial+' linux_docker_resources/Docker
 docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
 @[elif os_name == 'linux']@
 docker build -t ros2_batch_ci linux_docker_resources
+@[elif os_name == 'turtlebot-demo']@
+docker build --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=yes -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[else]@
 @{ assert 'Unknown os_name: ' + os_name }@
 @[end if]@
