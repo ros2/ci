@@ -89,6 +89,9 @@ def build_and_test_and_package(args, job):
                 '--only-packages', 'ros1_bridge',
                 # Skip building and installing, since we just did that successfully.
                 '--skip-build', '--skip-install',
+                # Ignore return codes that indicate test failures;
+                # they'll be picked up later in test reporting.
+                '--ignore-return-codes',
             ] + (['--isolated'] if args.isolated else []) + args.ament_test_args,
                 exit_on_error=False, shell=True)
             info("ament.py test returned: '{0}'".format(ret_test))
