@@ -80,6 +80,7 @@ def main(argv=None):
         'ament_test_args_default': '--retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
+        'turtlebot_demo': False,
     }
 
     jenkins = connect(args.jenkins_url)
@@ -110,11 +111,6 @@ def main(argv=None):
             'shell_type': 'Shell',
             'use_connext_default': 'false',
         },
-        'turtlebot-demo': {
-            'label_expression': 'linux',
-            'shell_type': 'Shell',
-            'default_repos_url': DEFAULT_REPOS_URL,
-        },
     }
 
     jenkins_kwargs = {}
@@ -139,9 +135,6 @@ def main(argv=None):
 
         # skip packaging and nightly jobs on ARM32 for now
         if os_name == 'linux-armhf':
-            continue
-        # skip packaging and nightly jobs for turtlebot CI
-        if os_name == 'turtlebot-demo':
             continue
 
         # all following jobs are triggered nightly with email notification
@@ -222,6 +215,19 @@ def main(argv=None):
     job_data['cmake_build_type'] = 'None'
     job_config = expand_template('ci_launcher_job.xml.em', job_data)
     configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
+
+
+    # Run the turtlebot job on Linux only for now.
+    os_name = 'linux'
+    turtlebot_job_data = dict(data)
+    turtlebot_job_data['os_name'] = os_name
+    turtlebot_job_data.update(os_configs[os_name])
+    turtlebot_job_data['turtlebot_demo'] = True
+    turtlebot_job_data['default_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
+    turtlebot_job_data['cmake_build_type'] = 'None'
+    job_config = expand_template('ci_job.xml.em', turtlebot_job_data)
+    configure_job(jenkins, 'ci_turtlebot-demo', job_config, **jenkins_kwargs)
+
 
 
 if __name__ == '__main__':
