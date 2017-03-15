@@ -176,16 +176,18 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
-@[if turtlebot_demo]@
-docker build --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=yes -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[elif os_name == 'linux-armhf']@
+@[if os_name == 'linux-armhf']@
 sed -i 's+^FROM.*$+FROM osrf/ubuntu_armhf:xenial+' linux_docker_resources/Dockerfile
 docker build --build-arg PLATFORM=arm -t ros2_batch_ci_armhf linux_docker_resources
 @[elif os_name == 'linux-aarch64']@
 sed -i 's+^FROM.*$+FROM osrf/ubuntu_arm64:xenial+' linux_docker_resources/Dockerfile
 docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
 @[elif os_name == 'linux']@
+@[if turtlebot_demo]@
+docker build --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
+@[else]@
 docker build -t ros2_batch_ci linux_docker_resources
+@[endif]@
 @[else]@
 @{ assert 'Unknown os_name: ' + os_name }@
 @[end if]@

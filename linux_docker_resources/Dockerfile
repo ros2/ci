@@ -1,6 +1,7 @@
 FROM ubuntu:xenial
 MAINTAINER William Woodall <william@osrfoundation.org>
 ARG BRIDGE=false
+ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
 ARG PLATFORM=x86
 
 # Prevent errors from apt-get.
@@ -37,9 +38,6 @@ RUN apt-get update && apt-get install -y build-essential ccache cmake pkg-config
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install -y clang-format-3.8 cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 uncrustify
-
-# Install build dependencies for turtlebot demo.
-RUN if test -n ${INSTALL_TURTLEBOT2_DEMO_DEPS}; apt-get update && apt-get install -y libeigen3-dev libtinyxml-dev
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install -y python3-pip
@@ -91,6 +89,9 @@ RUN echo "@today_str"
 
 # Install build and test dependencies of ros1_bridge.
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials; fi
+
+# Install build dependencies for turtlebot demo.
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; apt-get update && apt-get install -y libeigen3-dev libtinyxml-dev
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
