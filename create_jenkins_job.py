@@ -222,8 +222,8 @@ def main(argv=None):
     turtlebot_job_data['os_name'] = os_name
     turtlebot_job_data.update(os_configs[os_name])
     turtlebot_job_data['turtlebot_demo'] = True
-    # Will use a turtlebot2_demo repos file when one is available.
-    # turtlebot_job_data['default_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
+    # Use a turtlebot2_demo-specific repos file by default.
+    turtlebot_job_data['default_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
     turtlebot_job_data['cmake_build_type'] = 'None'
     job_config = expand_template('ci_job.xml.em', turtlebot_job_data)
     configure_job(jenkins, 'ci_turtlebot-demo', job_config, **jenkins_kwargs)
