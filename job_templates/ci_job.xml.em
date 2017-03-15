@@ -187,7 +187,7 @@ docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_reso
 docker build --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[else]@
 docker build -t ros2_batch_ci linux_docker_resources
-@[endif]@
+@[end if]@
 @[else]@
 @{ assert 'Unknown os_name: ' + os_name }@
 @[end if]@
