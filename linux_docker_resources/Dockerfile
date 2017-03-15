@@ -91,7 +91,7 @@ RUN echo "@today_str"
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials; fi
 
 # Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; apt-get update && apt-get install -y libeigen3-dev libtinyxml-dev
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install -y libeigen3-dev libtinyxml-dev; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
