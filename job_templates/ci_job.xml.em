@@ -143,7 +143,7 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  case $CI_AMENT_BUILD_ARGS in 
+  case $CI_AMENT_BUILD_ARGS in
     *-- )
       # delimiter is already appended
       ;;
@@ -154,7 +154,7 @@ if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  case $CI_AMENT_TEST_ARGS in 
+  case $CI_AMENT_TEST_ARGS in
     *-- )
       # delimiter is already appended
       ;;
