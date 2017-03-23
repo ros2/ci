@@ -91,7 +91,7 @@ RUN apt-get update && apt-get install -y python3-dev
 RUN echo "@today_str"
 
 # Install build and test dependencies of ros1_bridge.
-RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials; fi
+RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install -y libeigen3-dev libtinyxml-dev; fi
