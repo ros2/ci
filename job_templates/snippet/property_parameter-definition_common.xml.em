@@ -1,6 +1,6 @@
         <hudson.model.StringParameterDefinition>
           <name>CI_BRANCH_TO_TEST</name>
-          <description>Branch to test across the ros2 repositories which have it.
+          <description>Branch to test across the repositories in the .repos file that have it.
 For example, if you have a few repositories with the &apos;feature&apos; branch.
 Then you can set this to &apos;feature&apos;.
 The repositories with the &apos;feature&apos; branch will be changed to that branch.
