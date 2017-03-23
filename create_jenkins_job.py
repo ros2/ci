@@ -140,7 +140,7 @@ def main(argv=None):
         # all following jobs are triggered nightly with email notification
         job_data['time_trigger_spec'] = '30 7 * * *'
         # for now, skip emailing about Windows failures
-        job_data['mailer_recipients'] = 'ros@osrfoundation.org'
+        job_data['mailer_recipients'] = 'ros2-buildfarm@googlegroups.com'
 
         # configure packaging job
         # no aarch64 packaging yet
