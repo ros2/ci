@@ -59,7 +59,7 @@ For CMake warnings to be parsed by the Warnings plugin you need to add a global 
 
 Each of the batch CI jobs have the same set of parameters.
 The parameters have their own descriptions, but the main one to look at is the `CI_BRANCH_TO_TEST` parameter.
-It allows you to select a branch name across all of the ROS 2 repositories which should be tested.
+It allows you to select a branch name across all of the repositories in the `.repos` file that should be tested.
 Repositories which have this branch will be switched to it, others will be left on the default branch, usually `master`.
 
 ### Notes about the Windows Slave
