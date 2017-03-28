@@ -298,7 +298,7 @@ echo "# END SECTION"
     'publisher_xunit',
 ))@
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.19">
+    <hudson.tasks.Mailer plugin="mailer@@1.20">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>@(dont_notify_every_unstable_build)</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>

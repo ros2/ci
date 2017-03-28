@@ -228,7 +228,7 @@ echo "# END SECTION"
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.19">
+    <hudson.tasks.Mailer plugin="mailer@@1.20">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
