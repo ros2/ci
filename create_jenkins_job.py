@@ -162,13 +162,11 @@ def main(argv=None):
         # many, likely related to qemu). Also disable linter tests (because
         # this is already a very slow job and because we lint plenty on other
         # jobs). Also don't build packages in parallel because we've seen hung
-        # builds that seem to be caused by parallelism. Also don't rerun tests,
-        # as we're currently not paying attention to test failures.
+        # builds that seem to be caused by parallelism.
         if os_name == 'linux-aarch64':
             job_data['dont_notify_every_unstable_build'] = 'true'
-            job_data['ament_test_args_default'] = '--retest-until-pass 10 --ctest-args -LE linter --'
+            job_data['ament_test_args_default'] = '--ctest-args -LE linter --'
             job_data['ament_build_args_default'] = ''
-            job_data['ament_test_args_default'] = ''
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
