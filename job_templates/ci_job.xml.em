@@ -306,6 +306,16 @@ echo "# END SECTION"
 @[end if]@
   </publishers>
   <buildWrappers>
+@[if build_timeout_mins]@
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.18">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>@(build_timeout_mins)</timeoutMinutes>
+      </strategy>
+      <operationList>
+        <hudson.plugins.build__timeout.operations.AbortOperation />
+      </operationList>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+@[end if]@
     <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.8" />
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.4.3">
       <colorMapName>xterm</colorMapName>
