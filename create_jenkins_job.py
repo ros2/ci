@@ -162,7 +162,7 @@ def main(argv=None):
         # For the aarch64 job, don't email on test failures (because there are
         # many, likely related to qemu). Also disable linter tests (because
         # this is already a very slow job and because we lint plenty on other
-	# jobs). Also don't build packages in parallel because we've seen hung
+        # jobs). Also don't build packages in parallel because we've seen hung
         # builds that seem to be caused by parallelism. Also put a timeout to abort
         # hung builds (which happen from time to time).
         if os_name == 'linux-aarch64':
