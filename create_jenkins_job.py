@@ -81,6 +81,7 @@ def main(argv=None):
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
+        'build_timeout_mins': 0,
     }
 
     jenkins = connect(args.jenkins_url)
@@ -162,11 +163,13 @@ def main(argv=None):
         # many, likely related to qemu). Also disable linter tests (because
         # this is already a very slow job and because we lint plenty on other
         # jobs). Also don't build packages in parallel because we've seen hung
-        # builds that seem to be caused by parallelism.
+        # builds that seem to be caused by parallelism. Also put a timeout to abort
+        # hung builds (which happen from time to time).
         if os_name == 'linux-aarch64':
             job_data['dont_notify_every_unstable_build'] = 'true'
             job_data['ament_test_args_default'] = '--ctest-args -LE linter --'
             job_data['ament_build_args_default'] = ''
+            job_data['build_timeout_mins'] = 600
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
