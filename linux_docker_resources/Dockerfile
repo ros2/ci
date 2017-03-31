@@ -94,8 +94,8 @@ RUN echo "@today_str"
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install -y libudev-dev libusb-1.0.0-dev ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
-# dependencies for map_server: libyaml-cpp-dev libsdl1.2-dev libsdl-image1.2-dev
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install -y libsdl1.2-dev libsdl-image1.2-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
+
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
 RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
