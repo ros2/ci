@@ -22,9 +22,7 @@ echo "done."
 
 if [ $ARCH = "x86_64" ]; then
   echo "Initializing Git-LFS..."
-  if ! sudo -H -u rosbuild -- git lfs install; then
-    echo "Git-LFS failed to initialize (this is expected on ARM platforms)."
-  fi
+  sudo -H -u rosbuild -- git lfs install
   echo "done."
 else
   echo "Not installing git-lfs because we're on a non-x86_64 machine."
