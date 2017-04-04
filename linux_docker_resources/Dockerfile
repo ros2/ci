@@ -1,4 +1,4 @@
-FROM aarch64/ubuntu:xenial
+FROM ubuntu:xenial
 MAINTAINER William Woodall <william@osrfoundation.org>
 ARG BRIDGE=false
 ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
@@ -63,12 +63,12 @@ RUN curl --silent http://s3.amazonaws.com/RTI/Bundles/5.2.3/Evaluation/rti_conne
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
-#ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 
 # Add the RTI binaries we made.
-#ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
-#ADD rticonnextdds-src/librticonnextdds52-dev_5.2.3-1_amd64.deb /tmp/librticonnextdds52-dev_5.2.3-1_amd64.deb
-#ADD rticonnextdds-src/rticonnextdds-tools_5.2.3-1_amd64.deb /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
+ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
+ADD rticonnextdds-src/librticonnextdds52-dev_5.2.3-1_amd64.deb /tmp/librticonnextdds52-dev_5.2.3-1_amd64.deb
+ADD rticonnextdds-src/rticonnextdds-tools_5.2.3-1_amd64.deb /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
 
 # Install the eProsima dependencies.
 RUN (apt-get update || true) && apt-get install -y libasio-dev libboost-chrono-dev libboost-date-time-dev libboost-program-options-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libtinyxml2-dev valgrind
