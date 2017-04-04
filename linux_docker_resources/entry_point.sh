@@ -12,41 +12,51 @@ export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
 export UID=${UID:=$ORIG_UID}
 export GID=${GID:=$ORIG_GID}
 
+ARCH=`uname -i`
+
 ORIG_HOME=$(echo $ORIGPASSWD | cut -f6 -d:)
 
 echo "Enabling multicast..."
 ifconfig eth0 multicast
 echo "done."
 
-echo "Initializing Git-LFS..."
-if ! sudo -H -u rosbuild -- git lfs install; then
-  echo "Git-LFS failed to initialize (this is expected on ARM platforms)."
+if [ $ARCH = "x86_64" ]; then
+  echo "Initializing Git-LFS..."
+  if ! sudo -H -u rosbuild -- git lfs install; then
+    echo "Git-LFS failed to initialize (this is expected on ARM platforms)."
+  fi
+  echo "done."
+else
+  echo "Not installing git-lfs because we're on a non-x86_64 machine."
 fi
-echo "done."
 
 case "${CI_ARGS}" in
   *--connext*)
-    echo "Installing Connext..."
-    case "${CI_ARGS}" in
-      *--osrf-connext-debs*)
-        echo "Installing OSRF-built Connext debs..."
-        dpkg -i /tmp/librticonnextdds52_5.2.3-1_amd64.deb
-        dpkg -i /tmp/librticonnextdds52-dev_5.2.3-1_amd64.deb
-        dpkg -i /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
-        ;;
-      *)
-        echo "Installing Connext binaries off RTI website..."
-        python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti-installer.run /home/rosbuild
-        if [ $? -ne 0 ]
-        then
-          echo "Connext not installed correctly." >&2
-          exit 1
-        fi
-        mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
-        export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
-        ;;
-    esac
-    echo "done."
+    if [ $ARCH = "x86_64" ]; then
+      echo "Installing Connext..."
+      case "${CI_ARGS}" in
+        *--osrf-connext-debs*)
+          echo "Installing OSRF-built Connext debs..."
+          dpkg -i /tmp/librticonnextdds52_5.2.3-1_amd64.deb
+          dpkg -i /tmp/librticonnextdds52-dev_5.2.3-1_amd64.deb
+          dpkg -i /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
+          ;;
+        *)
+          echo "Installing Connext binaries off RTI website..."
+          python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti-installer.run /home/rosbuild
+          if [ $? -ne 0 ]
+          then
+            echo "Connext not installed correctly." >&2
+            exit 1
+          fi
+          mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
+          export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
+          ;;
+      esac
+      echo "done."
+    else
+      echo "Not installing Connext because we're on a non-x86_64 machine."
+    fi
     ;;
   *)
     echo "NOT installing Connext."
