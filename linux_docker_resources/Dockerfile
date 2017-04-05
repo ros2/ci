@@ -29,11 +29,6 @@ RUN curl --silent http://repositories.ros.org/repos.key | apt-key add -
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
-# Add the Git-LFS repository.
-RUN echo "platform: ${PLATFORM}"
-RUN if test ${PLATFORM} = x86; then echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ `lsb_release -cs` main" > /etc/apt/sources.list.d/github_git-lfs.list; fi
-RUN if test ${PLATFORM} = x86; then curl --silent https://packagecloud.io/gpg.key | apt-key add -; fi
-
 # Install some development tools.
 RUN apt-get update && apt-get install -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
 
@@ -81,9 +76,6 @@ RUN apt-get update && apt-get install -y libpoco-dev libpocofoundation9v5 libpoc
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install -y libtinyxml-dev libeigen3-dev
-
-# Install Git-LFS.
-RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y git-lfs; fi
 
 # Install Python3 development files.
 RUN apt-get update && apt-get install -y python3-dev
