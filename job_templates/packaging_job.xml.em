@@ -108,7 +108,7 @@ ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'osx']]@
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -141,7 +141,7 @@ if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   esac
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
-@[if os_name == 'linux']@
+@[if os_name in ['linux', 'linux-aarch64']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
 @[else]@
 export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
@@ -149,7 +149,7 @@ export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[if os_name == 'linux']@
+@[if os_name in ['linux', 'linux-aarch64']]@
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
 docker version
@@ -158,10 +158,25 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
+@[if os_name == 'linux-aarch64']@
+sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
+sed -i 's+apt-get update+(apt-get update || true)+' linux_docker_resources/Dockerfile
+docker build --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+@[elif os_name == 'linux']@
 docker build --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
+@[else]@
+@{ assert 'Unknown os_name: ' + os_name }@
+@[end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache ros2_packaging
+@[if os_name == 'linux']@
+export CONTAINER_NAME=ros2_packaging
+@[elif os_name == 'linux-aarch64']@
+export CONTAINER_NAME=ros2_packaging_aarch64
+@[else]@
+@{ assert 'Unknown os_name: ' + os_name }@
+@[end if]@
+docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[else]@
 echo "# BEGIN SECTION: Run packaging script"

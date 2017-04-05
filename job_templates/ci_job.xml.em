@@ -101,7 +101,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'osx', 'linux-armhf', 'linux-aarch64']]@
+@[if os_name in ['linux', 'osx', 'linux-aarch64']]@
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -167,7 +167,7 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[if os_name in ['linux', 'linux-armhf', 'linux-aarch64']]@
+@[if os_name in ['linux', 'linux-aarch64']]@
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
 docker version
@@ -176,11 +176,9 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
-@[if os_name == 'linux-armhf']@
-sed -i 's+^FROM.*$+FROM osrf/ubuntu_armhf:xenial+' linux_docker_resources/Dockerfile
-docker build --build-arg PLATFORM=arm -t ros2_batch_ci_armhf linux_docker_resources
-@[elif os_name == 'linux-aarch64']@
-sed -i 's+^FROM.*$+FROM osrf/ubuntu_arm64:xenial+' linux_docker_resources/Dockerfile
+@[if os_name == 'linux-aarch64']@
+sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
+sed -i 's+apt-get update+(apt-get update || true)+' linux_docker_resources/Dockerfile
 docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
 @[elif os_name == 'linux']@
 @[  if turtlebot_demo]@
@@ -193,28 +191,14 @@ docker build -t ros2_batch_ci linux_docker_resources
 @[end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-export EXTRA_MOUNT=""
-@[if os_name in ['linux-armhf', 'linux-aarch64']]@
-tmpd=`mktemp -d`
-mkdir $tmpd/src
-curl -sk https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos -o $tmpd/ros2.repos
-vcs import $tmpd/src --input $tmpd/ros2.repos
-export CI_ARGS="$CI_ARGS --src-mounted --workspace-path $tmpd"
-export EXTRA_MOUNT="-v $tmpd/src:/home/rosbuild/ci_scripts/ws/src"
-@[end if]@
 @[if os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
-@[elif os_name == 'linux-armhf']@
-export CONTAINER_NAME=ros2_batch_ci_armhf
 @[elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_batch_ci_aarch64
 @[else]@
 @{ assert 'Unknown os_name: ' + os_name }@
 @[end if]@
-docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $EXTRA_MOUNT $CONTAINER_NAME
-@[if os_name in ['linux-armhf', 'linux-aarch64']]@
-rm -rf $tmpd
-@[end if]@
+docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[else]@
 echo "# BEGIN SECTION: Run script"
