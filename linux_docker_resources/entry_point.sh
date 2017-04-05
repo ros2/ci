@@ -20,14 +20,6 @@ echo "Enabling multicast..."
 ifconfig eth0 multicast
 echo "done."
 
-if [ $ARCH = "x86_64" ]; then
-  echo "Initializing Git-LFS..."
-  sudo -H -u rosbuild -- git lfs install
-  echo "done."
-else
-  echo "Not installing git-lfs because we're on a non-x86_64 machine."
-fi
-
 case "${CI_ARGS}" in
   *--connext*)
     echo "Installing Connext..."
