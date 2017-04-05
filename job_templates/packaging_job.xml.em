@@ -108,7 +108,7 @@ ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'osx']]@
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -141,7 +141,7 @@ if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   esac
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
-@[if os_name == 'linux']@
+@[if os_name in ['linux', 'linux-aarch64']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
 @[else]@
 export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
@@ -149,7 +149,7 @@ export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[if os_name == 'linux']@
+@[if os_name in ['linux', 'linux-aarch64']]@
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
 docker version
