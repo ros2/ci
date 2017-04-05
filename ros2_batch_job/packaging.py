@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import platform
 import shutil
 import sys
 import tarfile
@@ -139,7 +140,7 @@ def build_and_test_and_package(args, job):
     # create an archive
     folder_name = 'ros2-' + args.os
     if args.os == 'linux' or args.os == 'osx':
-        archive_path = 'ros2-package-%s.tar.bz2' % args.os
+        archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, platform.machine())
 
         def exclude(filename):
             if os.path.basename(filename) == 'SOURCES.txt':
@@ -149,7 +150,7 @@ def build_and_test_and_package(args, job):
         with tarfile.open(archive_path, 'w:bz2') as h:
             h.add(args.installspace, arcname=folder_name, exclude=exclude)
     elif args.os == 'windows':
-        archive_path = 'ros2-package-windows.zip'
+        archive_path = 'ros2-package-windows-%s.zip' % platform.machine()
         # NOTE(esteve): hack to copy our custom built VS2015-compatible OpenCV DLLs
         opencv_libdir = os.path.join('c:/', 'opencv', 'build', 'x64', 'vc14', 'bin')
         for libfile in ['opencv_core2412.dll', 'opencv_highgui2412.dll']:
