@@ -178,6 +178,7 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[if os_name == 'linux-aarch64']@
 sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
+sed -i 's+apt-get update+(apt-get update || true)+' linux_docker_resources/Dockerfile
 docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
 @[elif os_name == 'linux']@
 @[  if turtlebot_demo]@
