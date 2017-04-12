@@ -40,7 +40,7 @@
   <builders/>
   <publishers>
 @[for os_name, os_data in os_specific_data.items()]@
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.32">
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.33">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>

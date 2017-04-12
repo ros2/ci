@@ -252,11 +252,11 @@ echo "# END SECTION"
   </publishers>
   <buildWrappers>
     <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.8" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.4.3">
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.5.0">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
 @[if os_name != 'windows']@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.13">
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.15">
       <credentialIds>
         <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>
       </credentialIds>
