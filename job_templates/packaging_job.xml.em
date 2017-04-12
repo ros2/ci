@@ -102,7 +102,7 @@ cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')},
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
 ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
 """);]]>
-          </script>
+        </script>
           <sandbox>false</sandbox>
         </script>
       </source>

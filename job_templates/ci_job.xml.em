@@ -95,7 +95,7 @@ ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')},
 ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
-          </script>
+        </script>
           <sandbox>false</sandbox>
         </script>
       </source>
