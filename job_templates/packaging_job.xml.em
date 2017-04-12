@@ -132,7 +132,7 @@ if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  case $CI_AMENT_TEST_ARGS in 
+  case $CI_AMENT_TEST_ARGS in
     *-- )
       # delimiter is already appended
       ;;
