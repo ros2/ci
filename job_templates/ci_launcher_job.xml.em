@@ -54,7 +54,7 @@
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
-@[end if]
+@[end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
           <condition>SUCCESS</condition>
