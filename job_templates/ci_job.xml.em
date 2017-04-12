@@ -75,9 +75,10 @@
 @[end if]</triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.30">
-      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-        <command><![CDATA[build.setDescription("""\
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
+      <source class="hudson.plugins.groovy.StringSystemScriptSource">
+        <script plugin="script-security@@1.27">
+          <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connext: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT')}, <br/>
 disable_connext_static: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_STATIC')}, <br/>
@@ -94,10 +95,10 @@ ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')},
 ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
-        </command>
-      </scriptSource>
-      <bindings/>
-      <classpath/>
+          </script>
+          <sandbox>false</sandbox>
+        </script>
+      </source>
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@

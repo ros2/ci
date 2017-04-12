@@ -90,9 +90,10 @@
 @[end if]</triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@1.30">
-      <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-        <command><![CDATA[build.setDescription("""\
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
+      <source class="hudson.plugins.groovy.StringSystemScriptSource">
+        <script plugin="script-security@@1.27">
+          <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
@@ -101,10 +102,10 @@ cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')},
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
 ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
 """);]]>
-        </command>
-      </scriptSource>
-      <bindings/>
-      <classpath/>
+          </script>
+          <sandbox>false</sandbox>
+        </script>
+      </source>
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
