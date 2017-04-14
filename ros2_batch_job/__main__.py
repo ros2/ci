@@ -426,9 +426,11 @@ def run(args, build_function, blacklisted_package_names=None):
                 info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
                 print()
 
-                # Attempt to rebase all the repositories to the __ci_default branch
-                info("Attempting to rebase all repositories to the '__ci_default' branch")
-                vcs_custom_cmd = vcs_cmd + ['custom', '.', '--git', '--args', 'rebase', '__ci_default']
+                # Attempt to merge all the repositories to the __ci_default branch.  This is to
+                # ensure that the changes on the branch still work when applied to the
+                # latest version of the default branch.
+                info("Attempting to merge all repositories to the '__ci_default' branch")
+                vcs_custom_cmd = vcs_cmd + ['custom', '.', '--git', '--args', 'merge', '__ci_default']
                 ret = job.run(vcs_custom_cmd)
                 info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
                 print()
