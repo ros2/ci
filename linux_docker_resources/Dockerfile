@@ -1,5 +1,4 @@
 FROM ubuntu:xenial
-MAINTAINER William Woodall <william@osrfoundation.org>
 ARG BRIDGE=false
 ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
 ARG PLATFORM=x86
