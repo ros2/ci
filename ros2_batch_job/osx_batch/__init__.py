@@ -38,6 +38,8 @@ class OSXBatchJob(BatchJob):
             os.environ['LANG'] = 'en_US.UTF-8'
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '111'
+        if 'OPENSSL_ROOT_DIR' not in os.environ:
+            os.environ['OPENSSL_ROOT_DIR'] = '/usr/local/Cellar/openssl/1.0.2k'
 
     def show_env(self):
         # Show the env
