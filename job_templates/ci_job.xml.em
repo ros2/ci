@@ -192,7 +192,9 @@ docker build -t ros2_batch_ci linux_docker_resources
 @[end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-@[if os_name == 'linux']@
+@[if turtlebot_demo]@
+export CONTAINER_NAME=ros2_batch_ci_turtlebot_demo
+@[elif os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
 @[elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_batch_ci_aarch64
