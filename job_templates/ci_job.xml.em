@@ -133,10 +133,8 @@ if [ "$CI_USE_OPENSPLICE" = "true" ]; then
 fi
 if [ -n "${CI_ROS2_REPOS_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
-@[ if turtlebot_demo ]@
 else
   export CI_ARGS="$CI_ARGS --repo-file-url @default_repos_url"
-@[ end if ]@
 fi
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
@@ -244,6 +242,8 @@ if "%CI_USE_OPENSPLICE%" == "true" (
 )
 if "%CI_ROS2_REPOS_URL%" NEQ "" (
   set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
+) else (
+  set "CI_ARGS=%CI_ARGS% --repo-file-url @default_repos_url"
 )
 if "%CI_ISOLATED%" == "true" (
   set "CI_ARGS=%CI_ARGS% --isolated"
