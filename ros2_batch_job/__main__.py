@@ -426,9 +426,9 @@ def run(args, build_function, blacklisted_package_names=None):
                 info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
                 print()
 
-                # Attempt to merge all the repositories to the __ci_default branch.  This is to
-                # ensure that the changes on the branch still work when applied to the
-                # latest version of the default branch.
+                # Attempt to merge the __ci_default branch into the branch.
+                # This is to ensure that the changes on the branch still work
+                # when applied to the latest version of the default branch.
                 info("Attempting to merge all repositories to the '__ci_default' branch")
                 vcs_custom_cmd = vcs_cmd + ['custom', '.', '--git', '--args', 'merge', '__ci_default']
                 ret = job.run(vcs_custom_cmd)
