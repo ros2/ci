@@ -184,6 +184,7 @@ class MyProtocol(AsyncSubprocessProtocol):
 
 
 def run(cmd, exit_on_error=True, **kwargs):
+    print('cmd:%s'%(cmd))
     log("@{bf}==>@| @!{0}", fargs=(" ".join(cmd),))
     ret = _run(cmd, exit_on_error=exit_on_error, **kwargs)
     print()
