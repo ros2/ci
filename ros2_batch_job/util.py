@@ -133,7 +133,6 @@ def log(*args, **kwargs):
     msg = ''
     # Do color formatting for each arg and combine them.
     for arg in args:
-        print(arg)
         msg += format_color(arg)
     # Extract fargs and/or fkwargs and format the now colorized string.
     fargs, fkwargs = None, None
