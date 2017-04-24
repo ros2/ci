@@ -227,7 +227,6 @@ def _format_color(msg, ansi_dict):
     import re
     regex = re.compile('@[^!/_|]')
     msg = regex.sub('@@ ', msg)
-    msg = msg.replace('@', '@@')
     msg = msg.replace('@!', '@{boldon}')
     msg = msg.replace('@/', '@{italicson}')
     msg = msg.replace('@_', '@{ulon}')
