@@ -146,7 +146,7 @@ def log(*args, **kwargs):
         fargs = fargs or []
         fkwargs = fkwargs or {}
         print('msg: %s'%(msg))
-        print('fargs: %s'%(*fargs))
+        print('fargs: %s'%(fargs))
         msg = msg.format(*fargs, **kwargs)
     # If the user did not provide an end kwarg, automatically clear the coloring.
     if 'end' not in kwargs:
