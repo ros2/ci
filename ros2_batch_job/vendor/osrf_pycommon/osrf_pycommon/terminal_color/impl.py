@@ -230,6 +230,7 @@ def _format_color(msg, ansi_dict):
 
     class ColorTemplate(string.Template):
         delimiter = '@'
+    print('msg: %s'%(msg))
     return ColorTemplate(msg).substitute(ansi_dict)
 
 
