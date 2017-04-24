@@ -227,10 +227,10 @@ def _format_color(msg, ansi_dict):
     msg = msg.replace('@/', '@{italicson}')
     msg = msg.replace('@_', '@{ulon}')
     msg = msg.replace('@|', '@{reset}')
+    msg = msg.replace('@', '@@')
 
     class ColorTemplate(string.Template):
         delimiter = '@'
-    print('msg: %s'%(msg))
     return ColorTemplate(msg).substitute(ansi_dict)
 
 
