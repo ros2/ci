@@ -33,7 +33,6 @@ from osrf_pycommon.process_utils import AsyncSubprocessProtocol
 from osrf_pycommon.process_utils import get_loop
 from osrf_pycommon.terminal_color import format_color as format_color_actual
 from osrf_pycommon.terminal_color import enable_ansi_color_substitution_globally
-from osrf_pycommon.terminal_color import sanitize
 
 IS_JENKINS = 'JOB_NAME' in os.environ
 
@@ -134,7 +133,7 @@ def log(*args, **kwargs):
     msg = ''
     # Do color formatting for each arg and combine them.
     for arg in args:
-        msg += format_color(sanitize(arg))
+        msg += format_color(arg)
     # Extract fargs and/or fkwargs and format the now colorized string.
     fargs, fkwargs = None, None
     if 'fargs' in kwargs:

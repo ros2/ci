@@ -17,6 +17,7 @@ import os
 import platform
 import subprocess
 import sys
+from osrf_pycommon.terminal_color import sanitize
 
 # Make sure we're using Python3
 assert sys.version.startswith('3'), "This script is only meant to work with Python3"
@@ -290,7 +291,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
     info("run_ros2_batch called with args:")
     for arg in vars(args):
-        info("  - {0}={1}".format(arg, getattr(args, arg)))
+        info("  - {0}={1}".format(sanitize(arg), sanitize(getattr(args, arg))))
 
     job = None
 
