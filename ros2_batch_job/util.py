@@ -133,6 +133,7 @@ def log(*args, **kwargs):
     msg = ''
     # Do color formatting for each arg and combine them.
     for arg in args:
+        print(arg)
         msg += format_color(arg)
     # Extract fargs and/or fkwargs and format the now colorized string.
     fargs, fkwargs = None, None
@@ -145,8 +146,6 @@ def log(*args, **kwargs):
     if fargs is not None or fkwargs is not None:
         fargs = fargs or []
         fkwargs = fkwargs or {}
-        print('msg: %s'%(msg))
-        print('fargs: %s'%(fargs))
         msg = msg.format(*fargs, **kwargs)
     # If the user did not provide an end kwarg, automatically clear the coloring.
     if 'end' not in kwargs:
