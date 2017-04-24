@@ -145,6 +145,9 @@ def log(*args, **kwargs):
     if fargs is not None or fkwargs is not None:
         fargs = fargs or []
         fkwargs = fkwargs or {}
+        print('msg: %s'%(msg))
+        print('fargs: %s'%(fargs))
+        print('kwargs: %s'%(kwargs))
         msg = msg.format(*fargs, **kwargs)
     # If the user did not provide an end kwarg, automatically clear the coloring.
     if 'end' not in kwargs:
