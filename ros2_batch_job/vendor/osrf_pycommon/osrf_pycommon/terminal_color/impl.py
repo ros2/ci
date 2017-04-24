@@ -225,7 +225,7 @@ def format_color(msg):
 def _format_color(msg, ansi_dict):
     # First escape any bare '@' characters
     import re
-    regex = re.compile('(@[^!/_|])')
+    regex = re.compile('(@[^{!/_|])')
     msg = regex.sub('@\g<1>', msg)
     msg = msg.replace('@!', '@{boldon}')
     msg = msg.replace('@/', '@{italicson}')
