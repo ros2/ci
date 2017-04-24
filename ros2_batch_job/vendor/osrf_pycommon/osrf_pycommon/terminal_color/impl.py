@@ -224,7 +224,7 @@ def format_color(msg):
 
 def _format_color(msg, ansi_dict):
     # First escape any bare '@' characters. This is especially important for multi-executor
-    # Jenkins nodes, in which the automatically generated workscape path can include @N for
+    # Jenkins nodes, in which the automatically generated workspace path can include @N for
     # parallel build number N.
     import re
     regex = re.compile('(@[^{!/_|])')
