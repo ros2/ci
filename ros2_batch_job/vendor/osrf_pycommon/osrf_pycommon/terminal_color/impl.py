@@ -223,11 +223,15 @@ def format_color(msg):
 
 
 def _format_color(msg, ansi_dict):
+    # First escape any bare '@' characters
+    import re
+    regex = re.compile('@[^!/_|]')
+    msg = regex.sub('@@ ', msg)
+    msg = msg.replace('@', '@@')
     msg = msg.replace('@!', '@{boldon}')
     msg = msg.replace('@/', '@{italicson}')
     msg = msg.replace('@_', '@{ulon}')
     msg = msg.replace('@|', '@{reset}')
-    msg = msg.replace('@', '@@')
 
     class ColorTemplate(string.Template):
         delimiter = '@'
