@@ -291,6 +291,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
     info("run_ros2_batch called with args:")
     for arg in vars(args):
+        print('%s %s'%(arg, getattr(args, arg)))
         info("  - {0}={1}".format(sanitize(arg), sanitize(getattr(args, arg))))
 
     job = None
