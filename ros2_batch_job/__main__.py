@@ -17,7 +17,6 @@ import os
 import platform
 import subprocess
 import sys
-from osrf_pycommon.terminal_color import sanitize
 
 # Make sure we're using Python3
 assert sys.version.startswith('3'), "This script is only meant to work with Python3"
@@ -31,6 +30,7 @@ assert osrf_pycommon.__file__.startswith(vendor_path), \
     ("osrf_pycommon imported from '{0}' which is not in the vendor folder '{1}'"
      .format(osrf_pycommon.__file__, vendor_path))
 from osrf_pycommon.cli_utils.common import extract_argument_group
+from osrf_pycommon.terminal_color import sanitize
 
 from . import DEFAULT_REPOS_URL
 from .packaging import build_and_test_and_package
