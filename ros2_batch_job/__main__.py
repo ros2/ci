@@ -30,6 +30,7 @@ assert osrf_pycommon.__file__.startswith(vendor_path), \
     ("osrf_pycommon imported from '{0}' which is not in the vendor folder '{1}'"
      .format(osrf_pycommon.__file__, vendor_path))
 from osrf_pycommon.cli_utils.common import extract_argument_group
+from osrf_pycommon.terminal_color import sanitize
 
 from . import DEFAULT_REPOS_URL
 from .packaging import build_and_test_and_package
@@ -290,7 +291,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
     info("run_ros2_batch called with args:")
     for arg in vars(args):
-        info("  - {0}={1}".format(arg, getattr(args, arg)))
+        info(sanitize("  - {0}={1}".format(arg, getattr(args, arg))))
 
     job = None
 
