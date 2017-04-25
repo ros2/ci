@@ -167,6 +167,9 @@ if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   esac
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
+@[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
+@[end if]@
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
