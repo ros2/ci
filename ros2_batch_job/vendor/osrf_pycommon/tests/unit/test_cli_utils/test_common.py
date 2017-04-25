@@ -74,12 +74,12 @@ def test_extract_argument_group():
     expected = (['foo', 'bar', 'baz'], ['ping', 'pong'])
     results = extract_argument_group(args, '--args')
     assert expected == results, (args, expected, results)
-    # Example with delimeter but no arguments
+    # Example with delimiter but no arguments
     args = ['foo', '--args']
     expected = (['foo'], [])
     results = extract_argument_group(args, '--args')
     assert expected == results, (args, expected, results)
-    # Example with no delimeter
+    # Example with no delimiter
     args = ['foo', 'bar']
     expected = (['foo', 'bar'], [])
     results = extract_argument_group(args, '--args')

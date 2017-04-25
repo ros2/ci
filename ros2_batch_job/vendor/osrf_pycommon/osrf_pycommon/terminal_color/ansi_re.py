@@ -20,20 +20,20 @@ _ansi_re = re.compile(r'\033\[\d{1,2}[m]')
 _ansi_re_group = re.compile(r'(\033\[\d{1,2}[m])')
 
 
-def split_by_ansi_escape_sequence(string, include_delimeters=False):
+def split_by_ansi_escape_sequence(string, include_delimiters=False):
     """
-    Splits a string into a list using any ansi escape sequence as a delimeter.
+    Splits a string into a list using any ansi escape sequence as a delimiter.
 
     :param string: string to be split
     :type string: str
-    :param include_delimeters: If True include matched escape sequences in
+    :param include_delimiters: If True include matched escape sequences in
         the list (default: False)
-    :type include_delimeters: bool
+    :type include_delimiters: bool
     :returns: list of strings, split from original string by escape sequences
     :rtype: list
     """
     global _ansi_re, _ansi_re_group
-    if include_delimeters:
+    if include_delimiters:
         return _ansi_re_group.split(string)
     return _ansi_re.split(string)
 

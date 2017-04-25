@@ -123,13 +123,13 @@ def extract_argument_group(args, delimiting_option):
     # Loop through all arguments extracting groups of arguments
     while True:
         try:
-            next_delimeter = trimmed_args.index(delimiting_option)
+            next_delimiter = trimmed_args.index(delimiting_option)
         except ValueError:
-            # No delimeter's left in the arguments, stop looking
+            # No delimiter's left in the arguments, stop looking
             break
-        # Capture and remove args after the delimeter
-        tail = trimmed_args[next_delimeter + 1:]
-        trimmed_args = trimmed_args[:next_delimeter]
+        # Capture and remove args after the delimiter
+        tail = trimmed_args[next_delimiter + 1:]
+        trimmed_args = trimmed_args[:next_delimiter]
         # Look for a terminator, '--'
         next_terminator = None
         try:
@@ -145,7 +145,7 @@ def extract_argument_group(args, delimiting_option):
             # in extracted_args
             extracted_args.extend(tail[:next_terminator])
             # And put arguments after the terminator back in trimmed_args
-            # then continue looking for additional delimeters
+            # then continue looking for additional delimiters
             trimmed_args.extend(tail[next_terminator + 1:])
     # Iterate through extracted args and shorted tokens with 3+ -'s only
     for i, token in enumerate(extracted_args):

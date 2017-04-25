@@ -84,6 +84,22 @@ class TestCliUtilsVerbPattern(unittest.TestCase):
         with self.assertRaisesRegexp(ValueError, 'one or two parameters'):
             r = cpa(f.fake_prepare_arguments, None)
 
+        # Try with additional optional argument
+        called = False
+
+        class Foo:
+            def fake_prepare_arguments(self, parser, args, optional=None):
+                global called
+                called = True
+                if called:
+                    pass
+                return parser
+
+        f = Foo()
+        r = cpa(f.fake_prepare_arguments, None)
+        self.assertTrue(called)
+        self.assertIsNone(r)
+
     def test_split_arguments_by_verb(self):
         args = ['--cmd-arg1', 'verb', '--verb-arg1', '--verb-arg2']
         expected = ('verb', ['--cmd-arg1'], ['--verb-arg1', '--verb-arg2'])

@@ -14,29 +14,20 @@
 
 from __future__ import print_function
 
-import os
 import sys
 
-try:
-    # If Python is < 3.3 then a SyntaxError will occur with asyncio
-    # If Python is >= 3.4 asyncio is included
-    # If Python is == 3.3 asyncio can be installed via pip
+if sys.version_info >= (3, 4) and 'trollius' not in sys.modules:
+    # If using Python 3.4 or greater, asyncio is always available.
+    # However, if trollius has already been imported, use that.
     from .async_execute_process_asyncio import async_execute_process
     from .async_execute_process_asyncio import get_loop
     from .async_execute_process_asyncio import asyncio
-except ImportError as exc:
-    # If asyncio is not available, they we can try Trollius
-    if 'PYTHONASYNCIODEBUG' in os.environ:
-        import traceback
-        traceback.print_exc()
-    try:
-        from .async_execute_process_trollius import async_execute_process
-        from .async_execute_process_trollius import get_loop
-        from .async_execute_process_trollius import asyncio
-    except ImportError:
-        raise ImportError("No module named trollius or asyncio")
-except SyntaxError:
-    raise ImportError("The asyncio module not supported")
+else:
+    # If Python is < 3.3 then a SyntaxError will occur with asyncio
+    # so we will use Trollius on all platforms below Python 3.4.
+    from .async_execute_process_trollius import async_execute_process
+    from .async_execute_process_trollius import get_loop
+    from .async_execute_process_trollius import asyncio
 
 __all__ = [
     'async_execute_process',
@@ -59,17 +50,18 @@ Here is an example of how to use this function:
     import asyncio
     from osrf_pycommon.process_utils import async_execute_process
     from osrf_pycommon.process_utils import AsyncSubprocessProtocol
-    from osrf_pycommon.process_utils import get_loop()
+    from osrf_pycommon.process_utils import get_loop
 
 
     @asyncio.coroutine
     def setup():
-        transport, protocol = async_execute_process(
+        transport, protocol = yield from async_execute_process(
             AsyncSubprocessProtocol, ['ls', '/usr'])
         returncode = yield from protocol.complete
         return returncode
 
     retcode = get_loop().run_until_complete(setup())
+    get_loop().close()
 
 That same example using :py:mod:`trollius` would look like this:
 
@@ -78,17 +70,18 @@ That same example using :py:mod:`trollius` would look like this:
     import trollius as asyncio
     from osrf_pycommon.process_utils import async_execute_process
     from osrf_pycommon.process_utils import AsyncSubprocessProtocol
-    from osrf_pycommon.process_utils import get_loop()
+    from osrf_pycommon.process_utils import get_loop
 
 
     @asyncio.coroutine
     def setup():
-        transport, protocol = async_execute_process(
-            AsyncSubprocessProtocol, ['ls', '/usr'])
+        transport, protocol = yield asyncio.From(async_execute_process(
+            AsyncSubprocessProtocol, ['ls', '/usr']))
         returncode = yield asyncio.From(protocol.complete)
         raise asyncio.Return(returncode)
 
     retcode = get_loop().run_until_complete(setup())
+    get_loop().close()
 
 This difference is required because in Python < 3.3 the ``yield from`` syntax
 is not valid.
@@ -103,14 +96,15 @@ and override the ``on_stdout_received``, ``on_stderr_received``, and
 ``on_process_exited`` functions.
 
 See the documentation for the :py:class:`AsyncSubprocessProtocol` class for
-more details, but here is an example:
+more details, but here is an example which uses asyncio from Python 3.4:
 
 .. code-block:: python
 
-    import trollius as asyncio
+    import asyncio
     from osrf_pycommon.process_utils import async_execute_process
     from osrf_pycommon.process_utils import AsyncSubprocessProtocol
-    from osrf_pycommon.process_utils import loop
+    from osrf_pycommon.process_utils import get_loop
+
 
     class MyProtocol(AsyncSubprocessProtocol):
         def __init__(self, file_name, **kwargs):
@@ -118,26 +112,31 @@ more details, but here is an example:
             AsyncSubprocessProtocol.__init__(self, **kwargs)
 
         def on_stdout_received(self, data):
-            self.fh.write(data)  # Data has line endings intact
+            # Data has line endings intact, but is bytes in Python 3
+            self.fh.write(data.decode('utf-8'))
 
         def on_stderr_received(self, data):
-            self.fh.write(data)
+            self.fh.write(data.decode('utf-8'))
 
         def on_process_exited(self, returncode):
             self.fh.write("Exited with return code: {0}".format(returncode))
             self.fh.close()
 
+
     @asyncio.coroutine
-    def log_command_to_file(self, cmd, file_name):
+    def log_command_to_file(cmd, file_name):
 
         def create_protocol(**kwargs):
             return MyProtocol(file_name, **kwargs)
 
-        transport, protocol = async_execute_process(create_protocol, cmd)
+        transport, protocol = yield from async_execute_process(
+            create_protocol, cmd)
         returncode = yield from protocol.complete
         return returncode
 
-    loop.run_until_complete(log_command_to_file(['ls', '/'], '/tmp/out.txt'))
+    get_loop().run_until_complete(
+        log_command_to_file(['ls', '/'], '/tmp/out.txt'))
+    get_loop().close()
 
 See the :py:class:`subprocess.Popen` class for more details on some of the
 parameters to this function like ``cwd``, ``env``, and ``shell``.
@@ -220,6 +219,12 @@ class AsyncSubprocessProtocol(asyncio.SubprocessProtocol):
 
     .. code-block:: python
 
+        import asyncio
+        from osrf_pycommon.process_utils import async_execute_process
+        from osrf_pycommon.process_utils import AsyncSubprocessProtocol
+        from osrf_pycommon.process_utils import get_loop
+
+
         @asyncio.coroutine
         def setup():
             transport, protocol = yield from async_execute_process(
@@ -228,7 +233,8 @@ class AsyncSubprocessProtocol(asyncio.SubprocessProtocol):
             print("Exited with", retcode)
 
         # This will block until the protocol.complete Future is done.
-        asyncio.get_event_loop().run_until_complete(setup())
+        get_loop().run_until_complete(setup())
+        get_loop().close()
 
     """
     def __init__(self, stdin=None, stdout=None, stderr=None):
@@ -276,6 +282,7 @@ class AsyncSubprocessProtocol(asyncio.SubprocessProtocol):
     def on_process_exited(self, returncode):
         # print("Exited with", returncode)
         pass
+
 
 get_loop.__doc__ = """\
 This function will return the proper event loop for the subprocess async calls.

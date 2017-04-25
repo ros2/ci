@@ -22,11 +22,11 @@ You can also use the :py:func:`is_tty` function to determine if a given object
 is a tty.
 """
 
-__all__ = ['GetTerminalDimensionsError', 'get_terminal_dimensions', 'is_tty']
-
 import os
 import struct
 import subprocess
+
+__all__ = ['GetTerminalDimensionsError', 'get_terminal_dimensions', 'is_tty']
 
 
 class GetTerminalDimensionsError(Exception):

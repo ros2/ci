@@ -34,7 +34,7 @@ _ansi = {
     # Bold on
     'boldon': '\x1b[1m',
     '!': '\x1b[1m',
-    'atexclimation': '@!',
+    'atexclamation': '@!',
 
     # Bold off
     'boldoff': '\x1b[22m',
@@ -143,7 +143,7 @@ _ansi = {
 _null_ansi = dict([(k, '') for k, v in _ansi.items()])
 # Except format preservers used by sanitize
 _null_ansi.update({
-    'atexclimation': '@!',
+    'atexclamation': '@!',
     'atfwdslash': '@/',
     'atunderscore': '@_',
     'atbar': '@|',
@@ -305,7 +305,7 @@ def sanitize(msg):
 
     In addition to expanding ``{`` => ``{{``, ``}`` => ``}}``, and
     ``@`` => ``@@``, this function will also replace any instances of
-    ``@!``, ``@/``, ``@_``, and ``@|`` with ``@{atexclimation}``,
+    ``@!``, ``@/``, ``@_``, and ``@|`` with ``@{atexclamation}``,
     ``@{atfwdslash}``, ``@{atunderscore}``, and ``@{atbar}`` respectively.
     And then there are corresponding keys in the ansi dict to convert them
     back.
@@ -355,7 +355,7 @@ def sanitize(msg):
     msg = msg.replace('{', '{{')
     msg = msg.replace('}', '}}')
     # Above line `msg = msg.replace('@', '@@')` will have converted @* to @@*
-    msg = msg.replace('@@!', '@{atexclimation}')
+    msg = msg.replace('@@!', '@{atexclamation}')
     msg = msg.replace('@@/', '@{atfwdslash}')
     msg = msg.replace('@@_', '@{atunderscore}')
     msg = msg.replace('@@|', '@{atbar}')

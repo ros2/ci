@@ -13,11 +13,18 @@
 # limitations under the License.
 
 import os
-import pty
-import time
+
+try:
+    import pty
+except ImportError:
+    # to support --cover-inclusive on Windows
+    if os.name not in ['nt']:
+        raise
 
 from subprocess import Popen
 from subprocess import STDOUT
+
+import time
 
 from .execute_process_nopty import _close_fds
 from .execute_process_nopty import _yield_data
@@ -40,7 +47,7 @@ def _execute_process_pty(cmd, cwd, env, shell, stderr_to_stdout=True):
                 p = Popen(
                     cmd,
                     stdin=stdout_slave, stdout=stderr_slave, stderr=STDOUT,
-                    cwd=cwd, env=env, shell=shell)
+                    cwd=cwd, env=env, shell=shell, close_fds=False)
             except OSError as exc:
                 # This can happen if a file you are trying to execute is being
                 # written to simultaneously on Linux

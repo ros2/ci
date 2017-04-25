@@ -53,7 +53,10 @@
 from __future__ import print_function
 
 import ctypes
-import ctypes.wintypes
+try:
+    import ctypes.wintypes
+except ValueError:
+    pass
 import os
 import sys
 
@@ -163,6 +166,7 @@ def _win_background(background, handle, attrs):
     SetConsoleTextAttribute(handle, attrs)
     return attrs
 
+
 _ansi_to_win32 = {
     '\x1b[0m': (_win_reset, ),          # reset
     '\x1b[1m': (_win_style, BRIGHT),    # boldon, see wincon.h
@@ -198,67 +202,71 @@ def _tokenize_ansi_string_for_win32(msg):
     tokens = [_ansi_to_win32.get(t, t) for t in tokens]
     return tokens
 
-windll = ctypes.LibraryLoader(ctypes.WinDLL)
 
-# Replication of types and defines from winbase.h
+try:
+    ctypes.winDLL
+    ctypes.wintypes
+except AttributeError:
+    pass
+else:
+    windll = ctypes.LibraryLoader(ctypes.WinDLL)
 
+    # Replication of types and defines from winbase.h
 
-class CONSOLE_SCREEN_BUFFER_INFO(ctypes.Structure):
-    _fields_ = [
-        ("dwSize", ctypes.wintypes._COORD),
-        ("dwCursorPosition", ctypes.wintypes._COORD),
-        ("wAttributes", ctypes.wintypes.WORD),
-        ("srWindow", ctypes.wintypes.SMALL_RECT),
-        ("dwMaximumWindowSize", ctypes.wintypes._COORD),
+    class CONSOLE_SCREEN_BUFFER_INFO(ctypes.Structure):
+        _fields_ = [
+            ("dwSize", ctypes.wintypes._COORD),
+            ("dwCursorPosition", ctypes.wintypes._COORD),
+            ("wAttributes", ctypes.wintypes.WORD),
+            ("srWindow", ctypes.wintypes.SMALL_RECT),
+            ("dwMaximumWindowSize", ctypes.wintypes._COORD),
+        ]
+
+        def __str__(self):
+            return (
+                '({0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0})'
+                .format(
+                    self.dwSize.Y, self.dwSize.X,
+                    self.dwCursorPosition.Y, self.dwCursorPosition.X,
+                    self.wAttributes,
+                    self.srWindow.Top, self.srWindow.Left,
+                    self.srWindow.Bottom, self.srWindow.Right,
+                    self.dwMaximumWindowSize.Y, self.dwMaximumWindowSize.X)
+            )
+
+    _GetStdHandle = windll.kernel32.GetStdHandle
+    _GetStdHandle.argtypes = [
+        ctypes.wintypes.DWORD,
     ]
+    _GetStdHandle.restype = ctypes.wintypes.HANDLE
 
-    def __str__(self):
-        return (
-            '({0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0})'
-            .format(
-                self.dwSize.Y, self.dwSize.X,
-                self.dwCursorPosition.Y, self.dwCursorPosition.X,
-                self.wAttributes,
-                self.srWindow.Top, self.srWindow.Left,
-                self.srWindow.Bottom, self.srWindow.Right,
-                self.dwMaximumWindowSize.Y, self.dwMaximumWindowSize.X)
-        )
+    _GetConsoleScreenBufferInfo = windll.kernel32.GetConsoleScreenBufferInfo
+    _GetConsoleScreenBufferInfo.argtypes = [
+        ctypes.wintypes.HANDLE,
+        ctypes.POINTER(CONSOLE_SCREEN_BUFFER_INFO),
+    ]
+    _GetConsoleScreenBufferInfo.restype = ctypes.wintypes.BOOL
 
-_GetStdHandle = windll.kernel32.GetStdHandle
-_GetStdHandle.argtypes = [
-    ctypes.wintypes.DWORD,
-]
-_GetStdHandle.restype = ctypes.wintypes.HANDLE
+    _SetConsoleTextAttribute = windll.kernel32.SetConsoleTextAttribute
+    _SetConsoleTextAttribute.argtypes = [
+        ctypes.wintypes.HANDLE,
+        ctypes.wintypes.WORD,
+    ]
+    _SetConsoleTextAttribute.restype = ctypes.wintypes.BOOL
 
-_GetConsoleScreenBufferInfo = windll.kernel32.GetConsoleScreenBufferInfo
-_GetConsoleScreenBufferInfo.argtypes = [
-    ctypes.wintypes.HANDLE,
-    ctypes.POINTER(CONSOLE_SCREEN_BUFFER_INFO),
-]
-_GetConsoleScreenBufferInfo.restype = ctypes.wintypes.BOOL
+    handles = {
+        STDOUT: _GetStdHandle(STDOUT),
+        STDERR: _GetStdHandle(STDERR),
+    }
 
-_SetConsoleTextAttribute = windll.kernel32.SetConsoleTextAttribute
-_SetConsoleTextAttribute.argtypes = [
-    ctypes.wintypes.HANDLE,
-    ctypes.wintypes.WORD,
-]
-_SetConsoleTextAttribute.restype = ctypes.wintypes.BOOL
+    def GetConsoleScreenBufferInfo(stream_id=STDOUT):
+        global handles, CONSOLE_SCREEN_BUFFER_INFO, _GetConsoleScreenBufferInfo
+        handle = handles[stream_id]
+        csbi = CONSOLE_SCREEN_BUFFER_INFO()
+        _GetConsoleScreenBufferInfo(handle, ctypes.byref(csbi))
+        return csbi
 
-handles = {
-    STDOUT: _GetStdHandle(STDOUT),
-    STDERR: _GetStdHandle(STDERR),
-}
-
-
-def GetConsoleScreenBufferInfo(stream_id=STDOUT):
-    global handles, CONSOLE_SCREEN_BUFFER_INFO, _GetConsoleScreenBufferInfo
-    handle = handles[stream_id]
-    csbi = CONSOLE_SCREEN_BUFFER_INFO()
-    _GetConsoleScreenBufferInfo(handle, ctypes.byref(csbi))
-    return csbi
-
-
-def SetConsoleTextAttribute(stream_id, attrs):
-    global handles, _SetConsoleTextAttribute
-    handle = handles[stream_id]
-    return _SetConsoleTextAttribute(handle, attrs)
+    def SetConsoleTextAttribute(stream_id, attrs):
+        global handles, _SetConsoleTextAttribute
+        handle = handles[stream_id]
+        return _SetConsoleTextAttribute(handle, attrs)

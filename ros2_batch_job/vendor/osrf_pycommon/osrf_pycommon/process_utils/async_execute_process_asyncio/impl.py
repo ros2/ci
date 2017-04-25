@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import asyncio
+import os
 
 try:
     import pty
@@ -21,7 +21,7 @@ try:
 except ImportError:
     has_pty = False
 
-from .get_loop_impl import get_loop_impl
+from ..get_loop_impl import get_loop_impl
 
 
 def get_loop():
@@ -41,11 +41,11 @@ def _async_execute_process_nopty(
     if shell is True:
         transport, protocol = yield from loop.subprocess_shell(
             protocol_class, " ".join(cmd), cwd=cwd, env=env,
-            stderr=stderr)
+            stderr=stderr, close_fds=False)
     else:
         transport, protocol = yield from loop.subprocess_exec(
             protocol_class, *cmd, cwd=cwd, env=env,
-            stderr=stderr)
+            stderr=stderr, close_fds=False)
     return transport, protocol
 
 
@@ -71,11 +71,11 @@ if has_pty:
         if shell is True:
             transport, protocol = yield from loop.subprocess_shell(
                 protocol_factory, " ".join(cmd), cwd=cwd, env=env,
-                stdout=stdout_slave, stderr=stderr_slave)
+                stdout=stdout_slave, stderr=stderr_slave, close_fds=False)
         else:
             transport, protocol = yield from loop.subprocess_exec(
                 protocol_factory, *cmd, cwd=cwd, env=env,
-                stdout=stdout_slave, stderr=stderr_slave)
+                stdout=stdout_slave, stderr=stderr_slave, close_fds=False)
 
         # Close our copies of the slaves,
         # the child's copy of the slave remain open until it terminates

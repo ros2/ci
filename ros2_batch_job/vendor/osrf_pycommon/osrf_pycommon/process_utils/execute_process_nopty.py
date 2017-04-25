@@ -15,11 +15,12 @@
 import errno
 import os
 import select
-import sys
 
 from subprocess import PIPE
 from subprocess import Popen
 from subprocess import STDOUT
+
+import sys
 
 _is_linux = sys.platform.lower().startswith('linux')
 _is_windows = sys.platform.lower().startswith('win')
@@ -52,10 +53,11 @@ def _close_fds(fds_to_close):
             continue
         try:
             os.close(s)
-        except OSError:
+        except OSError as exc:
             # This could raise "OSError: [Errno 9] Bad file descriptor"
             # If it has already been closed, but that's ok
-            pass
+            if "Bad file descriptor" not in "{0}".format(exc):
+                raise
 
 
 def _yield_data(p, fds, left_overs, linesep, fds_to_close=None):
@@ -131,11 +133,11 @@ def _execute_process_nopty(cmd, cwd, env, shell, stderr_to_stdout=True):
     if stderr_to_stdout:
         p = Popen(cmd,
                   stdin=PIPE, stdout=PIPE, stderr=STDOUT,
-                  cwd=cwd, env=env, shell=shell)
+                  cwd=cwd, env=env, shell=shell, close_fds=False)
     else:
         p = Popen(cmd,
                   stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                  cwd=cwd, env=env, shell=shell)
+                  cwd=cwd, env=env, shell=shell, close_fds=False)
 
     # Left over data from read which isn't a complete line yet
     left_overs = {p.stdout: b'', p.stderr: b''}
