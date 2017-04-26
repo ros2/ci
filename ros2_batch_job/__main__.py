@@ -83,9 +83,8 @@ def get_args(sysargv=None):
         '--packaging', default=False, action='store_true',
         help='create an archive of the install space')
     parser.add_argument(
-        '--repo-file-url',
-        help="url of the ros2.repos file to fetch and use for the basis of the batch job",
-        required=True)
+        '--repo-file-url', required=True,
+        help="url of the ros2.repos file to fetch and use for the basis of the batch job")
 
     parser.add_argument(
         '--test-branch', default=None,
