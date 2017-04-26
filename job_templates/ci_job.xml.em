@@ -131,7 +131,7 @@ fi
 if [ "$CI_USE_OPENSPLICE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --opensplice"
 fi
-if [ -n "${CI_ROS2_REPOS_URL+x}" ]; then
+if [ -z "${CI_ROS2_REPOS_URL+x}" ]; then
   CI_ROS2_REPOS_URL="@default_repos_url"
 fi
 export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
