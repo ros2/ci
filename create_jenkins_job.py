@@ -37,7 +37,7 @@ try:
 except ImportError:
     sys.exit("Could not import symbol from ros_buildfarm, please update ros_buildfarm.")
 
-from ros2_batch_job import DEFAULT_REPOS_URL
+DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos'
 
 template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]

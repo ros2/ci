@@ -32,7 +32,6 @@ assert osrf_pycommon.__file__.startswith(vendor_path), \
 from osrf_pycommon.cli_utils.common import extract_argument_group
 from osrf_pycommon.terminal_color import sanitize
 
-from . import DEFAULT_REPOS_URL
 from .packaging import build_and_test_and_package
 from .util import change_directory
 from .util import remove_folder
@@ -85,8 +84,9 @@ def get_args(sysargv=None):
         help='create an archive of the install space')
     parser.add_argument(
         '--repo-file-url',
-        default=DEFAULT_REPOS_URL,
-        help="url of the ros2.repos file to fetch and use for the basis of the batch job")
+        help="url of the ros2.repos file to fetch and use for the basis of the batch job",
+        required=True)
+
     parser.add_argument(
         '--test-branch', default=None,
         help="branch to attempt to checkout before doing batch job")
