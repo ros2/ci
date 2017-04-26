@@ -200,7 +200,7 @@ if "%CI_USED_RMW_IMPL%" EQU "FastRTPS" (
   set "CI_ARGS=%CI_ARGS% --opensplice"
 )
 if "%CI_ROS2_REPOS_URL%" EQU "" (
-  set "CI_ROS_REPOS_URL=@default_repos_url"
+  set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
 set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
 if "%CI_TEST_BRIDGE%" == "true" (
