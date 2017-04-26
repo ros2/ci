@@ -85,7 +85,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--repo-file-url', required=True,
         help="url of the ros2.repos file to fetch and use for the basis of the batch job")
-
     parser.add_argument(
         '--test-branch', default=None,
         help="branch to attempt to checkout before doing batch job")
