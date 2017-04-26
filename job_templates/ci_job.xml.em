@@ -132,10 +132,9 @@ if [ "$CI_USE_OPENSPLICE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --opensplice"
 fi
 if [ -n "${CI_ROS2_REPOS_URL+x}" ]; then
-  export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
-else
-  export CI_ARGS="$CI_ARGS --repo-file-url @default_repos_url"
+  CI_ROS2_REPOS_URL="@default_repos_url"
 fi
+export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
 fi
@@ -240,10 +239,10 @@ if "%CI_USE_FASTRTPS%" == "true" (
 if "%CI_USE_OPENSPLICE%" == "true" (
   set "CI_ARGS=%CI_ARGS% --opensplice"
 )
-if "%CI_ROS2_REPOS_URL%" NEQ "" (
-  set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
-) else (
-  set "CI_ARGS=%CI_ARGS% --repo-file-url @default_repos_url"
+if "%CI_ROS2_REPOS_URL%" EQ "" (
+  set "CI_ROS_REPOS_URL=@default_repos_url"
+)
+set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
 )
 if "%CI_ISOLATED%" == "true" (
   set "CI_ARGS=%CI_ARGS% --isolated"
