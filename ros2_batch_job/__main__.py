@@ -86,6 +86,9 @@ def get_args(sysargv=None):
         '--repo-file-url', required=True,
         help="url of the ros2.repos file to fetch and use for the basis of the batch job")
     parser.add_argument(
+        '--supplemental-repo-file-url', default=None,
+        help="url of a .repos file to fetch and merge with the ros2.repos file")
+    parser.add_argument(
         '--test-branch', default=None,
         help="branch to attempt to checkout before doing batch job")
     parser.add_argument(
@@ -395,6 +398,25 @@ def run(args, build_function, blacklisted_package_names=None):
             log("@{bf}==>@| Contents of `ros2.repos`:")
             with open('ros2.repos', 'r') as f:
                 print(f.read())
+            # Download and merge supplemental repos file
+            if args.supplemental_repo_file_url is not None:
+                import yaml
+                job.run(['curl', '-sk', args.supplemental_repo_file_url, '-o', 'supplemental.repos'])
+                log("@{bf}==>@| Contents of `supplemental.repos`:")
+                with open('supplemental.repos', 'r') as f:
+                    supplemental_repos_contents = f.read()
+                    print(supplemental_repos_contents)
+                with open('ros2.repos', 'r') as repos_file:
+                    repos = yaml.safe_load(repos_file.read())
+                supplemental_repos = yaml.safe_load(supplemental_repos_contents)
+                repos['repositories'].update(supplemental_repos['repositories'])
+                with open('ros2.repos', 'w') as repos_file:
+                    repos_file.write(yaml.safe_dump(repos, default_flow_style=False))
+                log("@{bf}==>@| Contents of merged `ros2.repos`:")
+                with open('ros2.repos', 'r') as f:
+                    print(f.read())
+
+
             # Use the repository listing and vcstool to fetch repositories
             if not os.path.exists(args.sourcespace):
                 os.makedirs(args.sourcespace)
