@@ -416,8 +416,6 @@ def run(args, build_function, blacklisted_package_names=None):
                 log("@{bf}==>@| Contents of merged `ros2.repos`:")
                 with open('ros2.repos', 'r') as f:
                     print(f.read())
-
-
             # Use the repository listing and vcstool to fetch repositories
             if not os.path.exists(args.sourcespace):
                 os.makedirs(args.sourcespace)
