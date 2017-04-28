@@ -396,7 +396,7 @@ def run(args, build_function, blacklisted_package_names=None):
             if args.supplemental_repo_file_url is not None:
                 repos_file_urls.append(args.supplemental_repo_file_url)
             repos_filenames = []
-            for index, repos_file_url in repos_file_urls:
+            for index, repos_file_url in enumerate(repos_file_urls):
                 repos_filename = '%02d-ros2.repos' % index
                 _fetch_repos_file(repos_file_url, repos_filename)
                 repos_filenames.append(repos_filename)
