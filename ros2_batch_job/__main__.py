@@ -55,7 +55,6 @@ pip_dependencies = [
     'pep8',
     'pydocstyle',
     'pyflakes',
-    'pyyaml',
     'vcstool',
 ]
 
@@ -401,20 +400,9 @@ def run(args, build_function, blacklisted_package_names=None):
                 print(f.read())
             # Download and merge supplemental repos file
             if args.supplemental_repo_file_url is not None:
-                import yaml
                 job.run(['curl', '-sk', args.supplemental_repo_file_url, '-o', 'supplemental.repos'])
                 log("@{bf}==>@| Contents of `supplemental.repos`:")
                 with open('supplemental.repos', 'r') as f:
-                    supplemental_repos_contents = f.read()
-                    print(supplemental_repos_contents)
-                with open('ros2.repos', 'r') as repos_file:
-                    repos = yaml.safe_load(repos_file.read())
-                supplemental_repos = yaml.safe_load(supplemental_repos_contents)
-                repos['repositories'].update(supplemental_repos['repositories'])
-                with open('ros2.repos', 'w') as repos_file:
-                    repos_file.write(yaml.safe_dump(repos, default_flow_style=False))
-                log("@{bf}==>@| Contents of merged `ros2.repos`:")
-                with open('ros2.repos', 'r') as f:
                     print(f.read())
             # Use the repository listing and vcstool to fetch repositories
             if not os.path.exists(args.sourcespace):
@@ -426,6 +414,9 @@ def run(args, build_function, blacklisted_package_names=None):
             else:
                 vcs_cmd = ['vcs']
             job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--input', 'ros2.repos'],
+                    shell=True)
+            if args.supplemental_repo_file_url is not None:
+                job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force', '--input', 'supplemental.repos'],
                     shell=True)
             print('# END SUBSECTION')
 
