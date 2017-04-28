@@ -504,7 +504,7 @@ def run(args, build_function, blacklisted_package_names=None):
 def get_ament_script(basepath):
     return os.path.join(basepath, 'ament', 'ament_tools', 'scripts', 'ament.py')
 
-def _fetch_repos_file(url, filename):
+def _fetch_repos_file(url, filename, job):
     """Use curl to fetch a repos file and display the contents."""
     job.run(['curl', '-sk', url, '-o', filename])
     log("@{bf}==>@| Contents of `%s`:" % filename)
