@@ -398,7 +398,7 @@ def run(args, build_function, blacklisted_package_names=None):
             repos_filenames = []
             for index, repos_file_url in enumerate(repos_file_urls):
                 repos_filename = '%02d-ros2.repos' % index
-                _fetch_repos_file(repos_file_url, repos_filename)
+                _fetch_repos_file(repos_file_url, repos_filename, job)
                 repos_filenames.append(repos_filename)
             # Use the repository listing and vcstool to fetch repositories
             if not os.path.exists(args.sourcespace):
