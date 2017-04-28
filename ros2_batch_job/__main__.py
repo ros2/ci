@@ -392,18 +392,14 @@ def run(args, build_function, blacklisted_package_names=None):
         # in.
         if not args.src_mounted:
             print('# BEGIN SUBSECTION: import repositories')
-            # Get the repositories
-            job.run(['curl', '-sk', args.repo_file_url, '-o', 'ros2.repos'])
-            # Show the contents
-            log("@{bf}==>@| Contents of `ros2.repos`:")
-            with open('ros2.repos', 'r') as f:
-                print(f.read())
-            # Download and merge supplemental repos file
+            repos_file_urls = [args.repos_file_url]
             if args.supplemental_repo_file_url is not None:
-                job.run(['curl', '-sk', args.supplemental_repo_file_url, '-o', 'supplemental.repos'])
-                log("@{bf}==>@| Contents of `supplemental.repos`:")
-                with open('supplemental.repos', 'r') as f:
-                    print(f.read())
+                repos_file_urls.append(args.supplemental_repo_file_url)
+            repos_filenames = []
+            for index, repos_file_url in repo_file_urls:
+                repos_filename = '%02d-ros2.repos' % index
+                _fetch_repos_file(repos_file_url, repos_filename)
+                repos_filenames.append(repos_filename)
             # Use the repository listing and vcstool to fetch repositories
             if not os.path.exists(args.sourcespace):
                 os.makedirs(args.sourcespace)
@@ -413,10 +409,8 @@ def run(args, build_function, blacklisted_package_names=None):
                 vcs_cmd = ['"%s"' % job.python, '"%s"' % os.path.join(venv_path, 'bin', 'vcs')]
             else:
                 vcs_cmd = ['vcs']
-            job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--input', 'ros2.repos'],
-                    shell=True)
-            if args.supplemental_repo_file_url is not None:
-                job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force', '--input', 'supplemental.repos'],
+            for filename in repos_filenames:
+                job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force',  '--input', filename],
                     shell=True)
             print('# END SUBSECTION')
 
@@ -510,6 +504,12 @@ def run(args, build_function, blacklisted_package_names=None):
 def get_ament_script(basepath):
     return os.path.join(basepath, 'ament', 'ament_tools', 'scripts', 'ament.py')
 
+def _fetch_repos_file(url, filename):
+    """Use curl to fetch a repos file and display the contents."""
+    job.run(['curl', '-sk', url, '-o', filename])
+    log("@{bf}==>@| Contents of `%s`:" % filename)
+    with open(filename, 'r') as f:
+        print(f.read())
 
 if __name__ == '__main__':
     sys.exit(main())
