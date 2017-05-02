@@ -68,6 +68,7 @@ def main(argv=None):
         'ci_scripts_repository': args.ci_scripts_repository,
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
         'default_repos_url': DEFAULT_REPOS_URL,
+        'supplemental_repos_url': '',
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'use_connext_default': 'true',
@@ -195,7 +196,7 @@ def main(argv=None):
     turtlebot_job_data.update(os_configs[os_name])
     turtlebot_job_data['turtlebot_demo'] = True
     # Use a turtlebot2_demo-specific repos file by default.
-    turtlebot_job_data['default_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
+    turtlebot_job_data['supplemental_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
     turtlebot_job_data['cmake_build_type'] = 'None'
     job_config = expand_template('ci_job.xml.em', turtlebot_job_data)
     configure_job(jenkins, 'ci_turtlebot-demo', job_config, **jenkins_kwargs)

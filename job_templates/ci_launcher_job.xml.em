@@ -17,6 +17,7 @@
     'property_parameter-definition',
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
+    supplemental_repos_url=supplemental_repos_url,
     use_connext_default=use_connext_default,
     disable_connext_static_default=disable_connext_static_default,
     disable_connext_dynamic_default=disable_connext_dynamic_default,

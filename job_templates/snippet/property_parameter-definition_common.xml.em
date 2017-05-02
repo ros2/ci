@@ -23,7 +23,7 @@ For example, copy the content of the .repos file to a GitHub Gist, modify it to 
           <name>CI_ROS2_SUPPLEMENTAL_REPOS_URL</name>
           <description>Supplemental .repos file which will be merged into the default repos file.
 Use this instead of the Custom .repos file if you want to add to the default repos file rather than replace it.</description>
-          <defaultValue></defaultValue>
+          <defaultValue>@supplemental_repos_url</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_CMAKE_BUILD_TYPE</name>
