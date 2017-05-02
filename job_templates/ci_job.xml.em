@@ -180,6 +180,9 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
+echo "# BEGIN SECTION: Inject date into Dockerfile"
+sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
+echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[if os_name == 'linux-aarch64']@
 sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
