@@ -38,7 +38,51 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
-  <builders/>
+  <builders>
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
+      <source class="hudson.plugins.groovy.StringSystemScriptSource">
+        <script plugin="script-security@@1.27">
+          <script>// PREDICT TRIGGERED BUILDS AND GENERATE MARKDOWN FOR BUILD STATUS
+
+import jenkins.model.Jenkins
+
+def predict_build_number(job_name) {
+  p = Jenkins.instance.getItemByFullName(job_name)
+  if (!p) {
+    return 0
+  }
+  build_number = p.getNextBuildNumber()
+  if (p.isInQueue()) {
+    // assuming the queued builds don't get cancelled
+    for (item in Jenkins.instance.getQueue().getItems()) {
+      if (item.task.getName() == job_name) {
+        build_number += 1
+      }
+    }
+  }
+  return build_number
+}
+
+build_numbers = [:]
+@[for os_name in os_specific_data.keys()]@
+build_numbers["@(os_name)"] = predict_build_number("ci_@(os_name)")
+@[end for]@
+
+for (item in build_numbers) {
+  name = item.key[0].toUpperCase() + item.key[1..-1].toLowerCase()
+  if (name == "Osx") {
+    name = "macOS"
+  }
+  job_name = "ci_${item.key}"
+  build_number = item.value
+  println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+}
+</script>
+          <sandbox>false</sandbox>
+        </script>
+      </source>
+    </hudson.plugins.groovy.SystemGroovy>
+  </builders>
   <publishers>
 @[for os_name, os_data in os_specific_data.items()]@
     <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.33">
