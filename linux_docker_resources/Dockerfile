@@ -7,18 +7,18 @@ ARG PLATFORM=x86
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y locales
+RUN apt-get update && apt-get install --no-install-recommends -y locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-RUN apt-get update && apt-get install -y lsb-release
-RUN apt-get update && apt-get install -y sudo
+RUN apt-get update && apt-get install --no-install-recommends -y lsb-release
+RUN apt-get update && apt-get install --no-install-recommends -y sudo
 
 # Get curl for fetching the repo keys.
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install --no-install-recommends -y curl
 
 # Get https transport for APT.
-RUN apt-get update && apt-get install -y apt-transport-https
+RUN apt-get update && apt-get install --no-install-recommends -y apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
 RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list
@@ -29,25 +29,25 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` 
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
-RUN apt-get update && apt-get install -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install -y clang-format-3.8 cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 uncrustify
+RUN apt-get update && apt-get install --no-install-recommends -y clang-format-3.8 cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 uncrustify
 
 # Install and self update pip/setuptools to the latest version.
-RUN apt-get update && apt-get install -y python3-pip
+RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
 RUN pip3 install -U setuptools pip virtualenv
 
 # Install coverage build dependencies.
-RUN apt-get update && apt-get install -y gcovr
+RUN apt-get update && apt-get install --no-install-recommends -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y libopensplice64; fi
+RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y libopensplice64; fi
 # Update default domain id.
 RUN if test ${PLATFORM} = x86; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
 # Install the RTI dependencies.
-RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install -y default-jre-headless; fi
+RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
 
 # Install dependencies for RTI web binaries install script.
 RUN pip3 install pexpect
@@ -65,28 +65,28 @@ ADD rticonnextdds-src/librticonnextdds52-dev_5.2.3-1_amd64.deb /tmp/librticonnex
 ADD rticonnextdds-src/rticonnextdds-tools_5.2.3-1_amd64.deb /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
 
 # Install the eProsima dependencies.
-RUN apt-get update && apt-get install -y libasio-dev libtinyxml2-dev valgrind
+RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libtinyxml2-dev valgrind
 
 # Install OpenCV.
-RUN apt-get update && apt-get install -y libopencv-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
 # Install build dependencies for class loader.
-RUN apt-get update && apt-get install -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
+RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
 
 # Install dependencies for robot_model and robot_state_publisher
-RUN apt-get update && apt-get install -y libtinyxml-dev libeigen3-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
 
 # Install Python3 development files.
-RUN apt-get update && apt-get install -y python3-dev
+RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
 # Install build and test dependencies of ros1_bridge.
-RUN if test ${BRIDGE} = true; then apt-get update && apt-get install -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
+RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install -y libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libpcl-dev libsdl1.2-dev libsdl-image1.2-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install --no-install-recommends -y libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libpcl-dev libsdl1.2-dev libsdl-image1.2-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
