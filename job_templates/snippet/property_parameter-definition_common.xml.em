@@ -19,6 +19,12 @@ To use the default branch on all repositories, use an empty string.</description
 For example, copy the content of the .repos file to a GitHub Gist, modify it to your needs, and then pass the raw URL here.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_ROS2_SUPPLEMENTAL_REPOS_URL</name>
+          <description>Supplemental .repos file which will be merged into the default repos file.
+Use this instead of the Custom .repos file if you want to add to the default repos file rather than replace it.</description>
+          <defaultValue>@supplemental_repos_url</defaultValue>
+        </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_CMAKE_BUILD_TYPE</name>
           <description>Select the CMake build type.</description>

@@ -19,6 +19,7 @@
     'property_parameter-definition',
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
+    supplemental_repos_url=supplemental_repos_url,
     use_connext_default=use_connext_default,
     disable_connext_static_default=disable_connext_static_default,
     disable_connext_dynamic_default=disable_connext_dynamic_default,
@@ -88,6 +89,7 @@ use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
+supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMENTAL_REPOS_URL')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
@@ -135,6 +137,9 @@ if [ -z "${CI_ROS2_REPOS_URL+x}" ]; then
   CI_ROS2_REPOS_URL="@default_repos_url"
 fi
 export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
+if [ -n "${CI_ROS2_SUPPLEMENTAL_REPOS_URL+x}" ]; then
+  export CI_ARGS="$CI_ARGS --supplemental-repo-file-url $CI_ROS2_SUPPLEMENTAL_REPOS_URL"
+fi
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
 fi
@@ -246,6 +251,8 @@ if "%CI_ROS2_REPOS_URL%" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
 set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
+if "%CI_ROS2_SUPPLEMENTAL_REPOS_URL%" NEQ "" (
+  set "CI_ARGS=%CI_ARGS% --supplemental-repo-file-url %CI_ROS2_SUPPLEMENTAL_REPOS_URL%"
 )
 if "%CI_ISOLATED%" == "true" (
   set "CI_ARGS=%CI_ARGS% --isolated"

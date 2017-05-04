@@ -21,6 +21,7 @@
     'property_parameter-definition_common',
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
+    supplemental_repos_url=supplemental_repos_url,
     cmake_build_type=cmake_build_type,
 ))@
         <hudson.model.ChoiceParameterDefinition>
