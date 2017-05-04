@@ -397,7 +397,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 repos_file_urls.append(args.supplemental_repo_file_url)
             repos_filenames = []
             for index, repos_file_url in enumerate(repos_file_urls):
-                repos_filename = '{0:02d}-{1}'.format(index, repos_file_url.split('/')[-1])
+                repos_filename = '{0:02d}-{1}'.format(index, os.path.basename(repos_file_url))
                 _fetch_repos_file(repos_file_url, repos_filename, job)
                 repos_filenames.append(repos_filename)
             # Use the repository listing and vcstool to fetch repositories
