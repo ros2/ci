@@ -88,8 +88,9 @@ RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-instal
 # Install build dependencies for turtlebot demo.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install -y --no-install-recommends google-mock libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libgoogle-glog-dev liblua5.2-dev libpcl-dev libprotobuf-dev libsdl1.2-dev libsdl-image1.2-dev libsuitesparse-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev protobuf-compiler ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
 
-# Workaround a bug in the Ubuntu 16.04 packaging of libpcl.
+# Workaround bugs in the Ubuntu 16.04 packaging of libpcl.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then sed -i -e '/vtkproj4;/d' /usr/lib/$(uname -m)-linux-gnu/cmake/pcl/PCLConfig.cmake; fi
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then ln -s /usr/lib/$(uname -m)-linux-gnu/libproj.so.9.1.0 /usr/lib/$(uname -m)-linux-gnu/libproj.so; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
