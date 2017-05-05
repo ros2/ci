@@ -190,16 +190,16 @@ def main(argv=None):
     configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
 
     # Run the turtlebot job on Linux only for now.
-    os_name = 'linux'
-    turtlebot_job_data = dict(data)
-    turtlebot_job_data['os_name'] = os_name
-    turtlebot_job_data.update(os_configs[os_name])
-    turtlebot_job_data['turtlebot_demo'] = True
-    # Use a turtlebot2_demo-specific repos file by default.
-    turtlebot_job_data['supplemental_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
-    turtlebot_job_data['cmake_build_type'] = 'None'
-    job_config = expand_template('ci_job.xml.em', turtlebot_job_data)
-    configure_job(jenkins, 'ci_turtlebot-demo', job_config, **jenkins_kwargs)
+    for os_name in ['linux', 'linux-aarch64']:
+        turtlebot_job_data = dict(data)
+        turtlebot_job_data['os_name'] = os_name
+        turtlebot_job_data.update(os_configs[os_name])
+        turtlebot_job_data['turtlebot_demo'] = True
+        # Use a turtlebot2_demo-specific repos file by default.
+        turtlebot_job_data['supplemental_repos_url'] = 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos'
+        turtlebot_job_data['cmake_build_type'] = 'None'
+        job_config = expand_template('ci_job.xml.em', turtlebot_job_data)
+        configure_job(jenkins, 'ci_turtlebot-demo_%s'%(os_name), job_config, **jenkins_kwargs)
 
 
 if __name__ == '__main__':
