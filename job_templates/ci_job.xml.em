@@ -192,7 +192,11 @@ echo "# BEGIN SECTION: Build Dockerfile"
 @[if os_name == 'linux-aarch64']@
 sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
 sed -i 's+apt-get update+(apt-get update || true)+' linux_docker_resources/Dockerfile
+@[  if turtlebot_demo]@
+docker build --build-arg PLATFORM=arm -t ros2_batch_ci_turtlebot_demo linux_docker_resources
+@[  else]@
 docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
+@[  end if]@
 @[elif os_name == 'linux']@
 @[  if turtlebot_demo]@
 docker build --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
