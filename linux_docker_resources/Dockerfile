@@ -86,7 +86,14 @@ RUN echo "@today_str"
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y python-rospkg ros-kinetic-catkin ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install --no-install-recommends -y libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libpcl-dev libsdl1.2-dev libsdl-image1.2-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install --no-install-recommends -y libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libgoogle-glog-dev liblua5.2-dev libpcl-dev libprotobuf-dev libsdl1.2-dev libsdl-image1.2-dev libsuitesparse-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev protobuf-compiler python-sphinx ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
+
+# Workaround bugs in the Ubuntu 16.04 packaging of libpcl.  Reports:
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=819741
+# https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
+# https://github.com/PointCloudLibrary/pcl/issues/1594
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then sed -i -e '/vtkproj4;/d' /usr/lib/$(uname -m)-linux-gnu/cmake/pcl/PCLConfig.cmake; fi
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then ln -s /usr/lib/$(uname -m)-linux-gnu/libproj.so.9.1.0 /usr/lib/$(uname -m)-linux-gnu/libproj.so; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
