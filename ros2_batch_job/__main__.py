@@ -148,6 +148,9 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--workspace-path', default=None,
         help="base path of the workspace")
+    parser.add_argument(
+        '--python-interpreter', default=None,
+        help='pass different Python interpreter to ament')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, ament_build_args = extract_argument_group(argv, '--ament-build-args')

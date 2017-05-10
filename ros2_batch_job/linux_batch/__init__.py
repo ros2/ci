@@ -23,7 +23,7 @@ class LinuxBatchJob(BatchJob):
     def __init__(self, args):
         self.args = args
         # The BatchJob constructor will set self.run and self.python
-        BatchJob.__init__(self)
+        BatchJob.__init__(self, python_interpreter=args.python_interpreter)
 
     def pre(self):
         # Check if ROS_DOMAIN_ID was already set in the environment
