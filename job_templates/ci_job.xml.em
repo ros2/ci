@@ -269,8 +269,8 @@ if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
   set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
 )
 if "%CI_CMAKE_BUILD_TYPE%" == "Debug" (
-  where python_d > python_debug_interpreter.txt
-  set /p PYTHON_DEBUG_INTERPRETER=<python_debug_interpreter.txt
+  where python_d &gt; python_debug_interpreter.txt
+  set /p PYTHON_DEBUG_INTERPRETER=&lt;python_debug_interpreter.txt
   set "CI_ARGS=%CI_ARGS% --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
 )
 if "%CI_ENABLE_C_COVERAGE%" == "true" (
