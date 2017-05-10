@@ -225,6 +225,7 @@ echo "# BEGIN SECTION: Run script"
 echo "# END SECTION"
 @[end if]@
 @[elif os_name == 'windows']@
+setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -266,6 +267,11 @@ if "%CI_ISOLATED%" == "true" (
 )
 if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
   set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
+)
+if "%CI_CMAKE_BUILD_TYPE%" == "Debug" (
+  where python_d > python_debug_interpreter.txt
+  set /p PYTHON_DEBUG_INTERPRETER=<python_debug_interpreter.txt
+  set "CI_ARGS=%CI_ARGS% --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
 )
 if "%CI_ENABLE_C_COVERAGE%" == "true" (
   set "CI_ARGS=%CI_ARGS% --coverage"

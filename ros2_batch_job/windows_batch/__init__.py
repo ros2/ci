@@ -24,7 +24,7 @@ class WindowsBatchJob(BatchJob):
     def __init__(self, args):
         self.args = args
         # The BatchJob constructor will set self.run and self.python
-        BatchJob.__init__(self)
+        BatchJob.__init__(self, python_interpreter=args.python_interpreter)
 
     def pre(self):
         if 'ROS_DOMAIN_ID' not in os.environ:
