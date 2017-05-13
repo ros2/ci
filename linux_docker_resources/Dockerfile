@@ -92,8 +92,8 @@ RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-g
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=819741
 # https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
 # https://github.com/PointCloudLibrary/pcl/issues/1594
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then sed -i -e '/vtkproj4;/d' /usr/lib/$(uname -m)-linux-gnu/cmake/pcl/PCLConfig.cmake; fi
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then ln -s /usr/lib/$(uname -m)-linux-gnu/libproj.so.9.1.0 /usr/lib/$(uname -m)-linux-gnu/libproj.so; fi
+RUN if test ${PLATFORM} = x86; then if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then sed -i -e '/vtkproj4;/d' /usr/lib/$(uname -m)-linux-gnu/cmake/pcl/PCLConfig.cmake; fi; fi
+RUN if test ${PLATFORM} = x86; then if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then ln -s /usr/lib/$(uname -m)-linux-gnu/libproj.so.9.1.0 /usr/lib/$(uname -m)-linux-gnu/libproj.so; fi; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
