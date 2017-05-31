@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-RUN apt-get update && apt-get install --no-install-recommends -y lsb-release
-RUN apt-get update && apt-get install --no-install-recommends -y sudo
+# net-tools is for ifconfig
+RUN apt-get update && apt-get install --no-install-recommends -y lsb-release net-tools sudo
 
 # Get curl for fetching the repo keys.
 RUN apt-get update && apt-get install --no-install-recommends -y curl
