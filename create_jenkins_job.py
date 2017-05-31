@@ -126,6 +126,13 @@ def main(argv=None):
         job_config = expand_template('ci_job.xml.em', job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
+        # configure a manual version of the packaging job
+        job_name = 'ci_packaging_' + os_name
+        job_data['cmake_build_type'] = 'RelWithDebInfo'
+        job_data['test_bridge_default'] = 'true'
+        job_config = expand_template('packaging_job.xml.em', job_data)
+        configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
+
         # all following jobs are triggered nightly with email notification
         job_data['time_trigger_spec'] = '30 7 * * *'
         # for now, skip emailing about Windows failures
