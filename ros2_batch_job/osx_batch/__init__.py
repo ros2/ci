@@ -39,7 +39,11 @@ class OSXBatchJob(BatchJob):
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '111'
         if 'OPENSSL_ROOT_DIR' not in os.environ:
-            os.environ['OPENSSL_ROOT_DIR'] = '/usr/local/Cellar/openssl/1.0.2k'
+            import subprocess
+            brew_openssl_prefix = subprocess.run(
+                ["brew", "--prefix", "openssl"], shell=True, stdout=subprocess.PIPE)
+            if not brew_openssl_prefix.stdout is bytes():
+              os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix.stdout.decode().strip('\n')
 
     def show_env(self):
         # Show the env
