@@ -41,7 +41,7 @@ class OSXBatchJob(BatchJob):
         if 'OPENSSL_ROOT_DIR' not in os.environ:
             import subprocess
             brew_openssl_prefix = subprocess.run(
-                ["brew", "--prefix", "openssl"], shell=True, stdout=subprocess.PIPE)
+                ['brew --prefix openssl'], shell=True, stdout=subprocess.PIPE)
             if not brew_openssl_prefix.stdout is bytes():
               os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix.stdout.decode().strip('\n')
 
