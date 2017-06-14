@@ -77,7 +77,7 @@ def main(argv=None):
         'use_osrf_connext_debs_default': 'false',
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
-        'ament_build_args_default': '--parallel',
+        'ament_build_args_default': '--parallel --cmake-args -DSECURITY=ON--',
         'ament_test_args_default': '--retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
