@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import subprocess
 
 from ..batch_job import BatchJob
 from ..util import log
@@ -38,6 +39,12 @@ class OSXBatchJob(BatchJob):
             os.environ['LANG'] = 'en_US.UTF-8'
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '111'
+        if 'OPENSSL_ROOT_DIR' not in os.environ:
+            brew_openssl_prefix_result = subprocess.run(
+                ['brew', '--prefix', 'openssl'],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if not brew_openssl_prefix_result.stderr:
+              os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix_result.stdout.decode().strip('\n')
 
     def show_env(self):
         # Show the env
