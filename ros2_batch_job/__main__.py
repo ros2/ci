@@ -66,7 +66,6 @@ def main(sysargv=None):
         blacklisted_package_names = [
             'actionlib_msgs',
             'shape_msgs',
-            'std_srvs',
             'stereo_msgs',
             'trajectory_msgs',
             'visualization_msgs'
