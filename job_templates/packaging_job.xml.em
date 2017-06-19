@@ -23,7 +23,6 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     cmake_build_type=cmake_build_type,
-    ament_build_args_default=ament_build_args_default,
 ))@
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_USED_RMW_IMPL</name>
@@ -35,6 +34,11 @@
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_AMENT_BUILD_ARGS</name>
+          <description>Additional arguments passed to 'ament build'.</description>
+          <defaultValue>@(ament_build_args_default)</defaultValue>
+        </hudson.model.StringParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_TEST_BRIDGE</name>
           <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
