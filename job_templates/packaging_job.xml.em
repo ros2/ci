@@ -23,6 +23,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     cmake_build_type=cmake_build_type,
+    ament_build_args_default=ament_build_args_default,
 ))@
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_USED_RMW_IMPL</name>
@@ -100,6 +101,7 @@ ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 used_rmw_impl: ${build.buildVariableResolver.resolve('CI_USED_RMW_IMPL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
+ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')}, <br/>
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
 ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
 """);]]>
@@ -132,6 +134,17 @@ if [ "$CI_TEST_BRIDGE" = "true" ]; then
 fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
+fi
+if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
+  case $CI_AMENT_BUILD_ARGS in
+    *-- )
+      # delimiter is already appended
+      ;;
+    * )
+      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
+      ;;
+  esac
+  export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   case $CI_AMENT_TEST_ARGS in
@@ -209,6 +222,12 @@ if "%CI_TEST_BRIDGE%" == "true" (
 )
 if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
   set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
+)
+if "%CI_AMENT_BUILD_ARGS%" NEQ "" (
+  if "%CI_AMENT_BUILD_ARGS:~-2%" NEQ "--" (
+    set "CI_AMENT_BUILD_ARGS=%CI_AMENT_BUILD_ARGS% --"
+  )
+  set "CI_ARGS=%CI_ARGS% --ament-build-args %CI_AMENT_BUILD_ARGS%"
 )
 if "%CI_AMENT_TEST_ARGS%" NEQ "" (
   if "%CI_AMENT_TEST_ARGS:~-2%" NEQ "--" (
