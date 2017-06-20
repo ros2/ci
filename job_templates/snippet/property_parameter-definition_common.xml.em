@@ -41,3 +41,8 @@ choices.remove(cmake_build_type)
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_AMENT_BUILD_ARGS</name>
+          <description>Additional arguments passed to 'ament build'.</description>
+          <defaultValue>@(ament_build_args_default)</defaultValue>
+        </hudson.model.StringParameterDefinition>

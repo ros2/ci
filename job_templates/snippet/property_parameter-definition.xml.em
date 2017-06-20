@@ -6,6 +6,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     cmake_build_type=cmake_build_type,
+    ament_build_args_default=ament_build_args_default,
 ))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_WHITESPACE_IN_PATHS</name>
@@ -54,11 +55,6 @@ This tests the robustness to whitespace being within the different paths.</descr
           <description>By setting this to true, the build will report test coverage for C/C++ code (currently ignored on non-Linux).</description>
           <defaultValue>@(enable_c_coverage_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_AMENT_BUILD_ARGS</name>
-          <description>Additional arguments passed to 'ament build'.</description>
-          <defaultValue>@(ament_build_args_default)</defaultValue>
-        </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_AMENT_TEST_ARGS</name>
           <description>Additional arguments passed to 'ament test'.</description>
