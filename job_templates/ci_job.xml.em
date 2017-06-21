@@ -151,22 +151,28 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
   case $CI_AMENT_BUILD_ARGS in
-    *-- )
+    *--- )
       # delimiter is already appended
       ;;
+    *-- )
+      CI_AMENT_BUILD_ARGS="${CI_AMENT_BUILD_ARGS% *} ---"
+      ;;
     * )
-      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
+      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS ---"
       ;;
   esac
   export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   case $CI_AMENT_TEST_ARGS in
-    *-- )
+    *--- )
       # delimiter is already appended
       ;;
+    *-- )
+      CI_AMENT_TEST_ARGS="${CI_AMENT_TEST_ARGS% *} ---"
+      ;;
     * )
-      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
+      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS ---"
       ;;
   esac
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
@@ -277,14 +283,22 @@ if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
 )
 if "!CI_AMENT_BUILD_ARGS!" NEQ "" (
-  if "!CI_AMENT_BUILD_ARGS:~-2!" NEQ "--" (
-    set "CI_AMENT_BUILD_ARGS=!CI_AMENT_BUILD_ARGS! --"
+  if "!CI_AMENT_BUILD_ARGS:~-3!" EQU " --" (
+    set "CI_AMENT_BUILD_ARGS=!CI_AMENT_BUILD_ARGS:~0,-3! ---"
+  ) else (
+    if "!CI_AMENT_BUILD_ARGS:~-3!" NEQ "---" (
+      set "CI_AMENT_BUILD_ARGS=!CI_AMENT_BUILD_ARGS! ---"
+    )
   )
   set "CI_ARGS=!CI_ARGS! --ament-build-args !CI_AMENT_BUILD_ARGS!"
 )
 if "!CI_AMENT_TEST_ARGS!" NEQ "" (
-  if "!CI_AMENT_TEST_ARGS:~-2!" NEQ "--" (
-    set "CI_AMENT_TEST_ARGS=!CI_AMENT_TEST_ARGS! --"
+  if "!CI_AMENT_TEST_ARGS:~-3!" EQU " --" (
+    set "CI_AMENT_TEST_ARGS=!CI_AMENT_TEST_ARGS:~0,-3! ---"
+  ) else (
+    if "!CI_AMENT_TEST_ARGS:~-3!" NEQ "---" (
+      set "CI_AMENT_TEST_ARGS=!CI_AMENT_TEST_ARGS! ---"
+    )
   )
   set "CI_ARGS=!CI_ARGS! --ament-test-args !CI_AMENT_TEST_ARGS!"
 )
