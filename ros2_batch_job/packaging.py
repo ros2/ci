@@ -113,11 +113,9 @@ def build_and_test_and_package(args, job):
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
         # Demo nodes are installed to 'lib', so binaries may be present there in addition to 'bin'
-        dirs_with_binaries = ['bin', 'lib']
-        for directory in dirs_with_binaries:
-            path_with_binaries = os.path.join(args.installspace, directory)
-            for filename in os.listdir(path_with_binaries):
-                path = os.path.join(path_with_binaries, filename)
+        for dir_with_binaries in ['bin', 'lib']:
+            path_with_binaries = os.path.join(args.installspace, dir_with_binaries)
+            for path in [os.path.join(root, f) for root, dirs, files in os.walk(path_with_binaries) for f in files]:
                 with open(path, 'rb') as h:
                     content = h.read()
                 shebang = b'#!%b' % job.python.encode()
