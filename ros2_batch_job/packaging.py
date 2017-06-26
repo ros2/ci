@@ -112,19 +112,30 @@ def build_and_test_and_package(args, job):
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
-        # Demo nodes are installed to 'lib', so binaries may be present there in addition to 'bin'
-        for dir_with_binaries in ['bin', 'lib']:
-            path_with_binaries = os.path.join(args.installspace, dir_with_binaries)
-            for path in [os.path.join(root, f) for root, dirs, files in os.walk(path_with_binaries) for f in files]:
-                with open(path, 'rb') as h:
-                    content = h.read()
-                shebang = b'#!%b' % job.python.encode()
-                if content[0:len(shebang)] != shebang:
-                    continue
-                print('- %s' % path)
-                with open(path, 'wb') as h:
-                    h.write(b'#!/usr/bin/env python3')
-                    h.write(content[len(shebang):])
+        filenames = []
+
+        bin_path = os.path.join(args.installspace, 'bin')
+        filenames.append([os.path.join(bin_path, filename) for filename in os.listdir(bin_path)])
+
+        # Demo nodes are installed to 'lib/<package_name>'
+        lib_path = os.path.join(args.installspace, 'lib')
+        for lib_sub_dir in next(os.walk(lib_path))[1]:
+            sub_dir_path = os.path.join(lib_path, lib_sub_dir)
+            sub_dir_contents = [os.path.join(sub_dir_path, name) for name in os.listdir(sub_dir_path)]
+            filenames.extend([filename for filename in sub_dir_contents if os.path.isfile(filename)])
+        for lib_sub_dir in next(os.walk(lib_path))[1]:
+            filenames.append([os.path.join(lib_sub_dir, filename) for filename in os.listdir(lib_sub_dir)])
+
+        for path in filenames:
+            with open(path, 'rb') as h:
+                content = h.read()
+            shebang = b'#!%b' % job.python.encode()
+            if content[0:len(shebang)] != shebang:
+                continue
+            print('- %s' % path)
+            with open(path, 'wb') as h:
+                h.write(b'#!/usr/bin/env python3')
+                h.write(content[len(shebang):])
         print('# END SUBSECTION')
 
     print('# BEGIN SUBSECTION: create archive')
