@@ -55,6 +55,7 @@ pip_dependencies = [
     'pep8',
     'pydocstyle',
     'pyflakes',
+    'pyyaml',
     'vcstool',
 ]
 
