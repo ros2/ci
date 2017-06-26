@@ -112,21 +112,20 @@ def build_and_test_and_package(args, job):
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
-        filenames = []
+        paths_to_files = []
 
         bin_path = os.path.join(args.installspace, 'bin')
-        filenames.append([os.path.join(bin_path, filename) for filename in os.listdir(bin_path)])
+        bin_contents = [os.path.join(bin_path, name) for name in os.listdir(bin_path)]
+        paths_to_files.extend([path for path in bin_contents if os.path.isfile(path)])
 
         # Demo nodes are installed to 'lib/<package_name>'
         lib_path = os.path.join(args.installspace, 'lib')
         for lib_sub_dir in next(os.walk(lib_path))[1]:
             sub_dir_path = os.path.join(lib_path, lib_sub_dir)
             sub_dir_contents = [os.path.join(sub_dir_path, name) for name in os.listdir(sub_dir_path)]
-            filenames.extend([filename for filename in sub_dir_contents if os.path.isfile(filename)])
-        for lib_sub_dir in next(os.walk(lib_path))[1]:
-            filenames.append([os.path.join(lib_sub_dir, filename) for filename in os.listdir(lib_sub_dir)])
+            paths_to_files.extend([path for path in sub_dir_contents if os.path.isfile(path)])
 
-        for path in filenames:
+        for path in paths_to_files:
             with open(path, 'rb') as h:
                 content = h.read()
             shebang = b'#!%b' % job.python.encode()
