@@ -112,18 +112,21 @@ def build_and_test_and_package(args, job):
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
-        bin_path = os.path.join(args.installspace, 'bin')
-        for filename in os.listdir(bin_path):
-            path = os.path.join(bin_path, filename)
-            with open(path, 'rb') as h:
-                content = h.read()
-            shebang = b'#!%b' % job.python.encode()
-            if content[0:len(shebang)] != shebang:
-                continue
-            print('- %s' % path)
-            with open(path, 'wb') as h:
-                h.write(b'#!/usr/bin/env python3')
-                h.write(content[len(shebang):])
+        # Demo nodes are installed to 'lib', so binaries may be present there in addition to 'bin'
+        dirs_with_binaries = ['bin', 'lib']
+        for directory in dirs_with_binaries:
+            path_with_binaries = os.path.join(args.installspace, directory)
+            for filename in os.listdir(path_with_binaries):
+                path = os.path.join(path_with_binaries, filename)
+                with open(path, 'rb') as h:
+                    content = h.read()
+                shebang = b'#!%b' % job.python.encode()
+                if content[0:len(shebang)] != shebang:
+                    continue
+                print('- %s' % path)
+                with open(path, 'wb') as h:
+                    h.write(b'#!/usr/bin/env python3')
+                    h.write(content[len(shebang):])
         print('# END SUBSECTION')
 
     print('# BEGIN SUBSECTION: create archive')
