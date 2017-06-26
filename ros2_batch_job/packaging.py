@@ -131,14 +131,14 @@ def build_and_test_and_package(args, job):
 
     print('# BEGIN SUBSECTION: create archive')
     # Remove "unnecessary" executables
-    install_bin_path = os.path.join(args.installspace, 'bin')
-    for filename in os.listdir(install_bin_path):
+    install_libexec_path = os.path.join(args.installspace, 'lib')
+    for filename in os.listdir(install_libexec_path):
         if (
             '__rmw_' in filename or
             filename.startswith('simple_bridge') or
             filename.startswith('static_bridge')
         ):
-            os.remove(os.path.join(install_bin_path, filename))
+            os.remove(os.path.join(install_libexec_path, filename))
 
     # create an archive
     folder_name = 'ros2-' + args.os
