@@ -112,9 +112,20 @@ def build_and_test_and_package(args, job):
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
+        paths_to_files = []
+
         bin_path = os.path.join(args.installspace, 'bin')
-        for filename in os.listdir(bin_path):
-            path = os.path.join(bin_path, filename)
+        bin_contents = [os.path.join(bin_path, name) for name in os.listdir(bin_path)]
+        paths_to_files.extend([path for path in bin_contents if os.path.isfile(path)])
+
+        # Demo nodes are installed to 'lib/<package_name>'
+        lib_path = os.path.join(args.installspace, 'lib')
+        for lib_sub_dir in next(os.walk(lib_path))[1]:
+            sub_dir_path = os.path.join(lib_path, lib_sub_dir)
+            sub_dir_contents = [os.path.join(sub_dir_path, name) for name in os.listdir(sub_dir_path)]
+            paths_to_files.extend([path for path in sub_dir_contents if os.path.isfile(path)])
+
+        for path in paths_to_files:
             with open(path, 'rb') as h:
                 content = h.read()
             shebang = b'#!%b' % job.python.encode()
@@ -128,14 +139,15 @@ def build_and_test_and_package(args, job):
 
     print('# BEGIN SUBSECTION: create archive')
     # Remove "unnecessary" executables
-    install_bin_path = os.path.join(args.installspace, 'bin')
-    for filename in os.listdir(install_bin_path):
-        if (
-            '__rmw_' in filename or
-            filename.startswith('simple_bridge') or
-            filename.startswith('static_bridge')
-        ):
-            os.remove(os.path.join(install_bin_path, filename))
+    ros1_bridge_libexec_path = os.path.join(args.installspace, 'lib', 'ros1_bridge')
+    if os.path.isdir(ros1_bridge_libexec_path):
+        for filename in os.listdir(ros1_bridge_libexec_path):
+            if (
+                filename.startswith('simple_bridge') or
+                filename.startswith('static_bridge') or
+                filename.startswith('test_')
+            ):
+                os.remove(os.path.join(ros1_bridge_libexec_path, filename))
 
     # create an archive
     folder_name = 'ros2-' + args.os
