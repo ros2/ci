@@ -48,6 +48,8 @@ def build_and_test_and_package(args, job):
         cmd.append('--isolated')
     if args.cmake_build_type:
         cmd += ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
+    if args.ament_build_args:
+        cmd += args.ament_build_args
     job.run(cmd)
 
     if ros1_bridge_ignore_marker:
