@@ -150,32 +150,38 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  case $CI_AMENT_BUILD_ARGS in
-    *--- )
-      # delimiter is already appended
-      ;;
-    *-- )
-      CI_AMENT_BUILD_ARGS="${CI_AMENT_BUILD_ARGS% *} ---"
-      ;;
-    * )
-      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS ---"
-      ;;
-  esac
-  export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
+  ESCAPE=""
+  for arg in ${CI_AMENT_BUILD_ARGS}; do
+      # These are arguments that the user wants to pass through to ament.
+      # Before they get there, they will first be passed through and parsed by
+      # run_ros2_batch.py.  In order to retain their original meaning, make
+      # sure to "escape" lone dash sequences that the user put onto the line.
+      # This ensures that these make it through to ament in the way the user intended.
+      case "${arg}" in
+        *-- )
+          arg="${arg}-"
+          ;;
+      esac
+      ESCAPE="${ESCAPE}${arg} "
+  done
+  export CI_ARGS="${CI_ARGS} --ament-build-args ${ESCAPE%?} --"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  case $CI_AMENT_TEST_ARGS in
-    *--- )
-      # delimiter is already appended
-      ;;
-    *-- )
-      CI_AMENT_TEST_ARGS="${CI_AMENT_TEST_ARGS% *} ---"
-      ;;
-    * )
-      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS ---"
-      ;;
-  esac
-  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
+  ESCAPE=""
+  for arg in ${CI_AMENT_TEST_ARGS}; do
+      # These are arguments that the user wants to pass through to ament.
+      # Before they get there, they will first be passed through and parsed by
+      # run_ros2_batch.py.  In order to retain their original meaning, make
+      # sure to "escape" lone dash sequences that the user put onto the line.
+      # This ensures that these make it through to ament in the way the user intended.
+      case "${arg}" in
+        *-- )
+          arg="${arg}-"
+          ;;
+      esac
+      ESCAPE="${ESCAPE}${arg} "
+  done
+  export CI_ARGS="${CI_ARGS} --ament-test-args ${ESCAPE%?} --"
 fi
 @[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
@@ -282,25 +288,27 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
 if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
 )
-if "!CI_AMENT_BUILD_ARGS!" NEQ "" (
-  if "!CI_AMENT_BUILD_ARGS:~-3!" EQU " --" (
-    set "CI_AMENT_BUILD_ARGS=!CI_AMENT_BUILD_ARGS:~0,-3! ---"
-  ) else (
-    if "!CI_AMENT_BUILD_ARGS:~-3!" NEQ "---" (
-      set "CI_AMENT_BUILD_ARGS=!CI_AMENT_BUILD_ARGS! ---"
+if "%CI_AMENT_BUILD_ARGS%" NEQ "" (
+  set ESCAPE=
+  for %%a in (%CI_AMENT_BUILD_ARGS%) do (
+    set substring=%%a
+    if "!substring:~-2!" EQU "--" (
+      set substring=%%a-
     )
+    set "ESCAPE=!ESCAPE!!substring! "
   )
-  set "CI_ARGS=!CI_ARGS! --ament-build-args !CI_AMENT_BUILD_ARGS!"
+  set "CI_ARGS=!CI_ARGS! --ament-build-args !ESCAPE:~0,-1! --"
 )
-if "!CI_AMENT_TEST_ARGS!" NEQ "" (
-  if "!CI_AMENT_TEST_ARGS:~-3!" EQU " --" (
-    set "CI_AMENT_TEST_ARGS=!CI_AMENT_TEST_ARGS:~0,-3! ---"
-  ) else (
-    if "!CI_AMENT_TEST_ARGS:~-3!" NEQ "---" (
-      set "CI_AMENT_TEST_ARGS=!CI_AMENT_TEST_ARGS! ---"
+if "%CI_AMENT_TEST_ARGS%" NEQ "" (
+  set ESCAPE=
+  for %%a in (%CI_AMENT_TEST_ARGS%) do (
+    set substring=%%a
+    if "!substring:~-2!" EQU "--" (
+      set substring=%%a-
     )
+    set "ESCAPE=!ESCAPE!!substring! "
   )
-  set "CI_ARGS=!CI_ARGS! --ament-test-args !CI_AMENT_TEST_ARGS!"
+  set "CI_ARGS=!CI_ARGS! --ament-test-args !ESCAPE:~0,-1! --"
 )
 echo Using args: !CI_ARGS!
 echo "# END SECTION"
