@@ -290,24 +290,32 @@ if "!CI_ENABLE_C_COVERAGE!" == "true" (
 )
 if "%CI_AMENT_BUILD_ARGS%" NEQ "" (
   set ESCAPE=
-  for %%a in (%CI_AMENT_BUILD_ARGS%) do (
+  set PARSER=%CI_AMENT_BUILD_ARGS%
+  :build-loop
+  for /f "tokens=1* delims= " %%a in ("!PARSER!") do (
     set substring=%%a
     if "!substring:~-2!" EQU "--" (
       set substring=%%a-
     )
     set "ESCAPE=!ESCAPE!!substring! "
+    set PARSER=%%b
   )
+  if defined PARSER goto build-loop
   set "CI_ARGS=!CI_ARGS! --ament-build-args !ESCAPE:~0,-1! --"
 )
 if "%CI_AMENT_TEST_ARGS%" NEQ "" (
   set ESCAPE=
-  for %%a in (%CI_AMENT_TEST_ARGS%) do (
+  set PARSER=%CI_AMENT_TEST_ARGS%
+  :test-loop
+  for /f "tokens=1* delims= " %%a in ("!PARSER!") do (
     set substring=%%a
     if "!substring:~-2!" EQU "--" (
       set substring=%%a-
     )
     set "ESCAPE=!ESCAPE!!substring! "
+    set PARSER=%%b
   )
+  if defined PARSER goto test-loop
   set "CI_ARGS=!CI_ARGS! --ament-test-args !ESCAPE:~0,-1! --"
 )
 echo Using args: !CI_ARGS!
