@@ -193,10 +193,17 @@ def main(argv=None):
 
         # configure turtlebot jobs on Linux only for now
         if os_name in ['linux', 'linux-aarch64']:
-            create_job(os_name, 'ci_turtlebot-demo_%s' % (os_name), 'ci_job.xml.em', {
+            create_job(os_name, 'ci_turtlebot-demo_' + os_name, 'ci_job.xml.em', {
                 'cmake_build_type': 'None',
                 'turtlebot_demo': True,
                 'supplemental_repos_url': 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos',
+            })
+            create_job(os_name, 'nightly_turtlebot-demo_' + os_name + '_release', 'ci_job.xml.em', {
+                'cmake_build_type': 'Release',
+                'turtlebot_demo': True,
+                'supplemental_repos_url': 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
     # configure the launch job
