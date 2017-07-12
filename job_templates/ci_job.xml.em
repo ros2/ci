@@ -150,26 +150,38 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  case $CI_AMENT_BUILD_ARGS in
-    *-- )
-      # delimiter is already appended
-      ;;
-    * )
-      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
-      ;;
-  esac
-  export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
+  ESCAPE=""
+  for arg in ${CI_AMENT_BUILD_ARGS}; do
+      # These are arguments that the user wants to pass through to ament.
+      # Before they get there, they will first be passed through and parsed by
+      # run_ros2_batch.py.  In order to retain their original meaning, make
+      # sure to "escape" lone dash sequences that the user put onto the line.
+      # This ensures that these make it through to ament in the way the user intended.
+      case "${arg}" in
+        *-- )
+          arg="${arg}-"
+          ;;
+      esac
+      ESCAPE="${ESCAPE}${arg} "
+  done
+  export CI_ARGS="${CI_ARGS} --ament-build-args ${ESCAPE%?} --"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  case $CI_AMENT_TEST_ARGS in
-    *-- )
-      # delimiter is already appended
-      ;;
-    * )
-      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
-      ;;
-  esac
-  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
+  ESCAPE=""
+  for arg in ${CI_AMENT_TEST_ARGS}; do
+      # These are arguments that the user wants to pass through to ament.
+      # Before they get there, they will first be passed through and parsed by
+      # run_ros2_batch.py.  In order to retain their original meaning, make
+      # sure to "escape" lone dash sequences that the user put onto the line.
+      # This ensures that these make it through to ament in the way the user intended.
+      case "${arg}" in
+        *-- )
+          arg="${arg}-"
+          ;;
+      esac
+      ESCAPE="${ESCAPE}${arg} "
+  done
+  export CI_ARGS="${CI_ARGS} --ament-test-args ${ESCAPE%?} --"
 fi
 @[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
@@ -229,70 +241,88 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
-set "PATH=%PATH:"=%"
-set "CI_ARGS=--force-ansi-color --workspace-path %WORKSPACE%"
-if "%CI_BRANCH_TO_TEST%" NEQ "" (
-  set "CI_ARGS=%CI_ARGS% --test-branch %CI_BRANCH_TO_TEST%"
+set "PATH=!PATH:"=!"
+set "CI_ARGS=--force-ansi-color --workspace-path !WORKSPACE!"
+if "!CI_BRANCH_TO_TEST!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-branch !CI_BRANCH_TO_TEST!"
 )
-if "%CI_USE_WHITESPACE_IN_PATHS%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --white-space-in sourcespace buildspace installspace workspace"
+if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
 )
-if "%CI_USE_CONNEXT%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --connext"
+if "!CI_USE_CONNEXT!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --connext"
 )
-if "%CI_DISABLE_CONNEXT_STATIC%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --disable-connext-static"
+if "!CI_DISABLE_CONNEXT_STATIC!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --disable-connext-static"
 )
-if "%CI_DISABLE_CONNEXT_DYNAMIC%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --disable-connext-dynamic"
+if "!CI_DISABLE_CONNEXT_DYNAMIC!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --disable-connext-dynamic"
 )
-if "%CI_USE_OSRF_CONNEXT_DEBS%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --osrf-connext-debs"
+if "!CI_USE_OSRF_CONNEXT_DEBS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --osrf-connext-debs"
 )
-if "%CI_USE_FASTRTPS%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --fastrtps"
+if "!CI_USE_FASTRTPS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --fastrtps"
 )
-if "%CI_USE_OPENSPLICE%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --opensplice"
+if "!CI_USE_OPENSPLICE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --opensplice"
 )
-if "%CI_ROS2_REPOS_URL%" EQU "" (
+if "!CI_ROS2_REPOS_URL!" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
-set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
-if "%CI_ROS2_SUPPLEMENTAL_REPOS_URL%" NEQ "" (
-  set "CI_ARGS=%CI_ARGS% --supplemental-repo-file-url %CI_ROS2_SUPPLEMENTAL_REPOS_URL%"
+set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
+if "!CI_ROS2_SUPPLEMENTAL_REPOS_URL!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --supplemental-repo-file-url !CI_ROS2_SUPPLEMENTAL_REPOS_URL!"
 )
-if "%CI_ISOLATED%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --isolated"
+if "!CI_ISOLATED!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --isolated"
 )
-if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
-  set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
+if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
+  set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
 )
-if "%CI_CMAKE_BUILD_TYPE%" == "Debug" (
+if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
   where python_d &gt; python_debug_interpreter.txt
   set /p PYTHON_DEBUG_INTERPRETER=&lt;python_debug_interpreter.txt
-  set "CI_ARGS=%CI_ARGS% --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
+  set "CI_ARGS=!CI_ARGS! --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
 )
-if "%CI_ENABLE_C_COVERAGE%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --coverage"
+if "!CI_ENABLE_C_COVERAGE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --coverage"
 )
 if "%CI_AMENT_BUILD_ARGS%" NEQ "" (
-  if "%CI_AMENT_BUILD_ARGS:~-2%" NEQ "--" (
-    set "CI_AMENT_BUILD_ARGS=%CI_AMENT_BUILD_ARGS% --"
+  set ESCAPE=
+  set PARSER=%CI_AMENT_BUILD_ARGS%
+  :build-loop
+  for /f "tokens=1* delims= " %%a in ("!PARSER!") do (
+    set substring=%%a
+    if "!substring:~-2!" EQU "--" (
+      set substring=%%a-
+    )
+    set "ESCAPE=!ESCAPE!!substring! "
+    set PARSER=%%b
   )
-  set "CI_ARGS=%CI_ARGS% --ament-build-args %CI_AMENT_BUILD_ARGS%"
+  if defined PARSER goto build-loop
+  set "CI_ARGS=!CI_ARGS! --ament-build-args !ESCAPE:~0,-1! --"
 )
 if "%CI_AMENT_TEST_ARGS%" NEQ "" (
-  if "%CI_AMENT_TEST_ARGS:~-2%" NEQ "--" (
-    set "CI_AMENT_TEST_ARGS=%CI_AMENT_TEST_ARGS% --"
+  set ESCAPE=
+  set PARSER=%CI_AMENT_TEST_ARGS%
+  :test-loop
+  for /f "tokens=1* delims= " %%a in ("!PARSER!") do (
+    set substring=%%a
+    if "!substring:~-2!" EQU "--" (
+      set substring=%%a-
+    )
+    set "ESCAPE=!ESCAPE!!substring! "
+    set PARSER=%%b
   )
-  set "CI_ARGS=%CI_ARGS% --ament-test-args %CI_AMENT_TEST_ARGS%"
+  if defined PARSER goto test-loop
+  set "CI_ARGS=!CI_ARGS! --ament-test-args !ESCAPE:~0,-1! --"
 )
-echo Using args: %CI_ARGS%
+echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Run script"
-python -u run_ros2_batch.py %CI_ARGS%
+python -u run_ros2_batch.py !CI_ARGS!
 echo "# END SECTION"
 @[else]@
 @{ assert 'Unknown os_name: ' + os_name }@
