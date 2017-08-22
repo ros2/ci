@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>
-    Note: The Windows jobs ignore the middleware selection flags.
+    Launches a build of the CI job for each supported platform with the same set of parameters.
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
