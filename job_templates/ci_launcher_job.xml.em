@@ -3,6 +3,7 @@
   <actions/>
   <description>
     Launches a build of the CI job for each supported platform with the same set of parameters.
+    Use of RTI Connext will always be disabled on aarch64 jobs.
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
