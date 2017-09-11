@@ -25,16 +25,16 @@
     cmake_build_type=cmake_build_type,
     ament_build_args_default=ament_build_args_default,
 ))@
-        <hudson.model.ChoiceParameterDefinition>
-          <name>CI_USED_RMW_IMPL</name>
-          <description/>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>FastRTPS</string>
-              <string>OpenSplice</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CI_USE_FASTRTPS</name>
+          <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS.</description>
+          <defaultValue>@(use_fastrtps_default)</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CI_USE_OPENSPLICE</name>
+          <description>By setting this to True, the build will attempt to use PrismTech&apos;s OpenSplice.</description>
+          <defaultValue>@(use_opensplice_default)</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_TEST_BRIDGE</name>
           <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
@@ -99,7 +99,8 @@
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
-used_rmw_impl: ${build.buildVariableResolver.resolve('CI_USED_RMW_IMPL')}, <br/>
+use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
+use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')}, <br/>
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
@@ -120,9 +121,10 @@ export CI_ARGS="--packaging --do-venv --force-ansi-color"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi
-if [ "${CI_USED_RMW_IMPL}" = "FastRTPS" ]; then
+if [ "$CI_USE_FASTRTPS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --fastrtps"
-elif [ "${CI_USED_RMW_IMPL}" = "OpenSplice" ]; then
+fi
+if [ "$CI_USE_OPENSPLICE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --opensplice"
 fi
 if [ -z "${CI_ROS2_REPOS_URL+x}" ]; then
@@ -208,9 +210,10 @@ set "CI_ARGS=--packaging --force-ansi-color"
 if "%CI_BRANCH_TO_TEST%" NEQ "" (
   set "CI_ARGS=%CI_ARGS% --test-branch %CI_BRANCH_TO_TEST%"
 )
-if "%CI_USED_RMW_IMPL%" EQU "FastRTPS" (
+if "%CI_USE_FASTRTPS%" == "true" (
   set "CI_ARGS=%CI_ARGS% --fastrtps"
-) else if "%CI_USED_RMW_IMPL%" EQU "OpenSplice" (
+)
+if "%CI_USE_OPENSPLICE%" == "true" (
   set "CI_ARGS=%CI_ARGS% --opensplice"
 )
 if "%CI_ROS2_REPOS_URL%" EQU "" (
