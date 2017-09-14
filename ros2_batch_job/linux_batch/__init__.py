@@ -50,8 +50,8 @@ class LinuxBatchJob(BatchJob):
         if self.args.connext:
             # Try to find the connext env file to later source it
             connext_env_file = os.path.join(
-                os.path.expanduser('~'), 'rti_connext_dds-5.2.3', 'resource', 'scripts',
-                'rtisetenv_x64Linux3gcc4.8.2.bash')
+                os.path.expanduser('~'), 'rti_connext_dds-5.3.0', 'resource', 'scripts',
+                'rtisetenv_x64Linux3gcc5.4.0.bash')
 
             if os.path.exists(connext_env_file):
                 # Make script compatible with dash
