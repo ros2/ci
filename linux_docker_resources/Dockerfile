@@ -52,16 +52,16 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 RUN pip3 install pexpect
 
 # Get and install the RTI web binaries.
-RUN curl --silent http://s3.amazonaws.com/RTI/Bundles/5.2.3/Evaluation/rti_connext_dds-5.2.3-eval-x64Linux3gcc4.8.2.run -o /tmp/rti-installer.run && chmod +x /tmp/rti-installer.run
+RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.0/Evaluation/rti_connext_dds_secure-5.3.0-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
 ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 
 # Add the RTI binaries we made.
-ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
-ADD rticonnextdds-src/librticonnextdds52-dev_5.2.3-1_amd64.deb /tmp/librticonnextdds52-dev_5.2.3-1_amd64.deb
-ADD rticonnextdds-src/rticonnextdds-tools_5.2.3-1_amd64.deb /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
+# ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
+# ADD rticonnextdds-src/librticonnextdds52-dev_5.2.3-1_amd64.deb /tmp/librticonnextdds52-dev_5.2.3-1_amd64.deb
+# ADD rticonnextdds-src/rticonnextdds-tools_5.2.3-1_amd64.deb /tmp/rticonnextdds-tools_5.2.3-1_amd64.deb
 
 # Install the eProsima dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libssl-dev libtinyxml2-dev valgrind
