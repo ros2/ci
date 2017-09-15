@@ -12,13 +12,12 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # net-tools is for ifconfig
-RUN apt-get update && apt-get install --no-install-recommends -y lsb-release net-tools sudo
-
 # Get curl for fetching the repo keys.
-RUN apt-get update && apt-get install --no-install-recommends -y curl
-
 # Get https transport for APT.
-RUN apt-get update && apt-get install --no-install-recommends -y apt-transport-https
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  lsb-release net-tools sudo \
+  curl \
+  apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
 RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list
