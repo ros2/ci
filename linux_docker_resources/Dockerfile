@@ -12,12 +12,11 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # net-tools is for ifconfig
+# Get curl for fetching the repo keys.
+# Get https transport for APT.
 RUN apt-get update && apt-get install --no-install-recommends -y \
-  `# net-tools is for ifconfig` \
   lsb-release net-tools sudo \
-  `# Get curl for fetching the repo keys.` \
   curl \
-  `# Get https transport for APT.` \
   apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
