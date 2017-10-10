@@ -32,7 +32,7 @@ case "${CI_ARGS}" in
         ;;
       *)
         echo "Installing Connext binaries off RTI website..."
-        python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.0-eval-x64Linux3gcc5.4.0.run /home/rosbuild
+        python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.0-eval-x64Linux3gcc5.4.0.run /home/rosbuild --rtipkg_paths /tmp/rti_security_plugins-5.3.0-eval-x64Linux3gcc5.4.0.rtipkg
         if [ $? -ne 0 ]
         then
           echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
