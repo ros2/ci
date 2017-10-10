@@ -14,7 +14,6 @@
 
 import argparse
 import os
-import sys
 
 import pexpect
 
@@ -78,4 +77,4 @@ if __name__ == '__main__':
         if os.path.isfile(plugin_path):
             install_plugin(plugin_path, args.install_directory)
         else:
-            print("RTI package '%s' not found, Skipping..." % plugin_path, file=sys.stderr)
+            raise RuntimeError("RTI package '%s' not found, Skipping..." % plugin_path)
