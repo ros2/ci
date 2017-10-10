@@ -74,7 +74,6 @@ if __name__ == '__main__':
     install_connext(args.installer_path, args.install_directory)
     # Install successful, now installing rti plugins if any
     for plugin_path in args.rtipkg_paths:
-        if os.path.isfile(plugin_path):
-            install_plugin(plugin_path, args.install_directory)
-        else:
+        if not os.path.isfile(plugin_path):
             raise RuntimeError("RTI package '%s' not found" % plugin_path)
+        install_plugin(plugin_path, args.install_directory)
