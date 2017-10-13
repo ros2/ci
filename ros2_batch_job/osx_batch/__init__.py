@@ -39,12 +39,19 @@ class OSXBatchJob(BatchJob):
             os.environ['LANG'] = 'en_US.UTF-8'
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '111'
-        if 'OPENSSL_ROOT_DIR' not in os.environ:
-            brew_openssl_prefix_result = subprocess.run(
-                ['brew', '--prefix', 'openssl'],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if not brew_openssl_prefix_result.stderr:
-              os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix_result.stdout.decode().strip('\n')
+        # set openssl env variables and add to library path
+        brew_openssl_prefix_result = subprocess.run(
+            ['brew', '--prefix', 'openssl'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if not brew_openssl_prefix_result.stderr:
+            brew_openssl_prefix = brew_openssl_prefix_result.stdout.decode().strip('\n')
+            if 'OPENSSL_ROOT_DIR' not in os.environ:
+                os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix
+            brew_openssl_lib_path = os.path.join(brew_openssl_prefix, 'lib')
+            if 'DYLD_LIBRARY_PATH' not in os.environ:
+                os.environ['DYLD_LIBRARY_PATH'] = brew_openssl_lib_path
+            else:
+                os.environ['DYLD_LIBRARY_PATH'] += os.pathsep + brew_openssl_lib_path
 
     def show_env(self):
         # Show the env
