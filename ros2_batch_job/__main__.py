@@ -73,6 +73,7 @@ def main(sysargv=None):
     if not args.packaging:
         blacklisted_package_names = [
             'actionlib_msgs',
+            'common_interfaces',
             'shape_msgs',
             'stereo_msgs',
             'trajectory_msgs',
