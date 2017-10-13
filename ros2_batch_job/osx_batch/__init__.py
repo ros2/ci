@@ -50,10 +50,8 @@ class OSXBatchJob(BatchJob):
             if 'DYLD_LIBRARY_PATH' not in os.environ:
                 os.environ['DYLD_LIBRARY_PATH'] = os.path.join(brew_openssl_prefix, 'lib')
             else:
-                print('DYLD_LIBRARY_PATH before openssl: %s' % os.environ['DYLD_LIBRARY_PATH'])
                 os.environ['DYLD_LIBRARY_PATH'] += os.pathsep + \
                     os.path.join(brew_openssl_prefix, 'lib')
-            print('DYLD_LIBRARY_PATH after openssl: %s' % os.environ['DYLD_LIBRARY_PATH'])
 
     def show_env(self):
         # Show the env
