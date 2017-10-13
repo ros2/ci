@@ -47,11 +47,11 @@ class OSXBatchJob(BatchJob):
             brew_openssl_prefix = brew_openssl_prefix_result.stdout.decode().strip('\n')
             if 'OPENSSL_ROOT_DIR' not in os.environ:
                 os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix
+            brew_openssl_lib_path = os.path.join(brew_openssl_prefix, 'lib')
             if 'DYLD_LIBRARY_PATH' not in os.environ:
-                os.environ['DYLD_LIBRARY_PATH'] = os.path.join(brew_openssl_prefix, 'lib')
+                os.environ['DYLD_LIBRARY_PATH'] = brew_openssl_lib_path
             else:
-                os.environ['DYLD_LIBRARY_PATH'] += os.pathsep + \
-                    os.path.join(brew_openssl_prefix, 'lib')
+                os.environ['DYLD_LIBRARY_PATH'] += os.pathsep + brew_openssl_lib_path
 
     def show_env(self):
         # Show the env
