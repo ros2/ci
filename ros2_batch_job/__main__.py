@@ -62,6 +62,9 @@ pip_dependencies = [
     'pep8',
     'pydocstyle',
     'pyflakes',
+    'pytest',
+    'pytest-cov',
+    'pytest-runner',
     'pyyaml',
     'vcstool',
 ]
