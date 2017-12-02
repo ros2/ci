@@ -72,6 +72,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 # Install build dependencies for class loader.
 RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
 
+# Install build dependencies for rviz et al.
+RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev
+
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
 
