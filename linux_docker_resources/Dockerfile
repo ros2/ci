@@ -74,6 +74,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 # We are building poco from source for now as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
 # RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
 
+# Install build dependencies for rviz et al.
+RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev
+
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
 
