@@ -49,7 +49,7 @@ class OSXBatchJob(BatchJob):
             os.environ['OSPL_HOME'] = os.path.join(os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
         # TODO(wjwwood): remove this when qt5 is linked on macOS by default
         # See: https://github.com/Homebrew/homebrew-core/issues/8392#issuecomment-334328367
-        os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + ':/usr/local/opt/qt'
+        os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + os.pathsep + '/usr/local/opt/qt'
 
     def show_env(self):
         # Show the env
