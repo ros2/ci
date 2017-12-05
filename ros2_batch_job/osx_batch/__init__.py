@@ -45,6 +45,8 @@ class OSXBatchJob(BatchJob):
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if not brew_openssl_prefix_result.stderr:
               os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix_result.stdout.decode().strip('\n')
+        if 'OSPL_HOME' not in os.environ:
+            os.environ['OSPL_HOME'] = os.path.join(os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
 
     def show_env(self):
         # Show the env
