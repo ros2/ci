@@ -75,7 +75,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 # RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
 
 # Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 qtbase5-dev libxaw7-dev libgles2-mesa-dev libglu1-mesa-dev
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
