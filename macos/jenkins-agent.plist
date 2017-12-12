@@ -13,7 +13,7 @@
 		<string>-jnlpUrl</string>
 		<string>http://ci.ros2.org/computer/REPLACE_JENKINS_AGENT_NAME/slave-agent.jnlp</string>
 		<string>-secret</string>
-		<string>REPLACE_JENKINS_AGENT_SECRETt</string>
+		<string>REPLACE_JENKINS_AGENT_SECRET</string>
 	</array>
 	<key>KeepAlive</key>
 	<true/>

@@ -5,14 +5,14 @@ By default it seems that launchd de-prioritizes processes as "background" tasks 
 
 For our CI hosts we consider the jenkins agent process to be the most critical thing on the machine so we must give it special flags to override the default behavior.
 
-## Preparing the Jenkins agent propery list
+## Preparing the Jenkins agent property list
 
 The agent plist was written when dosa was reimaged December 2017.
 It expects that the directory `$HOME/jenkins-agent` exists and that it contains the Jenkins agent program `slave.jar`.
 This directory will also contain the agent `stdout.log` and `stderr.log` streams from launchd.
 
 The file contains a few fields that must be updated for the specific CI host.
-To find them all run `grep REPLACE_ jenkins-agent.pliist`.
+To find them all run `grep REPLACE_ jenkins-agent.plist`.
 
 They are documented here
 
