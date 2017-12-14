@@ -18,6 +18,7 @@
 	<!-- Ensure that the agent is restarted automatically if it disconnects -->
 	<key>KeepAlive</key>
 	<true/>
+	<!-- Afford the same priority to the process as what it would get if started manually -->
 	<key>ProcessType</key>
 	<string>Interactive</string>
 	<key>Nice</key>
