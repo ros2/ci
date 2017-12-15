@@ -67,6 +67,7 @@ pip_dependencies = [
     'pytest-cov',
     'pytest-runner',
     'pyyaml',
+    'sip',
     'vcstool',
 ]
 
