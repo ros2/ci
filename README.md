@@ -69,4 +69,4 @@ The private submodule is still pulled on OS X and Linux.
 
 ### Notes about MacOS Agents
 
-Configuration details for running the Jenkins agent process via launchd can be found in the [configuration](https://github.com/ros2/ci/tree/confuguration) branch of this repository.
+Configuration details for running the Jenkins agent process via launchd can be found in the [configuration](https://github.com/ros2/ci/tree/configuration) branch of this repository.
