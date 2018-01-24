@@ -66,3 +66,7 @@ Repositories which have this branch will be switched to it, others will be left 
 
 I had trouble setting up the ssh-agent on Windows, so I disabled the submodule init on Windows which removes the need for cloning from private repositories and there removes the need for ssh keys and the ssh agent.
 The private submodule is still pulled on OS X and Linux.
+
+### Notes about MacOS Agents
+
+Configuration details for running the Jenkins agent process via launchd can be found in the [configuration](https://github.com/ros2/ci/tree/configuration) branch of this repository.
