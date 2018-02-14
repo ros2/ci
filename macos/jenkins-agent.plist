@@ -9,11 +9,26 @@
 		<string>/usr/bin/java</string>
 		<string>-Djava.awt.headless=true</string>
 		<string>-jar</string>
-		<string>/Users/osrf/jenkins-agent/slave.jar</string>
-		<string>-jnlpUrl</string>
-		<string>http://ci.ros2.org/computer/REPLACE_JENKINS_AGENT_NAME/slave-agent.jnlp</string>
-		<string>-secret</string>
-		<string>REPLACE_JENKINS_AGENT_SECRET</string>
+		<string>/Users/osrf/jenkins-agent/swarm-client-3.8.jar</string>
+		<string>-master</string>
+		<string>http://ci.ros2.org:8080</string>
+		<string>-labels</string>
+		<string>macos osx_slave</string>
+		<string>-name</string>
+		<string>macos_REPLACE_AGENT_NAME</string>
+		<string>-description</string>
+		<string>REPLACE_AGENT_DESCRIPTION</string>
+		<string>-disableClientsUniqueId</string>
+		<string>-username</string>
+		<string>REPLACE_USERNAME</string>
+		<string>-password</string>
+		<string>REPLACE_PASSWORD</string>
+		<string>-mode</string>
+		<string>exclusive</string>
+		<string>-executors</string>
+		<string>1</string>
+		<string>-fsroot</string>
+		<string>/home/osrf/jenkins-agent</string>
 	</array>
 	<!-- Ensure that the agent is restarted automatically if it disconnects -->
 	<key>KeepAlive</key>

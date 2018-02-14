@@ -7,8 +7,8 @@ For our CI hosts we consider the jenkins agent process to be the most critical t
 
 ## Preparing the Jenkins agent property list
 
-The agent plist was written when dosa was reimaged December 2017.
-It expects that the directory `$HOME/jenkins-agent` exists and that it contains the Jenkins agent program `slave.jar`.
+The agent plist was written when dosa was reimaged December 2017 and updated to use the Swarm client in Feb 2018.
+It expects that the directory `$HOME/jenkins-agent` exists and that it contains the Jenkins agent program `swarm-client-3.8.jar`.
 This directory will also contain the agent `stdout.log` and `stderr.log` streams from launchd.
 
 The file contains a few fields that must be updated for the specific CI host.
@@ -17,10 +17,10 @@ To find them all run `grep REPLACE_ jenkins-agent.plist`.
 They are documented here
 
 - `REPLACE_HOSTNAME`: The hostname of the CI host.
-- `REPLACE_JENKINS_AGENT_NAME`: The slug name of the CI host in the Jenkins UI.
-- `REPLACE_JENKNS_AGENT_SECRET`: The secret to authenticate a specific CI host.
-To collect this secret visit the Jenkins web UI and navigate to the host while it is disconnected.
-The connection instructions will include the JNLP url and secret.
+- `REPLACE_AGENT_NAME`: The slug name of the CI host in the Jenkins UI.
+- `REPLACE_AGENT_DESCRIPTION`: The description fof the agent in the Jenkins UI.
+- `REPLACE_USERNAME`: The Jenkins username of the user with node creation privileges.
+- `REPLACE_PASSWORD`: The password (usually a GitHub auth token for us) for the above user.
 
 
 ## Installing the jenkins agent property list (.plist file)

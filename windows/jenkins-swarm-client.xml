@@ -1,0 +1,23 @@
+<service>
+	<id>ros2ci-swarm-client</id>
+	<name>ROS2 CI Swarm Client</name>
+	<description>Jenkins swarm client for ROS 2 CI.</description>
+	<onfailure action="restart"/>
+
+	<executable>java</executable>
+	<argument>-Xrs</argument>
+	<argument>-Djava.awt.headless=true</argument>
+	<argument>-jar</argument>
+	<argument>%BASE%\swarm-client-3.8.jar</argument>
+	<argument>-master</argument><argument>https://ci.ros2.org</argument>
+	<argument>-name</argument><argument>windows_REPLACE_AGENT_NAME</argument>
+	<argument>-description</argument><argument>REPLACE_AGENT_DESCRIPTION</argument>
+	<argument>-fsroot</argument><argument>%BASE%</argument>
+	<argument>-mode</argument><argument>exclusive</argument>
+	<argument>-executors</argument><argument>1</argument>
+	<argument>-labels</argument><argument>windows windows_slave</argument>
+	<argument>-username</argument><argument>REPLACE_USERNAME</argument>
+	<argument>-password</argument><argument>REPLACE_PASSWORD</argument>
+	<argument>-disableClientsUniqueId</argument>
+</service>
+
