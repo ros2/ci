@@ -9,6 +9,7 @@ For our CI hosts we consider the jenkins agent process to be the most critical t
 
 The agent plist was written when dosa was reimaged December 2017 and updated to use the Swarm client in Feb 2018.
 It expects that the directory `$HOME/jenkins-agent` exists and that it contains the Jenkins agent program `swarm-client-3.8.jar`.
+If you need the swarm client, which when combined with the [Swarm plugin](https://plugins.jenkins.io/swarm) allows for easier addition and removal of temporary Jenkins nodes, you can get it from [this repository](https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/).
 This directory will also contain the agent `stdout.log` and `stderr.log` streams from launchd.
 
 The file contains a few fields that must be updated for the specific CI host.

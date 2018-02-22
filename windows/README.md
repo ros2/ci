@@ -5,7 +5,8 @@ Windows agents can be wrapped with [winsw][] to run as Windows services.
 ## Preparing the Jenkins agent
 
 To set up a Windows agent requires downloading the [winsw .NET4 executable](https://github.com/kohsuke/winsw/releases/).
-To keep paths as short as possible, we use the directory `C:\J` as our Jenkins home directory.
+To keep paths as short as possible, we use the directory `C:\J` as our Jenkins home directory because of path length limitations on Windows.
+You will also need the `swarm-client-3.8.jar` which can be downloaded from [this repository](https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/).
 
 0. Copy `WinSW.NET4.exe` to the `C:\J` directory.
 0. Rename `WinSW.NET4.exe` to `jenkins-swarm-client.exe`.
