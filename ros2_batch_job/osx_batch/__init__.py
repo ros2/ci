@@ -37,8 +37,6 @@ class OSXBatchJob(BatchJob):
             warn('ccache does not appear to be installed; not modifying PATH')
         if 'LANG' not in os.environ:
             os.environ['LANG'] = 'en_US.UTF-8'
-        if 'ROS_DOMAIN_ID' not in os.environ:
-            os.environ['ROS_DOMAIN_ID'] = '111'
         if 'OPENSSL_ROOT_DIR' not in os.environ:
             brew_openssl_prefix_result = subprocess.run(
                 ['brew', '--prefix', 'openssl'],
