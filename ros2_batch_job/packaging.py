@@ -135,8 +135,13 @@ def build_and_test_and_package(args, job):
             if content[0:len(shebang)] != shebang:
                 continue
             print('- %s' % path)
+            if args.os == 'osx':
+                new_shebang = b'#!/usr/local/bin/python3'
+            else:
+                # in the linux case
+                new_shebang = b'#!/usr/bin/env python3'
             with open(path, 'wb') as h:
-                h.write(b'#!/usr/bin/env python3')
+                h.write(new_shebang)
                 h.write(content[len(shebang):])
         print('# END SUBSECTION')
 
