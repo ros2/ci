@@ -30,7 +30,7 @@ def build_and_test_and_package(args, job):
     info('ROS1 bridge path: %s' % ros1_bridge_path)
     ros1_bridge_ignore_marker = None
     if os.path.exists(ros1_bridge_path):
-        ros1_bridge_ignore_marker = os.path.join(ros1_bridge_path, 'AMENT_IGNORE')
+        ros1_bridge_ignore_marker = os.path.join(ros1_bridge_path, 'COLCON_IGNORE')
         info('ROS1 bridge path ignore file: %s' % ros1_bridge_ignore_marker)
         with open(ros1_bridge_ignore_marker, 'w'):
             pass
