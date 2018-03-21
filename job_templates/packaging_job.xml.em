@@ -183,7 +183,7 @@ docker build --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_
 @[elif os_name == 'linux']@
 docker build --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
 @[else]@
-@{ assert 'Unknown os_name: ' + os_name }@
+@{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
@@ -192,7 +192,7 @@ export CONTAINER_NAME=ros2_packaging
 @[elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_packaging_aarch64
 @[else]@
-@{ assert 'Unknown os_name: ' + os_name }@
+@{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]@
 docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
@@ -245,7 +245,7 @@ echo "# BEGIN SECTION: Run packaging script"
 python -u run_ros2_batch.py %CI_ARGS%
 echo "# END SECTION"
 @[else]@
-@{ assert 'Unknown os_name: ' + os_name }@
+@{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]</command>
     </hudson.tasks.@(shell_type)>
   </builders>
