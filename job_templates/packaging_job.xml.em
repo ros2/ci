@@ -194,7 +194,7 @@ export CONTAINER_NAME=ros2_packaging_aarch64
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]@
-docker run --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[else]@
 echo "# BEGIN SECTION: Run packaging script"
