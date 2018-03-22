@@ -30,6 +30,9 @@ class WindowsBatchJob(BatchJob):
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '119'
 
+    def post(self):
+        pass
+
     def show_env(self):
         # Show the env
         self.run(['set'], shell=True)

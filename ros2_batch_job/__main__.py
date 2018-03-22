@@ -512,7 +512,10 @@ def run(args, build_function, blacklisted_package_names=None):
                         pass
             print('# END SUBSECTION')
 
-        return build_function(args, job)
+        rc = build_function(args, job)
+
+    job.post()
+    return rc
 
 
 def get_ament_script(basepath):
