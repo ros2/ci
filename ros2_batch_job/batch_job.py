@@ -24,6 +24,18 @@ class BatchJob:
         self.python = sys.executable if python_interpreter is None else python_interpreter
         self.python_history = []
 
+    def pre(self):
+        raise NotImplementedError()
+
+    def post(self):
+        raise NotImplementedError()
+
+    def show_env(self):
+        raise NotImplementedError()
+
+    def setup_env(self):
+        raise NotImplementedError()
+
     def push_run(self, run_func):
         self.run_history.append(self.run)
         self.run = run_func

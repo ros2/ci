@@ -22,6 +22,7 @@ from ..util import warn
 class LinuxBatchJob(BatchJob):
     def __init__(self, args):
         self.args = args
+        self.use_ccache = False
         # The BatchJob constructor will set self.run and self.python
         BatchJob.__init__(self, python_interpreter=args.python_interpreter)
 
@@ -32,10 +33,20 @@ class LinuxBatchJob(BatchJob):
         # Check for ccache's directory, as installed by apt-get
         ccache_exe_dir = '/usr/lib/ccache'
         if os.path.isdir(ccache_exe_dir):
+            self.use_ccache = True
             os.environ['PATH'] = ccache_exe_dir + os.pathsep +\
                 os.environ.get('PATH', '')
+            print('# BEGIN SUBSECTION: ccache stats (before)')
+            self.run(['ccache', '-s'])
+            print('# END SUBSECTION')
         else:
             warn('ccache does not appear to be installed; not modifying PATH')
+
+    def post(self):
+        if self.use_ccache:
+            print('# BEGIN SUBSECTION: ccache stats (after)')
+            self.run(['ccache', '-s'])
+            print('# END SUBSECTION')
 
     def show_env(self):
         # Show the env
