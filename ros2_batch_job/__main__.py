@@ -345,10 +345,6 @@ def run(args, build_function, blacklisted_package_names=None):
         # printing ANSI color codes on Windows.
         os.environ['ConEmuANSI'] = 'ON'
 
-    # ROS_DOMAIN_ID must be unique to each CI machine on a network to avoid crosstalk
-    if 'ROS_DOMAIN_ID' not in os.environ:
-        raise KeyError('ROS_DOMAIN_ID environment variable must be set')
-
     info("Using workspace: @!{0}", fargs=(args.workspace,))
     # git doesn't work reliably inside qemu, so we're assuming that somebody
     # already checked out the code on the host and mounted it in at the right
@@ -363,6 +359,11 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Allow batch job to do OS specific stuff
     job.pre()
+
+    # ROS_DOMAIN_ID must be unique to each CI machine on a network to avoid crosstalk
+    if 'ROS_DOMAIN_ID' not in os.environ:
+        raise KeyError('ROS_DOMAIN_ID environment variable must be set')
+
     # Check the env
     job.show_env()
 
