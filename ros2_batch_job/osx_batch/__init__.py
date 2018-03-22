@@ -41,7 +41,7 @@ class OSXBatchJob(BatchJob):
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '111'
         if 'OPENSSL_ROOT_DIR' not in os.environ:
-            warn('OPENSSL_ROOT_DIR not set; installing openssl')
+            warn('OPENSSL_ROOT_DIR not set; finding openssl')
             brew_openssl_prefix_result = subprocess.run(
                 ['brew', '--prefix', 'openssl'],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
