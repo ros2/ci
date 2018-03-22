@@ -46,15 +46,18 @@ class OSXBatchJob(BatchJob):
                 ['brew', '--prefix', 'openssl'],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if not brew_openssl_prefix_result.stderr:
-                os.environ['OPENSSL_ROOT_DIR'] = brew_openssl_prefix_result.stdout.decode().strip('\n')
+                os.environ['OPENSSL_ROOT_DIR'] = \
+                    brew_openssl_prefix_result.stdout.decode().strip('\n')
             else:
                 raise KeyError('Failed to find openssl')
         if 'OSPL_HOME' not in os.environ:
             warn('OSPL_HOME not set; using default value')
-            os.environ['OSPL_HOME'] = os.path.join(os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
+            os.environ['OSPL_HOME'] = os.path.join(
+                os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
         # TODO(wjwwood): remove this when qt5 is linked on macOS by default
         # See: https://github.com/Homebrew/homebrew-core/issues/8392#issuecomment-334328367
-        os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + os.pathsep + '/usr/local/opt/qt'
+        os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + os.pathsep + \
+            '/usr/local/opt/qt'
 
     def post(self):
         pass
