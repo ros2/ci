@@ -22,6 +22,7 @@ They are documented here
 - `REPLACE_AGENT_DESCRIPTION`: The description fof the agent in the Jenkins UI.
 - `REPLACE_USERNAME`: The Jenkins username of the user with node creation privileges.
 - `REPLACE_PASSWORD`: The password (usually a GitHub auth token for us) for the above user.
+- `REPLACE_DOMAIN_ID`: The DDS domain ID to use by setting `ROS_DOMAIN_ID`.
 
 
 ## Installing the jenkins agent property list (.plist file)
