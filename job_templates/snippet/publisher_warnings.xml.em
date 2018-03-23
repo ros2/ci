@@ -45,7 +45,7 @@
 @[elif os_name == 'windows']@
           <parserName>MSBuild</parserName>
 @[else]@
-@{assert 'Unknown os_name: ' + os_name}@
+@{assert False, 'Unknown os_name: ' + os_name}@
 @[end if]@
         </hudson.plugins.warnings.ConsoleParser>
       </consoleParsers>
