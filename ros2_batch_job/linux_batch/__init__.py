@@ -27,7 +27,8 @@ class LinuxBatchJob(BatchJob):
         BatchJob.__init__(self, python_interpreter=args.python_interpreter)
 
     def pre(self):
-        # Check if ROS_DOMAIN_ID was already set in the environment
+        # Linux jobs are run on machines in the cloud
+        # Assume machines won't crosstalk even if they have the same default ROS_DOMAIN_ID
         if 'ROS_DOMAIN_ID' not in os.environ:
             os.environ['ROS_DOMAIN_ID'] = '108'
         # Check for ccache's directory, as installed by apt-get

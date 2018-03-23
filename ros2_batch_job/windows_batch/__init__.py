@@ -27,8 +27,7 @@ class WindowsBatchJob(BatchJob):
         BatchJob.__init__(self, python_interpreter=args.python_interpreter)
 
     def pre(self):
-        if 'ROS_DOMAIN_ID' not in os.environ:
-            os.environ['ROS_DOMAIN_ID'] = '119'
+        pass
 
     def post(self):
         pass

@@ -38,8 +38,6 @@ class OSXBatchJob(BatchJob):
         if 'LANG' not in os.environ:
             warn('LANG unset; using default value')
             os.environ['LANG'] = 'en_US.UTF-8'
-        if 'ROS_DOMAIN_ID' not in os.environ:
-            os.environ['ROS_DOMAIN_ID'] = '111'
         if 'OPENSSL_ROOT_DIR' not in os.environ:
             warn('OPENSSL_ROOT_DIR not set; finding openssl')
             brew_openssl_prefix_result = subprocess.run(
