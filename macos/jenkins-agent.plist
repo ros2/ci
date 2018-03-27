@@ -28,7 +28,7 @@
 		<string>-executors</string>
 		<string>1</string>
 		<string>-fsroot</string>
-		<string>/home/osrf/jenkins-agent</string>
+		<string>/Users/osrf/jenkins-agent</string>
 	</array>
 	<key>EnvironmentVariables</key>
 	<dict>
