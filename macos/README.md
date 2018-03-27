@@ -11,6 +11,7 @@ The agent plist was written when dosa was reimaged December 2017 and updated to 
 It expects that the directory `$HOME/jenkins-agent` exists and that it contains the Jenkins agent program `swarm-client-3.8.jar`.
 The swarm client, when combined with the [Swarm plugin](https://plugins.jenkins.io/swarm) on the buildfarm, allows for easier addition and removal of temporary Jenkins nodes.
 It can be downloaded from [this repository](https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/).
+The agent must have at least Java JDK 8 installed.
 
 The file contains a few fields that must be updated for the specific CI host.
 To find them all run `grep REPLACE_ jenkins-agent.plist`.
