@@ -33,7 +33,7 @@
 	<key>EnvironmentVariables</key>
 	<dict>
 		<key>ROS_DOMAIN_ID</key>
-		</string>REPLACE_DOMAIN_ID</string>
+		<string>REPLACE_DOMAIN_ID</string>
 	</dict>
 	<!-- Ensure that the agent is restarted automatically if it disconnects -->
 	<key>KeepAlive</key>
