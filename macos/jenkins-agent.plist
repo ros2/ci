@@ -28,12 +28,12 @@
 		<string>-executors</string>
 		<string>1</string>
 		<string>-fsroot</string>
-		<string>/home/osrf/jenkins-agent</string>
+		<string>/Users/osrf/jenkins-agent</string>
 	</array>
 	<key>EnvironmentVariables</key>
 	<dict>
 		<key>ROS_DOMAIN_ID</key>
-		</string>REPLACE_DOMAIN_ID</string>
+		<string>REPLACE_DOMAIN_ID</string>
 	</dict>
 	<!-- Ensure that the agent is restarted automatically if it disconnects -->
 	<key>KeepAlive</key>
