@@ -50,7 +50,7 @@ pip_dependencies = [
     'coverage',
     'flake8',
     'flake8-blind-except',
-    'flake8-builtins',
+    'flake8-builtins==1.1.1',
     'flake8-class-newline',
     'flake8-comprehensions',
     'flake8-deprecated',
