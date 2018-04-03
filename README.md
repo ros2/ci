@@ -5,8 +5,8 @@ This repository contains all of the scripts and resources for running batch CI j
 ## Setting up on a Jenkins build farm
 
 You can run the `create_jenkins_job.py` Python3 script to create the jobs on your Jenkins build farm.
-This assumes you have a Jenkins build farm with at least one Linux slave, OS X slave, and Windows slave.
-However, even if you do not have the slaves setup yet, you can create the jobs.
+This assumes you have a Jenkins build farm with at least one Linux agent, OS X agent, and Windows agent.
+However, even if you do not have the agents setup yet, you can create the jobs.
 
 Before you run the script to create the jobs, you'll need to setup your environment according to this document:
 
@@ -38,9 +38,9 @@ The branch can be changed when running the job (it's a job parameter) to make it
 
 The jobs will be mostly setup, but you may need to adjust some settings for your farm.
 
-First you'll need to look at each job configuration and make sure that the 'Label Expression' for the 'Restrict where this project can be run' option matches some build slave label or build slave name for the operating system.
-For example, the default value for this in the Windows job is 'windows_slave_eatable_desktop' because we (OSRF) run a Jenkins slave on a desktop in the office and this is its name.
-Your Windows slave may be named differently and you'll need to update the label to match your slave or the job will not run.
+First you'll need to look at each job configuration and make sure that the 'Label Expression' for the 'Restrict where this project can be run' option matches some build agent label or build agent name for the operating system.
+For example, the default value for this in the Windows job is 'windows' because we (OSRF) run multiple Jenkins agents all with this label.
+You may want your job to run on a specific Windows agent in which case you can update the label to match the agent name/label you want to use.
 
 Another thing to check is the credentials settings.
 The RTI binaries are provided by a git submodule which points to a private GitHub repository.
