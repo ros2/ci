@@ -13,7 +13,7 @@
 		<string>-master</string>
 		<string>http://ci.ros2.org:8080</string>
 		<string>-labels</string>
-		<string>macos osx_slave</string>
+		<string>macos</string>
 		<string>-name</string>
 		<string>macos_REPLACE_AGENT_NAME</string>
 		<string>-description</string>

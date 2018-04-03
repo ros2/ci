@@ -15,7 +15,7 @@
 	<argument>-fsroot</argument><argument>%BASE%</argument>
 	<argument>-mode</argument><argument>exclusive</argument>
 	<argument>-executors</argument><argument>1</argument>
-	<argument>-labels</argument><argument>windows windows_slave</argument>
+	<argument>-labels</argument><argument>windows</argument>
 	<argument>-username</argument><argument>REPLACE_USERNAME</argument>
 	<argument>-password</argument><argument>REPLACE_PASSWORD</argument>
 	<argument>-disableClientsUniqueId</argument>
