@@ -95,14 +95,14 @@ def main(argv=None):
             'shell_type': 'Shell',
         },
         'osx': {
-            'label_expression': 'osx_slave',
+            'label_expression': 'macos',
             'shell_type': 'Shell',
             # the current OS X slave can't handle  git@github urls
             'ci_scripts_repository': args.ci_scripts_repository.replace(
                 'git@github.com:', 'https://github.com/'),
         },
         'windows': {
-            'label_expression': 'windows_slave',
+            'label_expression': 'windows',
             'shell_type': 'BatchFile',
         },
         'linux-aarch64': {
