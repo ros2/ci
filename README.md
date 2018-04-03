@@ -62,11 +62,6 @@ The parameters have their own descriptions, but the main one to look at is the `
 It allows you to select a branch name across all of the repositories in the `.repos` file that should be tested.
 Repositories which have this branch will be switched to it, others will be left on the default branch, usually `master`.
 
-### Notes about the Windows Slave
+### Notes about MacOS, Windows Agents
 
-I had trouble setting up the ssh-agent on Windows, so I disabled the submodule init on Windows which removes the need for cloning from private repositories and there removes the need for ssh keys and the ssh agent.
-The private submodule is still pulled on OS X and Linux.
-
-### Notes about MacOS Agents
-
-Configuration details for running the Jenkins agent process via launchd can be found in the [configuration](https://github.com/ros2/ci/tree/configuration) branch of this repository.
+Configuration details for running the Jenkins agent process via the Jenkins Swarm Client can be found in the [configuration](https://github.com/ros2/ci/tree/configuration) branch of this repository.
