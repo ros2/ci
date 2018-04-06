@@ -19,5 +19,6 @@
 	<argument>-username</argument><argument>REPLACE_USERNAME</argument>
 	<argument>-password</argument><argument>REPLACE_PASSWORD</argument>
 	<argument>-disableClientsUniqueId</argument>
+	<argument>-deleteExistingClients</argument>
 </service>
 

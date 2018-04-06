@@ -19,6 +19,7 @@
 		<string>-description</string>
 		<string>REPLACE_AGENT_DESCRIPTION</string>
 		<string>-disableClientsUniqueId</string>
+		<string>-deleteExistingClients</string>
 		<string>-username</string>
 		<string>REPLACE_USERNAME</string>
 		<string>-password</string>
