@@ -138,25 +138,9 @@ if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  case $CI_AMENT_BUILD_ARGS in
-    *-- )
-      # delimiter is already appended
-      ;;
-    * )
-      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
-      ;;
-  esac
   export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  case $CI_AMENT_TEST_ARGS in
-    *-- )
-      # delimiter is already appended
-      ;;
-    * )
-      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
-      ;;
-  esac
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
 @[if os_name in ['linux', 'linux-aarch64']]@
@@ -202,47 +186,42 @@ echo "# BEGIN SECTION: Run packaging script"
 echo "# END SECTION"
 @[end if]@
 @[elif os_name == 'windows']@
+setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
-set "PATH=%PATH:"=%"
+set "PATH=!PATH:"=!"
 set "CI_ARGS=--packaging --force-ansi-color"
-if "%CI_BRANCH_TO_TEST%" NEQ "" (
-  set "CI_ARGS=%CI_ARGS% --test-branch %CI_BRANCH_TO_TEST%"
+if "!CI_BRANCH_TO_TEST!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-branch !CI_BRANCH_TO_TEST!"
 )
-if "%CI_USE_FASTRTPS%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --fastrtps"
+if "!CI_USE_FASTRTPS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --fastrtps"
 )
-if "%CI_USE_OPENSPLICE%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --opensplice"
+if "!CI_USE_OPENSPLICE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --opensplice"
 )
-if "%CI_ROS2_REPOS_URL%" EQU "" (
+if "!CI_ROS2_REPOS_URL!" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
-set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
-if "%CI_TEST_BRIDGE%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --test-bridge"
+set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
+if "!CI_TEST_BRIDGE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --test-bridge"
 )
-if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
-  set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
+if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
+  set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
 )
-if "%CI_AMENT_BUILD_ARGS%" NEQ "" (
-  if "%CI_AMENT_BUILD_ARGS:~-2%" NEQ "--" (
-    set "CI_AMENT_BUILD_ARGS=%CI_AMENT_BUILD_ARGS% --"
-  )
-  set "CI_ARGS=%CI_ARGS% --ament-build-args %CI_AMENT_BUILD_ARGS%"
+if "!CI_AMENT_BUILD_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --ament-build-args !CI_AMENT_BUILD_ARGS!"
 )
-if "%CI_AMENT_TEST_ARGS%" NEQ "" (
-  if "%CI_AMENT_TEST_ARGS:~-2%" NEQ "--" (
-    set "CI_AMENT_TEST_ARGS=%CI_AMENT_TEST_ARGS% --"
-  )
-  set "CI_ARGS=%CI_ARGS% --ament-test-args %CI_AMENT_TEST_ARGS%"
+if "!CI_AMENT_TEST_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --ament-test-args !CI_AMENT_TEST_ARGS!"
 )
-echo Using args: %CI_ARGS%
+echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Run packaging script"
-python -u run_ros2_batch.py %CI_ARGS%
+python -u run_ros2_batch.py !CI_ARGS!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
