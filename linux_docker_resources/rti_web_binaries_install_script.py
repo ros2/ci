@@ -48,6 +48,8 @@ def install_connext(installer_path, install_directory):
                 child.sendline('y')
             elif result_index == 2:
                 child.sendline('n')
+            else:
+                raise RuntimeError('Unexpected result index: %d' % result_index)
 
     except (pexpect.TIMEOUT, pexpect.EOF):
         raise RuntimeError(
