@@ -36,11 +36,18 @@ def install_connext(installer_path, install_directory):
         child.sendline(install_directory)
         child.expect_exact('Do you want to continue? [Y/n]:')
         child.sendline('y')
-        result_index = child.expect_exact([
-            'Create an RTI Launcher shortcut on the Desktop [y/N]: ', pexpect.EOF], timeout=120)
-        if result_index == 0:
-            child.sendline('n')
-            child.expect(pexpect.EOF)
+        while True:
+            result_index = child.expect_exact([
+                pexpect.EOF,
+                'Disable copying of examples to rti_workspace [y/N]: ',
+                'Create an RTI Launcher shortcut on the Desktop [y/N]: ',
+                ], timeout=120)
+            if result_index == 0:
+                return
+            elif result_index == 1:
+                child.sendline('y')
+            elif result_index == 2:
+                child.sendline('n')
 
     except (pexpect.TIMEOUT, pexpect.EOF):
         raise RuntimeError(
