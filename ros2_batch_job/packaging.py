@@ -35,22 +35,19 @@ def build_and_test_and_package(args, job):
         with open(ros1_bridge_ignore_marker, 'w'):
             pass
 
-    ament_py = '"%s"' % os.path.join(
-        '.', args.sourcespace, 'ament', 'ament_tools', 'scripts', 'ament.py'
-    )
     # Now run ament build
     cmd = [
-        job.python, '-u', ament_py, 'build',
-        '"%s"' % args.sourcespace,
-        '--build-space', '"%s"' % args.buildspace,
-        '--install-space', '"%s"' % args.installspace,
-    ]
-    if args.isolated:
-        cmd.append('--isolated')
-    if args.cmake_build_type:
-        cmd += ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
-    if args.ament_build_args:
-        cmd += args.ament_build_args
+        args.colcon_script, 'build',
+        '--base-paths', '"%s"' % args.sourcespace,
+        '--build-base', '"%s"' % args.buildspace,
+        '--install-base', '"%s"' % args.installspace,
+        '--cmake-args', '" -DBUILD_TESTING=1"',
+    ] + (['--merge-install'] if not args.isolated else []) + \
+        (
+            ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
+                args.cmake_build_type + '"']
+            if args.cmake_build_type else []
+    ) + args.ament_build_args
     job.run(cmd)
 
     if ros1_bridge_ignore_marker:
@@ -63,19 +60,18 @@ def build_and_test_and_package(args, job):
         print('# BEGIN SUBSECTION: build ROS 1 bridge')
         # Now run ament build only for the bridge
         job.run([
-            job.python, '-u', ament_py, 'build',
-            '"%s"' % args.sourcespace,
-            '--build-tests',
-            '--build-space', '"%s"' % args.buildspace,
-            '--install-space', '"%s"' % args.installspace,
-            '--only-packages', 'ros1_bridge',
-        ] + (['--isolated'] if args.isolated else []) +
+            args.colcon_script, 'build',
+            '--base-paths', '"%s"' % args.sourcespace,
+            '--build-base', '"%s"' % args.buildspace,
+            '--install-base', '"%s"' % args.installspace,
+            '--cmake-args', '" -DBUILD_TESTING=1"',
+            '--packages-select', 'ros1_bridge',
+        ] + (['--merge-install'] if not args.isolated else []) +
             (
-                ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
+                ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
+                    args.cmake_build_type + '"']
                 if args.cmake_build_type else []
-            ) + [
-            '--make-flags', '-j1', '--'
-        ])
+        ))
         print('# END SUBSECTION')
 
         if args.test_bridge:
@@ -86,18 +82,16 @@ def build_and_test_and_package(args, job):
             print('# BEGIN SUBSECTION: test ROS 1 bridge')
             # Now run ament test only for the bridge
             ret_test = job.run([
-                '"%s"' % job.python, '-u', '"%s"' % ament_py, 'test',
-                '"%s"' % args.sourcespace,
-                '--build-space', '"%s"' % args.buildspace,
-                '--install-space', '"%s"' % args.installspace,
-                '--only-packages', 'ros1_bridge',
-                # Skip building and installing, since we just did that successfully.
-                '--skip-build', '--skip-install',
+                args.colcon_script, 'test',
+                '--base-paths', '"%s"' % args.sourcespace,
+                '--build-base', '"%s"' % args.buildspace,
+                '--install-base', '"%s"' % args.installspace,
+                '--packages-select', 'ros1_bridge',
                 # Ignore return codes that indicate test failures;
                 # they'll be picked up later in test reporting.
-                '--ignore-return-codes',
-            ] + (['--isolated'] if args.isolated else []) + args.ament_test_args,
-                exit_on_error=False, shell=True)
+                # '--ignore-return-codes',
+            ] + (['--merge-install'] if not args.isolated else []) +
+                args.ament_test_args, exit_on_error=False, shell=True)
             info("ament.py test returned: '{0}'".format(ret_test))
             print('# END SUBSECTION')
             if ret_test:
