@@ -149,15 +149,15 @@ fi
 if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
+@[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
+@[end if]@
 if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
 fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
-@[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
-@[end if]@
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
