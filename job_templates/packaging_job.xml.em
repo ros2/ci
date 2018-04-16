@@ -134,6 +134,11 @@ export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
 if [ "$CI_TEST_BRIDGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --test-bridge"
 fi
+@[if os_name in ['linux', 'linux-aarch64']]@
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
+@[else]@
+export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
+@[end if]@
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
@@ -143,11 +148,6 @@ fi
 if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
 fi
-@[if os_name in ['linux', 'linux-aarch64']]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
-@[else]@
-export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
-@[end if]@
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
