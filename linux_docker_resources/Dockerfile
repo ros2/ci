@@ -52,7 +52,7 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 RUN pip3 install pexpect
 
 # Get and install the RTI web binaries.
-RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.0/Evaluation/rti_connext_dds_secure-5.3.0-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
+RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.

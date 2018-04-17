@@ -44,7 +44,7 @@ class WindowsBatchJob(BatchJob):
         if self.args.connext:
             pf = os.environ.get('ProgramFiles', "C:\\Program Files\\")
             connext_env_file = os.path.join(
-                pf, 'rti_connext_dds-5.3.0', 'resource', 'scripts', 'rtisetenv_X64Win64VS2015.bat')
+                pf, 'rti_connext_dds-5.3.1', 'resource', 'scripts', 'rtisetenv_x64Win64VS2017.bat')
             if not os.path.exists(connext_env_file):
                 warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
                     connext_env_file))
@@ -67,8 +67,8 @@ class WindowsBatchJob(BatchJob):
             f.write("@echo off" + os.linesep)
             f.write(
                 'call '
-                '"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" '
-                'x86_amd64 8.1' + os.linesep)
+                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" '
+                'x86_amd64' + os.linesep)
             if connext_env_file is not None:
                 f.write('call "%s"%s' % (connext_env_file, os.linesep))
             if opensplice_env_file is not None:
