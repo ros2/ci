@@ -99,8 +99,9 @@ def build_and_test_and_package(args, job):
 
             print('# BEGIN SUBSECTION: ament test_results')
             # Collect the test results
-            ret_test_results = job.run(
-                ['"%s"' % job.python, '-u', '"%s"' % ament_py, 'test_results', '"%s"' % args.buildspace],
+            ret_test_results = job.run([
+                args.colcon_script, 'test-result',
+                '--build-base', '"%s"' % args.buildspace],
                 exit_on_error=False, shell=True
             )
             info("ament.py test_results returned: '{0}'".format(ret_test_results))
