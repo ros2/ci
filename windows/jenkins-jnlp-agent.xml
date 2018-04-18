@@ -1,0 +1,17 @@
+ <service>
+	<id>ros2ci-jnlp-agent</id>
+	<name>ROS2 CI JNLP Agent</name>
+	<description>Jenkins pre-configured agent for ROS 2 CI.</description>
+	<onfailure action="restart"/>
+
+	<executable>java</executable>
+	<argument>-Xrs</argument>
+	<argument>-Djava.awt.headless=true</argument>
+	<argument>-jar</argument>
+	<argument>%BASE%\agent.jar</argument>
+	<argument>-jnlpUrl</argument>
+	<argument>https://ci.ros2.org/computer/windows_REPLACE_AGENT_NAME/slave-agent.jnlp</argument>
+	<argument>-secret</argument>
+	<argument>REPLACE_JNLP_SECRET</argument>
+</service>
+
