@@ -80,7 +80,7 @@ def main(argv=None):
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
         'ament_build_args_default': '--cmake-args " -DSECURITY=ON" --event-handler console_cohesion+',
-        'ament_test_args_default': '--retest-until-pass 10',
+        'ament_test_args_default': '--retest-until-pass 10 --event-handler console_cohesion+',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
