@@ -260,7 +260,6 @@ def build_and_test(args, job):
     ret_build = job.run([
         args.colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
-        # '--build-tests',
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ] + (['--merge-install'] if not args.isolated else []) + [
