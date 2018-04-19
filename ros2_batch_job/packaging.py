@@ -41,13 +41,20 @@ def build_and_test_and_package(args, job):
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-        '--cmake-args', '" -DBUILD_TESTING=1"',
     ] + (['--merge-install'] if not args.isolated else []) + \
-        (
-            ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
-                args.cmake_build_type + '"']
-            if args.cmake_build_type else []
-    ) + args.ament_build_args
+        args.ament_build_args
+
+    cmake_args = ['" -DBUILD_TESTING=1"']
+    if args.cmake_build_type:
+        cmake_args.append(
+            '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
+    if '--cmake-args' in cmd:
+        index = cmd.index('--cmake-args')
+        cmd[index + 1:index + 1] = cmake_args
+    else:
+        cmd.append('--cmake-args')
+        cmd.extend(cmake_args)
+
     job.run(cmd)
 
     if ros1_bridge_ignore_marker:

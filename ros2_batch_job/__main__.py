@@ -257,22 +257,37 @@ def build_and_test(args, job):
     coverage = args.coverage and args.os == 'linux'
 
     print('# BEGIN SUBSECTION: colcon build')
-    ret_build = job.run([
+    cmd = [
         args.colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-    ] + (['--merge-install'] if not args.isolated else []) + [
-        '--cmake-args', '" -DBUILD_TESTING=1"',
-    ] + (
-            ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
-                args.cmake_build_type + '"']
-            if args.cmake_build_type else []
-        ) + args.ament_build_args +
-        (['--ament-cmake-args " -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} ' +
-            gcov_flags + '" " -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ' +
-            gcov_flags + '"']
-            if coverage else []), shell=True)
+    ] + (['--merge-install'] if not args.isolated else []) + \
+        args.ament_build_args
+
+    cmake_args = ['" -DBUILD_TESTING=1"']
+    if args.cmake_build_type:
+        cmake_args.append(
+            '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
+    if '--cmake-args' in cmd:
+        index = cmd.index('--cmake-args')
+        cmd[index + 1:index + 1] = cmake_args
+    else:
+        cmd.append('--cmake-args')
+        cmd.extend(cmake_args)
+
+    if coverage:
+        ament_cmake_args = [
+            '" -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
+            '" -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ' + gcov_flags + '"']
+        if '--ament-cmake-args' in cmd:
+            index = cmd.index('--ament-cmake-args')
+            cmd[index + 1:index + 1] = ament_cmake_args
+        else:
+            cmd.append('--ament-cmake-args')
+            cmd.extend(ament_cmake_args)
+
+    ret_build = job.run(cmd, shell=True)
     info("colcon build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
     if ret_build:
