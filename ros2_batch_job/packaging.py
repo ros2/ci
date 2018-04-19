@@ -24,7 +24,7 @@ from .util import info
 
 
 def build_and_test_and_package(args, job):
-    print('# BEGIN SUBSECTION: ament build')
+    print('# BEGIN SUBSECTION: build')
     # ignore ROS 1 bridge package for now
     ros1_bridge_path = os.path.join(args.sourcespace, 'ros2', 'ros1_bridge')
     info('ROS1 bridge path: %s' % ros1_bridge_path)
@@ -35,14 +35,14 @@ def build_and_test_and_package(args, job):
         with open(ros1_bridge_ignore_marker, 'w'):
             pass
 
-    # Now run ament build
+    # Now run build
     cmd = [
         args.colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ] + (['--merge-install'] if not args.isolated else []) + \
-        args.ament_build_args
+        args.build_args
 
     cmake_args = ['" -DBUILD_TESTING=1"']
     if args.cmake_build_type:
@@ -65,7 +65,7 @@ def build_and_test_and_package(args, job):
     # ROS1 is not supported on Windows
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: build ROS 1 bridge')
-        # Now run ament build only for the bridge
+        # Now run build only for the bridge
         job.run([
             args.colcon_script, 'build',
             '--base-paths', '"%s"' % args.sourcespace,
@@ -87,7 +87,7 @@ def build_and_test_and_package(args, job):
             print('# END SUBSECTION')
 
             print('# BEGIN SUBSECTION: test ROS 1 bridge')
-            # Now run ament test only for the bridge
+            # Now run test only for the bridge
             ret_test = job.run([
                 args.colcon_script, 'test',
                 '--base-paths', '"%s"' % args.sourcespace,
@@ -98,20 +98,20 @@ def build_and_test_and_package(args, job):
                 # they'll be picked up later in test reporting.
                 # '--ignore-return-codes',
             ] + (['--merge-install'] if not args.isolated else []) +
-                args.ament_test_args, exit_on_error=False, shell=True)
-            info("ament.py test returned: '{0}'".format(ret_test))
+                args.test_args, exit_on_error=False, shell=True)
+            info("test returned: '{0}'".format(ret_test))
             print('# END SUBSECTION')
             if ret_test:
                 return ret_test
 
-            print('# BEGIN SUBSECTION: ament test_results')
+            print('# BEGIN SUBSECTION: test-result')
             # Collect the test results
             ret_test_results = job.run([
                 args.colcon_script, 'test-result',
                 '--build-base', '"%s"' % args.buildspace],
                 exit_on_error=False, shell=True
             )
-            info("ament.py test_results returned: '{0}'".format(ret_test_results))
+            info("test-result returned: '{0}'".format(ret_test_results))
             print('# END SUBSECTION')
 
     # Only on Linux and OSX Python scripts have a shebang line

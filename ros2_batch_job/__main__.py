@@ -163,11 +163,11 @@ def get_args(sysargv=None):
         '--cmake-build-type', default=None,
         help='select the CMake build type')
     parser.add_argument(
-        '--ament-build-args', default=None,
-        help="arguments passed to 'ament build'")
+        '--build-args', default=None,
+        help="arguments passed to the 'build' verb")
     parser.add_argument(
-        '--ament-test-args', default=None,
-        help="arguments passed to 'ament test'")
+        '--test-args', default=None,
+        help="arguments passed to the 'test' verb")
     parser.add_argument(
         '--src-mounted', default=False, action='store_true',
         help="src directory is already mounted into the workspace")
@@ -179,17 +179,17 @@ def get_args(sysargv=None):
         help="base path of the workspace")
     parser.add_argument(
         '--python-interpreter', default=None,
-        help='pass different Python interpreter to ament')
+        help='pass different Python interpreter')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
-    argv, ament_build_args = extract_argument_group(argv, '--ament-build-args')
-    if '--ament-test-args' in argv:
-        argv, ament_test_args = extract_argument_group(argv, '--ament-test-args')
+    argv, build_args = extract_argument_group(argv, '--build-args')
+    if '--test-args' in argv:
+        argv, test_args = extract_argument_group(argv, '--test-args')
     else:
-        ament_build_args, ament_test_args = extract_argument_group(ament_build_args, '--ament-test-args')
+        build_args, test_args = extract_argument_group(build_args, '--test-args')
     args = parser.parse_args(argv)
-    args.ament_build_args = ament_build_args
-    args.ament_test_args = ament_test_args
+    args.build_args = build_args
+    args.test_args = test_args
     return args
 
 
@@ -263,7 +263,7 @@ def build_and_test(args, job):
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ] + (['--merge-install'] if not args.isolated else []) + \
-        args.ament_build_args
+        args.build_args
 
     cmake_args = ['" -DBUILD_TESTING=1"']
     if args.cmake_build_type:
@@ -299,7 +299,7 @@ def build_and_test(args, job):
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-    ] + (['--merge-install'] if not args.isolated else []) + args.ament_test_args,
+    ] + (['--merge-install'] if not args.isolated else []) + args.test_args,
         exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
@@ -553,9 +553,6 @@ def run(args, build_function, blacklisted_package_names=None):
     job.post()
     return rc
 
-
-def get_ament_script(basepath):
-    return os.path.join(basepath, 'ament', 'ament_tools', 'scripts', 'ament.py')
 
 def _fetch_repos_file(url, filename, job):
     """Use curl to fetch a repos file and display the contents."""
