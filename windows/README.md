@@ -35,7 +35,7 @@ Copy `WinSW.NET4.exe` to the `C:\J` directory.
 The file contains a few fields that must be updated for the specific CI host.
 To find them all run `grep REPLACE_ jenkins-agent.plist`.
 
-- `REPLACE_AGENT_NAME`: The slug name of the CI host in the Jenkins U without the `windows_` prefix (Example: windshield for windows_windshield).
+- `REPLACE_AGENT_NAME`: The slug name of the CI host in the Jenkins UI without the `windows_` prefix (Example: windshield for windows_windshield).
 - `REPLACE_AGENT_DESCRIPTION`: The description of the agent in the Jenkins UI.
 - `REPLACE_USERNAME`: The Jenkins username of the user with node creation privileges.
 - `REPLACE_PASSWORD`: The password (usually a Jenkins auth token) for the above user.
