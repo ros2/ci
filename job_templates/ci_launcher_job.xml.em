@@ -27,8 +27,8 @@
     use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
     cmake_build_type=cmake_build_type,
-    ament_build_args_default=ament_build_args_default,
-    ament_test_args_default=ament_test_args_default,
+    build_args_default=build_args_default,
+    test_args_default=test_args_default,
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
   </properties>

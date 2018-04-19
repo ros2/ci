@@ -28,8 +28,8 @@
     use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
     cmake_build_type=cmake_build_type,
-    ament_build_args_default=ament_build_args_default,
-    ament_test_args_default=ament_test_args_default,
+    build_args_default=build_args_default,
+    test_args_default=test_args_default,
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
   </properties>
@@ -94,8 +94,8 @@ supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMEN
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
-ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')}, <br/>
-ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}, <br/>
+build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
+test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
         </script>
@@ -153,11 +153,11 @@ fi
 @[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
 @[end if]@
-if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
+if [ -n "${CI_BUILD_ARGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
 fi
-if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
+if [ -n "${CI_TEST_ARGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --test-args $CI_TEST_ARGS"
 fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
@@ -261,11 +261,11 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
 if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
 )
-if "!CI_AMENT_BUILD_ARGS!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ament-build-args !CI_AMENT_BUILD_ARGS!"
+if "!CI_BUILD_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
-if "!CI_AMENT_TEST_ARGS!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ament-test-args !CI_AMENT_TEST_ARGS!"
+if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
 echo "# END SECTION"

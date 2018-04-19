@@ -23,7 +23,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     cmake_build_type=cmake_build_type,
-    ament_build_args_default=ament_build_args_default,
+    build_args_default=build_args_default,
 ))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_FASTRTPS</name>
@@ -41,9 +41,9 @@
           <defaultValue>@(test_bridge_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>CI_AMENT_TEST_ARGS</name>
-          <description>Additional arguments passed to 'ament test' if testing the bridge.</description>
-          <defaultValue>@(ament_test_args_default)</defaultValue>
+          <name>CI_TEST_ARGS</name>
+          <description>Additional arguments passed to the 'test' verb if testing the bridge.</description>
+          <defaultValue>@(test_args_default)</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -102,9 +102,9 @@ repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
-ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')}, <br/>
+build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
-ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
+test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
 """);]]>
         </script>
           <sandbox>false</sandbox>
@@ -142,11 +142,11 @@ export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
-if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
+if [ -n "${CI_BUILD_ARGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
 fi
-if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
+if [ -n "${CI_TEST_ARGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --test-args $CI_TEST_ARGS"
 fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
@@ -211,11 +211,11 @@ if "!CI_TEST_BRIDGE!" == "true" (
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
 )
-if "!CI_AMENT_BUILD_ARGS!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ament-build-args !CI_AMENT_BUILD_ARGS!"
+if "!CI_BUILD_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
-if "!CI_AMENT_TEST_ARGS!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ament-test-args !CI_AMENT_TEST_ARGS!"
+if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
 echo "# END SECTION"
