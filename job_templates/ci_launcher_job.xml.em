@@ -102,6 +102,16 @@ for (item in build_numbers) {
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[end if]@
+@[if os_name == 'windows']@
+            <hudson.plugins.parameterizedtrigger.BooleanParameters>
+              <configs>
+                <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
+                  <name>CI_ISOLATED</name>
+                  <value>@(os_data['use_isolated_default'])</value>
+                </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
+              </configs>
+            </hudson.plugins.parameterizedtrigger.BooleanParameters>
+@[end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
           <condition>SUCCESS</condition>
