@@ -48,7 +48,7 @@ This tests the robustness to whitespace being within the different paths.</descr
         <hudson.model.BooleanParameterDefinition>
           <name>CI_ISOLATED</name>
           <description>By setting this to True, the build will use the --isolated option.</description>
-          <defaultValue>true</defaultValue>
+          <defaultValue>@(use_isolated_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_ENABLE_C_COVERAGE</name>

@@ -25,6 +25,7 @@
     use_osrf_connext_debs_default=use_osrf_connext_debs_default,
     use_fastrtps_default=use_fastrtps_default,
     use_opensplice_default=use_opensplice_default,
+    use_isolated_default=use_isolated_default,
     cmake_build_type=cmake_build_type,
     ament_build_args_default=ament_build_args_default,
     ament_test_args_default=ament_test_args_default,
@@ -97,6 +98,16 @@ for (item in build_numbers) {
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
                   <name>CI_USE_CONNEXT</name>
                   <value>false</value>
+                </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
+              </configs>
+            </hudson.plugins.parameterizedtrigger.BooleanParameters>
+@[end if]@
+@[if os_name == 'windows']@
+            <hudson.plugins.parameterizedtrigger.BooleanParameters>
+              <configs>
+                <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
+                  <name>CI_ISOLATED</name>
+                  <value>@(os_data['use_isolated_default'])</value>
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>

@@ -79,6 +79,7 @@ def main(argv=None):
         'use_osrf_connext_debs_default': 'false',
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
+        'use_isolated_default': 'true',
         'ament_build_args_default': '--parallel --cmake-args -DSECURITY=ON --',
         'ament_test_args_default': '--retest-until-pass 10',
         'enable_c_coverage_default': 'false',
@@ -104,6 +105,7 @@ def main(argv=None):
         'windows': {
             'label_expression': 'windows',
             'shell_type': 'BatchFile',
+            'use_isolated_default': 'false',
         },
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
