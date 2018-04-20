@@ -25,6 +25,7 @@
     use_osrf_connext_debs_default=use_osrf_connext_debs_default,
     use_fastrtps_default=use_fastrtps_default,
     use_opensplice_default=use_opensplice_default,
+    use_isolated_default=use_isolated_default,
     cmake_build_type=cmake_build_type,
     ament_build_args_default=ament_build_args_default,
     ament_test_args_default=ament_test_args_default,
