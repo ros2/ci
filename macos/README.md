@@ -24,7 +24,8 @@ cd ~/jenkins-agent && wget https://ci.ros2.org/jnlpJars/agent.jar
 ```
 
 The agent must have at least Java JDK 8 installed.
-For best results use the same version as our Jenkins master, currently `1.8.0_162`.
+For best results use the same version as our Jenkins host.
+Run `java -version` on ci.ros2.org or check the `java.version` key on <https://ci.ros2.org/systemInfo>.
 
 Download the relevant launchd plist for your agent type.
 
