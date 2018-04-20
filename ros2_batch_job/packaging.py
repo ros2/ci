@@ -66,6 +66,8 @@ def build_and_test_and_package(args, job):
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: build ROS 1 bridge')
         # Now run build only for the bridge
+        env = dict(os.environ)
+        env['MAKEFLAGS'] = '-j1'
         job.run([
             args.colcon_script, 'build',
             '--base-paths', '"%s"' % args.sourcespace,
@@ -78,7 +80,7 @@ def build_and_test_and_package(args, job):
                 ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
                     args.cmake_build_type + '"']
                 if args.cmake_build_type else []
-        ))
+        ), env=env)
         print('# END SUBSECTION')
 
         if args.test_bridge:
