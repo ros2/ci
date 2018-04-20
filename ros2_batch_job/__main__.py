@@ -306,10 +306,19 @@ def build_and_test(args, job):
     if ret_test:
         return ret_test
 
-    print('# BEGIN SUBSECTION: colcon test-result')
+    print('# BEGIN SUBSECTION: colcon test-result --all')
     # Collect the test results
     ret_test_results = job.run(
         [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace, '--all'],
+        exit_on_error=False, shell=True
+    )
+    info("colcon test-result returned: '{0}'".format(ret_test_results))
+    print('# END SUBSECTION')
+
+    print('# BEGIN SUBSECTION: colcon test-result')
+    # Collect the test results
+    ret_test_results = job.run(
+        [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace],
         exit_on_error=False, shell=True
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))
