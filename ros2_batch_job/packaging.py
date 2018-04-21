@@ -24,33 +24,37 @@ from .util import info
 
 
 def build_and_test_and_package(args, job):
-    print('# BEGIN SUBSECTION: ament build')
+    print('# BEGIN SUBSECTION: build')
     # ignore ROS 1 bridge package for now
     ros1_bridge_path = os.path.join(args.sourcespace, 'ros2', 'ros1_bridge')
     info('ROS1 bridge path: %s' % ros1_bridge_path)
     ros1_bridge_ignore_marker = None
     if os.path.exists(ros1_bridge_path):
-        ros1_bridge_ignore_marker = os.path.join(ros1_bridge_path, 'AMENT_IGNORE')
+        ros1_bridge_ignore_marker = os.path.join(ros1_bridge_path, 'COLCON_IGNORE')
         info('ROS1 bridge path ignore file: %s' % ros1_bridge_ignore_marker)
         with open(ros1_bridge_ignore_marker, 'w'):
             pass
 
-    ament_py = '"%s"' % os.path.join(
-        '.', args.sourcespace, 'ament', 'ament_tools', 'scripts', 'ament.py'
-    )
-    # Now run ament build
+    # Now run build
     cmd = [
-        job.python, '-u', ament_py, 'build',
-        '"%s"' % args.sourcespace,
-        '--build-space', '"%s"' % args.buildspace,
-        '--install-space', '"%s"' % args.installspace,
-    ]
-    if args.isolated:
-        cmd.append('--isolated')
+        args.colcon_script, 'build',
+        '--base-paths', '"%s"' % args.sourcespace,
+        '--build-base', '"%s"' % args.buildspace,
+        '--install-base', '"%s"' % args.installspace,
+    ] + (['--merge-install'] if not args.isolated else []) + \
+        args.build_args
+
+    cmake_args = ['" -DBUILD_TESTING=1"']
     if args.cmake_build_type:
-        cmd += ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
-    if args.ament_build_args:
-        cmd += args.ament_build_args
+        cmake_args.append(
+            '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
+    if '--cmake-args' in cmd:
+        index = cmd.index('--cmake-args')
+        cmd[index + 1:index + 1] = cmake_args
+    else:
+        cmd.append('--cmake-args')
+        cmd.extend(cmake_args)
+
     job.run(cmd)
 
     if ros1_bridge_ignore_marker:
@@ -61,21 +65,22 @@ def build_and_test_and_package(args, job):
     # ROS1 is not supported on Windows
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: build ROS 1 bridge')
-        # Now run ament build only for the bridge
+        # Now run build only for the bridge
+        env = dict(os.environ)
+        env['MAKEFLAGS'] = '-j1'
         job.run([
-            job.python, '-u', ament_py, 'build',
-            '"%s"' % args.sourcespace,
-            '--build-tests',
-            '--build-space', '"%s"' % args.buildspace,
-            '--install-space', '"%s"' % args.installspace,
-            '--only-packages', 'ros1_bridge',
-        ] + (['--isolated'] if args.isolated else []) +
+            args.colcon_script, 'build',
+            '--base-paths', '"%s"' % args.sourcespace,
+            '--build-base', '"%s"' % args.buildspace,
+            '--install-base', '"%s"' % args.installspace,
+            '--cmake-args', '" -DBUILD_TESTING=1"',
+            '--packages-select', 'ros1_bridge',
+        ] + (['--merge-install'] if not args.isolated else []) +
             (
-                ['--cmake-args', '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type + ' --']
+                ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
+                    args.cmake_build_type + '"']
                 if args.cmake_build_type else []
-            ) + [
-            '--make-flags', '-j1', '--'
-        ])
+        ), env=env)
         print('# END SUBSECTION')
 
         if args.test_bridge:
@@ -84,32 +89,31 @@ def build_and_test_and_package(args, job):
             print('# END SUBSECTION')
 
             print('# BEGIN SUBSECTION: test ROS 1 bridge')
-            # Now run ament test only for the bridge
+            # Now run test only for the bridge
             ret_test = job.run([
-                '"%s"' % job.python, '-u', '"%s"' % ament_py, 'test',
-                '"%s"' % args.sourcespace,
-                '--build-space', '"%s"' % args.buildspace,
-                '--install-space', '"%s"' % args.installspace,
-                '--only-packages', 'ros1_bridge',
-                # Skip building and installing, since we just did that successfully.
-                '--skip-build', '--skip-install',
+                args.colcon_script, 'test',
+                '--base-paths', '"%s"' % args.sourcespace,
+                '--build-base', '"%s"' % args.buildspace,
+                '--install-base', '"%s"' % args.installspace,
+                '--packages-select', 'ros1_bridge',
                 # Ignore return codes that indicate test failures;
                 # they'll be picked up later in test reporting.
-                '--ignore-return-codes',
-            ] + (['--isolated'] if args.isolated else []) + args.ament_test_args,
-                exit_on_error=False, shell=True)
-            info("ament.py test returned: '{0}'".format(ret_test))
+                # '--ignore-return-codes',
+            ] + (['--merge-install'] if not args.isolated else []) +
+                args.test_args, exit_on_error=False, shell=True)
+            info("test returned: '{0}'".format(ret_test))
             print('# END SUBSECTION')
             if ret_test:
                 return ret_test
 
-            print('# BEGIN SUBSECTION: ament test_results')
+            print('# BEGIN SUBSECTION: test-result')
             # Collect the test results
-            ret_test_results = job.run(
-                ['"%s"' % job.python, '-u', '"%s"' % ament_py, 'test_results', '"%s"' % args.buildspace],
+            ret_test_results = job.run([
+                args.colcon_script, 'test-result',
+                '--build-base', '"%s"' % args.buildspace],
                 exit_on_error=False, shell=True
             )
-            info("ament.py test_results returned: '{0}'".format(ret_test_results))
+            info("test-result returned: '{0}'".format(ret_test_results))
             print('# END SUBSECTION')
 
     # Only on Linux and OSX Python scripts have a shebang line

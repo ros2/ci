@@ -23,7 +23,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     cmake_build_type=cmake_build_type,
-    ament_build_args_default=ament_build_args_default,
+    build_args_default=build_args_default,
 ))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_FASTRTPS</name>
@@ -41,9 +41,9 @@
           <defaultValue>@(test_bridge_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>CI_AMENT_TEST_ARGS</name>
-          <description>Additional arguments passed to 'ament test' if testing the bridge.</description>
-          <defaultValue>@(ament_test_args_default)</defaultValue>
+          <name>CI_TEST_ARGS</name>
+          <description>Additional arguments passed to the 'test' verb if testing the bridge.</description>
+          <defaultValue>@(test_args_default)</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -102,9 +102,9 @@ repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
-ament_build_args: ${build.buildVariableResolver.resolve('CI_AMENT_BUILD_ARGS')}, <br/>
+build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
-ament_test_args: ${build.buildVariableResolver.resolve('CI_AMENT_TEST_ARGS')}\
+test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
 """);]]>
         </script>
           <sandbox>false</sandbox>
@@ -134,36 +134,20 @@ export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
 if [ "$CI_TEST_BRIDGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --test-bridge"
 fi
-if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
-  export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
-fi
-if [ -n "${CI_AMENT_BUILD_ARGS+x}" ]; then
-  case $CI_AMENT_BUILD_ARGS in
-    *-- )
-      # delimiter is already appended
-      ;;
-    * )
-      CI_AMENT_BUILD_ARGS="$CI_AMENT_BUILD_ARGS --"
-      ;;
-  esac
-  export CI_ARGS="$CI_ARGS --ament-build-args $CI_AMENT_BUILD_ARGS"
-fi
-if [ -n "${CI_AMENT_TEST_ARGS+x}" ]; then
-  case $CI_AMENT_TEST_ARGS in
-    *-- )
-      # delimiter is already appended
-      ;;
-    * )
-      CI_AMENT_TEST_ARGS="$CI_AMENT_TEST_ARGS --"
-      ;;
-  esac
-  export CI_ARGS="$CI_ARGS --ament-test-args $CI_AMENT_TEST_ARGS"
-fi
 @[if os_name in ['linux', 'linux-aarch64']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
 @[else]@
 export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
 @[end if]@
+if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
+  export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
+fi
+if [ -n "${CI_BUILD_ARGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
+fi
+if [ -n "${CI_TEST_ARGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --test-args $CI_TEST_ARGS"
+fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
@@ -202,47 +186,42 @@ echo "# BEGIN SECTION: Run packaging script"
 echo "# END SECTION"
 @[end if]@
 @[elif os_name == 'windows']@
+setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
-set "PATH=%PATH:"=%"
+set "PATH=!PATH:"=!"
 set "CI_ARGS=--packaging --force-ansi-color"
-if "%CI_BRANCH_TO_TEST%" NEQ "" (
-  set "CI_ARGS=%CI_ARGS% --test-branch %CI_BRANCH_TO_TEST%"
+if "!CI_BRANCH_TO_TEST!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-branch !CI_BRANCH_TO_TEST!"
 )
-if "%CI_USE_FASTRTPS%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --fastrtps"
+if "!CI_USE_FASTRTPS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --fastrtps"
 )
-if "%CI_USE_OPENSPLICE%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --opensplice"
+if "!CI_USE_OPENSPLICE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --opensplice"
 )
-if "%CI_ROS2_REPOS_URL%" EQU "" (
+if "!CI_ROS2_REPOS_URL!" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
-set "CI_ARGS=%CI_ARGS% --repo-file-url %CI_ROS2_REPOS_URL%"
-if "%CI_TEST_BRIDGE%" == "true" (
-  set "CI_ARGS=%CI_ARGS% --test-bridge"
+set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
+if "!CI_TEST_BRIDGE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --test-bridge"
 )
-if "%CI_CMAKE_BUILD_TYPE%" NEQ "None" (
-  set "CI_ARGS=%CI_ARGS% --cmake-build-type %CI_CMAKE_BUILD_TYPE%"
+if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
+  set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
 )
-if "%CI_AMENT_BUILD_ARGS%" NEQ "" (
-  if "%CI_AMENT_BUILD_ARGS:~-2%" NEQ "--" (
-    set "CI_AMENT_BUILD_ARGS=%CI_AMENT_BUILD_ARGS% --"
-  )
-  set "CI_ARGS=%CI_ARGS% --ament-build-args %CI_AMENT_BUILD_ARGS%"
+if "!CI_BUILD_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
-if "%CI_AMENT_TEST_ARGS%" NEQ "" (
-  if "%CI_AMENT_TEST_ARGS:~-2%" NEQ "--" (
-    set "CI_AMENT_TEST_ARGS=%CI_AMENT_TEST_ARGS% --"
-  )
-  set "CI_ARGS=%CI_ARGS% --ament-test-args %CI_AMENT_TEST_ARGS%"
+if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
-echo Using args: %CI_ARGS%
+echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Run packaging script"
-python -u run_ros2_batch.py %CI_ARGS%
+python -u run_ros2_batch.py !CI_ARGS!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@

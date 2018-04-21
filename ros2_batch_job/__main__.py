@@ -15,6 +15,7 @@
 import argparse
 import os
 import platform
+from shutil import which
 import subprocess
 import sys
 
@@ -48,6 +49,7 @@ sys.stderr = UnbufferedIO(sys.stderr)
 pip_dependencies = [
     'EmPy',
     'coverage',
+    'catkin_pkg',
     'flake8',
     'flake8-blind-except',
     'flake8-builtins==1.1.1',
@@ -65,9 +67,25 @@ pip_dependencies = [
     'pyparsing',
     'pytest',
     'pytest-cov',
+    'pytest-repeat',
+    'pytest-rerunfailures',
     'pytest-runner',
     'pyyaml',
     'vcstool',
+] + [
+    'git+https://github.com/colcon/colcon-core.git',
+    'git+https://github.com/colcon/colcon-defaults.git',
+    'git+https://github.com/colcon/colcon-library-path.git',
+    'git+https://github.com/colcon/colcon-metadata.git',
+    'git+https://github.com/colcon/colcon-output.git',
+    'git+https://github.com/colcon/colcon-package-information.git',
+    'git+https://github.com/colcon/colcon-package-selection.git',
+    'git+https://github.com/colcon/colcon-parallel-executor.git',
+    'git+https://github.com/colcon/colcon-python-setup-py.git',
+    'git+https://github.com/colcon/colcon-recursive-crawl.git',
+    'git+https://github.com/colcon/colcon-test-result.git',
+    'git+https://github.com/colcon/colcon-cmake.git',
+    'git+https://github.com/colcon/colcon-ros.git',
 ]
 
 gcov_flags = " -fprofile-arcs -ftest-coverage "
@@ -145,11 +163,11 @@ def get_args(sysargv=None):
         '--cmake-build-type', default=None,
         help='select the CMake build type')
     parser.add_argument(
-        '--ament-build-args', default=None,
-        help="arguments passed to 'ament build'")
+        '--build-args', default=None,
+        help="arguments passed to the 'build' verb")
     parser.add_argument(
-        '--ament-test-args', default=None,
-        help="arguments passed to 'ament test'")
+        '--test-args', default=None,
+        help="arguments passed to the 'test' verb")
     parser.add_argument(
         '--src-mounted', default=False, action='store_true',
         help="src directory is already mounted into the workspace")
@@ -161,28 +179,27 @@ def get_args(sysargv=None):
         help="base path of the workspace")
     parser.add_argument(
         '--python-interpreter', default=None,
-        help='pass different Python interpreter to ament')
+        help='pass different Python interpreter')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
-    argv, ament_build_args = extract_argument_group(argv, '--ament-build-args')
-    if '--ament-test-args' in argv:
-        argv, ament_test_args = extract_argument_group(argv, '--ament-test-args')
+    argv, build_args = extract_argument_group(argv, '--build-args')
+    if '--test-args' in argv:
+        argv, test_args = extract_argument_group(argv, '--test-args')
     else:
-        ament_build_args, ament_test_args = extract_argument_group(ament_build_args, '--ament-test-args')
+        build_args, test_args = extract_argument_group(build_args, '--test-args')
     args = parser.parse_args(argv)
-    args.ament_build_args = ament_build_args
-    args.ament_test_args = ament_test_args
+    args.build_args = build_args
+    args.test_args = test_args
     return args
 
 
 def process_coverage(args, job):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Collect all .gcda files in args.workspace
-    ament_py = get_ament_script(args.sourcespace)
     output = subprocess.check_output(
-        [job.python, '-u', ament_py, 'list_packages', args.sourcespace])
+        [args.colcon_script, 'list', '--base-paths', args.sourcespace])
     for line in output.decode().splitlines():
-        package_name, package_path = line.split(' ', 1)
+        package_name, package_path, _ = line.split('\t', 2)
         print(package_name)
         package_build_path = os.path.join(args.buildspace, package_name)
         gcda_files = []
@@ -237,58 +254,74 @@ def process_coverage(args, job):
 
 
 def build_and_test(args, job):
-    ament_py = get_ament_script(args.sourcespace)
     coverage = args.coverage and args.os == 'linux'
 
-    print('# BEGIN SUBSECTION: ament build')
-    # Now run ament build
-    ret_build = job.run([
-        '"%s"' % job.python, '-u', '"%s"' % ament_py, 'build',
-        '"%s"' % args.sourcespace,
-        '--build-tests',
-        '--build-space', '"%s"' % args.buildspace,
-        '--install-space', '"%s"' % args.installspace,
-    ] + (['--isolated'] if args.isolated else []) +
-        (
-            ['--cmake-args', '-DCMAKE_BUILD_TYPE=' +
-                args.cmake_build_type + ' --']
-            if args.cmake_build_type else []
-        ) + args.ament_build_args +
-        (['--ament-cmake-args -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' +
-            gcov_flags + ' " -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' +
-            gcov_flags + '" --']
-            if coverage else []), shell=True)
-    info("ament.py build returned: '{0}'".format(ret_build))
+    print('# BEGIN SUBSECTION: build')
+    cmd = [
+        args.colcon_script, 'build',
+        '--base-paths', '"%s"' % args.sourcespace,
+        '--build-base', '"%s"' % args.buildspace,
+        '--install-base', '"%s"' % args.installspace,
+    ] + (['--merge-install'] if not args.isolated else []) + \
+        args.build_args
+
+    cmake_args = ['" -DBUILD_TESTING=1"']
+    if args.cmake_build_type:
+        cmake_args.append(
+            '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
+    if '--cmake-args' in cmd:
+        index = cmd.index('--cmake-args')
+        cmd[index + 1:index + 1] = cmake_args
+    else:
+        cmd.append('--cmake-args')
+        cmd.extend(cmake_args)
+
+    if coverage:
+        ament_cmake_args = [
+            '" -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
+            '" -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ' + gcov_flags + '"']
+        if '--ament-cmake-args' in cmd:
+            index = cmd.index('--ament-cmake-args')
+            cmd[index + 1:index + 1] = ament_cmake_args
+        else:
+            cmd.append('--ament-cmake-args')
+            cmd.extend(ament_cmake_args)
+
+    ret_build = job.run(cmd, shell=True)
+    info("colcon build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
     if ret_build:
         return ret_build
 
-    print('# BEGIN SUBSECTION: ament test')
-    # Run tests
+    print('# BEGIN SUBSECTION: test')
     ret_test = job.run([
-        '"%s"' % job.python, '-u', '"%s"' % ament_py, 'test',
-        '"%s"' % args.sourcespace,
-        '--build-space', '"%s"' % args.buildspace,
-        '--install-space', '"%s"' % args.installspace,
-        # Skip building and installing, since we just did that successfully.
-        '--skip-build', '--skip-install',
-        # Ignore return codes that indicate test failures;
-        # they'll be picked up later in test reporting.
-        '--ignore-return-codes',
-    ] + (['--isolated'] if args.isolated else []) + args.ament_test_args,
+        args.colcon_script, 'test',
+        '--base-paths', '"%s"' % args.sourcespace,
+        '--build-base', '"%s"' % args.buildspace,
+        '--install-base', '"%s"' % args.installspace,
+    ] + (['--merge-install'] if not args.isolated else []) + args.test_args,
         exit_on_error=False, shell=True)
-    info("ament.py test returned: '{0}'".format(ret_test))
+    info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
     if ret_test:
         return ret_test
 
-    print('# BEGIN SUBSECTION: ament test_results')
+    print('# BEGIN SUBSECTION: test-result --all')
     # Collect the test results
     ret_test_results = job.run(
-        ['"%s"' % job.python, '-u', '"%s"' % ament_py, 'test_results', '"%s"' % args.buildspace],
+        [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace, '--all'],
         exit_on_error=False, shell=True
     )
-    info("ament.py test_results returned: '{0}'".format(ret_test_results))
+    info("colcon test-result returned: '{0}'".format(ret_test_results))
+    print('# END SUBSECTION')
+
+    print('# BEGIN SUBSECTION: test-result')
+    # Collect the test results
+    ret_test_results = job.run(
+        [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace],
+        exit_on_error=False, shell=True
+    )
+    info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
     if coverage:
         process_coverage(args, job)
@@ -315,6 +348,8 @@ def run(args, build_function, blacklisted_package_names=None):
     args.sourcespace = 'source space' if 'sourcespace' in args.white_space_in else 'src'
     args.buildspace = 'build space' if 'buildspace' in args.white_space_in else 'build'
     args.installspace = 'install space' if 'installspace' in args.white_space_in else 'install'
+
+    os.environ['COLCON_LOG_PATH'] = os.path.join(os.getcwd(), args.workspace, 'log')
 
     if args.disable_connext_static:
         os.environ["CONNEXT_STATIC_DISABLE"] = '1'
@@ -367,6 +402,7 @@ def run(args, build_function, blacklisted_package_names=None):
     # Check the env
     job.show_env()
 
+    colcon_script = None
     # Enter a venv if asked to, the venv must be in a path without spaces
     if args.do_venv:
         print('# BEGIN SUBSECTION: enter virtualenv')
@@ -402,6 +438,11 @@ def run(args, build_function, blacklisted_package_names=None):
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
         job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U'] + pip_dependencies, shell=True)
+        if sys.platform != 'win32':
+            colcon_script = os.path.join(venv_path, 'bin', 'colcon')
+        else:
+            colcon_script = which('colcon')
+        args.colcon_script = colcon_script
         # Show what pip has
         job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
         print('# END SUBSECTION')
@@ -500,18 +541,17 @@ def run(args, build_function, blacklisted_package_names=None):
         # Allow the batch job to push custom sourcing onto the run command
         job.setup_env()
 
-        # create AMENT_IGNORE files in package folders which should not be used
+        # create COLCON_IGNORE files in package folders which should not be used
         if blacklisted_package_names:
             print('# BEGIN SUBSECTION: ignored packages')
             print('Trying to ignore the following packages:')
             [print('- ' + name) for name in blacklisted_package_names]
-            ament_py = get_ament_script(args.sourcespace)
             output = subprocess.check_output(
-                [job.python, '-u', ament_py, 'list_packages', args.sourcespace])
+                [colcon_script, 'list', '--base-paths', args.sourcespace])
             for line in output.decode().splitlines():
-                package_name, package_path = line.split(' ', 1)
+                package_name, package_path, _ = line.split('\t', 2)
                 if package_name in blacklisted_package_names:
-                    marker_file = os.path.join(args.sourcespace, package_path, 'AMENT_IGNORE')
+                    marker_file = os.path.join(args.sourcespace, package_path, 'COLCON_IGNORE')
                     print('Create marker file: ' + marker_file)
                     with open(marker_file, 'w'):
                         pass
@@ -522,9 +562,6 @@ def run(args, build_function, blacklisted_package_names=None):
     job.post()
     return rc
 
-
-def get_ament_script(basepath):
-    return os.path.join(basepath, 'ament', 'ament_tools', 'scripts', 'ament.py')
 
 def _fetch_repos_file(url, filename, job):
     """Use curl to fetch a repos file and display the contents."""

@@ -80,8 +80,8 @@ def main(argv=None):
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
         'use_isolated_default': 'true',
-        'ament_build_args_default': '--parallel --cmake-args -DSECURITY=ON --',
-        'ament_test_args_default': '--retest-until-pass 10',
+        'build_args_default': '--event-handler console_cohesion+ --cmake-args " -DSECURITY=ON"',
+        'test_args_default': '--event-handler console_cohesion+ --retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
@@ -190,7 +190,7 @@ def main(argv=None):
             'cmake_build_type': 'None',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ament_test_args_default': '--retest-until-fail 20 --ctest-args -LE linter --',
+            'test_args_default': '--retest-until-fail 20 --ctest-args " -LE" linter',
         })
 
         # configure turtlebot jobs on Linux only for now

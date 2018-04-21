@@ -86,7 +86,10 @@ class WindowsBatchJob(BatchJob):
             # Ensure shell is on since we're using &&
             kwargs['shell'] = True
             # Use the env file to call the commands
-            cmd = ['env.bat'] + cmd
+            # ensure that quoted arguments are passed through as quoted arguments
+            cmd = ['env.bat'] + [
+                '"%s"' % c if ' ' in c and not (c.startswith('"') and c.endswith('"')) else c
+                for c in cmd]
             # Pass along to the original runner
             return current_run(cmd, **kwargs)
 
