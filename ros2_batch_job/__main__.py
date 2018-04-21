@@ -256,7 +256,7 @@ def process_coverage(args, job):
 def build_and_test(args, job):
     coverage = args.coverage and args.os == 'linux'
 
-    print('# BEGIN SUBSECTION: colcon build')
+    print('# BEGIN SUBSECTION: build')
     cmd = [
         args.colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
@@ -293,7 +293,7 @@ def build_and_test(args, job):
     if ret_build:
         return ret_build
 
-    print('# BEGIN SUBSECTION: colcon test')
+    print('# BEGIN SUBSECTION: test')
     ret_test = job.run([
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
@@ -306,7 +306,7 @@ def build_and_test(args, job):
     if ret_test:
         return ret_test
 
-    print('# BEGIN SUBSECTION: colcon test-result --all')
+    print('# BEGIN SUBSECTION: test-result --all')
     # Collect the test results
     ret_test_results = job.run(
         [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace, '--all'],
@@ -315,7 +315,7 @@ def build_and_test(args, job):
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
 
-    print('# BEGIN SUBSECTION: colcon test-result')
+    print('# BEGIN SUBSECTION: test-result')
     # Collect the test results
     ret_test_results = job.run(
         [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace],
