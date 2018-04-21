@@ -441,7 +441,7 @@ def run(args, build_function, blacklisted_package_names=None):
         if sys.platform != 'win32':
             colcon_script = os.path.join(venv_path, 'bin', 'colcon')
         else:
-            colcon_script = 'c:\\python36\\Scripts\\colcon.exe'
+            colcon_script = which('colcon')
         args.colcon_script = colcon_script
         # Show what pip has
         job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
