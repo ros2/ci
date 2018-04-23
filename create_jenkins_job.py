@@ -81,7 +81,7 @@ def main(argv=None):
         'use_opensplice_default': 'false',
         'use_isolated_default': 'true',
         'build_args_default': '--event-handler console_cohesion+ --cmake-args " -DSECURITY=ON"',
-        'test_args_default': '--event-handler console_cohesion+ --retest-until-pass 10',
+        'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
