@@ -81,12 +81,18 @@ pip_dependencies = [
     'git+https://github.com/colcon/colcon-package-information.git',
     'git+https://github.com/colcon/colcon-package-selection.git',
     'git+https://github.com/colcon/colcon-parallel-executor.git',
+    'git+https://github.com/colcon/colcon-powershell.git',
     'git+https://github.com/colcon/colcon-python-setup-py.git',
     'git+https://github.com/colcon/colcon-recursive-crawl.git',
     'git+https://github.com/colcon/colcon-test-result.git',
     'git+https://github.com/colcon/colcon-cmake.git',
     'git+https://github.com/colcon/colcon-ros.git',
 ]
+if sys.platform != 'win32':
+    pip_dependencies += [
+        'git+https://github.com/colcon/colcon-bash.git',
+        'git+https://github.com/colcon/colcon-zsh.git',
+    ]
 
 gcov_flags = " -fprofile-arcs -ftest-coverage "
 
