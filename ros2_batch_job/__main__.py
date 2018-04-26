@@ -355,8 +355,6 @@ def run(args, build_function, blacklisted_package_names=None):
     args.buildspace = 'build space' if 'buildspace' in args.white_space_in else 'build'
     args.installspace = 'install space' if 'installspace' in args.white_space_in else 'install'
 
-    os.environ['COLCON_LOG_PATH'] = os.path.join(os.getcwd(), args.workspace, 'log')
-
     if args.disable_connext_static:
         os.environ["CONNEXT_STATIC_DISABLE"] = '1'
     if args.disable_connext_dynamic:
