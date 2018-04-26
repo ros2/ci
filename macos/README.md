@@ -5,28 +5,49 @@ By default it seems that launchd de-prioritizes processes as "background" tasks 
 
 For our CI hosts we consider the jenkins agent process to be the most critical thing on the machine so we must give it special flags to override the default behavior.
 
-## Preparing the Jenkins agent property list
+## Swarm client or JNLP Agent
 
-The agent plist was written when dosa was reimaged December 2017 and updated to use the Swarm client in Feb 2018.
-It expects that the directory `$HOME/jenkins-agent` exists and that it contains the Jenkins agent program `swarm-client-3.8.jar`.
-The swarm client, when combined with the [Swarm plugin](https://plugins.jenkins.io/swarm) on the buildfarm, allows for easier addition and removal of temporary Jenkins nodes.
-It can be downloaded from [this repository](https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/).
+Configurations for both [swarm client plugin](https://plugins.jenkins.io/swarm) and permanent agents connecting via JNLP are provided.
+Both are supported by ROS2 CI and the swarm client is recommended since deployment requires no changes to the Jenkins host.
+But if you have trouble with the swarm client you may wish to use the JNLP agent.
+
+## Preparing the Jenkins agent
+
+Create the directory `$HOME/jenkins-agent` if it does not already exist.
+
+If using the swarm client, download the swarm client jar from [this repository][swarm-repo] and place it in the ~/jenkins-agent directory.
+We're currently using version 3.8.
+
+For JNLP agents, the agent.jar is best downloaded from your running Jenkins. With wget installed:
+```
+cd ~/jenkins-agent && wget https://ci.ros2.org/jnlpJars/agent.jar
+```
+
 The agent must have at least Java JDK 8 installed.
+For best results use the same version as our Jenkins host.
+Run `java -version` on ci.ros2.org or check the `java.version` key on <https://ci.ros2.org/systemInfo>.
 
-The file contains a few fields that must be updated for the specific CI host.
+Download the relevant launchd plist for your agent type.
+
+Swarm client: `cd ~/jenkins-agent && wget https://raw.githubusercontent.com/ros2/ci/configuration/macos/jenkins-swarm-client.plist`  
+JNLP agent: `cd ~/jenkins-agent && wget https://raw.githubusercontent.com/ros2/ci/configuration/macos/jenkins-jnlp-agent.plist`
+
+
+Both plist files contain a few fields that must be updated for the specific CI host.
 To find them all run `grep REPLACE_ jenkins-agent.plist`.
 
-They are documented here
+They are documented here (not all fields are in both files)
 
 - `REPLACE_HOSTNAME`: The hostname of the CI host.
-- `REPLACE_AGENT_NAME`: The slug name of the CI host in the Jenkins UI.
+- `REPLACE_AGENT_NAME`: The slug name of the CI host in the Jenkins UI without the `macos_` prefix (Example: mini2 for the machine macos_mini2).
 - `REPLACE_AGENT_DESCRIPTION`: The description fof the agent in the Jenkins UI.
+- `REPLACE_JNLP_SECRET`: The JNLP secret which is shown to admin users when creating the agent in the Jenkins UI.
 - `REPLACE_USERNAME`: The Jenkins username of the user with node creation privileges.
-- `REPLACE_PASSWORD`: The password (usually a GitHub auth token for us) for the above user.
+- `REPLACE_PASSWORD`: The password (usually a Jenkins auth token) for the above user.
 - `REPLACE_DOMAIN_ID`: The DDS domain ID to use by setting `ROS_DOMAIN_ID`.
 
 
-## Installing the jenkins agent property list (.plist file)
+## Installing the property list (.plist file)
 
 Once the property list has been updated, you can install and run it with the following command.
 Be sure to stop any manually started Jenkins agent before doing so.
@@ -37,8 +58,15 @@ Check to be sure the local user's LaunchAgents directory exists.
 test -d ~/Library/LaunchAgents || mkdir -p ~/Library/LaunchAgents
 ```
 
+Swarm client: `cp ~/jenkins-agent/jenkins-swarm-client.plist ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist`
+JNLP agent: `cp ~/jenkins-agent/jenkins-jnlp-agent.plist ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist`
+
+## Starting the jenkins process and configuring it to start on next boot.
+
+To start a process via launchd use `launchctl load PATH/TO/PLIST`.
+The `-w` option sets this to take effect on next boot as well.
+
 ```
-cp ~/jenkins-agent/jenkins-agent.plist ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist
 launchctl load -w ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist
 ```
 
@@ -56,3 +84,5 @@ launchctl unload ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist
 launchctl unload -w ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist
 rm ~/Library/LaunchAgents/org.ros2.ci.REPLACE_HOSTNAME-agent.plist
 ```
+
+[swarm-repo]: https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/

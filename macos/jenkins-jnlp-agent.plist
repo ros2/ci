@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>org.ros2.ci.REPLACE_HOSTNAME-agent</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/bin/java</string>
+		<string>-Djava.awt.headless=true</string>
+		<string>-jar</string>
+		<string>/Users/osrf/jenkins-agent/agent.jar</string>
+		<string>-jnlpUrl</string>
+		<string>https://ci.ros2.org/computer/macos_REPLACE_AGENT_NAME/slave-agent.jnlp</string>
+		<string>-secret</string>
+		<string>REPLACE_JNLP_SECRET</string>
+	</array>
+	<!-- Ensure that the agent is restarted automatically if it disconnects -->
+	<key>KeepAlive</key>
+	<true/>
+	<!-- Afford the same priority to the process as what it would get if started manually -->
+	<key>ProcessType</key>
+	<string>Interactive</string>
+	<key>Nice</key>
+	<integer>-20</integer>
+	<key>StandardOutPath</key>
+	<string>/Users/osrf/jenkins-agent/stdout.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/osrf/jenkins-agent/stderr.log</string>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>ROS_DOMAIN_ID</key>
+		<string>REPLACE_DOMAIN_ID</string>
+	</dict>
+</dict>
+</plist>
