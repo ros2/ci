@@ -138,6 +138,11 @@ def main(argv=None):
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
         })
+        # configure test jobs for experimenting with job config changes
+        # Keep parameters the same as the manual triggered job above.
+        create_job(os_name, 'test_ci_' + os_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'None',
+        })
 
         # configure a manual version of the packaging job
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
