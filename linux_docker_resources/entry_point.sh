@@ -29,7 +29,7 @@ case "${CI_ARGS}" in
         ;;
       *)
         echo "Installing Connext binaries off RTI website..."
-        python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg
+        python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg
         if [ $? -ne 0 ]
         then
           echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
@@ -37,6 +37,9 @@ case "${CI_ARGS}" in
         fi
         mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
         export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
+        mv /tmp/openssl-1.0.2n /home/rosbuild/openssl-1.0.2n
+        export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
+        export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
         ;;
     esac
     echo "done."
