@@ -271,7 +271,7 @@ def build_and_test(args, job):
     ] + (['--merge-install'] if not args.isolated else []) + \
         args.build_args
 
-    cmake_args = ['" -DBUILD_TESTING=1"']
+    cmake_args = ['" -DBUILD_TESTING=1" " --no-warn-unused-cli"']
     if args.cmake_build_type:
         cmake_args.append(
             '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
