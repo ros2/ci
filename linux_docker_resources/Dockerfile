@@ -32,7 +32,7 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install --no-install-recommends -y clang-format-3.8 cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
+RUN apt-get update && apt-get install --no-install-recommends -y clang-format cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
@@ -53,7 +53,7 @@ RUN if test ${PLATFORM} = x86; then apt-get update && RTI_NC_LICENSE_ACCEPTED=ye
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
 
 # Install dependencies for RTI web binaries install script.
-RUN pip3 install pexpect
+RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
 # Get and install the RTI web binaries.
 RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
@@ -73,13 +73,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev lib
 # Install OpenCV.
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
-# Install build dependencies for class loader.
-# TODO Uncomment this when we switch to bionic
-# We are building poco from source for now as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
-# RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
+# Install build dependencies for class_loader.
+# TODO(mikaelarguedas) Uncomment this when we decide what to do about Poco debug builds
+# RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
+# required to build poco from source
+RUN apt-get update && apt-get install --no-install-recommends -y libpcre3-dev
 
 # Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 qtbase5-dev libxaw7-dev libgles2-mesa-dev libglu1-mesa-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
