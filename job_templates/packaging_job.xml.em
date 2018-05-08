@@ -138,10 +138,10 @@ if [ "$CI_TEST_BRIDGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --test-bridge"
 fi
 @[if os_name in ['linux', 'linux-aarch64']]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/melodic"
 @[else]@
 echo "not building/testing the ros1_bridge on MacOS"
-# export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
+# export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
 @[end if]@
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"

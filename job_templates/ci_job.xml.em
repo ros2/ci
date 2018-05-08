@@ -155,7 +155,7 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 @[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/melodic"
 @[end if]@
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
