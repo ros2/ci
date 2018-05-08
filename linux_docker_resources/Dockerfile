@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 ARG BRIDGE=false
 ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
 ARG PLATFORM=x86
@@ -17,6 +17,7 @@ ENV LANG en_US.UTF-8
 RUN apt-get update && apt-get install --no-install-recommends -y \
   lsb-release net-tools sudo \
   curl \
+  gnupg2 \
   apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
