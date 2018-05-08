@@ -75,6 +75,7 @@ def build_and_test_and_package(args, job):
             '--install-base', '"%s"' % args.installspace,
             '--cmake-args', '" -DBUILD_TESTING=1"',
             '--packages-select', 'ros1_bridge',
+            '--event-handlers', 'console_direct+',
         ] + (['--merge-install'] if not args.isolated else []) +
             (
                 ['--cmake-args', '" -DCMAKE_BUILD_TYPE=' +
