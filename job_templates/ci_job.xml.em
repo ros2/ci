@@ -179,8 +179,6 @@ sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[if os_name == 'linux-aarch64']@
-sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
-sed -i 's+apt-get update+(apt-get update || true)+' linux_docker_resources/Dockerfile
 @[  if turtlebot_demo]@
 docker build --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[  else]@
