@@ -168,6 +168,17 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
+        # confiruge a manually triggered version of the coverage job
+        if os_name == 'linux':
+            create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'enable_c_coverage_default': 'true',
+            })
+            create_job(os_name, 'test_' + os_name + '_coverage', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'enable_c_coverage_default': 'true',
+            })
+
         # configure nightly coverage job on x86 Linux only
         if os_name == 'linux':
             create_job(os_name, 'nightly_' + os_name + '_coverage', 'ci_job.xml.em', {
