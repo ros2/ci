@@ -42,10 +42,9 @@ RUN pip3 install -U setuptools pip virtualenv
 RUN apt-get update && apt-get install --no-install-recommends -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-# TODO(mikaelarguedas) add arm to the list of platforms when we have a deb for it
-RUN if test \( ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice67=6.7.180404+osrf1-1~bionic; fi
+RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice67=6.7.180404+osrf1-1~bionic; fi
 # Update default domain id.
-RUN if test \( ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
+RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
 # Install the RTI dependencies.
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
