@@ -44,7 +44,7 @@ def build_and_test_and_package(args, job):
     ] + (['--merge-install'] if not args.isolated else []) + \
         args.build_args
 
-    cmake_args = ['" -DBUILD_TESTING=1"']
+    cmake_args = []
     if args.cmake_build_type:
         cmake_args.append(
             '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
