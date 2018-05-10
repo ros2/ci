@@ -90,7 +90,7 @@
     </hudson.triggers.TimerTrigger>
   @
 @[end if]</triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
