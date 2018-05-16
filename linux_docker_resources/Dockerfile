@@ -94,16 +94,6 @@ RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-instal
 # Install build dependencies for turtlebot demo.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install --no-install-recommends -y libatlas-base-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libceres-dev libgoogle-glog-dev liblua5.2-dev libpcl-dev libprotobuf-dev libsdl1.2-dev libsdl-image1.2-dev libsuitesparse-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev protobuf-compiler python-sphinx ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi; fi
 
-# Workaround bugs in the Ubuntu 16.04 packaging of libpcl.  Reports:
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=819741
-# https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
-# https://github.com/PointCloudLibrary/pcl/issues/1594
-# TODO(clalancette): for some reason, if these two workarounds are listed in
-# different RUN statements, it causes the docker image to fail to build on
-# aarch64 (see https://github.com/ros2/ci/pull/73).  As a workaround, do them
-# in one statement.
-# RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then sed -i -e '/vtkproj4;/d' /usr/lib/$(uname -m)-linux-gnu/cmake/pcl/PCLConfig.cmake && ln -s /usr/lib/$(uname -m)-linux-gnu/libproj.so.9.1.0 /usr/lib/$(uname -m)-linux-gnu/libproj.so; fi
-
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
 RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
