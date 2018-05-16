@@ -72,10 +72,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev lib
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
 # Install build dependencies for class_loader.
-# TODO(mikaelarguedas) Uncomment this when we decide what to do about Poco debug builds
-# RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
-# required to build poco from source
-RUN apt-get update && apt-get install --no-install-recommends -y libpcre3-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
 
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
