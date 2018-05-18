@@ -86,7 +86,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-kinetic-catkin; fi
+RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-melodic-catkin; fi
 
 # Install build and test dependencies of ros1_bridge.
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y python-rospkg ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
