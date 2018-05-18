@@ -92,7 +92,27 @@ RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; t
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y python-rospkg ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install --no-install-recommends -y libatlas-base-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libceres-dev libgoogle-glog-dev liblua5.2-dev libpcl-dev libprotobuf-dev libsdl1.2-dev libsdl-image1.2-dev libsuitesparse-dev libudev-dev libusb-1.0.0-dev libyaml-cpp-dev protobuf-compiler python-sphinx ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi; fi
+RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
+    apt-get install --no-install-recommends -y \
+    # libatlas-base-dev \
+    libboost-iostreams-dev \
+    libboost-regex-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    # libcairo2-dev \
+    # libceres-dev \
+    libgoogle-glog-dev \
+    liblua5.2-dev \
+    libpcl-dev \
+    # libprotobuf-dev \
+    libsdl1.2-dev libsdl-image1.2-dev \
+    libudev-dev \
+    libusb-1.0-0-dev \
+    libyaml-cpp-dev \
+    # python3-sphinx \
+    ros-melodic-catkin \
+    ros-melodic-cartographer \
+    ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
