@@ -121,6 +121,9 @@ export CI_ARGS="--packaging --do-venv --force-ansi-color"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi
+if [ -n "${CI_COLCON_BRANCH+x}" ]; then
+  export CI_ARGS="$CI_ARGS --colcon-branch $CI_COLCON_BRANCH"
+fi
 if [ "$CI_USE_FASTRTPS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --fastrtps"
 fi

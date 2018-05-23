@@ -91,6 +91,7 @@ use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMENTAL_REPOS_URL')}, <br/>
+colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
@@ -112,6 +113,9 @@ echo "# BEGIN SECTION: Determine arguments"
 export CI_ARGS="--do-venv --force-ansi-color --workspace-path $WORKSPACE"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
+fi
+if [ -n "${CI_COLCON_BRANCH+x}" ]; then
+  export CI_ARGS="$CI_ARGS --colcon-branch $CI_COLCON_BRANCH"
 fi
 if [ "$CI_USE_WHITESPACE_IN_PATHS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --white-space-in sourcespace buildspace installspace workspace"
