@@ -25,6 +25,13 @@ For example, copy the content of the .repos file to a GitHub Gist, modify it to 
 Use this instead of the Custom .repos file if you want to add to the default repos file rather than replace it.</description>
           <defaultValue>@supplemental_repos_url</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_COLCON_BRANCH</name>
+          <description>Use a specific branch of the colcon repositories.
+If the branch doesn't exist fall back to the default branch.
+To use the latest released version, use an empty string.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_CMAKE_BUILD_TYPE</name>
           <description>Select the CMake build type.</description>

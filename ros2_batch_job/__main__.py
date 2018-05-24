@@ -72,26 +72,27 @@ pip_dependencies = [
     'pytest-runner',
     'pyyaml',
     'vcstool',
-] + [
-    'git+https://github.com/colcon/colcon-core.git',
-    'git+https://github.com/colcon/colcon-defaults.git',
-    'git+https://github.com/colcon/colcon-library-path.git',
-    'git+https://github.com/colcon/colcon-metadata.git',
-    'git+https://github.com/colcon/colcon-output.git',
-    'git+https://github.com/colcon/colcon-package-information.git',
-    'git+https://github.com/colcon/colcon-package-selection.git',
-    'git+https://github.com/colcon/colcon-parallel-executor.git',
-    'git+https://github.com/colcon/colcon-powershell.git',
-    'git+https://github.com/colcon/colcon-python-setup-py.git',
-    'git+https://github.com/colcon/colcon-recursive-crawl.git',
-    'git+https://github.com/colcon/colcon-test-result.git',
-    'git+https://github.com/colcon/colcon-cmake.git',
-    'git+https://github.com/colcon/colcon-ros.git',
+]
+colcon_packages = [
+    'colcon-core',
+    'colcon-defaults',
+    'colcon-library-path',
+    'colcon-metadata',
+    'colcon-output',
+    'colcon-package-information',
+    'colcon-package-selection',
+    'colcon-parallel-executor',
+    'colcon-powershell',
+    'colcon-python-setup-py',
+    'colcon-recursive-crawl',
+    'colcon-test-result',
+    'colcon-cmake',
+    'colcon-ros',
 ]
 if sys.platform != 'win32':
-    pip_dependencies += [
-        'git+https://github.com/colcon/colcon-bash.git',
-        'git+https://github.com/colcon/colcon-zsh.git',
+    colcon_packages += [
+        'colcon-bash',
+        'colcon-zsh',
     ]
 
 gcov_flags = " -fprofile-arcs -ftest-coverage "
@@ -126,6 +127,11 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--test-branch', default=None,
         help="branch to attempt to checkout before doing batch job")
+    parser.add_argument(
+        '--colcon-branch', default=None,
+        help='Use a specific branch of the colcon repositories, if the branch '
+             "doesn't exist fall back to the default branch (default: latest "
+             'release)')
     parser.add_argument(
         '--white-space-in', nargs='*', default=None,
         choices=['sourcespace', 'buildspace', 'installspace', 'workspace'],
@@ -441,7 +447,56 @@ def run(args, build_function, blacklisted_package_names=None):
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
-        job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U'] + pip_dependencies, shell=True)
+        pip_packages = list(pip_dependencies)
+        if not args.colcon_branch:
+            pip_packages += colcon_packages
+        if sys.platform == 'win32':
+            job.run(
+                ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
+                colcon_packages, shell=True)
+        job.run(
+            ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] + pip_packages,
+            shell=True)
+
+        # OS X can't invoke a file which has a space in the shebang line
+        # therefore invoking vcs explicitly through Python
+        if args.do_venv:
+            vcs_cmd = [
+                '"%s"' % job.python,
+                '"%s"' % os.path.join(venv_path, 'bin', 'vcs')]
+        else:
+            vcs_cmd = ['vcs']
+
+        if args.colcon_branch:
+            # create .repos file for colcon repositories
+            os.makedirs('colcon', exist_ok=True)
+            with open('colcon/colcon.repos', 'w') as h:
+                h.write('repositories:\n')
+                for name in colcon_packages:
+                    h.write('  %s:\n' % name)
+                    h.write('    type: git\n')
+                    h.write(
+                        '    url: https://github.com/colcon/%s.git\n' % name)
+            # clone default branches
+            job.run(
+                vcs_cmd + [
+                    'import', 'colcon', '--force', '--retry', '5', '--input',
+                    'colcon/colcon.repos'],
+                shell=True)
+            # use -b and --track to checkout correctly when file/folder
+            # with the same name exists
+            job.run(
+                vcs_cmd + [
+                    'custom', 'colcon', '--args', 'checkout',
+                    '-b', args.colcon_branch,
+                    '--track', 'origin/' + args.colcon_branch],
+                exit_on_error=False)
+            # install colcon packages from local working copies
+            job.run(
+                ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] +
+                ['colcon/%s' % name for name in colcon_packages],
+                shell=True)
+
         if sys.platform != 'win32':
             colcon_script = os.path.join(venv_path, 'bin', 'colcon')
         else:
@@ -467,12 +522,6 @@ def run(args, build_function, blacklisted_package_names=None):
             # Use the repository listing and vcstool to fetch repositories
             if not os.path.exists(args.sourcespace):
                 os.makedirs(args.sourcespace)
-            # OS X can't invoke a file which has a space in the shebang line
-            # therefore invoking vcs explicitly through Python
-            if args.do_venv:
-                vcs_cmd = ['"%s"' % job.python, '"%s"' % os.path.join(venv_path, 'bin', 'vcs')]
-            else:
-                vcs_cmd = ['vcs']
             for filename in repos_filenames:
                 job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force', '--retry', '5',
                                    '--input', filename], shell=True)
