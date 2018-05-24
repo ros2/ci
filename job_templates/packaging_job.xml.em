@@ -199,6 +199,9 @@ set "CI_ARGS=--packaging --force-ansi-color"
 if "!CI_BRANCH_TO_TEST!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --test-branch !CI_BRANCH_TO_TEST!"
 )
+if "!CI_COLCON_BRANCH!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
+)
 if "!CI_USE_FASTRTPS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --fastrtps"
 )
