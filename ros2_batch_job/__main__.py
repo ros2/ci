@@ -453,7 +453,7 @@ def run(args, build_function, blacklisted_package_names=None):
         if sys.platform == 'win32':
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                pip_packages, shell=True)
+                colcon_packages, shell=True)
         job.run(
             ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] + pip_packages,
             shell=True)
