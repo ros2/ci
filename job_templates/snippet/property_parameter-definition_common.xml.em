@@ -29,7 +29,7 @@ Use this instead of the Custom .repos file if you want to add to the default rep
           <name>CI_COLCON_BRANCH</name>
           <description>Use a specific branch of the colcon repositories.
 If the branch doesn't exist fall back to the default branch.
-To use the latest released versionuse an empty string.</description>
+To use the latest released version, use an empty string.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
