@@ -447,12 +447,12 @@ def run(args, build_function, blacklisted_package_names=None):
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
-        install_pip_packages = list(pip_dependencies)
+        pip_packages = list(pip_dependencies)
         if not args.colcon_branch:
-            install_pip_packages += colcon_packages
+            pip_packages += colcon_packages
         job.run(
             ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] +
-            install_pip_packages, shell=True)
+            pip_packages, shell=True)
 
         # OS X can't invoke a file which has a space in the shebang line
         # therefore invoking vcs explicitly through Python
