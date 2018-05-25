@@ -89,7 +89,18 @@ RUN echo "@today_str"
 RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-melodic-catkin; fi
 
 # Install build and test dependencies of ros1_bridge.
-RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y python-rospkg ros-melodic-common-msgs ros-melodic-rosbash ros-melodic-roscpp ros-melodic-roslaunch ros-melodic-rosmsg ros-melodic-roscpp-tutorials ros-melodic-rospy-tutorials ros-melodic-tf2-msgs; fi
+RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
+    python-rospkg \
+    python3-crypto \
+    python3-gnupg \
+    ros-melodic-common-msgs \
+    ros-melodic-rosbash \
+    ros-melodic-roscpp \
+    ros-melodic-roslaunch \
+    ros-melodic-rosmsg \
+    ros-melodic-roscpp-tutorials \
+    ros-melodic-rospy-tutorials \
+    ros-melodic-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
@@ -110,7 +121,6 @@ RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
     libusb-1.0-0-dev \
     libyaml-cpp-dev \
     # python3-sphinx \
-    ros-melodic-catkin \
     ros-melodic-cartographer \
     ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi; fi
 
