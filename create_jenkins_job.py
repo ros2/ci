@@ -22,7 +22,7 @@ import sys
 try:
     import ros_buildfarm  # noqa
 except ImportError:
-    sys.exit("Could not import ros_buildfarm, please add to the PYTHONPATH.")
+    sys.exit("Could not import ros_buildfarm, please add it to the PYTHONPATH.")
 
 try:
     import jenkinsapi  # noqa
@@ -168,7 +168,7 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
-        # confiruge a manually triggered version of the coverage job
+        # configure a manually triggered version of the coverage job
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
