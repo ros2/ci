@@ -27,6 +27,7 @@
     use_fastrtps_default=use_fastrtps_default,
     use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
+    ubuntu_distro=ubuntu_distro,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     test_args_default=test_args_default,
@@ -94,6 +95,7 @@ supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMEN
 colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
+ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
@@ -148,6 +150,12 @@ fi
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
 fi
+if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
+  export CI_ROS1_DISTRO=melodic
+fi
+if [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
+  export CI_ROS1_DISTRO=kinetic
+fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
@@ -155,7 +163,7 @@ if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 @[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/melodic"
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[end if]@
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
@@ -167,6 +175,9 @@ echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
 @[if os_name in ['linux', 'linux-aarch64']]@
+sed -i 's+^FROM.*$+FROM ubuntu:${CI_UBUNTU_DISTRO}+' linux_docker_resources/Dockerfile
+export DOCKER_BUILD_ARGS="--build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
 docker version
@@ -180,15 +191,15 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[if os_name == 'linux-aarch64']@
 @[  if turtlebot_demo]@
-docker build --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[  else]@
-docker build --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
 @[  end if]@
 @[elif os_name == 'linux']@
 @[  if turtlebot_demo]@
-docker build --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[  else]@
-docker build -t ros2_batch_ci linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci linux_docker_resources
 @[  end if]@
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@

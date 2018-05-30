@@ -2,6 +2,8 @@ FROM ubuntu:bionic
 ARG BRIDGE=false
 ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
 ARG PLATFORM=x86
+ARG ROS1_DISTRO=melodic
+ARG UBUNTU_DISTRO=bionic
 
 # Prevent errors from apt-get.
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
@@ -42,7 +44,7 @@ RUN pip3 install -U setuptools pip virtualenv
 RUN apt-get update && apt-get install --no-install-recommends -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice67=6.7.180404+osrf1-1~bionic; fi
+RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice67=6.7.180404+osrf1-1~*; fi
 # Update default domain id.
 RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
@@ -72,7 +74,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev lib
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
 # Install build dependencies for class_loader.
-RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
+# We are building poco from source on xenial as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
+RUN if test ${UBUNTU_DISTRO} = bionic; then apt-get update && apt-get install --no-install-recommends -y libpoco-dev; fi
 
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
@@ -86,21 +89,21 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-melodic-catkin; fi
+RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-${ROS1_DISTRO}-catkin; fi
 
 # Install build and test dependencies of ros1_bridge.
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
     python-rospkg \
     python3-crypto \
     python3-gnupg \
-    ros-melodic-common-msgs \
-    ros-melodic-rosbash \
-    ros-melodic-roscpp \
-    ros-melodic-roslaunch \
-    ros-melodic-rosmsg \
-    ros-melodic-roscpp-tutorials \
-    ros-melodic-rospy-tutorials \
-    ros-melodic-tf2-msgs; fi
+    ros-${ROS1_DISTRO}-common-msgs \
+    ros-${ROS1_DISTRO}-rosbash \
+    ros-${ROS1_DISTRO}-roscpp \
+    ros-${ROS1_DISTRO}-roslaunch \
+    ros-${ROS1_DISTRO}-rosmsg \
+    ros-${ROS1_DISTRO}-roscpp-tutorials \
+    ros-${ROS1_DISTRO}-rospy-tutorials \
+    ros-${ROS1_DISTRO}-tf2-msgs; fi
 
 # Install build dependencies for turtlebot demo.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
@@ -117,13 +120,16 @@ RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
     libpcl-dev \
     libprotobuf-dev \
     libprotoc-dev \
+    libgoogle-glog-dev \
+    liblua5.2-dev \
+    libpcl-dev \
     libsdl1.2-dev libsdl-image1.2-dev \
     libudev-dev \
     libusb-1.0-0-dev \
     libyaml-cpp-dev \
     protobuf-compiler \
     python3-sphinx \
-    ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi; fi
+    ros-${ROS1_DISTRO}-kobuki-driver ros-${ROS1_DISTRO}-kobuki-ftdi; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
