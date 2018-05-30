@@ -22,7 +22,7 @@ import sys
 try:
     import ros_buildfarm  # noqa
 except ImportError:
-    sys.exit("Could not import ros_buildfarm, please add to the PYTHONPATH.")
+    sys.exit("Could not import ros_buildfarm, please add it to the PYTHONPATH.")
 
 try:
     import jenkinsapi  # noqa
@@ -168,7 +168,7 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
-        # confiruge a manually triggered version of the coverage job
+        # configure a manually triggered version of the coverage job
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
@@ -187,6 +187,19 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
+
+        # configure nightly triggered job using opensplice
+        job_name = 'nightly_' + job_os_name + '_ospl' + '_release'
+        if os_name == 'windows':
+            job_name = job_name[:20]
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'Release',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'use_connext_default': 'false',
+            'use_fastrtps_default': 'true',
+            'use_opensplice_default': 'true',
+        })
 
         # configure nightly triggered job
         job_name = 'nightly_' + job_os_name + '_release'
