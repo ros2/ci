@@ -197,6 +197,7 @@ def main(argv=None):
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'use_connext_default': 'false',
+            'use_fastrtps_default': 'true',
             'use_opensplice_default': 'true',
         })
 
