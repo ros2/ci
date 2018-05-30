@@ -188,6 +188,18 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
+        # configure nightly triggered job using opensplice
+        job_name = 'nightly_' + job_os_name + '_ospl' + '_release'
+        if os_name == 'windows':
+            job_name = job_name[:20]
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'Release',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'use_connext_default': 'false',
+            'use_opensplice_default': 'true',
+        })
+
         # configure nightly triggered job
         job_name = 'nightly_' + job_os_name + '_release'
         if os_name == 'windows':
