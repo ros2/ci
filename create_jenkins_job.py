@@ -86,6 +86,7 @@ def main(argv=None):
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
+        'ubuntu_distro': 'bionic',
     }
 
     jenkins = connect(args.jenkins_url)
@@ -236,6 +237,19 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
+
+
+    # configure nightly triggered job
+    job_name = 'nightly_xenial_release'
+    create_job('linux', job_name, 'ci_job.xml.em', {
+        'cmake_build_type': 'Release',
+        'time_trigger_spec': PERIODIC_JOB_SPEC,
+        'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+        'use_connext_default': 'false',
+        'use_fastrtps_default': 'true',
+        'use_opensplice_default': 'true',
+        'ubuntu_distro': 'xenial',
+    })
 
     # configure the launch job
     os_specific_data = collections.OrderedDict()
