@@ -176,7 +176,7 @@ echo "# END SECTION"
 
 @[if os_name in ['linux', 'linux-aarch64']]@
 sed -i 's+^FROM.*$+FROM ubuntu:${CI_UBUNTU_DISTRO}+' linux_docker_resources/Dockerfile
-export DOCKER_BUILD_ARGS="--build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+export DOCKER_BUILD_ARGS="--build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
