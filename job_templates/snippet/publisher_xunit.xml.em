@@ -16,6 +16,13 @@
           <stopProcessingIfError>true</stopProcessingIfError>
         </GoogleTestType>
         <JUnitType>
+          <pattern>@(prefix)/*/pytest.xml</pattern>
+          <skipNoTestFiles>true</skipNoTestFiles>
+          <failIfNotNew>true</failIfNotNew>
+          <deleteOutputFiles>true</deleteOutputFiles>
+          <stopProcessingIfError>true</stopProcessingIfError>
+        </JUnitType>
+        <JUnitType>
           <pattern>@(prefix)/*/test_results/**/*.xunit.xml</pattern>
           <skipNoTestFiles>true</skipNoTestFiles>
           <failIfNotNew>true</failIfNotNew>
