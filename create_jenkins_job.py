@@ -239,17 +239,18 @@ def main(argv=None):
             })
 
 
-    # configure nightly triggered job
-    job_name = 'nightly_xenial_release'
-    create_job('linux', job_name, 'ci_job.xml.em', {
-        'cmake_build_type': 'Release',
-        'time_trigger_spec': PERIODIC_JOB_SPEC,
-        'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-        'use_connext_default': 'false',
-        'use_fastrtps_default': 'true',
-        'use_opensplice_default': 'true',
-        'ubuntu_distro': 'xenial',
-    })
+    for os_name in ['linux', 'linux-aarch64']:
+        # configure a nightly triggered job for xenial using all RMW implementations
+        job_name = 'nightly_xenial_' + os_name + '_release'
+        create_job('linux', job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'Release',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'use_connext_default': 'true',
+            'use_fastrtps_default': 'true',
+            'use_opensplice_default': 'true',
+            'ubuntu_distro': 'xenial',
+        })
 
     # configure the launch job
     os_specific_data = collections.OrderedDict()
