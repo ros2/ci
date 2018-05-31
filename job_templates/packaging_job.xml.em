@@ -22,6 +22,7 @@
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
+    ubuntu_distro=ubuntu_distro,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
 ))@
