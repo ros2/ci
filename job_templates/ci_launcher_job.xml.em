@@ -26,6 +26,7 @@
     use_fastrtps_default=use_fastrtps_default,
     use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
+    ubuntu_distro=ubuntu_distro,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     test_args_default=test_args_default,
