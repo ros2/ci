@@ -246,7 +246,7 @@ def main(argv=None):
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'use_connext_default': 'true',
+            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
             'use_fastrtps_default': 'true',
             'use_opensplice_default': 'true',
             'ubuntu_distro': 'xenial',
