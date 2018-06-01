@@ -219,7 +219,7 @@ def main(argv=None):
             'cmake_build_type': 'None',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-fail 10 --ctest-args " -LE" linter',
+            'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-fail 10 --ctest-args " -LE" linter --pytest-args " -m" "not linter"',
         })
 
         # configure turtlebot jobs on Linux only for now
