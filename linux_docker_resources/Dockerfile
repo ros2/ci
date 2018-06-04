@@ -120,9 +120,6 @@ RUN if test \(${UBUNTU_DISTRO} != xenial -a ${INSTALL_TURTLEBOT2_DEMO_DEPS} = tr
     libpcl-dev \
     libprotobuf-dev \
     libprotoc-dev \
-    libgoogle-glog-dev \
-    liblua5.2-dev \
-    libpcl-dev \
     libsdl1.2-dev libsdl-image1.2-dev \
     libudev-dev \
     libusb-1.0-0-dev \
