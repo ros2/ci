@@ -28,7 +28,7 @@ case "${CI_ARGS}" in
         echo "Downloading Debian package of Connext..."
         curl --silent http://repo.ros2.org/ubuntu/main/pool/main/r/rti-connext-dds-5.3.1/rti-connext-dds-5.3.1_5.3.1_amd64.deb -o /tmp/rti-connext-dds.deb
         echo "Installing Debian package of Connext..."
-        dpkg -i /tmp/rti-connext-dds.deb
+        RTI_NC_LICENSE_ACCEPTED=yes dpkg -i /tmp/rti-connext-dds.deb
         ;;
       *)
         echo "Installing Connext binaries off RTI website..."
