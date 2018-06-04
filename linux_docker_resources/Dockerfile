@@ -108,9 +108,9 @@ RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-instal
     ros-${ROS1_DISTRO}-rospy-tutorials \
     ros-${ROS1_DISTRO}-tf2-msgs; fi
 
-# Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
-    apt-get install --no-install-recommends -y \
+# Install build dependencies for turtlebot demo (not supported on xenial).
+RUN if test \(${UBUNTU_DISTRO} != xenial -a ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then \
+    apt-get update && apt-get install --no-install-recommends -y \
     libatlas-base-dev \
     libboost-iostreams-dev \
     libboost-regex-dev \
