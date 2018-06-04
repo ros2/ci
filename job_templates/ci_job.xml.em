@@ -152,8 +152,7 @@ if [ "$CI_ISOLATED" = "true" ]; then
 fi
 if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
   export CI_ROS1_DISTRO=melodic
-fi
-if [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
+elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
   export CI_ROS1_DISTRO=kinetic
 fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
