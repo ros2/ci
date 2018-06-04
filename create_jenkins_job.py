@@ -241,7 +241,8 @@ def main(argv=None):
 
     for os_name in ['linux', 'linux-aarch64']:
         # configure a nightly triggered job for xenial using all RMW implementations
-        job_name = 'nightly_xenial_' + os_name + '_release'
+        ubuntu_distro = 'xenial'
+        job_name = 'nightly_{0}_{1}_release'.format(ubuntu_distro, os_name)
         create_job('linux', job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -249,7 +250,7 @@ def main(argv=None):
             'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
             'use_fastrtps_default': 'true',
             'use_opensplice_default': 'true',
-            'ubuntu_distro': 'xenial',
+            'ubuntu_distro': ubuntu_distro,
         })
 
     # configure the launch job
