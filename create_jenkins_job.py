@@ -76,7 +76,7 @@ def main(argv=None):
         'use_connext_default': 'true',
         'disable_connext_static_default': 'false',
         'disable_connext_dynamic_default': 'true',
-        'use_osrf_connext_debs_default': 'false',
+        'use_connext_debs_default': 'false',
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
         'use_isolated_default': 'true',

@@ -23,7 +23,7 @@
     use_connext_default=use_connext_default,
     disable_connext_static_default=disable_connext_static_default,
     disable_connext_dynamic_default=disable_connext_dynamic_default,
-    use_osrf_connext_debs_default=use_osrf_connext_debs_default,
+    use_connext_debs_default=use_connext_debs_default,
     use_fastrtps_default=use_fastrtps_default,
     use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
@@ -85,7 +85,7 @@ branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connext: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT')}, <br/>
 disable_connext_static: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_STATIC')}, <br/>
 disable_connext_dynamic: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_DYNAMIC')}, <br/>
-use_osrf_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_OSRF_CONNEXT_DEBS')}, <br/>`
+use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>`
 use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
@@ -129,8 +129,8 @@ fi
 if [ "$CI_DISABLE_CONNEXT_DYNAMIC" = "true" ]; then
   export CI_ARGS="$CI_ARGS --disable-connext-dynamic"
 fi
-if [ "$CI_USE_OSRF_CONNEXT_DEBS" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --osrf-connext-debs"
+if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --connext-debs"
 fi
 if [ "$CI_USE_FASTRTPS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --fastrtps"
@@ -238,8 +238,8 @@ if "!CI_DISABLE_CONNEXT_STATIC!" == "true" (
 if "!CI_DISABLE_CONNEXT_DYNAMIC!" == "true" (
   set "CI_ARGS=!CI_ARGS! --disable-connext-dynamic"
 )
-if "!CI_USE_OSRF_CONNEXT_DEBS!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --osrf-connext-debs"
+if "!CI_USE_CONNEXT_DEBS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --connext-debs"
 )
 if "!CI_USE_FASTRTPS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --fastrtps"

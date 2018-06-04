@@ -61,9 +61,13 @@ class LinuxBatchJob(BatchJob):
         # but the installed official packages
         if self.args.connext:
             # Try to find the connext env file to later source it
+            if self.args.connext_debs:
+                connext_env_file = '/opt/rti.com'
+            else:
+                connext_env_file = os.path.expanduser('~')
             connext_env_file = os.path.join(
-                os.path.expanduser('~'), 'rti_connext_dds-5.3.1', 'resource', 'scripts',
-                'rtisetenv_x64Linux3gcc5.4.0.bash')
+                connext_env_file, 'rti_connext_dds-5.3.1',
+                'resource', 'scripts', 'rtisetenv_x64Linux3gcc5.4.0.bash')
 
             if os.path.exists(connext_env_file):
                 # Make script compatible with dash
