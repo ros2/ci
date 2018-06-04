@@ -243,7 +243,7 @@ def main(argv=None):
         # configure a nightly triggered job for xenial using all RMW implementations
         ubuntu_distro = 'xenial'
         job_name = 'nightly_{0}_{1}_release'.format(ubuntu_distro, os_name)
-        create_job('linux', job_name, 'ci_job.xml.em', {
+        create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
