@@ -108,23 +108,24 @@ RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-instal
 # Install build dependencies for turtlebot demo.
 RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && \
     apt-get install --no-install-recommends -y \
-    # libatlas-base-dev \
+    libatlas-base-dev \
     libboost-iostreams-dev \
     libboost-regex-dev \
     libboost-system-dev \
     libboost-thread-dev \
-    # libcairo2-dev \
-    # libceres-dev \
+    libcairo2-dev \
+    libceres-dev \
     libgoogle-glog-dev \
     liblua5.2-dev \
     libpcl-dev \
-    # libprotobuf-dev \
+    libprotobuf-dev \
+    libprotoc-dev \
     libsdl1.2-dev libsdl-image1.2-dev \
     libudev-dev \
     libusb-1.0-0-dev \
     libyaml-cpp-dev \
-    # python3-sphinx \
-    ros-melodic-cartographer \
+    protobuf-compiler \
+    python3-sphinx \
     ros-melodic-kobuki-driver ros-melodic-kobuki-ftdi; fi
 
 # Create a user to own the build output.
