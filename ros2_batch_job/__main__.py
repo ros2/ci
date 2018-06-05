@@ -280,10 +280,10 @@ def build_and_test(args, job):
     ] + (['--merge-install'] if not args.isolated else []) + \
         args.build_args
 
-    cmake_args = ['" -DBUILD_TESTING=1" " --no-warn-unused-cli"']
+    cmake_args = ['-DBUILD_TESTING=ON --no-warn-unused-cli']
     if args.cmake_build_type:
         cmake_args.append(
-            '" -DCMAKE_BUILD_TYPE=' + args.cmake_build_type + '"')
+            '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
     if '--cmake-args' in cmd:
         index = cmd.index('--cmake-args')
         cmd[index + 1:index + 1] = cmake_args
@@ -293,8 +293,8 @@ def build_and_test(args, job):
 
     if coverage:
         ament_cmake_args = [
-            '" -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
-            '" -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ' + gcov_flags + '"']
+            '-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} ' + gcov_flags,
+            '-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ' + gcov_flags]
         if '--ament-cmake-args' in cmd:
             index = cmd.index('--ament-cmake-args')
             cmd[index + 1:index + 1] = ament_cmake_args
