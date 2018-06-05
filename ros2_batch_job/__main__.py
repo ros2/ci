@@ -154,8 +154,8 @@ def get_args(sysargv=None):
         '--disable-connext-dynamic', default=False, action='store_true',
         help="disable connext dynamic")
     parser.add_argument(
-        '--osrf-connext-debs', default=False, action='store_true',
-        help="use OSRF-built debs for Connext instead of binaries off the RTI website (linux only)")
+        '--connext-debs', default=False, action='store_true',
+        help="use Debian packages for Connext instead of binaries off the RTI website (Linux only)")
     parser.add_argument(
         '--fastrtps', default=False, action='store_true',
         help="try to build with FastRTPS")

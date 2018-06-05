@@ -57,19 +57,24 @@ class LinuxBatchJob(BatchJob):
 
     def setup_env(self):
         connext_env_file = None
-        # this block is only relevant if it is not using the custom Debian package
-        # but the installed official packages
+        # Update the script provided by Connext to work in dash
         if self.args.connext:
-            # Try to find the connext env file to later source it
+            # Location of the original Connext script
+            if self.args.connext_debs:
+                connext_env_file = '/opt/rti.com'
+            else:
+                connext_env_file = os.path.expanduser('~')
             connext_env_file = os.path.join(
-                os.path.expanduser('~'), 'rti_connext_dds-5.3.1', 'resource', 'scripts',
-                'rtisetenv_x64Linux3gcc5.4.0.bash')
+                connext_env_file, 'rti_connext_dds-5.3.1',
+                'resource', 'scripts', 'rtisetenv_x64Linux3gcc5.4.0.bash')
 
             if os.path.exists(connext_env_file):
                 # Make script compatible with dash
                 with open(connext_env_file, 'r') as env_file:
                     env_file_data = env_file.read()
                 env_file_data = env_file_data.replace('${BASH_SOURCE[0]}', connext_env_file)
+                # Create the new script to a writable location
+                connext_env_file = os.path.join(os.getcwd(), 'rti.sh')
                 with open(connext_env_file, 'w') as env_file:
                     env_file.write(env_file_data)
             else:

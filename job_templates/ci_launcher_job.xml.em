@@ -22,7 +22,7 @@
     use_connext_default=use_connext_default,
     disable_connext_static_default=disable_connext_static_default,
     disable_connext_dynamic_default=disable_connext_dynamic_default,
-    use_osrf_connext_debs_default=use_osrf_connext_debs_default,
+    use_connext_debs_default=use_connext_debs_default,
     use_fastrtps_default=use_fastrtps_default,
     use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
