@@ -80,7 +80,7 @@ def main(argv=None):
         'use_fastrtps_default': 'true',
         'use_opensplice_default': 'false',
         'use_isolated_default': 'true',
-        'build_args_default': '--event-handler console_cohesion+ --cmake-args " -DSECURITY=ON"',
+        'build_args_default': '--event-handler console_cohesion+ --cmake-args -DSECURITY=ON',
         'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
@@ -219,7 +219,7 @@ def main(argv=None):
             'cmake_build_type': 'None',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-fail 10 --ctest-args " -LE" linter --pytest-args " -m" "not linter"',
+            'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-fail 10 --ctest-args -LE linter --pytest-args -m "not linter"',
         })
 
         # configure turtlebot jobs on Linux only for now
