@@ -44,7 +44,7 @@ def build_and_test_and_package(args, job):
     ] + (['--merge-install'] if not args.isolated else []) + \
         args.build_args
 
-    cmake_args = ['-DBUILD_TESTING=OFF --no-warn-unused-cli']
+    cmake_args = ['-DBUILD_TESTING=OFF', '--no-warn-unused-cli']
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
@@ -73,7 +73,7 @@ def build_and_test_and_package(args, job):
             '--base-paths', '"%s"' % args.sourcespace,
             '--build-base', '"%s"' % args.buildspace,
             '--install-base', '"%s"' % args.installspace,
-            '--cmake-args', '-DBUILD_TESTING=ON --no-warn-unused-cli',
+            '--cmake-args', '-DBUILD_TESTING=ON', '--no-warn-unused-cli',
             '--packages-select', 'ros1_bridge',
             '--event-handlers', 'console_direct+',
         ] + (['--merge-install'] if not args.isolated else []) +
