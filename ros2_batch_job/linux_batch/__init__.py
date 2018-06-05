@@ -69,17 +69,18 @@ class LinuxBatchJob(BatchJob):
                 connext_env_file, 'rti_connext_dds-5.3.1',
                 'resource', 'scripts', 'rtisetenv_x64Linux3gcc5.4.0.bash')
 
-            if not os.path.exists(connext_env_file):
-                warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
-                    connext_env_file))
-                connext_env_file = None
-            elif not self.args.connext_debs:
+            if os.path.exists(connext_env_file):
                 # Make script compatible with dash
                 with open(connext_env_file, 'r') as env_file:
                     env_file_data = env_file.read()
                 env_file_data = env_file_data.replace('${BASH_SOURCE[0]}', connext_env_file)
+                connext_env_file = os.path.join(os.getcwd(), 'rti.sh')
                 with open(connext_env_file, 'w') as env_file:
                     env_file.write(env_file_data)
+            else:
+                warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
+                    connext_env_file))
+                connext_env_file = None
         # There is nothing extra to be done for OpenSplice
 
         ros1_setup_file = None
