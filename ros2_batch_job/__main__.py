@@ -293,8 +293,8 @@ def build_and_test(args, job):
 
     if coverage:
         ament_cmake_args = [
-            '-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} ' + gcov_flags,
-            '-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ' + gcov_flags]
+            '-DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
+            '-DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' + gcov_flags + '"']
         if '--ament-cmake-args' in cmd:
             index = cmd.index('--ament-cmake-args')
             cmd[index + 1:index + 1] = ament_cmake_args
