@@ -78,7 +78,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
 # Install build dependencies for class_loader.
 # We are building poco from source on xenial as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
-RUN if test ${UBUNTU_DISTRO} = bionic; then apt-get update && apt-get install --no-install-recommends -y libpoco-dev; fi
+RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libpoco-dev; fi
 
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
