@@ -238,7 +238,6 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
-
     for os_name in ['linux', 'linux-aarch64']:
         # configure a nightly triggered job for xenial using all RMW implementations
         ubuntu_distro = 'xenial'
