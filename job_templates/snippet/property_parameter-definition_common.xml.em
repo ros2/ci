@@ -33,6 +33,22 @@ To use the latest released version, use an empty string.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
+          <name>CI_UBUNTU_DISTRO</name>
+          <description>Select the linux distribution to use.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>@ubuntu_distro</string>
+@{
+choices = ['bionic', 'xenial']
+choices.remove(ubuntu_distro)
+}@
+@[for choice in choices]@
+              <string>@choice</string>
+@[end for]@
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
           <name>CI_CMAKE_BUILD_TYPE</name>
           <description>Select the CMake build type.</description>
           <choices class="java.util.Arrays$ArrayList">

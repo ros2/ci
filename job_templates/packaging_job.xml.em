@@ -22,6 +22,7 @@
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
+    ubuntu_distro=ubuntu_distro,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
 ))@
@@ -138,10 +139,10 @@ if [ "$CI_TEST_BRIDGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --test-bridge"
 fi
 @[if os_name in ['linux', 'linux-aarch64']]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/kinetic"
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/melodic"
 @[else]@
 echo "not building/testing the ros1_bridge on MacOS"
-# export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/kinetic/install_isolated"
+# export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
 @[end if]@
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
@@ -165,8 +166,6 @@ docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[if os_name == 'linux-aarch64']@
-sed -i 's+^FROM.*$+FROM aarch64/ubuntu:xenial+' linux_docker_resources/Dockerfile
-sed -i 's+apt-get update+(apt-get update || true)+' linux_docker_resources/Dockerfile
 docker build --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
 @[elif os_name == 'linux']@
 docker build --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources

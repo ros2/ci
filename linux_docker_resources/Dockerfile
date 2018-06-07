@@ -1,7 +1,9 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 ARG BRIDGE=false
 ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
 ARG PLATFORM=x86
+ARG ROS1_DISTRO=melodic
+ARG UBUNTU_DISTRO=bionic
 
 # Prevent errors from apt-get.
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
@@ -17,6 +19,7 @@ ENV LANG en_US.UTF-8
 RUN apt-get update && apt-get install --no-install-recommends -y \
   lsb-release net-tools sudo \
   curl \
+  gnupg2 \
   apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
@@ -31,7 +34,7 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install --no-install-recommends -y clang-format-3.8 cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
+RUN apt-get update && apt-get install --no-install-recommends -y clang-format cppcheck git pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
@@ -41,7 +44,7 @@ RUN pip3 install -U setuptools pip virtualenv
 RUN apt-get update && apt-get install --no-install-recommends -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice67=6.7.180404+osrf1-1~xenial; fi
+RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice67=6.7.180404+osrf1-1~$UBUNTU_DISTRO; fi
 # Update default domain id.
 RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
@@ -52,10 +55,11 @@ RUN if test ${PLATFORM} = x86; then apt-get update && RTI_NC_LICENSE_ACCEPTED=ye
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
 
 # Install dependencies for RTI web binaries install script.
-RUN pip3 install pexpect
+RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
 # Get and install the RTI web binaries.
 RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
+RUN cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
@@ -72,13 +76,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev lib
 # Install OpenCV.
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
-# Install build dependencies for class loader.
-# TODO Uncomment this when we switch to bionic
-# We are building poco from source for now as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
-# RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev libpocofoundation9v5 libpocofoundation9v5-dbg
+# Install build dependencies for class_loader.
+# We are building poco from source on xenial as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
+RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libpoco-dev; fi
 
 # Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 qtbase5-dev libxaw7-dev libgles2-mesa-dev libglu1-mesa-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
@@ -89,23 +92,42 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-kinetic-catkin; fi
+RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-${ROS1_DISTRO}-catkin; fi
 
 # Install build and test dependencies of ros1_bridge.
-RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y python-rospkg ros-kinetic-common-msgs ros-kinetic-rosbash ros-kinetic-roscpp ros-kinetic-roslaunch ros-kinetic-rosmsg ros-kinetic-roscpp-tutorials ros-kinetic-rospy-tutorials ros-kinetic-tf2-msgs; fi
+RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
+    python-rospkg \
+    ros-${ROS1_DISTRO}-common-msgs \
+    ros-${ROS1_DISTRO}-rosbash \
+    ros-${ROS1_DISTRO}-roscpp \
+    ros-${ROS1_DISTRO}-roslaunch \
+    ros-${ROS1_DISTRO}-rosmsg \
+    ros-${ROS1_DISTRO}-roscpp-tutorials \
+    ros-${ROS1_DISTRO}-rospy-tutorials \
+    ros-${ROS1_DISTRO}-tf2-msgs; fi
 
-# Install build dependencies for turtlebot demo.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then apt-get update && apt-get install --no-install-recommends -y libatlas-base-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libboost-thread-dev libceres-dev libgoogle-glog-dev liblua5.2-dev libpcl-dev libprotobuf-dev libsdl1.2-dev libsdl-image1.2-dev libsuitesparse-dev libudev-dev libusb-1.0-0-dev libyaml-cpp-dev protobuf-compiler python-sphinx ros-kinetic-kobuki-driver ros-kinetic-kobuki-ftdi; fi
-
-# Workaround bugs in the Ubuntu 16.04 packaging of libpcl.  Reports:
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=819741
-# https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
-# https://github.com/PointCloudLibrary/pcl/issues/1594
-# TODO(clalancette): for some reason, if these two workarounds are listed in
-# different RUN statements, it causes the docker image to fail to build on
-# aarch64 (see https://github.com/ros2/ci/pull/73).  As a workaround, do them
-# in one statement.
-RUN if test ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true; then sed -i -e '/vtkproj4;/d' /usr/lib/$(uname -m)-linux-gnu/cmake/pcl/PCLConfig.cmake && ln -s /usr/lib/$(uname -m)-linux-gnu/libproj.so.9.1.0 /usr/lib/$(uname -m)-linux-gnu/libproj.so; fi
+# Install build dependencies for turtlebot demo (not supported on xenial).
+RUN if test \( ${UBUNTU_DISTRO} != xenial -a ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then \
+    apt-get update && apt-get install --no-install-recommends -y \
+    libatlas-base-dev \
+    libboost-iostreams-dev \
+    libboost-regex-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libcairo2-dev \
+    libceres-dev \
+    libgoogle-glog-dev \
+    liblua5.2-dev \
+    libpcl-dev \
+    libprotobuf-dev \
+    libprotoc-dev \
+    libsdl1.2-dev libsdl-image1.2-dev \
+    libudev-dev \
+    libusb-1.0-0-dev \
+    libyaml-cpp-dev \
+    protobuf-compiler \
+    python3-sphinx \
+    ros-${ROS1_DISTRO}-kobuki-driver ros-${ROS1_DISTRO}-kobuki-ftdi; fi
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild

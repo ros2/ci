@@ -86,6 +86,7 @@ def main(argv=None):
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
+        'ubuntu_distro': 'bionic',
     }
 
     jenkins = connect(args.jenkins_url)
@@ -236,6 +237,20 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
+
+    for os_name in ['linux', 'linux-aarch64']:
+        # configure a nightly triggered job for xenial using all RMW implementations
+        ubuntu_distro = 'xenial'
+        job_name = 'nightly_{0}_{1}_release'.format(ubuntu_distro, os_name)
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'Release',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+            'use_fastrtps_default': 'true',
+            'use_opensplice_default': 'true',
+            'ubuntu_distro': ubuntu_distro,
+        })
 
     # configure the launch job
     os_specific_data = collections.OrderedDict()
