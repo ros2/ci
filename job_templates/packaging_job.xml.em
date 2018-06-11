@@ -138,8 +138,13 @@ export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
 if [ "$CI_TEST_BRIDGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --test-bridge"
 fi
+if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
+  export CI_ROS1_DISTRO=melodic
+elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
+  export CI_ROS1_DISTRO=kinetic
+fi
 @[  if os_name in ['linux', 'linux-aarch64']]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/melodic"
+export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  else]@
 echo "not building/testing the ros1_bridge on MacOS"
 # export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
@@ -157,6 +162,9 @@ echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
 @[  if os_name in ['linux', 'linux-aarch64']]@
+sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
+export DOCKER_BUILD_ARGS="--build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
 docker version
@@ -166,9 +174,9 @@ docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-docker build --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux']@
-docker build --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
