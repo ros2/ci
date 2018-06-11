@@ -138,12 +138,12 @@ export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
 if [ "$CI_TEST_BRIDGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --test-bridge"
 fi
-@[if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/melodic"
-@[else]@
+@[  else]@
 echo "not building/testing the ros1_bridge on MacOS"
 # export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
-@[end if]@
+@[  end if]@
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
@@ -156,7 +156,7 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64']]@
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
 docker version
@@ -165,29 +165,29 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
-@[if os_name == 'linux-aarch64']@
+@[    if os_name == 'linux-aarch64']@
 docker build --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
-@[elif os_name == 'linux']@
+@[    elif os_name == 'linux']@
 docker build --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
-@[else]@
+@[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
-@[end if]@
+@[    end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-@[if os_name == 'linux']@
+@[    if os_name == 'linux']@
 export CONTAINER_NAME=ros2_packaging
-@[elif os_name == 'linux-aarch64']@
+@[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_packaging_aarch64
-@[else]@
+@[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
-@[end if]@
+@[    end if]@
 docker run --rm --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
-@[else]@
+@[  else]@
 echo "# BEGIN SECTION: Run packaging script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
-@[end if]@
+@[  end if]@
 @[elif os_name == 'windows']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
