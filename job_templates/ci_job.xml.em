@@ -161,9 +161,9 @@ fi
 if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
-@[if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
+@[  if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
-@[end if]@
+@[  end if]@
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
 fi
@@ -173,7 +173,7 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 export DOCKER_BUILD_ARGS="--build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 
@@ -188,39 +188,39 @@ echo "# BEGIN SECTION: Inject date into Dockerfile"
 sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
-@[if os_name == 'linux-aarch64']@
-@[  if turtlebot_demo]@
+@[    if os_name == 'linux-aarch64']@
+@[      if turtlebot_demo]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[  else]@
+@[      else]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
-@[  end if]@
-@[elif os_name == 'linux']@
-@[  if turtlebot_demo]@
+@[      end if]@
+@[    elif os_name == 'linux']@
+@[      if turtlebot_demo]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[  else]@
+@[      else]@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci linux_docker_resources
-@[  end if]@
-@[else]@
+@[      end if]@
+@[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
-@[end if]@
+@[    end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-@[if turtlebot_demo]@
+@[    if turtlebot_demo]@
 export CONTAINER_NAME=ros2_batch_ci_turtlebot_demo
-@[elif os_name == 'linux']@
+@[    elif os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
-@[elif os_name == 'linux-aarch64']@
+@[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_batch_ci_aarch64
-@[else]@
+@[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
-@[end if]@
+@[    end if]@
 docker run --rm --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
-@[else]@
+@[  else]@
 echo "# BEGIN SECTION: Run script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
-@[end if]@
+@[  end if]@
 @[elif os_name == 'windows']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"

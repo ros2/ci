@@ -93,7 +93,7 @@ for (item in build_numbers) {
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
             <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
-@[if os_name == 'linux-aarch64']@
+@[  if os_name == 'linux-aarch64']@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
@@ -102,8 +102,8 @@ for (item in build_numbers) {
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
-@[end if]@
-@[if os_name == 'windows']@
+@[  end if]@
+@[  if os_name == 'windows']@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
@@ -112,7 +112,7 @@ for (item in build_numbers) {
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
-@[end if]@
+@[  end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
           <condition>SUCCESS</condition>
