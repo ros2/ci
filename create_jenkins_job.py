@@ -252,6 +252,16 @@ def main(argv=None):
             'ubuntu_distro': ubuntu_distro,
         })
 
+        ubuntu_distro = 'xenial'
+        # configure a nightly xenial packaging job
+        job_name = 'packaging_{0}_{1}'.format(ubuntu_distro, os_name)
+        create_job(os_name, job_name, 'packaging_job.xml.em', {
+            'cmake_build_type': 'RelWithDebInfo',
+            'test_bridge_default': 'true',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+        })
+
     # configure the launch job
     os_specific_data = collections.OrderedDict()
     for os_name in sorted(os_configs.keys()):
