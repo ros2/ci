@@ -260,6 +260,7 @@ def main(argv=None):
             'test_bridge_default': 'true',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'ubuntu_distro': ubuntu_distro,
         })
 
     # configure the launch job
