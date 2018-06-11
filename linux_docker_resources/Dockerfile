@@ -81,7 +81,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libpoco-dev; fi
 
 # Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
