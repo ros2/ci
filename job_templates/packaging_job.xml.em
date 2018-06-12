@@ -26,16 +26,15 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
 ))@
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_FASTRTPS</name>
-          <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS.</description>
-          <defaultValue>@(use_fastrtps_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_OPENSPLICE</name>
-          <description>By setting this to True, the build will attempt to use PrismTech&apos;s OpenSplice.</description>
-          <defaultValue>@(use_opensplice_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
+@(SNIPPET(
+    'property_parameter-definition_rmw_implementations',
+    use_connext_default=use_connext_default,
+    disable_connext_static_default=disable_connext_static_default,
+    disable_connext_dynamic_default=disable_connext_dynamic_default,
+    use_connext_debs_default=use_connext_debs_default,
+    use_fastrtps_default=use_fastrtps_default,
+    use_opensplice_default=use_opensplice_default,
+))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_TEST_BRIDGE</name>
           <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
