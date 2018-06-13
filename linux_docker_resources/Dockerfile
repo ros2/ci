@@ -27,9 +27,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list
 RUN curl --silent http://repositories.ros.org/repos.key | apt-key add -
 
-# Add the OSRF repositories to the apt sources list.
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
-RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
+# # Add the OSRF repositories to the apt sources list.
+# RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
+# RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
+# Add the ROS2 apt repo as packages.osrfoundation.org is down
+RUN echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list
+RUN curl --silent http://repo.ros2.org/repos.key | apt-key add -
 
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
