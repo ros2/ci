@@ -150,8 +150,8 @@ def main(argv=None):
             'cmake_build_type': 'RelWithDebInfo',
             'test_bridge_default': 'true',
             'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'false',
-            'use_connext_default': 'false',
+            'use_opensplice_default': 'true',
+            'use_connext_default': 'true',
             'use_connext_debs_default': 'true',
         })
 
@@ -162,8 +162,8 @@ def main(argv=None):
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'false',
-            'use_connext_default': 'false',
+            'use_opensplice_default': 'true',
+            'use_connext_default': 'true',
             'use_connext_debs_default': 'true',
         })
 
@@ -270,8 +270,8 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ubuntu_distro': ubuntu_distro,
             'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'false',
-            'use_connext_default': 'false',
+            'use_opensplice_default': 'true',
+            'use_connext_default': 'true',
             'use_connext_debs_default': 'true',
         })
 
