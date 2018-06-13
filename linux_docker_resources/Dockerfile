@@ -1,6 +1,7 @@
 FROM ubuntu:bionic
 ARG BRIDGE=false
 ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
+ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
 ARG ROS1_DISTRO=melodic
 ARG UBUNTU_DISTRO=bionic
@@ -49,7 +50,7 @@ RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update &
 RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
 # Install the Connext binary from the OSRF repositories.
-RUN if test ${PLATFORM} = x86; then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-5.3.1; fi
+RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-5.3.1; fi
 
 # Install the RTI dependencies.
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
