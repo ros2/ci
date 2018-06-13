@@ -138,6 +138,7 @@ if [ "$CI_DISABLE_CONNEXT_DYNAMIC" = "true" ]; then
   export CI_ARGS="$CI_ARGS --disable-connext-dynamic"
 fi
 if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
+  export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg INSTALL_CONNEXT_DEBS=$CI_USE_CONNEXT_DEBS"
   export CI_ARGS="$CI_ARGS --connext-debs"
 fi
 if [ "$CI_USE_FASTRTPS" = "true" ]; then
@@ -178,7 +179,7 @@ echo "# END SECTION"
 
 @[  if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-export DOCKER_BUILD_ARGS="--build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
