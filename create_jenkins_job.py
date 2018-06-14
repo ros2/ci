@@ -151,7 +151,7 @@ def main(argv=None):
             'test_bridge_default': 'true',
             'use_fastrtps_default': 'true',
             'use_opensplice_default': 'true',
-            'use_connext_default': 'true',
+            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
             'use_connext_debs_default': 'true',
         })
 
@@ -163,7 +163,7 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'use_fastrtps_default': 'true',
             'use_opensplice_default': 'true',
-            'use_connext_default': 'true',
+            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
             'use_connext_debs_default': 'true',
         })
 
@@ -271,7 +271,7 @@ def main(argv=None):
             'ubuntu_distro': ubuntu_distro,
             'use_fastrtps_default': 'true',
             'use_opensplice_default': 'true',
-            'use_connext_default': 'true',
+            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
             'use_connext_debs_default': 'true',
         })
 
