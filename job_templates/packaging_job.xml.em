@@ -172,6 +172,8 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
+echo "# BEGIN SECTION: Inject date into Dockerfile"
+sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
