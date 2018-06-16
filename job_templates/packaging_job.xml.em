@@ -26,16 +26,15 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
 ))@
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_FASTRTPS</name>
-          <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS.</description>
-          <defaultValue>@(use_fastrtps_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_OPENSPLICE</name>
-          <description>By setting this to True, the build will attempt to use PrismTech&apos;s OpenSplice.</description>
-          <defaultValue>@(use_opensplice_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
+@(SNIPPET(
+    'property_parameter-definition_rmw_implementations',
+    use_connext_default=use_connext_default,
+    disable_connext_static_default=disable_connext_static_default,
+    disable_connext_dynamic_default=disable_connext_dynamic_default,
+    use_connext_debs_default=use_connext_debs_default,
+    use_fastrtps_default=use_fastrtps_default,
+    use_opensplice_default=use_opensplice_default,
+))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_TEST_BRIDGE</name>
           <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
@@ -100,6 +99,10 @@
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
+use_connext: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT')}, <br/>
+disable_connext_static: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_STATIC')}, <br/>
+disable_connext_dynamic: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_DYNAMIC')}, <br/>
+use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>`
 use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
@@ -124,6 +127,19 @@ if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
 fi
 if [ -n "${CI_COLCON_BRANCH+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-branch $CI_COLCON_BRANCH"
+fi
+if [ "$CI_USE_CONNEXT" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --connext"
+fi
+if [ "$CI_DISABLE_CONNEXT_STATIC" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --disable-connext-static"
+fi
+if [ "$CI_DISABLE_CONNEXT_DYNAMIC" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --disable-connext-dynamic"
+fi
+if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
+  export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg INSTALL_CONNEXT_DEBS=$CI_USE_CONNEXT_DEBS"
+  export CI_ARGS="$CI_ARGS --connext-debs"
 fi
 if [ "$CI_USE_FASTRTPS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --fastrtps"
@@ -163,7 +179,7 @@ echo "# END SECTION"
 
 @[  if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-export DOCKER_BUILD_ARGS="--build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
@@ -210,6 +226,18 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
+)
+if "!CI_USE_CONNEXT!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --connext"
+)
+if "!CI_DISABLE_CONNEXT_STATIC!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --disable-connext-static"
+)
+if "!CI_DISABLE_CONNEXT_DYNAMIC!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --disable-connext-dynamic"
+)
+if "!CI_USE_CONNEXT_DEBS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --connext-debs"
 )
 if "!CI_USE_FASTRTPS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --fastrtps"
