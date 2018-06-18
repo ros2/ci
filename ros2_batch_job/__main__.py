@@ -324,7 +324,7 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: test-result --all')
     # Collect the test results
     ret_test_results = job.run(
-        [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace, '--all'],
+        [args.colcon_script, 'test-result', '--test-result-base', '"%s"' % args.buildspace, '--all'],
         exit_on_error=False, shell=True
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))
@@ -333,7 +333,7 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: test-result')
     # Collect the test results
     ret_test_results = job.run(
-        [args.colcon_script, 'test-result', '--build-base', '"%s"' % args.buildspace],
+        [args.colcon_script, 'test-result', '--test-result-base', '"%s"' % args.buildspace],
         exit_on_error=False, shell=True
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))

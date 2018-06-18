@@ -111,7 +111,7 @@ def build_and_test_and_package(args, job):
             # Collect the test results
             ret_test_results = job.run([
                 args.colcon_script, 'test-result',
-                '--build-base', '"%s"' % args.buildspace],
+                '--test-result-base', '"%s"' % args.buildspace],
                 exit_on_error=False, shell=True
             )
             info("test-result returned: '{0}'".format(ret_test_results))
