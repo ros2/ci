@@ -6,6 +6,9 @@ ARG PLATFORM=x86
 ARG ROS1_DISTRO=melodic
 ARG UBUNTU_DISTRO=bionic
 
+# automatic invalidation once every day.
+RUN echo "@today_str"
+
 # Prevent errors from apt-get.
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
 ENV DEBIAN_FRONTEND noninteractive
@@ -89,9 +92,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev 
 
 # Install Python3 development files.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
-
-# automatic invalidation once every day.
-RUN echo "@today_str"
 
 RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-${ROS1_DISTRO}-catkin; fi
 
