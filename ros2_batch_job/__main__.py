@@ -99,8 +99,10 @@ gcov_flags = " -fprofile-arcs -ftest-coverage "
 
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
+    blacklisted_package_names = []
     if not args.packaging:
-        blacklisted_package_names = [
+        build_function = build_and_test
+        blacklisted_package_names += [
             'actionlib_msgs',
             'common_interfaces',
             'cv_bridge',
@@ -110,9 +112,16 @@ def main(sysargv=None):
             'trajectory_msgs',
             'vision_opencv',
         ]
-        return run(args, build_and_test, blacklisted_package_names=blacklisted_package_names)
     else:
-        return run(args, build_and_test_and_package)
+        build_function = build_and_test_and_package
+        if sys.platform == 'win32':
+            blacklisted_package_names += [
+                'pendulum_control',
+                'rttest',
+                'tlsf',
+                'tlsf_cpp',
+            ]
+    return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
 
 
 def get_args(sysargv=None):
