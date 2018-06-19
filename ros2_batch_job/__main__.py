@@ -114,7 +114,7 @@ def main(sysargv=None):
         ]
     else:
         build_function = build_and_test_and_package
-        if sys.platform == 'win32':
+        if sys.platform in ('darwin', 'win32'):
             blacklisted_package_names += [
                 'pendulum_control',
                 'rttest',
