@@ -96,6 +96,9 @@
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
         <script plugin="script-security@@1.27">
           <script><![CDATA[build.setDescription("""\
+@[if 'linux' in os_name]@
+ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
+@[end if]@
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
