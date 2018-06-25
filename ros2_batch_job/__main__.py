@@ -60,7 +60,6 @@ pip_dependencies = [
     'flake8-import-order',
     'flake8-quotes',
     'mock',
-    'nose',
     'pep8',
     'pydocstyle',
     'pyflakes',
