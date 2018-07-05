@@ -167,6 +167,19 @@ def main(argv=None):
             'use_connext_debs_default': 'true',
         })
 
+        # create a nightly Debug packaging job on Windows
+        if os_name == 'windows':
+            create_job(os_name, 'packaging_' + os_name + '_debug', 'packaging_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'test_bridge_default': 'true',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'use_fastrtps_default': 'true',
+                'use_opensplice_default': 'true',
+                'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+                'use_connext_debs_default': 'true',
+            })
+
         # configure nightly triggered job
         job_name = 'nightly_' + job_os_name + '_debug'
         if os_name == 'windows':
