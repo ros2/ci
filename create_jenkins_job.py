@@ -169,7 +169,7 @@ def main(argv=None):
 
         # create a nightly Debug packaging job on Windows
         if os_name == 'windows':
-            create_job(os_name, 'packaging_' + os_name + '_deb', 'packaging_job.xml.em', {
+            create_job(os_name, 'packaging_' + os_name + '_debug', 'packaging_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'test_bridge_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
