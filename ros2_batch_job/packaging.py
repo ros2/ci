@@ -194,7 +194,3 @@ def build_and_test_and_package(args, job):
     print('# END SUBSECTION')
 
     return 0
-
-
-if __name__ == '__main__':
-    sys.exit(main())
