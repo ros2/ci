@@ -210,7 +210,11 @@ export CONTAINER_NAME=ros2_packaging_aarch64
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
-docker run --rm --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+# Create a network that prevents docker containers on the same host from communicating.
+# This prevents cross-talk between builds running in parallel on different executors on a single host.
+# It may have already been created.
+docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
+docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run packaging script"
