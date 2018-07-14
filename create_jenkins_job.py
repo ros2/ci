@@ -154,6 +154,16 @@ def main(argv=None):
             'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
             'use_connext_debs_default': 'true',
         })
+        # configure test jobs for experimenting with packaging job config changes
+        # Keep parameters the same as the manual triggered job above.
+        create_job(os_name, 'test_ci_packaging_' + os_name, 'packaging_job.xml.em', {
+            'cmake_build_type': 'RelWithDebInfo',
+            'test_bridge_default': 'true',
+            'use_fastrtps_default': 'true',
+            'use_opensplice_default': 'true',
+            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+            'use_connext_debs_default': 'true',
+        })
 
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
