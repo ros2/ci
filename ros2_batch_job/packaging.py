@@ -167,13 +167,13 @@ def build_and_test_and_package(args, job):
     if args.os == 'linux' or args.os == 'osx':
         archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, platform.machine())
 
-        def exclude(filename):
-            if os.path.basename(filename) == 'SOURCES.txt':
-                if os.path.dirname(filename).endswith('.egg-info'):
-                    return True
-            return False
+        def exclude_filter(tarinfo):
+            if tarinfo.isfile() and os.path.basename(tarinfo.name) == 'SOURCES.txt':
+                if os.path.dirname(tarinfo.name).endswith('.egg-info'):
+                    return None  # returning None will exclude it from the archive
+            return tarinfo
         with tarfile.open(archive_path, 'w:bz2') as h:
-            h.add(args.installspace, arcname=folder_name, exclude=exclude)
+            h.add(args.installspace, arcname=folder_name, filter=exclude_filter)
     elif args.os == 'windows':
         archive_path = 'ros2-package-windows-%s.zip' % platform.machine()
         with zipfile.ZipFile(archive_path, 'w') as zf:
