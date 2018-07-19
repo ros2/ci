@@ -133,6 +133,17 @@ RUN if test \( ${UBUNTU_DISTRO} != xenial -a ${INSTALL_TURTLEBOT2_DEMO_DEPS} = t
     python3-sphinx \
     ros-${ROS1_DISTRO}-kobuki-driver ros-${ROS1_DISTRO}-kobuki-ftdi; fi
 
+# Install dependencies for RViz visual tests
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    libgl1-mesa-dri \
+    libglapi-mesa \
+    libosmesa6 \
+    mesa-utils \
+    xvfb \
+    matchbox-window-manager
+
+ENV DISPLAY=:99
+
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
 RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
@@ -147,4 +158,4 @@ RUN chmod 755 /entry_point.sh
 
 ENTRYPOINT ["/entry_point.sh"]
 
-CMD ["python3 -u run_ros2_batch.py $CI_ARGS"]
+CMD ["matchbox-window-manager > /dev/null 2>&1 & python3 -u run_ros2_batch.py $CI_ARGS"]
