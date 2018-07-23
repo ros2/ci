@@ -58,4 +58,4 @@ echo "done."
 
 cd /home/rosbuild/ci_scripts
 
-exec sudo -H -u rosbuild -E -- /bin/sh -c "$*"
+exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
