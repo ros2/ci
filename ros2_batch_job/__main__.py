@@ -154,23 +154,11 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--os', default=None, choices=['linux', 'osx', 'windows'])
     parser.add_argument(
-        '--connext', default=False, action='store_true',
-        help="try to build with connext")
-    parser.add_argument(
-        '--disable-connext-static', default=False, action='store_true',
-        help="disable connext static")
-    parser.add_argument(
-        '--disable-connext-dynamic', default=False, action='store_true',
-        help="disable connext dynamic")
+        '--ignore-rmw', nargs='*', default=[],
+        help='ignore the passes RMW implementations as well as supporting packages')
     parser.add_argument(
         '--connext-debs', default=False, action='store_true',
         help="use Debian packages for Connext instead of binaries off the RTI website (Linux only)")
-    parser.add_argument(
-        '--fastrtps', default=False, action='store_true',
-        help="try to build with FastRTPS")
-    parser.add_argument(
-        '--opensplice', default=False, action='store_true',
-        help="try to build with OpenSplice")
     parser.add_argument(
         '--isolated', default=False, action='store_true',
         help="build and install each package a separate folders")
@@ -373,11 +361,6 @@ def run(args, build_function, blacklisted_package_names=None):
     args.buildspace = 'build space' if 'buildspace' in args.white_space_in else 'build'
     args.installspace = 'install space' if 'installspace' in args.white_space_in else 'install'
 
-    if args.disable_connext_static:
-        os.environ["CONNEXT_STATIC_DISABLE"] = '1'
-    if args.disable_connext_dynamic:
-        os.environ["CONNEXT_DYNAMIC_DISABLE"] = '1'
-
     platform_name = platform.platform().lower()
     if args.os == 'linux' or platform_name.startswith('linux'):
         args.os = 'linux'
@@ -579,23 +562,37 @@ def run(args, build_function, blacklisted_package_names=None):
                 exit_on_error=False)
             print('# END SUBSECTION')
 
-        if not args.connext:
+        # blacklist rmw packages as well as their dependencies where possible
+        if 'rmw_connext_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
-                'connext_cmake_module',
                 'rmw_connext_cpp',
-                'rmw_connext_dynamic_cpp',
-                'rmw_connext_shared_cpp',
                 'rosidl_typesupport_connext_c',
                 'rosidl_typesupport_connext_cpp',
             ]
-        if not args.fastrtps:
+        if 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
+            blacklisted_package_names += [
+                'rmw_connext_dynamic_cpp',
+            ]
+        if 'rmw_connext_cpp' in args.ignore_rmw and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
+            blacklisted_package_names += [
+                'connext_cmake_module',
+                'rmw_connext_shared_cpp',
+            ]
+        if 'rmw_fastrtps_cpp' in args.ignore_rmw:
+            blacklisted_package_names += [
+                'rmw_fastrtps_cpp',
+            ]
+        if 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
+            blacklisted_package_names += [
+                'rmw_fastrtps_dynamic_cpp',
+            ]
+        if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'fastcdr',
                 'fastrtps',
                 'fastrtps_cmake_module',
-                'rmw_fastrtps_cpp',
             ]
-        if not args.opensplice:
+        if 'rmw_opensplice_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'opensplice_cmake_module',
                 'rmw_opensplice_cpp',

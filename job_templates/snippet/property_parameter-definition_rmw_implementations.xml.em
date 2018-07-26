@@ -1,17 +1,12 @@
         <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_CONNEXT</name>
-          <description>By setting this to True, the build will attempt to use RTI&apos;s Connext.</description>
-          <defaultValue>@(use_connext_default)</defaultValue>
+          <name>CI_USE_CONNEXT_STATIC</name>
+          <description>By setting this to True, the build will attempt to use RTI&apos;s Connext (static type support).</description>
+          <defaultValue>@('false' if 'rmw_connext_cpp' in ignore_rmw_default else 'true')</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
-          <name>CI_DISABLE_CONNEXT_STATIC</name>
-          <description>By setting this to True, the build will disable the Connext static rmw implementation.</description>
-          <defaultValue>@(disable_connext_static_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_DISABLE_CONNEXT_DYNAMIC</name>
-          <description>By setting this to True, the build will disable the Connext dynamic rmw implementation.</description>
-          <defaultValue>@(disable_connext_dynamic_default)</defaultValue>
+          <name>CI_USE_CONNEXT_DYNAMIC</name>
+          <description>By setting this to True, the build will attempt to use RTI&apos;s Connext (dynamic type support).</description>
+          <defaultValue>@('false' if 'rmw_connext_dynamic_cpp' in ignore_rmw_default else 'true')</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_CONNEXT_DEBS</name>
@@ -19,12 +14,17 @@
           <defaultValue>@(use_connext_debs_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_FASTRTPS</name>
-          <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS.</description>
-          <defaultValue>@(use_fastrtps_default)</defaultValue>
+          <name>CI_USE_FASTRTPS_STATIC</name>
+          <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS (static type support).</description>
+          <defaultValue>@('false' if 'rmw_fastrtps_cpp' in ignore_rmw_default else 'true')</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CI_USE_FASTRTPS_DYNAMIC</name>
+          <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS (dynamic type support).</description>
+          <defaultValue>@('false' if 'rmw_fastrtps_dynamic_cpp' in ignore_rmw_default else 'true')</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_OPENSPLICE</name>
-          <description>By setting this to True, the build will attempt to use PrismTech&apos;s OpenSplice.</description>
-          <defaultValue>@(use_opensplice_default)</defaultValue>
+          <description>By setting this to True, the build will attempt to use ADLINK&apos;s OpenSplice.</description>
+          <defaultValue>@('false' if 'rmw_opensplice_cpp' in ignore_rmw_default else 'true')</defaultValue>
         </hudson.model.BooleanParameterDefinition>

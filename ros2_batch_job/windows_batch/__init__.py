@@ -41,7 +41,7 @@ class WindowsBatchJob(BatchJob):
     def setup_env(self):
         # Try to find the connext env file and source it
         connext_env_file = None
-        if self.args.connext:
+        if 'rmw_connext_cpp' not in self.args.ignore_rmw or 'rmw_connext_dynamic_cpp' not in self.args.ignore_rmw:
             pf = os.environ.get('ProgramFiles', "C:\\Program Files\\")
             connext_env_file = os.path.join(
                 pf, 'rti_connext_dds-5.3.1', 'resource', 'scripts', 'rtisetenv_x64Win64VS2017.bat')
@@ -52,7 +52,7 @@ class WindowsBatchJob(BatchJob):
 
         # Try to find the OpenSplice env file
         opensplice_env_file = None
-        if self.args.opensplice:
+        if 'rmw_opensplice_cpp' not in self.args.ignore_rmw:
             opensplice_env_file = os.path.join(
                 os.path.abspath(os.sep), 'dev', 'opensplice', 'HDE', 'x86_64.win64', 'release.bat')
             if not os.path.exists(opensplice_env_file):
