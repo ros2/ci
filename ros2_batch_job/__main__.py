@@ -573,7 +573,7 @@ def run(args, build_function, blacklisted_package_names=None):
             blacklisted_package_names += [
                 'rmw_connext_dynamic_cpp',
             ]
-        if 'rmw_connext_cpp' in args.ignore_rmw and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
+        if 'rmw_connext_cpp' in args.ignore_rmw:  # and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'connext_cmake_module',
                 'rmw_connext_shared_cpp',
