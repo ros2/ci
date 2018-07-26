@@ -155,7 +155,7 @@ def get_args(sysargv=None):
         '--os', default=None, choices=['linux', 'osx', 'windows'])
     parser.add_argument(
         '--ignore-rmw', nargs='*', default=[],
-        help='ignore the passes RMW implementations as well as supporting packages')
+        help='ignore the passed RMW implementations as well as supporting packages')
     parser.add_argument(
         '--connext-debs', default=False, action='store_true',
         help="use Debian packages for Connext instead of binaries off the RTI website (Linux only)")
