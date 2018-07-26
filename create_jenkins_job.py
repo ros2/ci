@@ -213,8 +213,7 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ignore_rmw_default': {
                 'rmw_connext_cpp',
-                'rmw_connext_dynamic_cpp',
-                'rmw_fastrtps_dynamic_cpp'},
+                'rmw_connext_dynamic_cpp'},
         })
 
         # configure nightly triggered job
