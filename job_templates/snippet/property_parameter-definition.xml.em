@@ -18,12 +18,8 @@ This tests the robustness to whitespace being within the different paths.</descr
         </hudson.model.BooleanParameterDefinition>
 @(SNIPPET(
     'property_parameter-definition_rmw_implementations',
-    use_connext_default=use_connext_default,
-    disable_connext_static_default=disable_connext_static_default,
-    disable_connext_dynamic_default=disable_connext_dynamic_default,
+    ignore_rmw_default=ignore_rmw_default,
     use_connext_debs_default=use_connext_debs_default,
-    use_fastrtps_default=use_fastrtps_default,
-    use_opensplice_default=use_opensplice_default,
 ))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_ISOLATED</name>

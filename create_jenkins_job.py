@@ -73,12 +73,11 @@ def main(argv=None):
         'supplemental_repos_url': '',
         'time_trigger_spec': '',
         'mailer_recipients': '',
-        'use_connext_default': 'true',
-        'disable_connext_static_default': 'false',
-        'disable_connext_dynamic_default': 'true',
+        'ignore_rmw_default': {
+            'rmw_connext_dynamic_cpp',
+            'rmw_fastrtps_dynamic_cpp',
+            'rmw_opensplice_cpp'},
         'use_connext_debs_default': 'false',
-        'use_fastrtps_default': 'true',
-        'use_opensplice_default': 'false',
         'use_isolated_default': 'true',
         'build_args_default': '--event-handler console_cohesion+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
         'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-pass 10',
@@ -111,7 +110,7 @@ def main(argv=None):
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
-            'use_connext_default': 'false',
+            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
         },
     }
 
@@ -149,9 +148,7 @@ def main(argv=None):
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'cmake_build_type': 'RelWithDebInfo',
             'test_bridge_default': 'true',
-            'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'true',
-            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
             'use_connext_debs_default': 'true',
         })
 
@@ -161,9 +158,7 @@ def main(argv=None):
             'test_bridge_default': 'true',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'true',
-            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
             'use_connext_debs_default': 'true',
         })
 
@@ -174,9 +169,7 @@ def main(argv=None):
                 'test_bridge_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'use_fastrtps_default': 'true',
-                'use_opensplice_default': 'true',
-                'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
                 'use_connext_debs_default': 'true',
             })
 
@@ -211,16 +204,16 @@ def main(argv=None):
             })
 
         # configure nightly triggered job using opensplice
-        job_name = 'nightly_' + job_os_name + '_ospl' + '_release'
+        job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
         if os_name == 'windows':
             job_name = job_name[:20]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'use_connext_default': 'false',
-            'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'true',
+            'ignore_rmw_default': {
+                'rmw_connext_cpp',
+                'rmw_connext_dynamic_cpp'},
         })
 
         # configure nightly triggered job
@@ -267,9 +260,7 @@ def main(argv=None):
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
-            'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'true',
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
             'ubuntu_distro': ubuntu_distro,
         })
 
@@ -282,9 +273,7 @@ def main(argv=None):
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ubuntu_distro': ubuntu_distro,
-            'use_fastrtps_default': 'true',
-            'use_opensplice_default': 'true',
-            'use_connext_default': 'false' if os_name is 'linux-aarch64' else 'true',
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
             'use_connext_debs_default': 'true',
         })
 

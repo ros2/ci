@@ -20,12 +20,8 @@
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
-    use_connext_default=use_connext_default,
-    disable_connext_static_default=disable_connext_static_default,
-    disable_connext_dynamic_default=disable_connext_dynamic_default,
+    ignore_rmw_default=ignore_rmw_default,
     use_connext_debs_default=use_connext_debs_default,
-    use_fastrtps_default=use_fastrtps_default,
-    use_opensplice_default=use_opensplice_default,
     use_isolated_default=use_isolated_default,
     ubuntu_distro=ubuntu_distro,
     cmake_build_type=cmake_build_type,
@@ -83,11 +79,11 @@
         <script plugin="script-security@@1.27">
           <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
-use_connext: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT')}, <br/>
-disable_connext_static: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_STATIC')}, <br/>
-disable_connext_dynamic: ${build.buildVariableResolver.resolve('CI_DISABLE_CONNEXT_DYNAMIC')}, <br/>
+use_connext_static: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_STATIC')}, <br/>
+@# use_connext_dynamic: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DYNAMIC')}, <br/>
 use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>`
-use_fastrtps: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS')}, <br/>
+use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
+use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
@@ -122,24 +118,25 @@ fi
 if [ "$CI_USE_WHITESPACE_IN_PATHS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --white-space-in sourcespace buildspace installspace workspace"
 fi
-if [ "$CI_USE_CONNEXT" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --connext"
+export CI_ARGS="$CI_ARGS --ignore-rmw"
+if [ "$CI_USE_CONNEXT_STATIC" = "false" ]; then
+  export CI_ARGS="$CI_ARGS rmw_connext_cpp"
 fi
-if [ "$CI_DISABLE_CONNEXT_STATIC" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --disable-connext-static"
+if [ "$CI_USE_CONNEXT_DYNAMIC" = "false" ]; then
+  export CI_ARGS="$CI_ARGS rmw_connext_dynamic_cpp"
 fi
-if [ "$CI_DISABLE_CONNEXT_DYNAMIC" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --disable-connext-dynamic"
+if [ "$CI_USE_FASTRTPS_STATIC" = "false" ]; then
+  export CI_ARGS="$CI_ARGS rmw_fastrtps_cpp"
+fi
+if [ "$CI_USE_FASTRTPS_DYNAMIC" = "false" ]; then
+  export CI_ARGS="$CI_ARGS rmw_fastrtps_dynamic_cpp"
+fi
+if [ "$CI_USE_OPENSPLICE" = "false" ]; then
+  export CI_ARGS="$CI_ARGS rmw_opensplice_cpp"
 fi
 if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --connext-debs"
   export DOCKER_BUILD_ARGS="$DOCKER_BUILD_ARGS --build-arg INSTALL_CONNEXT_DEBS=$CI_USE_CONNEXT_DEBS"
-fi
-if [ "$CI_USE_FASTRTPS" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --fastrtps"
-fi
-if [ "$CI_USE_OPENSPLICE" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --opensplice"
 fi
 if [ -z "${CI_ROS2_REPOS_URL+x}" ]; then
   CI_ROS2_REPOS_URL="@default_repos_url"
@@ -242,23 +239,24 @@ if "!CI_COLCON_BRANCH!" NEQ "" (
 if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
 )
-if "!CI_USE_CONNEXT!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --connext"
+set "CI_ARGS=!CI_ARGS! --ignore-rmw"
+if "!CI_USE_CONNEXT_STATIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
 )
-if "!CI_DISABLE_CONNEXT_STATIC!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --disable-connext-static"
+if "!CI_USE_CONNEXT_DYNAMIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_connext_dynamic_cpp"
 )
-if "!CI_DISABLE_CONNEXT_DYNAMIC!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --disable-connext-dynamic"
+if "!CI_USE_FASTRTPS_STATIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_cpp"
+)
+if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_dynamic_cpp"
+)
+if "!CI_USE_OPENSPLICE!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_opensplice_cpp"
 )
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"
-)
-if "!CI_USE_FASTRTPS!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --fastrtps"
-)
-if "!CI_USE_OPENSPLICE!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --opensplice"
 )
 if "!CI_ROS2_REPOS_URL!" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
