@@ -21,7 +21,10 @@ ifconfig eth0 multicast
 echo "done."
 
 case "${CI_ARGS}" in
-  *--connext*)
+  *rmw_connext_cpp*)
+    echo "NOT installing Connext."
+    ;;
+  *)
     echo "Installing Connext..."
     case "${CI_ARGS}" in
       *--connext-debs*)
@@ -43,9 +46,6 @@ case "${CI_ARGS}" in
         ;;
     esac
     echo "done."
-    ;;
-  *)
-    echo "NOT installing Connext."
     ;;
 esac
 
