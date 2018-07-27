@@ -205,8 +205,6 @@ def main(argv=None):
 
         # configure nightly triggered job using opensplice
         job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
-        if os_name == 'windows':
-            job_name = job_name[:20]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
