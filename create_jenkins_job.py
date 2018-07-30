@@ -148,7 +148,7 @@ def main(argv=None):
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'cmake_build_type': 'RelWithDebInfo',
             'test_bridge_default': 'true',
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name =='linux-aarch64' else set(),
             'use_connext_debs_default': 'true',
         })
 
@@ -158,7 +158,7 @@ def main(argv=None):
             'test_bridge_default': 'true',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
             'use_connext_debs_default': 'true',
         })
 
@@ -169,7 +169,7 @@ def main(argv=None):
                 'test_bridge_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
+                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
                 'use_connext_debs_default': 'true',
             })
 
@@ -258,7 +258,7 @@ def main(argv=None):
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
             'ubuntu_distro': ubuntu_distro,
         })
 
@@ -271,7 +271,7 @@ def main(argv=None):
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ubuntu_distro': ubuntu_distro,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name is 'linux-aarch64' else set(),
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
             'use_connext_debs_default': 'true',
         })
 
