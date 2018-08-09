@@ -79,7 +79,7 @@ def main(argv=None):
             'rmw_opensplice_cpp'},
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
-        'build_args_default': '--event-handler console_cohesion+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
+        'build_args_default': '--event-handler console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
         'test_args_default': '--event-handler console_direct+ --executor sequential --retest-until-pass 10',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
