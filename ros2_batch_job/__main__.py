@@ -581,6 +581,8 @@ def run(args, build_function, blacklisted_package_names=None):
         if 'rmw_fastrtps_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'rmw_fastrtps_cpp',
+                'rosidl_typesupport_fastrtps_c',
+                'rosidl_typesupport_fastrtps_cpp',
             ]
         if 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
@@ -591,6 +593,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 'fastcdr',
                 'fastrtps',
                 'fastrtps_cmake_module',
+                'rmw_fastrtps_shared_cpp',
             ]
         if 'rmw_opensplice_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
