@@ -107,6 +107,7 @@ def main(sysargv=None):
             'common_interfaces',
             'cv_bridge',
             'opencv_tests',
+            'ros1_bridge',
             'shape_msgs',
             'stereo_msgs',
             'trajectory_msgs',
@@ -117,6 +118,7 @@ def main(sysargv=None):
         if sys.platform in ('darwin', 'win32'):
             blacklisted_package_names += [
                 'pendulum_control',
+                'ros1_bridge',
                 'rttest',
                 'tlsf',
                 'tlsf_cpp',
