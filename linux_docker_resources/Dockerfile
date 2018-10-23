@@ -87,6 +87,9 @@ RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install -
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
 
+# Install build dependencies for rqt et al.
+RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev
+
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
 
