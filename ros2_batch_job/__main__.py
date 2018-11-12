@@ -635,7 +635,7 @@ def run(args, build_function, blacklisted_package_names=None):
 def _fetch_repos_file(url, filename, job):
     """Use curl to fetch a repos file and display the contents."""
 
-    job.run(['curl', '-sk', url, '-o', filename])
+    job.run(['curl', '-skL', url, '-o', filename])
     log("@{bf}==>@| Contents of `%s`:" % filename)
     with open(filename, 'r') as f:
         print(f.read())
