@@ -61,9 +61,10 @@ def build_and_test_and_package(args, job):
         os.remove(ros1_bridge_ignore_marker)
     print('# END SUBSECTION')
 
-    # It only makes sense to build the bridge for Linux or OSX, since
+    # only build the bridge on Linux for now
+    # the OSX nodes don't have a working ROS 1 installation atm and
     # ROS1 is not supported on Windows
-    if args.os in ['linux', 'osx']:
+    if args.os in ['linux']:
         print('# BEGIN SUBSECTION: build ROS 1 bridge')
         # Now run build only for the bridge
         env = dict(os.environ)
