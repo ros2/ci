@@ -124,6 +124,11 @@ def main(sysargv=None):
                 'tlsf',
                 'tlsf_cpp',
             ]
+    if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
+        blacklisted_package_names += [
+            'qt_gui_cpp',
+            'rqt_gui_cpp',
+        ]
     return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
 
 
