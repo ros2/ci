@@ -59,7 +59,7 @@ pip_dependencies = [
     'flake8-docstrings',
     'flake8-import-order',
     'flake8-quotes',
-    'git+https://github.com/lark-parser/lark.git@0.7b',
+    'git+https://github.com/lark-parser/lark.git@870a7611cba40bcbdddad17a085984c7d8806d99',
     'mock',
     'nose',
     'pep8',
