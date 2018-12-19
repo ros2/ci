@@ -132,6 +132,7 @@ def main(sysargv=None):
             ]
     if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
         blacklisted_package_names += [
+            'image_tools_py',
             'qt_dotgraph',
         ]
     return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
