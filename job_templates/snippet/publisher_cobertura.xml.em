@@ -1,4 +1,4 @@
-    <hudson.plugins.cobertura.CoberturaPublisher plugin="cobertura@@1.9.8">
+    <hudson.plugins.cobertura.CoberturaPublisher plugin="cobertura@@1.13">
       <coberturaReportFile>ws/build*/**/*coverage.xml</coberturaReportFile>
       <onlyStable>false</onlyStable>
       <failUnhealthy>false</failUnhealthy>

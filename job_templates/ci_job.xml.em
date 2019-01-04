@@ -4,11 +4,11 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.25.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.29.3">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.25">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.29">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -30,7 +30,7 @@
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.0.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -76,7 +76,7 @@
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.27">
+        <script plugin="script-security@@1.49">
           <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connext_static: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_STATIC')}, <br/>
@@ -308,7 +308,7 @@ echo "# END SECTION"
     'publisher_xunit',
 ))@
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.20">
+    <hudson.tasks.Mailer plugin="mailer@@1.22">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>@(dont_notify_every_unstable_build)</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
@@ -317,7 +317,7 @@ echo "# END SECTION"
   </publishers>
   <buildWrappers>
 @[if build_timeout_mins]@
-    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.18">
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.19">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
         <timeoutMinutes>@(build_timeout_mins)</timeoutMinutes>
       </strategy>
@@ -326,12 +326,12 @@ echo "# END SECTION"
       </operationList>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
 @[end if]@
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.8" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.5.0">
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.8.10" />
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.5.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
 @[if os_name != 'windows']@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.15">
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
         <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>
       </credentialIds>
