@@ -32,6 +32,7 @@
       <includePattern/>
       <excludePattern>.*Microsoft.CppCommon.targets</excludePattern>
       <messagesPattern/>
+      <categoriesPattern/>
       <parserConfigurations/>
       <consoleParsers>
         <hudson.plugins.warnings.ConsoleParser>
