@@ -40,6 +40,7 @@
           <name>CI_TEST_ARGS</name>
           <description>Additional arguments passed to the 'test' verb if testing the bridge.</description>
           <defaultValue>@(test_args_default)</defaultValue>
+          <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
