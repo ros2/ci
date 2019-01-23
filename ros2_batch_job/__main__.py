@@ -127,8 +127,6 @@ def main(sysargv=None):
     if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
         blacklisted_package_names += [
             'qt_dotgraph',
-            'qt_gui_cpp',
-            'rqt_gui_cpp',
         ]
     return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
 
