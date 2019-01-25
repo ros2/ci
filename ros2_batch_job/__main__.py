@@ -400,7 +400,9 @@ def run(args, build_function, blacklisted_package_names=None):
         remove_folder(os.path.join(args.workspace, 'build'))
         remove_folder(os.path.join(args.workspace, 'install'))
     else:
-        remove_folder(args.workspace)
+        # temporary keep the workspace (actually the logs) on Windows
+        if args.os != 'windows':
+            remove_folder(args.workspace)
     if not os.path.isdir(args.workspace):
         os.makedirs(args.workspace)
 
