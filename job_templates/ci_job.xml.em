@@ -226,7 +226,8 @@ echo "# END SECTION"
 @[elif os_name == 'windows']@
 setlocal enableDelayedExpansion
 REM rmdir /S /Q ws workspace "work space"
-rmdir /S /Q ws/build ws/install ws/src ws/*.repos ws/env.bat
+rmdir /S /Q ws\build ws\install ws\src
+del ws\00-ros2.repos ws\env.bat
 
 echo "# BEGIN SECTION: Determine arguments"
 set "PATH=!PATH:"=!"
