@@ -12,6 +12,7 @@
       @#  First: The target value above which a build is considered "100% healthy/sunny".
       @#  Second: The target value below which a build is considered "0% healthy/stormy".
       @#  Third: The target value below which a build is considered "Unstable".
+      @# The values below are the plugin defaults.
       <lineCoverageTargets>80, 0, 0</lineCoverageTargets>
       <methodCoverageTargets>80, 0, 0</methodCoverageTargets>
       <conditionalCoverageTargets>70, 0, 0</conditionalCoverageTargets>
