@@ -62,7 +62,7 @@ class WindowsBatchJob(BatchJob):
 
         # Generate the env file
         if os.path.exists('env.bat'):
-            shutil.rmtree('env.bat')
+            os.remove('env.bat')
         with open('env.bat', 'w') as f:
             f.write("@echo off" + os.linesep)
             f.write(
