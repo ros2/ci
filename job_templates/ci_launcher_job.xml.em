@@ -7,7 +7,7 @@
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.25">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.29">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -40,7 +40,7 @@
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.0">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.27">
+        <script plugin="script-security@@1.49">
           <script>// PREDICT TRIGGERED BUILDS AND GENERATE MARKDOWN FOR BUILD STATUS
 
 import jenkins.model.Jenkins
@@ -84,7 +84,7 @@ for (item in build_numbers) {
   </builders>
   <publishers>
 @[for os_name, os_data in os_specific_data.items()]@
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.33">
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.35.2">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>

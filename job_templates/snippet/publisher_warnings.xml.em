@@ -1,4 +1,4 @@
-    <hudson.plugins.warnings.WarningsPublisher plugin="warnings@@4.62">
+    <hudson.plugins.warnings.WarningsPublisher plugin="warnings@@5.0.0">
       <healthy/>
       <unHealthy/>
       <thresholdLimit>low</thresholdLimit>
@@ -8,7 +8,7 @@
       <usePreviousBuildAsReference>false</usePreviousBuildAsReference>
       <useStableBuildAsReference>false</useStableBuildAsReference>
       <useDeltaValues>false</useDeltaValues>
-      <thresholds plugin="analysis-core@@1.86">
+      <thresholds plugin="analysis-core@@1.95">
         <unstableTotalAll>0</unstableTotalAll>
         <unstableTotalHigh/>
         <unstableTotalNormal/>
@@ -32,6 +32,7 @@
       <includePattern/>
       <excludePattern>.*Microsoft.CppCommon.targets</excludePattern>
       <messagesPattern/>
+      <categoriesPattern/>
       <parserConfigurations/>
       <consoleParsers>
         <hudson.plugins.warnings.ConsoleParser>
