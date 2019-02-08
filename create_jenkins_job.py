@@ -81,6 +81,7 @@ def main(argv=None):
         'use_isolated_default': 'true',
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
         'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 10',
+        'compile_on_clang_default': 'false',
         'enable_c_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
@@ -199,6 +200,15 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'enable_c_coverage_default': 'true',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            })
+
+        # configure nightly coverage job for clang compiler on linux
+        if os_name == 'linux':
+            create_job(os_name, 'nightly_' + os_name + '_clang', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'compile_on_clang_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
