@@ -26,7 +26,7 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     test_args_default=test_args_default,
-    compile_on_clang_default=compile_on_clang_default,
+    compile_with_clang_default=compile_with_clang_default,
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
   </properties>

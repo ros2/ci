@@ -191,8 +191,8 @@ def get_args(sysargv=None):
         '--src-mounted', default=False, action='store_true',
         help="src directory is already mounted into the workspace")
     parser.add_argument(
-        '--compile-on-clang', default=False, action='store_true',
-        help="compile on clang instead of gnu")
+        '--compile-with-clang', default=False, action='store_true',
+        help="compile with clang instead of gcc")
     parser.add_argument(
         '--coverage', default=False, action='store_true',
         help="enable collection of coverage statistics")
@@ -277,7 +277,7 @@ def process_coverage(args, job):
 
 def build_and_test(args, job):
     coverage = args.coverage and args.os == 'linux'
-    compile_on_clang = args.compile_on_clang and args.os == 'linux'
+    compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
     print('# BEGIN SUBSECTION: build')
     cmd = [
@@ -292,19 +292,15 @@ def build_and_test(args, job):
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    if compile_with_clang:
+        cmake_args.extend(
+            ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])
     if '--cmake-args' in cmd:
         index = cmd.index('--cmake-args')
         cmd[index + 1:index + 1] = cmake_args
     else:
         cmd.append('--cmake-args')
         cmd.extend(cmake_args)
-
-    if compile_on_clang:
-        install_clang_cmd = ['sudo apt-get install --no-install-recommends -y clang;']
-        export_clang_variables_cmd = ['export CC=clang CXX=clang++;']
-        cmd = install_clang_cmd + export_clang_variables_cmd + cmd
-        # TODO: Stop skipping pluginlib and dep packages once they are clang on linux compatible
-        cmd.extend(['--packages-skip pluginlib --packages-skip-by-dep pluginlib'])
 
     if coverage:
         ament_cmake_args = [
@@ -324,17 +320,13 @@ def build_and_test(args, job):
         return ret_build
 
     print('# BEGIN SUBSECTION: test')
-    test_cmd = [args.colcon_script, 'test',
+    ret_test = job.run([
+        args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-    ] + (['--merge-install'] if not args.isolated else []) + args.test_args
-
-    # TODO: Stop skipping pluginlib and dep packages once they are clang on linux compatible
-    if compile_on_clang:
-        test_cmd.extend(['--packages-skip pluginlib --packages-skip-by-dep pluginlib'])
-
-    ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
+    ] + (['--merge-install'] if not args.isolated else []) + args.test_args,
+        exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
     if ret_test:

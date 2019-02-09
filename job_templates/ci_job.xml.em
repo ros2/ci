@@ -27,7 +27,7 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     test_args_default=test_args_default,
-    compile_on_clang_default=compile_on_clang_default,
+    compile_with_clang_default=compile_with_clang_default,
     enable_c_coverage_default=enable_c_coverage_default,
 ))@
   </properties>
@@ -96,7 +96,7 @@ ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
-compile_on_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_ON_CLANG')}, <br/>
+compile_with_clang_default: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
         </script>
@@ -158,8 +158,9 @@ fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
-if [ "$CI_COMPILE_ON_CLANG" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --compile-on-clang"
+if [ "$CI_COMPILE_WITH_CLANG" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --compile-with-clang"
+  export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg COMPILE_WITH_CLANG=$CI_COMPILE_WITH_CLANG"
 fi
 if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
@@ -283,8 +284,8 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
   set /p PYTHON_DEBUG_INTERPRETER=&lt;python_debug_interpreter.txt
   set "CI_ARGS=!CI_ARGS! --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
 )
-if "!CI_COMPILE_ON_CLANG!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --compile-on-clang"
+if "!CI_COMPILE_WITH_CLANG!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --compile-with-clang"
 )
 if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"

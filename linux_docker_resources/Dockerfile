@@ -5,6 +5,7 @@ ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
 ARG ROS1_DISTRO=melodic
 ARG UBUNTU_DISTRO=bionic
+ARG COMPILE_WITH_CLANG=false
 
 # Prevent errors from apt-get.
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
@@ -41,6 +42,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y clang-format cp
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
 RUN pip3 install -U setuptools pip virtualenv
+
+# Install clang if build arg is true
+RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang; fi
 
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y gcovr
