@@ -27,6 +27,11 @@ This tests the robustness to whitespace being within the different paths.</descr
           <defaultValue>@(use_isolated_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
+          <name>CI_COMPILE_WITH_CLANG</name>
+          <description>By setting this to true, the build will run with clang compiler on Linux (currently ignored on non-Linux).</description>
+          <defaultValue>@(compile_with_clang_default)</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
           <name>CI_ENABLE_C_COVERAGE</name>
           <description>By setting this to true, the build will report test coverage for C/C++ code (currently ignored on non-Linux).</description>
           <defaultValue>@(enable_c_coverage_default)</defaultValue>

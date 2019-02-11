@@ -191,6 +191,9 @@ def get_args(sysargv=None):
         '--src-mounted', default=False, action='store_true',
         help="src directory is already mounted into the workspace")
     parser.add_argument(
+        '--compile-with-clang', default=False, action='store_true',
+        help="compile with clang instead of gcc")
+    parser.add_argument(
         '--coverage', default=False, action='store_true',
         help="enable collection of coverage statistics")
     parser.add_argument(
@@ -274,6 +277,7 @@ def process_coverage(args, job):
 
 def build_and_test(args, job):
     coverage = args.coverage and args.os == 'linux'
+    compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
     print('# BEGIN SUBSECTION: build')
     cmd = [
@@ -288,6 +292,9 @@ def build_and_test(args, job):
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    if compile_with_clang:
+        cmake_args.extend(
+            ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])
     if '--cmake-args' in cmd:
         index = cmd.index('--cmake-args')
         cmd[index + 1:index + 1] = cmake_args
