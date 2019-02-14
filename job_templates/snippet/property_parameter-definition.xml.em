@@ -42,5 +42,27 @@ This tests the robustness to whitespace being within the different paths.</descr
           <defaultValue>@(test_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>CI_ENABLE_SANITIZER_TYPE</name>
+          <description>This can be used to enable sanitizer based builds and tests</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>@enable_sanitizer_type_default</string>
+@{
+choices = ['none', 'address']
+choices.remove(enable_sanitizer_type_default)
+}@
+@[for choice in choices]@
+              <string>@choice</string>
+@[end for]@
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_RESTRICT_SANITIZER_TO_PKGS_REGEX</name>
+          <description>Restrict sanitizer instrumentation and testing to packages based on a particular regex</description>
+          <defaultValue>@(restrict_sanitizer_to_pkgs_regex_default)</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>

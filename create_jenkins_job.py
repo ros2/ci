@@ -87,6 +87,8 @@ def main(argv=None):
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
         'ubuntu_distro': 'bionic',
+        'enable_sanitizer_type_default': 'none',
+        'restrict_sanitizer_to_pkgs_regex_default': ''
     }
 
     jenkins = connect(args.jenkins_url)
@@ -191,6 +193,17 @@ def main(argv=None):
                 'compile_with_clang_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            })
+
+        # configure nightly job for testing rmw based packages with address sanitizer on linux
+        if os_name == 'linux':
+            create_job(os_name, 'nightly_' + os_name + '_address_sanitizer', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'enable_sanitizer_type_default': 'address',
+                'restrict_sanitizer_to_pkgs_regex_default': 'rmw',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'test_args_default': '--event-handlers console_direct+ --executor sequential'
             })
 
         # configure a manually triggered version of the coverage job
