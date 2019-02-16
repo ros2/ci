@@ -49,12 +49,10 @@ This tests the robustness to whitespace being within the different paths.</descr
             <a class="string-array">
               <string>@enable_sanitizer_type_default</string>
 @{
-choices = ['none', 'address']
-choices.remove(enable_sanitizer_type_default)
+alternate_sanitizer_types = ['none', 'address']
+alternate_sanitizer_types.remove(enable_sanitizer_type_default)
 }@
-@[for choice in choices]@
-              <string>@choice</string>
-@[end for]@
+              <string>@alternate_sanitizer_types[0]</string>
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>

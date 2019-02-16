@@ -129,6 +129,25 @@ def main(argv=None):
         job_config = expand_template(template_file, job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
+    def create_linux_based_nightly_jobs():
+        # configure nightly job for compiling with clang on linux
+        create_job('linux', 'nightly_linux_clang', 'ci_job.xml.em', {
+            'cmake_build_type': 'Debug',
+            'compile_with_clang_default': 'true',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+        })
+
+        # configure nightly job for testing rmw based packages with address sanitizer on linux
+        create_job('linux', 'nightly_linux_address_sanitizer', 'ci_job.xml.em', {
+            'cmake_build_type': 'Debug',
+            'enable_sanitizer_type_default': 'address',
+            'restrict_sanitizer_to_pkgs_regex_default': 'rmw',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'test_args_default': '--event-handlers console_direct+ --executor sequential'
+        })
+
     # configure os specific jobs
     for os_name in sorted(os_configs.keys()):
         # We need the keep the paths short on Windows, so on that platform make
@@ -186,25 +205,8 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
-        # configure nightly job for compiling with clang on linux
         if os_name == 'linux':
-            create_job(os_name, 'nightly_' + os_name + '_clang', 'ci_job.xml.em', {
-                'cmake_build_type': 'Debug',
-                'compile_with_clang_default': 'true',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            })
-
-        # configure nightly job for testing rmw based packages with address sanitizer on linux
-        if os_name == 'linux':
-            create_job(os_name, 'nightly_' + os_name + '_address_sanitizer', 'ci_job.xml.em', {
-                'cmake_build_type': 'Debug',
-                'enable_sanitizer_type_default': 'address',
-                'restrict_sanitizer_to_pkgs_regex_default': 'rmw',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'test_args_default': '--event-handlers console_direct+ --executor sequential'
-            })
+            create_linux_based_nightly_jobs()
 
         # configure a manually triggered version of the coverage job
         if os_name == 'linux':
@@ -313,7 +315,6 @@ def main(argv=None):
     job_data['cmake_build_type'] = 'None'
     job_config = expand_template('ci_launcher_job.xml.em', job_data)
     configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
-
 
 if __name__ == '__main__':
     main()
