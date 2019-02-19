@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y python3-lark-parser; fi
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install --no-install-recommends -y clang-format cppcheck git libxml2-utils pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
+RUN apt-get update && apt-get install --no-install-recommends -y clang-format cppcheck git libxml2-utils pydocstyle pyflakes python3-coverage python3-flake8 python3-lxml python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
