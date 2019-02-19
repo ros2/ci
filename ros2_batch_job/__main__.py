@@ -60,6 +60,7 @@ pip_dependencies = [
     'flake8-import-order',
     'flake8-quotes',
     'git+https://github.com/lark-parser/lark.git@0.7d',
+    'lxml',
     'mock',
     'nose',
     'pep8',
