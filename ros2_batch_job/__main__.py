@@ -60,7 +60,6 @@ pip_dependencies = [
     'flake8-import-order',
     'flake8-quotes',
     'git+https://github.com/lark-parser/lark.git@0.7d',
-    'lxml',
     'mock',
     'nose',
     'pep8',
@@ -75,6 +74,11 @@ pip_dependencies = [
     'pyyaml',
     'vcstool',
 ]
+if sys.platform in ('darwin', 'win32'):
+    pip_dependencies += [
+        'lxml'
+    ]
+
 colcon_packages = [
     'colcon-core',
     'colcon-defaults',
