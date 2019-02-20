@@ -30,6 +30,7 @@
     compile_with_clang_default=compile_with_clang_default,
     enable_c_coverage_default=enable_c_coverage_default,
     enable_sanitizer_type_default=enable_sanitizer_type_default,
+    sanitizer_types=sanitizer_types,
     restrict_sanitizer_to_pkgs_regex_default=restrict_sanitizer_to_pkgs_regex_default
 ))@
   </properties>

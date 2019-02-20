@@ -36,6 +36,7 @@ try:
     from ros_buildfarm.templates import template_prefix_path
 except ImportError:
     sys.exit("Could not import symbol from ros_buildfarm, please update ros_buildfarm.")
+from ros2_batch_job.util import SANITIZER_TYPES
 
 DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos'
 DEFAULT_MAIL_RECIPIENTS = 'ros2-buildfarm@googlegroups.com'
@@ -88,6 +89,7 @@ def main(argv=None):
         'build_timeout_mins': 0,
         'ubuntu_distro': 'bionic',
         'enable_sanitizer_type_default': 'none',
+        'sanitizer_types': SANITIZER_TYPES,
         'restrict_sanitizer_to_pkgs_regex_default': ''
     }
 
@@ -128,25 +130,6 @@ def main(argv=None):
         job_data.update(additional_dict)
         job_config = expand_template(template_file, job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
-
-    def create_linux_based_nightly_jobs():
-        # configure nightly job for compiling with clang on linux
-        create_job('linux', 'nightly_linux_clang', 'ci_job.xml.em', {
-            'cmake_build_type': 'Debug',
-            'compile_with_clang_default': 'true',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-        })
-
-        # configure nightly job for testing rmw based packages with address sanitizer on linux
-        create_job('linux', 'nightly_linux_address_sanitizer', 'ci_job.xml.em', {
-            'cmake_build_type': 'Debug',
-            'enable_sanitizer_type_default': 'address',
-            'restrict_sanitizer_to_pkgs_regex_default': 'rmw',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': '--event-handlers console_direct+ --executor sequential'
-        })
 
     # configure os specific jobs
     for os_name in sorted(os_configs.keys()):
@@ -205,8 +188,25 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
+        # configure nightly job for compiling with clang on linux
         if os_name == 'linux':
-            create_linux_based_nightly_jobs()
+            create_job('linux', 'nightly_linux_clang', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'compile_with_clang_default': 'true',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            })
+
+        # configure nightly job for testing rmw based packages with address sanitizer on linux
+        if os_name == 'linux':
+            create_job('linux', 'nightly_linux_address_sanitizer', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'enable_sanitizer_type_default': 'address',
+                'restrict_sanitizer_to_pkgs_regex_default': 'rmw',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'test_args_default': '--event-handlers console_direct+ --executor sequential'
+            })
 
         # configure a manually triggered version of the coverage job
         if os_name == 'linux':
@@ -315,6 +315,7 @@ def main(argv=None):
     job_data['cmake_build_type'] = 'None'
     job_config = expand_template('ci_launcher_job.xml.em', job_data)
     configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
+
 
 if __name__ == '__main__':
     main()

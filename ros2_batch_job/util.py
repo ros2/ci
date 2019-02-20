@@ -35,7 +35,7 @@ from osrf_pycommon.terminal_color import format_color as format_color_actual
 from osrf_pycommon.terminal_color import enable_ansi_color_substitution_globally
 
 IS_JENKINS = 'JOB_NAME' in os.environ
-
+SANITIZER_TYPES = ['none', 'address']
 
 def close_asyncio_loop():
     try:

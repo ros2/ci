@@ -41,6 +41,8 @@ from .util import generated_venv_vars
 from .util import info
 from .util import log
 from .util import UnbufferedIO
+from .util import SANITIZER_TYPES
+
 
 # Enforce unbuffered output
 sys.stdout = UnbufferedIO(sys.stdout)
@@ -203,7 +205,7 @@ def get_args(sysargv=None):
         '--python-interpreter', default=None,
         help='pass different Python interpreter')
     parser.add_argument(
-        '--enable-sanitizer-type', default=None,
+        '--enable-sanitizer-type', default=None, choices=SANITIZER_TYPES,
         help='enable sanitizer based builds and tests')
     parser.add_argument(
         '--restrict-san-pkgs-regex', default=None,
@@ -314,16 +316,14 @@ def build_and_test(args, job):
             cmd.append('--ament-cmake-args')
             cmd.extend(ament_cmake_args)
 
+    if args.enable_sanitizer_type:
+        cmd = update_build_cmd_based_on_sanitizer_args(cmd, args)
+
     ret_build = job.run(cmd, shell=True)
     info("colcon build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
     if ret_build:
         return ret_build
-
-    if args.enable_sanitizer_type:
-        ret_build_with_sanitizer = build_with_sanitizer(cmd, args, job)
-    if ret_build_with_sanitizer:
-        return ret_build_with_sanitizer
 
     print('# BEGIN SUBSECTION: test')
     test_cmd = [
@@ -367,45 +367,73 @@ def build_and_test(args, job):
     return 0
 
 '''
-Run colcon build on requested packages with appropriate cmake sanitizer flags
+Add sanitizer based flags to colcon build for appropriate packages.
 '''
-def build_with_sanitizer(build_cmd, args, job):
-    print('# BEGIN SUBSECTION: build with sanitizer')
-
-    # Pass appropriate sanitizer flags
-    sanitizer_flag = '-fsanitize={}'.format(args.enable_sanitizer_type)
-    additional_compiler_flags = '-g'
+def update_build_cmd_based_on_sanitizer_args(cmd, args):
+    sanitizer_flags = '-fsanitize={} -pthread'.format(args.enable_sanitizer_type)
+    additional_compiler_flags = '-g -fno-omit-frame-pointer'
     sanitizer_cmake_args = [
-    '-DCMAKE_CXX_FLAGS="{} {}"'.format(sanitizer_flag, additional_compiler_flags),
-    '-DCMAKE_C_FLAGS="{} {}"'.format(sanitizer_flag, additional_compiler_flags),
-    '-DCMAKE_EXE_LINKER_FLAGS="{}"'.format(sanitizer_flag),
-    '-DCMAKE_MODULE_LINKER_FLAGS="{}"'.format(sanitizer_flag),
-    '-DCMAKE_SHARED_LINKER_FLAGS="{}"'.format(sanitizer_flag)
+    '-DCMAKE_CXX_FLAGS="{} {}"'.format(sanitizer_flags, additional_compiler_flags),
+    '-DCMAKE_C_FLAGS="{} {}"'.format(sanitizer_flags, additional_compiler_flags),
+    '-DCMAKE_EXE_LINKER_FLAGS="{}"'.format(sanitizer_flags),
+    '-DCMAKE_MODULE_LINKER_FLAGS="{}"'.format(sanitizer_flags),
+    '-DCMAKE_SHARED_LINKER_FLAGS="{}"'.format(sanitizer_flags)
     ]
-    add_cmake_args_to_cmd(build_cmd, sanitizer_cmake_args)
 
-    # Restrict build packages to the provided regex
+    '''
+    Build command is split into build upto regex packages, build regex packages and then build
+    packages above regex packages. This ensures that we do not rebuild all the packages again with sanitizer flags.
+    '''
     if args.restrict_san_pkgs_regex:
-        build_cmd.extend(['--packages-select-regex ' + args.restrict_san_pkgs_regex])
+        regex_pkgs, pkgs_above_regex_pkgs = fetch_pkgs_based_on_regex(args)
+        build_cmd_upto_regex_pkgs = cmd[:] + ['--packages-up-to'] + regex_pkgs
+        build_cmd_for_regex_pkgs = cmd[:] + ['--packages-select'] + regex_pkgs
+        build_cmd_above_regex_pkgs = cmd[:] + ['--packages-up-to'] + pkgs_above_regex_pkgs + ['--packages-skip-build-finished']
+        # For address sanitizer, only regex packages need to be build with sanitizer flags
+        if args.enable_sanitizer_type == 'address':
+            add_cmake_args_to_cmd(build_cmd_for_regex_pkgs, sanitizer_cmake_args)
+        cmd = build_cmd_upto_regex_pkgs + [';'] + build_cmd_for_regex_pkgs + [';'] + build_cmd_above_regex_pkgs
+    else:
+        add_cmake_args_to_cmd(cmd, sanitizer_cmake_args)
+    return cmd
 
-    ret_build = job.run(build_cmd, shell=True)
-    info("colcon build with sanitizer returned: '{0}'".format(ret_build))
-    print('# END SUBSECTION')
-    return ret_build
+'''
+Fetches list of packages matching the provided regex for sanitization. It also provides the list of
+packages above regex packages.
+
+'''
+def fetch_pkgs_based_on_regex(args):
+    regex_pkgs_output = subprocess.check_output(
+        [args.colcon_script, 'list', '--packages-select-regex', args.restrict_san_pkgs_regex])
+    regex_pkgs = get_pkg_names_from_colcon_list_output(regex_pkgs_output)
+    pkgs_above_regex_pkgs_output = subprocess.check_output(
+        [args.colcon_script, 'list', '--packages-above'] + regex_pkgs)
+    pkgs_above_regex_pkgs = get_pkg_names_from_colcon_list_output(pkgs_above_regex_pkgs_output)
+    return regex_pkgs, pkgs_above_regex_pkgs
+
+def get_pkg_names_from_colcon_list_output(output):
+    pkg_names = []
+    if output:
+        for line in output.decode().splitlines():
+            pkg_name = line.split('\t')[0]
+            pkg_names.extend([pkg_name])
+    return pkg_names
+
+def filter_to_only_cmake_pkgs(args, pkgs):
+    output = subprocess.check_output(
+        [args.colcon_script, 'list', '--packages-select'] + pkgs)
+    cmake_pkgs = []
+    for line in output.decode().splitlines():
+        pkg_name, _, pkg_type  = line.split('\t', 2)
+        if 'cmake' in pkg_type:
+            cmake_pkgs.extend([pkg_name])
+    return cmake_pkgs
 
 '''
 Updates colcon test targets to only the required packages and adds pre-run/post-run
 commands for sanitizers
 '''
 def update_test_cmd_based_on_sanitizer_args(test_cmd, args):
-    test_cmd_prefix = get_test_cmd_prefix_based_on_sanitizer_args(args)
-    test_cmd_suffix = get_test_cmd_suffix_based_on_sanitizer_args(args)
-    return test_cmd_prefix + test_cmd + test_cmd_suffix
-
-'''
-Set up prerequisites for sanitizer tests and restrict tests to the required cmake packages
-'''
-def get_test_cmd_prefix_based_on_sanitizer_args(args):
     '''
     OSRF memory testing relies on LD_PRELOAD env variable to instrument libc functions like malloc().
     Sanitizers work in a similar way and hence fail on memory tools tests with the message:
@@ -416,28 +444,15 @@ def get_test_cmd_prefix_based_on_sanitizer_args(args):
     FIXME(osrf/osrf_testing_tools_cpp#23): Add a cmake argument for disabling memory tool tests and
     avoid overriding LD_PRELOAD.
     '''
-    export_library_preload_for_sanitizer = []
     if args.enable_sanitizer_type == 'address':
-        export_library_preload_for_sanitizer = ['export LD_PRELOAD=$(ls /usr/lib/x86_64-linux-gnu/libasan.so* | head -1);']
+        set_library_preload_for_sanitizer = ['LD_PRELOAD=$(ls /usr/lib/x86_64-linux-gnu/libasan.so* | head -1)']
+        test_cmd = set_library_preload_for_sanitizer + test_cmd
 
-    # Identify the sanitized packages
-    pkgs_regex_arg = '--packages-select-regex {}'.format(args.restrict_san_pkgs_regex) if args.restrict_san_pkgs_regex else ''
-    sanitized_pkgs = '$({} list {}'.format(args.colcon_script, pkgs_regex_arg) + '| awk \'{printf $1" "}\')'
-
-    # Identify all cmake packages which depend on/are sanitized packages
-    pkgs_above_sanitized_pkgs = '{} list --packages-above {}'.format(args.colcon_script, sanitized_pkgs)
-    cmake_pkgs_filter = 'awk \'$3 ~ /cmake/ {printf $1" "}\''
-    cmake_test_pkgs = ['cmake_test_pkgs="$({}|{})";'.format(pkgs_above_sanitized_pkgs, cmake_pkgs_filter)]
-
-    return cmake_test_pkgs + export_library_preload_for_sanitizer
-
-'''
-Restrict colcon test to appropriate pkgs and reset library variables post test
-'''
-def get_test_cmd_suffix_based_on_sanitizer_args(args):
-    select_cmake_pkgs_for_testing = ['--packages-select $cmake_test_pkgs;']
-    reset_library_preload = ['export LD_PRELOAD=;']
-    return select_cmake_pkgs_for_testing + reset_library_preload
+    if args.restrict_san_pkgs_regex:
+        _, pkgs_above_regex_pkgs = fetch_pkgs_based_on_regex(args)
+        cmake_pkgs = filter_to_only_cmake_pkgs(args, pkgs_above_regex_pkgs)
+        test_cmd.extend(['--packages-select'] + cmake_pkgs)
+    return test_cmd
 
 '''
 Add cmake args to the command fields. If cmake args are already present it appends new args to the same
