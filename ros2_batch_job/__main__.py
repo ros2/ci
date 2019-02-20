@@ -191,8 +191,8 @@ def get_args(sysargv=None):
         '--ros1-path', default=None,
         help="path of ROS 1 workspace to be sourced")
     parser.add_argument(
-        '--test-bridge', default=False, action='store_true',
-        help='test ros1_bridge')
+        '--mixed-ros-overlay-pkgs', nargs='+', default=[],
+        help='space separated list of packages to be built in an overlay workspace with ROS 1')
     parser.add_argument(
         '--colcon-mixin-url', default=None,
         help='A mixin index url to be included by colcon')

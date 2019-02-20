@@ -24,24 +24,20 @@ from .util import info
 
 
 def build_and_test_and_package(args, job):
-    print('# BEGIN SUBSECTION: build')
-    # ignore ROS 1 bridge package for now
-    ros1_bridge_path = os.path.join(args.sourcespace, 'ros2', 'ros1_bridge')
-    info('ROS1 bridge path: %s' % ros1_bridge_path)
-    ros1_bridge_ignore_marker = None
-    if os.path.exists(ros1_bridge_path):
-        ros1_bridge_ignore_marker = os.path.join(ros1_bridge_path, 'COLCON_IGNORE')
-        info('ROS1 bridge path ignore file: %s' % ros1_bridge_ignore_marker)
-        with open(ros1_bridge_ignore_marker, 'w'):
-            pass
+    skip_pkgs = args.mixed_ros_overlay_pkgs + \
+        (['ros1_bridge'] if 'ros1_bridge' not in args.mixed_ros_overlay_pkgs else [])
+    print('Skipping the following packages from underlay:')
+    for skip_pkg in sorted(skip_pkgs):
+        print('-', skip_pkg)
 
-    # Now run build
+    print('# BEGIN SUBSECTION: build underlay packages')
     cmd = [
         args.colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ] + (['--merge-install'] if not args.isolated else []) + \
+        (['--packages-skip', ' '.join(skip_pkgs)] if skip_pkgs else []) + \
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=OFF', '--no-warn-unused-cli']
@@ -56,52 +52,50 @@ def build_and_test_and_package(args, job):
         cmd.extend(cmake_args)
 
     job.run(cmd)
-
-    if ros1_bridge_ignore_marker:
-        os.remove(ros1_bridge_ignore_marker)
     print('# END SUBSECTION')
 
     # only build the bridge on Linux for now
     # the OSX nodes don't have a working ROS 1 installation atm and
     # ROS1 is not supported on Windows
     if args.os in ['linux']:
-        print('# BEGIN SUBSECTION: build ROS 1 bridge')
-        # Now run build only for the bridge
-        env = dict(os.environ)
-        env['MAKEFLAGS'] = '-j1'
-        job.run([
-            args.colcon_script, 'build',
-            '--base-paths', '"%s"' % args.sourcespace,
-            '--build-base', '"%s"' % args.buildspace,
-            '--install-base', '"%s"' % args.installspace,
-            '--cmake-args', '-DBUILD_TESTING=ON', '--no-warn-unused-cli',
-            '--packages-select', 'ros1_bridge',
-            '--event-handlers', 'console_direct+',
-        ] + (['--merge-install'] if not args.isolated else []) +
-            (
-                ['--cmake-args', '-DCMAKE_BUILD_TYPE=' +
-                    args.cmake_build_type]
-                if args.cmake_build_type else []
-        ), env=env)
-        print('# END SUBSECTION')
+        if args.mixed_ros_overlay_pkgs:
+            print('# BEGIN SUBSECTION: build overlay packages')
 
-        if args.test_bridge:
+            overlay_pkgs = ' '.join(args.mixed_ros_overlay_pkgs)
+            # Now run build only for the bridge
+            env = dict(os.environ)
+            env['MAKEFLAGS'] = '-j1'
+            job.run([
+                args.colcon_script, 'build',
+                '--base-paths', '"%s"' % args.sourcespace,
+                '--build-base', '"%s"' % args.buildspace,
+                '--install-base', '"%s"' % args.installspace,
+                '--cmake-args', '-DBUILD_TESTING=ON', '--no-warn-unused-cli',
+                '--event-handlers', 'console_direct+',
+            ] + (['--packages-select', overlay_pkgs]) +
+                (['--merge-install'] if not args.isolated else []) +
+                (
+                    ['--cmake-args', '-DCMAKE_BUILD_TYPE=' +
+                        args.cmake_build_type]
+                    if args.cmake_build_type else []
+            ), env=env)
+            print('# END SUBSECTION')
+
             print('# BEGIN SUBSECTION: install Python packages for ros1_bridge test')
             job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U', 'catkin_pkg', 'rospkg'], shell=True)
             print('# END SUBSECTION')
 
-            print('# BEGIN SUBSECTION: test ROS 1 bridge')
-            # Now run test only for the bridge
+            print('# BEGIN SUBSECTION: test overlay packages')
             ret_test = job.run([
                 args.colcon_script, 'test',
                 '--base-paths', '"%s"' % args.sourcespace,
                 '--build-base', '"%s"' % args.buildspace,
                 '--install-base', '"%s"' % args.installspace,
-                '--packages-select', 'ros1_bridge',
+            ] + (['--packages-select', overlay_pkgs]) +
                 # Ignore return codes that indicate test failures;
                 # they'll be picked up later in test reporting.
                 # '--ignore-return-codes',
-            ] + (['--merge-install'] if not args.isolated else []) +
+                (['--merge-install'] if not args.isolated else []) + \
                 args.test_args, exit_on_error=False, shell=True)
             info("test returned: '{0}'".format(ret_test))
             print('# END SUBSECTION')
@@ -116,6 +110,10 @@ def build_and_test_and_package(args, job):
                 exit_on_error=False, shell=True
             )
             info("test-result returned: '{0}'".format(ret_test_results))
+            print('# END SUBSECTION')
+        else:
+            print('# BEGIN SUBSECTION: build overlay packages')
+            print('no overlay packages specified')
             print('# END SUBSECTION')
 
     # Only on Linux and OSX Python scripts have a shebang line
