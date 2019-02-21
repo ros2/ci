@@ -74,6 +74,11 @@ pip_dependencies = [
     'pyyaml',
     'vcstool',
 ]
+if sys.platform in ('darwin', 'win32'):
+    pip_dependencies += [
+        'lxml'
+    ]
+
 colcon_packages = [
     'colcon-core',
     'colcon-defaults',
