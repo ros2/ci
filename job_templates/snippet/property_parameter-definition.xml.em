@@ -55,11 +55,5 @@ sanitizer_types.remove(enable_sanitizer_type_default)
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CI_RESTRICT_SANITIZER_TO_PKGS_REGEX</name>
-          <description>Restrict sanitizer instrumentation and testing to packages based on a particular regex</description>
-          <defaultValue>@(restrict_sanitizer_to_pkgs_regex_default)</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>

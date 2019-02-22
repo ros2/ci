@@ -31,7 +31,6 @@
     enable_c_coverage_default=enable_c_coverage_default,
     enable_sanitizer_type_default=enable_sanitizer_type_default,
     sanitizer_types=sanitizer_types,
-    restrict_sanitizer_to_pkgs_regex_default=restrict_sanitizer_to_pkgs_regex_default
 ))@
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.9.1">
@@ -101,7 +100,6 @@ build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
 compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
 enable_sanitizer_type: ${build.buildVariableResolver.resolve('CI_ENABLE_SANITIZER_TYPE')}, <br/>
-restrict_sanitizer_to_pkgs_regex: ${build.buildVariableResolver.resolve('CI_RESTRICT_SANITIZER_TO_PKGS_REGEX')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
         </script>
@@ -175,9 +173,6 @@ export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  end if]@
 if [ "${CI_ENABLE_SANITIZER_TYPE}" != "none" ]; then
   export CI_ARGS="$CI_ARGS --enable-sanitizer-type $CI_ENABLE_SANITIZER_TYPE"
-fi
-if [ -n "${CI_RESTRICT_SANITIZER_TO_PKGS_REGEX+x}" ]; then
-  export CI_ARGS="$CI_ARGS --restrict-san-pkgs-regex $CI_RESTRICT_SANITIZER_TO_PKGS_REGEX"
 fi
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
@@ -300,9 +295,6 @@ if "!CI_COMPILE_WITH_CLANG!" == "true" (
 )
 if "!CI_ENABLE_SANITIZER_TYPE!" NEQ "none" (
   set "CI_ARGS=!CI_ARGS! --enable-sanitizer-type !CI_ENABLE_SANITIZER_TYPE!"
-)
-if "!CI_RESTRICT_SANITIZER_TO_PKGS_REGEX!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --restrict-san-pkgs-regex !CI_RESTRICT_SANITIZER_TO_PKGS_REGEX!"
 )
 if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"

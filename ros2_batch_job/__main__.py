@@ -48,6 +48,7 @@ from .util import SANITIZER_TYPES
 sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
+MIXIN_REPO_URL='https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml'
 pip_dependencies = [
     'EmPy',
     'coverage',
@@ -81,6 +82,7 @@ colcon_packages = [
     'colcon-defaults',
     'colcon-library-path',
     'colcon-metadata',
+    'colcon-mixin',
     'colcon-output',
     'colcon-package-information',
     'colcon-package-selection',
@@ -207,9 +209,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--enable-sanitizer-type', default=None, choices=SANITIZER_TYPES,
         help='enable sanitizer based builds and tests')
-    parser.add_argument(
-        '--restrict-san-pkgs-regex', default=None,
-        help="restrict sanitizer instrumentation and testing to packages based on a particular regex")
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, build_args = extract_argument_group(argv, '--build-args')
@@ -303,7 +302,12 @@ def build_and_test(args, job):
     if compile_with_clang:
         cmake_args.extend(
             ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])
-    add_cmake_args_to_cmd(cmd, cmake_args)
+    if '--cmake-args' in cmd:
+        index = cmd.index('--cmake-args')
+        cmd[index + 1:index + 1] = cmake_args
+    else:
+        cmd.append('--cmake-args')
+        cmd.extend(cmake_args)
 
     if coverage:
         ament_cmake_args = [
@@ -367,71 +371,15 @@ def build_and_test(args, job):
     return 0
 
 '''
-Add sanitizer based flags to colcon build for appropriate packages.
+Adds sanitizer specific mixin as a build arg
 '''
 def update_build_cmd_based_on_sanitizer_args(cmd, args):
-    sanitizer_flags = '-fsanitize={} -pthread'.format(args.enable_sanitizer_type)
-    additional_compiler_flags = '-g -fno-omit-frame-pointer'
-    sanitizer_cmake_args = [
-    '-DCMAKE_CXX_FLAGS="{} {}"'.format(sanitizer_flags, additional_compiler_flags),
-    '-DCMAKE_C_FLAGS="{} {}"'.format(sanitizer_flags, additional_compiler_flags),
-    '-DCMAKE_EXE_LINKER_FLAGS="{}"'.format(sanitizer_flags),
-    '-DCMAKE_MODULE_LINKER_FLAGS="{}"'.format(sanitizer_flags),
-    '-DCMAKE_SHARED_LINKER_FLAGS="{}"'.format(sanitizer_flags)
-    ]
-
-    '''
-    Build command is split into build upto regex packages, build regex packages and then build
-    packages above regex packages. This ensures that we do not rebuild all the packages again with sanitizer flags.
-    '''
-    if args.restrict_san_pkgs_regex:
-        regex_pkgs, pkgs_above_regex_pkgs = fetch_pkgs_based_on_regex(args)
-        build_cmd_upto_regex_pkgs = cmd[:] + ['--packages-up-to'] + regex_pkgs
-        build_cmd_for_regex_pkgs = cmd[:] + ['--packages-select'] + regex_pkgs
-        build_cmd_above_regex_pkgs = cmd[:] + ['--packages-up-to'] + pkgs_above_regex_pkgs + ['--packages-skip-build-finished']
-        # For address sanitizer, only regex packages need to be build with sanitizer flags
-        if args.enable_sanitizer_type == 'address':
-            add_cmake_args_to_cmd(build_cmd_for_regex_pkgs, sanitizer_cmake_args)
-        cmd = build_cmd_upto_regex_pkgs + [';'] + build_cmd_for_regex_pkgs + [';'] + build_cmd_above_regex_pkgs
-    else:
-        add_cmake_args_to_cmd(cmd, sanitizer_cmake_args)
+    if args.enable_sanitizer_type == 'address':
+        cmd.extend(['--mixin asan-gcc'])
     return cmd
 
 '''
-Fetches list of packages matching the provided regex for sanitization. It also provides the list of
-packages above regex packages.
-
-'''
-def fetch_pkgs_based_on_regex(args):
-    regex_pkgs_output = subprocess.check_output(
-        [args.colcon_script, 'list', '--packages-select-regex', args.restrict_san_pkgs_regex])
-    regex_pkgs = get_pkg_names_from_colcon_list_output(regex_pkgs_output)
-    pkgs_above_regex_pkgs_output = subprocess.check_output(
-        [args.colcon_script, 'list', '--packages-above'] + regex_pkgs)
-    pkgs_above_regex_pkgs = get_pkg_names_from_colcon_list_output(pkgs_above_regex_pkgs_output)
-    return regex_pkgs, pkgs_above_regex_pkgs
-
-def get_pkg_names_from_colcon_list_output(output):
-    pkg_names = []
-    if output:
-        for line in output.decode().splitlines():
-            pkg_name = line.split('\t')[0]
-            pkg_names.extend([pkg_name])
-    return pkg_names
-
-def filter_to_only_cmake_pkgs(args, pkgs):
-    output = subprocess.check_output(
-        [args.colcon_script, 'list', '--packages-select'] + pkgs)
-    cmake_pkgs = []
-    for line in output.decode().splitlines():
-        pkg_name, _, pkg_type  = line.split('\t', 2)
-        if 'cmake' in pkg_type:
-            cmake_pkgs.extend([pkg_name])
-    return cmake_pkgs
-
-'''
-Updates colcon test targets to only the required packages and adds pre-run/post-run
-commands for sanitizers
+Sets up prerequisites for sanitizer based testing
 '''
 def update_test_cmd_based_on_sanitizer_args(test_cmd, args):
     '''
@@ -447,23 +395,7 @@ def update_test_cmd_based_on_sanitizer_args(test_cmd, args):
     if args.enable_sanitizer_type == 'address':
         set_library_preload_for_sanitizer = ['LD_PRELOAD=$(ls /usr/lib/x86_64-linux-gnu/libasan.so* | head -1)']
         test_cmd = set_library_preload_for_sanitizer + test_cmd
-
-    if args.restrict_san_pkgs_regex:
-        _, pkgs_above_regex_pkgs = fetch_pkgs_based_on_regex(args)
-        cmake_pkgs = filter_to_only_cmake_pkgs(args, pkgs_above_regex_pkgs)
-        test_cmd.extend(['--packages-select'] + cmake_pkgs)
     return test_cmd
-
-'''
-Add cmake args to the command fields. If cmake args are already present it appends new args to the same
-'''
-def add_cmake_args_to_cmd(cmd, cmake_args):
-    if '--cmake-args' in cmd:
-        index = cmd.index('--cmake-args')
-        cmd[index + 1:index + 1] = cmake_args
-    else:
-        cmd.append('--cmake-args')
-        cmd.extend(cmake_args)
 
 def run(args, build_function, blacklisted_package_names=None):
     if blacklisted_package_names is None:
@@ -631,6 +563,10 @@ def run(args, build_function, blacklisted_package_names=None):
         # Show what pip has
         job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
         print('# END SUBSECTION')
+
+        # Fetch colcon mixins
+        job.run([args.colcon_script, 'mixin add default ' + MIXIN_REPO_URL], shell=True)
+        job.run([args.colcon_script, 'mixin update default'], shell=True)
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
         # that somebody has already pulled the code on the host and mounted it
