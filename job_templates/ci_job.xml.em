@@ -29,8 +29,6 @@
     test_args_default=test_args_default,
     compile_with_clang_default=compile_with_clang_default,
     enable_c_coverage_default=enable_c_coverage_default,
-    enable_sanitizer_type_default=enable_sanitizer_type_default,
-    sanitizer_types=sanitizer_types,
 ))@
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.9.1">
@@ -99,7 +97,6 @@ cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')},
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
 compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
-enable_sanitizer_type: ${build.buildVariableResolver.resolve('CI_ENABLE_SANITIZER_TYPE')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
         </script>
@@ -171,9 +168,6 @@ fi
 @[  if os_name in ['linux', 'linux-aarch64'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  end if]@
-if [ "${CI_ENABLE_SANITIZER_TYPE}" != "none" ]; then
-  export CI_ARGS="$CI_ARGS --enable-sanitizer-type $CI_ENABLE_SANITIZER_TYPE"
-fi
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
 fi
@@ -292,9 +286,6 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
 )
 if "!CI_COMPILE_WITH_CLANG!" == "true" (
   set "CI_ARGS=!CI_ARGS! --compile-with-clang"
-)
-if "!CI_ENABLE_SANITIZER_TYPE!" NEQ "none" (
-  set "CI_ARGS=!CI_ARGS! --enable-sanitizer-type !CI_ENABLE_SANITIZER_TYPE!"
 )
 if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"

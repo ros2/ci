@@ -41,8 +41,6 @@ from .util import generated_venv_vars
 from .util import info
 from .util import log
 from .util import UnbufferedIO
-from .util import SANITIZER_TYPES
-
 
 # Enforce unbuffered output
 sys.stdout = UnbufferedIO(sys.stdout)
@@ -206,9 +204,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--python-interpreter', default=None,
         help='pass different Python interpreter')
-    parser.add_argument(
-        '--enable-sanitizer-type', default=None, choices=SANITIZER_TYPES,
-        help='enable sanitizer based builds and tests')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, build_args = extract_argument_group(argv, '--build-args')
@@ -320,9 +315,6 @@ def build_and_test(args, job):
             cmd.append('--ament-cmake-args')
             cmd.extend(ament_cmake_args)
 
-    if args.enable_sanitizer_type:
-        cmd = update_build_cmd_based_on_sanitizer_args(cmd, args)
-
     ret_build = job.run(cmd, shell=True)
     info("colcon build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
@@ -330,17 +322,13 @@ def build_and_test(args, job):
         return ret_build
 
     print('# BEGIN SUBSECTION: test')
-    test_cmd = [
+    ret_test = job.run([
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-    ] + (['--merge-install'] if not args.isolated else []) + args.test_args
-
-    if args.enable_sanitizer_type:
-        test_cmd = update_test_cmd_based_on_sanitizer_args(test_cmd, args)
-
-    ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
+    ] + (['--merge-install'] if not args.isolated else []) + args.test_args,
+        exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
     if ret_test:
@@ -370,32 +358,6 @@ def build_and_test(args, job):
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
     return 0
 
-'''
-Adds sanitizer specific mixin as a build arg
-'''
-def update_build_cmd_based_on_sanitizer_args(cmd, args):
-    if args.enable_sanitizer_type == 'address':
-        cmd.extend(['--mixin asan-gcc'])
-    return cmd
-
-'''
-Sets up prerequisites for sanitizer based testing
-'''
-def update_test_cmd_based_on_sanitizer_args(test_cmd, args):
-    '''
-    OSRF memory testing relies on LD_PRELOAD env variable to instrument libc functions like malloc().
-    Sanitizers work in a similar way and hence fail on memory tools tests with the message:
-    "ASan runtime does not come first in initial library list; you should either link runtime to your
-    application or manually preload it with LD_PRELOAD"
-
-    We are overriding LD_PRELOAD with the sanitizer library path before colcon test to resolve this.
-    FIXME(osrf/osrf_testing_tools_cpp#23): Add a cmake argument for disabling memory tool tests and
-    avoid overriding LD_PRELOAD.
-    '''
-    if args.enable_sanitizer_type == 'address':
-        set_library_preload_for_sanitizer = ['LD_PRELOAD=$(ls /usr/lib/x86_64-linux-gnu/libasan.so* | head -1)']
-        test_cmd = set_library_preload_for_sanitizer + test_cmd
-    return test_cmd
 
 def run(args, build_function, blacklisted_package_names=None):
     if blacklisted_package_names is None:
@@ -565,8 +527,8 @@ def run(args, build_function, blacklisted_package_names=None):
         print('# END SUBSECTION')
 
         # Fetch colcon mixins
-        job.run([args.colcon_script, 'mixin add default ' + MIXIN_REPO_URL], shell=True)
-        job.run([args.colcon_script, 'mixin update default'], shell=True)
+        job.run([args.colcon_script, 'mixin', 'add', 'default', MIXIN_REPO_URL], shell=True)
+        job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
         # that somebody has already pulled the code on the host and mounted it

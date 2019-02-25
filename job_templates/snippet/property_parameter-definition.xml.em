@@ -42,18 +42,5 @@ This tests the robustness to whitespace being within the different paths.</descr
           <defaultValue>@(test_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
-        <hudson.model.ChoiceParameterDefinition>
-          <name>CI_ENABLE_SANITIZER_TYPE</name>
-          <description>This can be used to enable sanitizer based builds and tests</description>
-          <choices class="java.util.Arrays$ArrayList">
-            <a class="string-array">
-              <string>@enable_sanitizer_type_default</string>
-@{
-sanitizer_types.remove(enable_sanitizer_type_default)
-}@
-              <string>@sanitizer_types[0]</string>
-            </a>
-          </choices>
-        </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
