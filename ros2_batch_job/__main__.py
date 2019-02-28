@@ -84,6 +84,7 @@ colcon_packages = [
     'colcon-defaults',
     'colcon-library-path',
     'colcon-metadata',
+    'colcon-mixin',
     'colcon-output',
     'colcon-package-information',
     'colcon-package-selection',
