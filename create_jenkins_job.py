@@ -40,9 +40,6 @@ except ImportError:
 DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos'
 DEFAULT_MAIL_RECIPIENTS = 'ros2-buildfarm@googlegroups.com'
 PERIODIC_JOB_SPEC = '30 7 * * *'
-RMW_RCL_TEST_PKGS = ['rcl','rcl_action','rcl_interfaces','rcl_lifecycle','rcl_logging_noop','rcl_yaml_param_parser','rclcpp','rclcpp_action','rclcpp_lifecycle','rclpy',
-'rmw','rmw_connext_shared_cpp','rmw_fastrtps_cpp','rmw_fastrtps_shared_cpp','rmw_implementation','rmw_implementation_cmake',
-'osrf_testing_tools_cpp','test_cli','test_cli_remapping','test_communication','test_msgs','test_osrf_testing_tools_cpp','test_rclcpp','test_security']
 
 template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]
@@ -204,8 +201,8 @@ def main(argv=None):
                 'cmake_build_type': 'Debug',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select ' + ' '.join(RMW_RCL_TEST_PKGS),
-                'build_args_default': '--event-handlers console_cohesion+ console_package_list+' + asan_cmake_build_args + ' --mixin asan --packages-up-to ' + ' '.join(RMW_RCL_TEST_PKGS)
+                'build_args_default': '--event-handlers console_cohesion+ console_package_list+' + asan_cmake_build_args + ' --mixin asan --packages-up-to test_communication test_rclcpp',
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select test_communication test_rclcpp',
             })
 
         # configure a manually triggered version of the coverage job
