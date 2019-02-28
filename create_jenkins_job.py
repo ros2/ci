@@ -82,6 +82,7 @@ def main(argv=None):
             'rmw_opensplice_cpp'},
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
+        'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
         'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 10',
         'compile_with_clang_default': 'false',

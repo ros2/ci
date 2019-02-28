@@ -53,6 +53,12 @@ choices.remove(ubuntu_distro)
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_COLCON_MIXIN_URL</name>
+          <description>A mixin index url for colcon to use.</description>
+          <defaultValue>@(colcon_mixin_url)</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_CMAKE_BUILD_TYPE</name>
           <description>Select the CMake build type.</description>

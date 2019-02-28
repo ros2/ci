@@ -25,6 +25,7 @@
     use_isolated_default=use_isolated_default,
     ubuntu_distro=ubuntu_distro,
     cmake_build_type=cmake_build_type,
+    colcon_mixin_url=colcon_mixin_url,
     build_args_default=build_args_default,
     test_args_default=test_args_default,
     compile_with_clang_default=compile_with_clang_default,
@@ -93,6 +94,7 @@ colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
+colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
@@ -155,6 +157,9 @@ if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
 elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
   export CI_ROS1_DISTRO=kinetic
 fi
+if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
+  export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
+fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
@@ -191,6 +196,10 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Inject date into Dockerfile"
 sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
 echo "# END SECTION"
+echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
+sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile
+sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
+echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 @[      if turtlebot_demo]@
@@ -222,7 +231,7 @@ export CONTAINER_NAME=ros2_batch_ci_aarch64
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run script"
@@ -275,6 +284,9 @@ if "!CI_ROS2_SUPPLEMENTAL_REPOS_URL!" NEQ "" (
 )
 if "!CI_ISOLATED!" == "true" (
   set "CI_ARGS=!CI_ARGS! --isolated"
+)
+if "!CI_COLCON_MIXIN_URL!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
 )
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"

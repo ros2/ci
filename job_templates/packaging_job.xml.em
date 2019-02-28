@@ -23,6 +23,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     ubuntu_distro=ubuntu_distro,
+    colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
 ))@
@@ -105,6 +106,7 @@ use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')},
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
 use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
+colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
@@ -166,6 +168,9 @@ export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 echo "not building/testing the ros1_bridge on MacOS"
 # export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
 @[  end if]@
+if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
+  export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
+fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
   export CI_ARGS="$CI_ARGS --cmake-build-type $CI_CMAKE_BUILD_TYPE"
 fi
@@ -191,6 +196,11 @@ docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Inject date into Dockerfile"
 sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
+echo "# END SECTION"
+echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
+sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile
+sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
+echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
@@ -212,7 +222,7 @@ export CONTAINER_NAME=ros2_packaging_aarch64
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:/home/rosbuild/ci_scripts -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run packaging script"
@@ -257,6 +267,9 @@ if "!CI_ROS2_REPOS_URL!" EQU "" (
 set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_TEST_BRIDGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --test-bridge"
+)
+if "!CI_COLCON_MIXIN_URL!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
 )
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"

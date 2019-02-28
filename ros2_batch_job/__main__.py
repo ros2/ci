@@ -46,7 +46,6 @@ from .util import UnbufferedIO
 sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
-MIXIN_REPO_URL='https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml'
 pip_dependencies = [
     'EmPy',
     'coverage',
@@ -75,6 +74,11 @@ pip_dependencies = [
     'pyyaml',
     'vcstool',
 ]
+if sys.platform in ('darwin', 'win32'):
+    pip_dependencies += [
+        'lxml'
+    ]
+
 colcon_packages = [
     'colcon-core',
     'colcon-defaults',
@@ -180,6 +184,9 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--test-bridge', default=False, action='store_true',
         help='test ros1_bridge')
+    parser.add_argument(
+        '--colcon-mixin-url', default=None,
+        help='A mixin index url to be included by colcon')
     parser.add_argument(
         '--cmake-build-type', default=None,
         help='select the CMake build type')
@@ -527,8 +534,10 @@ def run(args, build_function, blacklisted_package_names=None):
         print('# END SUBSECTION')
 
         # Fetch colcon mixins
-        job.run([args.colcon_script, 'mixin', 'add', 'default', MIXIN_REPO_URL], shell=True)
-        job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
+        if args.colcon_mixin_url:
+            job.run([args.colcon_script, 'mixin', 'remove', 'default', '||', 'true'], shell=True)
+            job.run([args.colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
+            job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
         # that somebody has already pulled the code on the host and mounted it

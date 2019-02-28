@@ -37,7 +37,25 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y python3-lark-parser; fi
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install --no-install-recommends -y clang-format cppcheck git libxml2-utils pydocstyle pyflakes python3-coverage python3-flake8 python3-mock python3-nose python3-pep8 python3-pyparsing python3-yaml uncrustify
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  clang-format \
+  cppcheck \
+  git \
+  liblog4cxx-dev \
+  libxml2-dev \
+  libxml2-utils \
+  libxslt-dev \
+  pydocstyle \
+  pyflakes \
+  python3-coverage \
+  python3-flake8 \
+  python3-lxml \
+  python3-mock \
+  python3-nose \
+  python3-pep8 \
+  python3-pyparsing \
+  python3-yaml \
+  uncrustify
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
@@ -157,7 +175,7 @@ RUN useradd -u 1234 -m rosbuild
 RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
 RUN sudo -H -u rosbuild -- git config --global user.name "Jenkins ROS 2"
 RUN echo 'rosbuild ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-WORKDIR /home/rosbuild
+WORKDIR "@workdir"
 
 # Add an entry point which changes rosbuild's UID from 1234 to the UID of the invoking user.
 # This means that the generated files will have the same ownership as the host OS user.
