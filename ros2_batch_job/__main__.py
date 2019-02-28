@@ -184,6 +184,9 @@ def get_args(sysargv=None):
         '--test-bridge', default=False, action='store_true',
         help='test ros1_bridge')
     parser.add_argument(
+        '--colcon-mixin-url', default=None,
+        help='A mixin index url to be included by colcon')
+    parser.add_argument(
         '--cmake-build-type', default=None,
         help='select the CMake build type')
     parser.add_argument(
@@ -528,6 +531,11 @@ def run(args, build_function, blacklisted_package_names=None):
         # Show what pip has
         job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
         print('# END SUBSECTION')
+
+        # Fetch colcon mixins
+        if args.colcon_mixin_url:
+            job.run([args.colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
+            job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
         # that somebody has already pulled the code on the host and mounted it
