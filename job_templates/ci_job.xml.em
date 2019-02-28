@@ -157,7 +157,7 @@ if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
 elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
   export CI_ROS1_DISTRO=kinetic
 fi
-if [ "${CI_COLCON_MIXIN_URL}" != "" ]; then
+if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
 fi
 if [ "${CI_CMAKE_BUILD_TYPE}" != "None" ]; then
@@ -284,6 +284,9 @@ if "!CI_ROS2_SUPPLEMENTAL_REPOS_URL!" NEQ "" (
 )
 if "!CI_ISOLATED!" == "true" (
   set "CI_ARGS=!CI_ARGS! --isolated"
+)
+if "!CI_COLCON_MIXIN_URL!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
 )
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
