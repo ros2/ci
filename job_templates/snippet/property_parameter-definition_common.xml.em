@@ -55,7 +55,7 @@ choices.remove(ubuntu_distro)
         </hudson.model.ChoiceParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_COLCON_MIXIN_URL</name>
-          <description>A mixin index url for colconto use.</description>
+          <description>A mixin index url for colcon to use.</description>
           <defaultValue>@(colcon_mixin_url)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
