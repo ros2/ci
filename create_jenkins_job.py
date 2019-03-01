@@ -263,31 +263,6 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
-    for os_name in ['linux', 'linux-aarch64']:
-        # configure a nightly triggered job for xenial using all RMW implementations
-        ubuntu_distro = 'xenial'
-        job_name = 'nightly_{0}_{1}_release'.format(ubuntu_distro, os_name)
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'Release',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
-            'ubuntu_distro': ubuntu_distro,
-        })
-
-        ubuntu_distro = 'xenial'
-        # configure a nightly xenial packaging job
-        job_name = 'packaging_{0}_{1}'.format(ubuntu_distro, os_name)
-        create_job(os_name, job_name, 'packaging_job.xml.em', {
-            'cmake_build_type': 'RelWithDebInfo',
-            'test_bridge_default': 'true',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ubuntu_distro': ubuntu_distro,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
-            'use_connext_debs_default': 'true',
-        })
-
     # configure the launch job
     os_specific_data = collections.OrderedDict()
     for os_name in sorted(os_configs.keys()):
