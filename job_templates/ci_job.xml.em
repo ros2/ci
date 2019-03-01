@@ -64,7 +64,7 @@
   </scm>
   <assignedNode>@(label_expression)</assignedNode>
   <canRoam>false</canRoam>
-  <disabled>false</disabled>
+  <disabled>@('true' if vars().get('disabled') else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>@
