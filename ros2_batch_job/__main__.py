@@ -535,7 +535,8 @@ def run(args, build_function, blacklisted_package_names=None):
 
         # Fetch colcon mixins
         if args.colcon_mixin_url:
-            job.run([args.colcon_script, 'mixin', 'remove', 'default', '||', 'true'], shell=True)
+            true_cmd = 'VER>NUL' if sys.platform == 'win32' else 'true'
+            job.run([args.colcon_script, 'mixin', 'remove', 'default', '||', true_cmd], shell=True)
             job.run([args.colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
             job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
 
