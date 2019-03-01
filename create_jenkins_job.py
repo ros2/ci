@@ -194,6 +194,16 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
+        # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
+        if os_name == 'linux':
+            create_job(os_name, 'nightly_' + os_name + '_thread_sanitizer', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'build_args_default': data['build_args_default'] + ' --mixin tsan --packages-up-to test_communication test_rclcpp',
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select test_communication test_rclcpp',
+            })
+
         # configure a manually triggered version of the coverage job
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
