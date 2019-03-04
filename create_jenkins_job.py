@@ -256,6 +256,7 @@ def main(argv=None):
                 'supplemental_repos_url': 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos',
             })
             create_job(os_name, 'nightly_turtlebot-demo_' + os_name + '_release', 'ci_job.xml.em', {
+                'disabled': True,
                 'cmake_build_type': 'Release',
                 'turtlebot_demo': True,
                 'supplemental_repos_url': 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos',
