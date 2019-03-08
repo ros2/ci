@@ -74,7 +74,7 @@ pip_dependencies = [
     'pyyaml',
     'vcstool',
 ]
-if sys.platform in ('darwin', 'win32'):
+if sys.platform in ('darwin'):
     pip_dependencies += [
         'lxml'
     ]
@@ -470,6 +470,15 @@ def run(args, build_function, blacklisted_package_names=None):
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
+        if args.os == 'windows':
+            if args.cmake_build_type and args.cmake_build_type.casefold() == 'debug':
+                pip_packages += [
+                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl'
+                ]
+            else:
+                pip_packages += [
+                    'lxml'
+                ]
         if not args.colcon_branch:
             pip_packages += colcon_packages
         if sys.platform == 'win32':
