@@ -471,7 +471,7 @@ def run(args, build_function, blacklisted_package_names=None):
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
         if args.os == 'windows':
-            if args.cmake_build_type and args.cmake_build_type.casefold() == 'debug':
+            if not args.packaging and args.cmake_build_type and args.cmake_build_type.casefold() == 'debug':
                 pip_packages += [
                     'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl'
                 ]
