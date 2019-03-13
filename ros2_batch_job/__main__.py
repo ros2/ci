@@ -470,8 +470,8 @@ def run(args, build_function, blacklisted_package_names=None):
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
-        if args.os == 'windows':
-            if not args.packaging and args.cmake_build_type and args.cmake_build_type.casefold() == 'debug':
+        if sys.platform == 'win32':
+            if not args.packaging and args.cmake_build_type and args.cmake_build_type == 'Debug':
                 pip_packages += [
                     'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl'
                 ]
@@ -485,7 +485,9 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 colcon_packages, shell=True)
-
+            job.run(
+                ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
+                ['lxml'], shell=True)
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
         if args.do_venv:
             # Force reinstall so all dependencies are in virtual environment
