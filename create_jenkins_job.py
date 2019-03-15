@@ -251,11 +251,15 @@ def main(argv=None):
         job_name = 'nightly_' + job_os_name + '_repeated'
         if os_name == 'windows':
             job_name = job_name[:15]
+        test_args_default = '--event-handlers console_direct+ --executor sequential --retest-until-fail 10 --ctest-args -LE linter --pytest-args -m "not linter"'
+        if job_os_name == 'linux-aarch64':
+            # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
+            test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-fail 10 --ctest-args -LE linter --pytest-args -m "not linter"',
+            'test_args_default': test_args_default,
         })
 
         # configure turtlebot jobs on Linux only for now
