@@ -124,7 +124,6 @@ def main(sysargv=None):
         blacklisted_package_names += [
             'actionlib_msgs',
             'common_interfaces',
-            'cv_bridge',
             'opencv_tests',
             'ros1_bridge',
             'shape_msgs',
