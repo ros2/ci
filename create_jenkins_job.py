@@ -200,8 +200,8 @@ def main(argv=None):
                 'cmake_build_type': 'Debug',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
-                'build_args_default': data['build_args_default'] + ' --mixin tsan --packages-up-to test_communication test_rclcpp',
-                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select test_communication test_rclcpp',
+                'build_args_default': data['build_args_default'] + ' --mixin tsan --packages-up-to test_communication',
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select test_communication',
             })
 
         # configure a manually triggered version of the coverage job
