@@ -185,6 +185,20 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
+        # configure nightly job for testing with address sanitizer on linux
+        if os_name == 'linux':
+            asan_build_args = data['default_build_args'].replace('--cmake-args',
+                '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
+                ' --mixin asan-gcc --packages-up-to test_communication'
+
+            create_job(os_name, 'nightly_' + os_name + '_address_sanitizer', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
+                'build_args_default': asan_build_args,
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select test_communication',
+            })
+
         # configure nightly job for compiling with clang+libcxx on linux
         if os_name == 'linux':
             create_job(os_name, 'nightly_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
