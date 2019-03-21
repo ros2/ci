@@ -98,7 +98,7 @@ colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')},
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
-compile_with_clang_default: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
+compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
 coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
 """);]]>
         </script>
