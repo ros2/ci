@@ -62,6 +62,7 @@ pip_dependencies = [
     'git+https://github.com/lark-parser/lark.git@0.7d',
     'mock',
     'nose',
+    'numpy',
     'pep8',
     'pydocstyle',
     'pyflakes',
