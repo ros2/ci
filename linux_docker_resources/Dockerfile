@@ -63,11 +63,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-yaml \
   uncrustify \
   libgazebo9-dev \
-  gazebo9
+  gazebo9 \
+  libboost-all-dev
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
 RUN pip3 install -U setuptools pip virtualenv==16.7.9
+RUN python3 -m pip install numpy
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
