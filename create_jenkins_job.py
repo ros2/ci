@@ -187,7 +187,7 @@ def main(argv=None):
 
         # configure nightly job for testing with address sanitizer on linux
         if os_name == 'linux':
-            asan_build_args = data['default_build_args'].replace('--cmake-args',
+            asan_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
                 ' --mixin asan-gcc --packages-up-to test_communication'
 
