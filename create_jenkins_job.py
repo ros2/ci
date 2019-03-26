@@ -191,7 +191,7 @@ def main(argv=None):
                 '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
                 ' --mixin asan-gcc --packages-up-to test_communication'
 
-            create_job(os_name, 'nightly_' + os_name + '_address_sanitizer', 'ci_job.xml.em', {
+            create_job(os_name, 'nightly_{}_address_sanitizer'.format(os_name), 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
