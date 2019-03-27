@@ -52,6 +52,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-lxml \
   python3-mock \
   python3-nose \
+  python3-numpy \
   python3-pep8 \
   python3-pyparsing \
   python3-yaml \
