@@ -108,7 +108,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'osx', 'linux-aarch64']]@
+@[if os_name in ['linux', 'osx', 'linux-aarch64', 'linux-centos']]@
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -182,9 +182,11 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-centos']]@
+@[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+@[    end if]@
 
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
@@ -194,10 +196,10 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Inject date into Dockerfile"
-sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
+sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile*
 echo "# END SECTION"
 echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
-sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile
+sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile*
 sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
@@ -206,6 +208,12 @@ echo "# BEGIN SECTION: Build Dockerfile"
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[      else]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
+@[      end if]@
+@[    elif os_name == 'linux-centos']@
+@[      if turtlebot_demo]@
+docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
+@[      else]@
+docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
 @[      end if]@
 @[    elif os_name == 'linux']@
 @[      if turtlebot_demo]@
@@ -222,6 +230,8 @@ echo "# BEGIN SECTION: Run Dockerfile"
 export CONTAINER_NAME=ros2_batch_ci_turtlebot_demo
 @[    elif os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
+@[    elif os_name == 'linux-centos']@
+export CONTAINER_NAME=ros2_batch_ci_centos
 @[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_batch_ci_aarch64
 @[    else]@

@@ -114,6 +114,25 @@ def main(argv=None):
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
         },
+        'linux-centos': {
+            'label_expression': 'linux',
+            'shell_type': 'Shell',
+            'build_args_default': '--packages-skip-by-dep qt_gui_cpp --packages-skip qt_gui_cpp ' + data['build_args_default'].replace(
+                '--cmake-args', '--cmake-args -DCMAKE_POLICY_DEFAULT_CMP0072=NEW -DPYTHON_VERSION=3.6'),
+            'test_args_default': '--packages-skip-by-dep qt_gui_cpp --packages-skip qt_gui_cpp ' + data['test_args_default'],
+        },
+    }
+
+    os_config_overrides = {
+        'linux-centos': {
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_opensplice_cpp'},
+            'test_bridge_default': 'false',
+            'use_connext_debs_default': 'false',
+        },
+    }
+
+    launcher_exclude = {
+        'linux-centos',
     }
 
     jenkins_kwargs = {}
@@ -125,6 +144,7 @@ def main(argv=None):
         job_data['os_name'] = os_name
         job_data.update(os_configs[os_name])
         job_data.update(additional_dict)
+        job_data.update(os_config_overrides.get(os_name, {}))
         job_config = expand_template(template_file, job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
@@ -295,7 +315,7 @@ def main(argv=None):
 
     # configure the launch job
     os_specific_data = collections.OrderedDict()
-    for os_name in sorted(os_configs.keys()):
+    for os_name in sorted(os_configs.keys() - launcher_exclude):
         os_specific_data[os_name] = dict(data)
         os_specific_data[os_name].update(os_configs[os_name])
         os_specific_data[os_name]['job_name'] = 'ci_' + os_name
