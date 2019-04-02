@@ -484,9 +484,10 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 colcon_packages, shell=True)
+            # to ensure that the build type specific package is installed
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                ['lxml'], shell=True)
+                ['lxml', 'numpy'], shell=True)
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
         if args.do_venv:
             # Force reinstall so all dependencies are in virtual environment
