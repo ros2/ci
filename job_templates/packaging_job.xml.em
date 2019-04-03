@@ -119,7 +119,7 @@ test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-centos', 'osx']]@
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -183,9 +183,11 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-centos']]@
+@[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+@[    end if]@
 
 mkdir -p $HOME/.ccache
 echo "# BEGIN SECTION: docker version"
@@ -195,15 +197,17 @@ echo "# BEGIN SECTION: docker info"
 docker info
 echo "# END SECTION"
 echo "# BEGIN SECTION: Inject date into Dockerfile"
-sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile
+sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile*
 echo "# END SECTION"
 echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
-sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile
+sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile*
 sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+@[    elif os_name == 'linux-centos']@
+docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
 @[    elif os_name == 'linux']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
 @[    else]@
@@ -215,6 +219,8 @@ echo "# BEGIN SECTION: Run Dockerfile"
 export CONTAINER_NAME=ros2_packaging
 @[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_packaging_aarch64
+@[    elif os_name == 'linux-centos']@
+export CONTAINER_NAME=ros2_packaging_centos
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
