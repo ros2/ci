@@ -69,7 +69,7 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 RUN apt-get update && apt-get install --no-install-recommends -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice69=6.9.190227+r2+osrf1-1~$UBUNTU_DISTRO; fi
+RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice69=6.9.190403+osrf1-1~$UBUNTU_DISTRO; fi
 # Update default domain id.
 RUN if test \( ${PLATFORM} = arm -o ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
 
