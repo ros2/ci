@@ -62,7 +62,6 @@ pip_dependencies = [
     'lark-parser',
     'mock',
     'nose',
-    'numpy',
     'pep8',
     'pydocstyle',
     'pyflakes',
@@ -472,11 +471,13 @@ def run(args, build_function, blacklisted_package_names=None):
         if sys.platform == 'win32':
             if not args.packaging and args.cmake_build_type and args.cmake_build_type == 'Debug':
                 pip_packages += [
-                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl'
+                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.16.2-cp37-cp37dm-win_amd64.whl',
                 ]
             else:
                 pip_packages += [
-                    'lxml'
+                    'lxml',
+                    'numpy',
                 ]
         if not args.colcon_branch:
             pip_packages += colcon_packages
