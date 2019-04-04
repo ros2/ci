@@ -490,8 +490,10 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['lxml', 'numpy'], shell=True)
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
-        if args.do_venv:
+        if args.do_venv or sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
+            # On Windows since we switch between the debug and non-debug
+            # interpreter all packages need to be reinstalled too
             pip_cmd.append('--force-reinstall')
         job.run(
             pip_cmd + pip_packages,
