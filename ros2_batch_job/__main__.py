@@ -494,7 +494,7 @@ def run(args, build_function, blacklisted_package_names=None):
             # Force reinstall so all dependencies are in virtual environment
             pip_cmd.append('--force-reinstall')
         job.run(
-             pip_cmd + pip_packages,
+            pip_cmd + pip_packages,
             shell=True)
 
         # OS X can't invoke a file which has a space in the shebang line
