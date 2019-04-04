@@ -469,7 +469,7 @@ def run(args, build_function, blacklisted_package_names=None):
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
         if sys.platform == 'win32':
-            if not args.packaging and args.cmake_build_type and args.cmake_build_type == 'Debug':
+            if args.cmake_build_type == 'Debug':
                 pip_packages += [
                     'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.16.2-cp37-cp37dm-win_amd64.whl',
@@ -490,11 +490,13 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['lxml', 'numpy'], shell=True)
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
-        if args.do_venv:
+        if args.do_venv or sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
+            # On Windows since we switch between the debug and non-debug
+            # interpreter all packages need to be reinstalled too
             pip_cmd.append('--force-reinstall')
         job.run(
-             pip_cmd + pip_packages,
+            pip_cmd + pip_packages,
             shell=True)
 
         # OS X can't invoke a file which has a space in the shebang line
