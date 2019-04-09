@@ -211,6 +211,9 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--python-interpreter', default=None,
         help='pass different Python interpreter')
+    parser.add_argument(
+        '--visual-studio-version', default=None, required=(os.name == 'nt'),
+        help='select the Visual Studio version')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, build_args = extract_argument_group(argv, '--build-args')

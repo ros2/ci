@@ -29,6 +29,7 @@
     test_args_default=test_args_default,
     compile_with_clang_default=compile_with_clang_default,
     enable_c_coverage_default=enable_c_coverage_default,
+    os_name=os_name,
 ))@
   </properties>
   <scm class="hudson.scm.NullSCM"/>

@@ -30,6 +30,7 @@
     test_args_default=test_args_default,
     compile_with_clang_default=compile_with_clang_default,
     enable_c_coverage_default=enable_c_coverage_default,
+    os_name=os_name,
 ))@
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.9.1">
@@ -310,6 +311,7 @@ if "!CI_COMPILE_WITH_CLANG!" == "true" (
 if "!CI_ENABLE_C_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
 )
+set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
 if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
