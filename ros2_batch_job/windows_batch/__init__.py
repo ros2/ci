@@ -67,7 +67,7 @@ class WindowsBatchJob(BatchJob):
             f.write("@echo off" + os.linesep)
             f.write(
                 'call '
-                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" '
+                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" '
                 'x86_amd64' + os.linesep)
             if connext_env_file is not None:
                 f.write('call "%s"%s' % (connext_env_file, os.linesep))
