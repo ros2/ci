@@ -67,6 +67,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     data = {
+        'build_discard': dict(),
         'ci_scripts_repository': args.ci_scripts_repository,
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
         'default_repos_url': DEFAULT_REPOS_URL,
@@ -146,6 +147,7 @@ def main(argv=None):
         job_data.update(additional_dict)
         job_data.update(os_config_overrides.get(os_name, {}))
         job_config = expand_template(template_file, job_data)
+        if job_name == 'test_ci_linux': print(job_config)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
     # configure os specific jobs
@@ -159,15 +161,27 @@ def main(argv=None):
         # configure manual triggered job
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
+            'build_discard': {
+                'days_to_keep': 1000,
+                'num_to_keep': 3000,
+            },
         })
         # configure test jobs for experimenting with job config changes
         # Keep parameters the same as the manual triggered job above.
         create_job(os_name, 'test_ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
+            'build_discard': {
+                'days_to_keep': 1000,
+                'num_to_keep': 3000,
+            },
         })
 
         # configure a manual version of the packaging job
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
+            'build_discard': {
+                'days_to_keep': 1000,
+                'num_to_keep': 100,
+            },
             'cmake_build_type': 'RelWithDebInfo',
             'test_bridge_default': 'true',
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name =='linux-aarch64' else set(),
