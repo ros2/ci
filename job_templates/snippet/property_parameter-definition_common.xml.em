@@ -81,3 +81,15 @@ choices.remove(cmake_build_type)
           <defaultValue>@(build_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
+@[if os_name == 'windows']@
+        <hudson.model.ChoiceParameterDefinition>
+          <name>CI_VISUAL_STUDIO_VERSION</name>
+          <description>Select the Visual Studio version.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>2019</string>
+              <string>2017</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+@[end if]@

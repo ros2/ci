@@ -26,6 +26,7 @@
     colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
+    os_name=os_name,
 ))@
 @(SNIPPET(
     'property_parameter-definition_rmw_implementations',
@@ -285,6 +286,7 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
   set /p PYTHON_DEBUG_INTERPRETER=&lt;python_debug_interpreter.txt
   set "CI_ARGS=!CI_ARGS! --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
 )
+set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
 if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )

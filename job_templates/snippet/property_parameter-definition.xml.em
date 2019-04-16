@@ -9,6 +9,7 @@
     colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
+    os_name=os_name,
 ))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_WHITESPACE_IN_PATHS</name>

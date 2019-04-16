@@ -65,10 +65,11 @@ class WindowsBatchJob(BatchJob):
             os.remove('env.bat')
         with open('env.bat', 'w') as f:
             f.write("@echo off" + os.linesep)
+            assert self.args.visual_studio_version is not None
             f.write(
                 'call '
-                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" '
-                'x86_amd64' + os.linesep)
+                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\%s\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" ' %
+                self.args.visual_studio_version + 'x86_amd64' + os.linesep)
             if connext_env_file is not None:
                 f.write('call "%s"%s' % (connext_env_file, os.linesep))
             if opensplice_env_file is not None:
