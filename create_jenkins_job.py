@@ -67,7 +67,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     data = {
-        'build_discard': dict(),
+        'build_discard': {},
         'ci_scripts_repository': args.ci_scripts_repository,
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
         'default_repos_url': DEFAULT_REPOS_URL,
