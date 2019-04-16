@@ -4,6 +4,13 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
+@[if build_discard]@
+@(SNIPPET(
+    'property_build-discard',
+    days_to_keep=build_discard['days_to_keep'],
+    num_to_keep=build_discard['num_to_keep'],
+))@
+@[end if]@
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.29.3">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
