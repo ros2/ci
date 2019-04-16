@@ -147,7 +147,6 @@ def main(argv=None):
         job_data.update(additional_dict)
         job_data.update(os_config_overrides.get(os_name, {}))
         job_config = expand_template(template_file, job_data)
-        if job_name == 'test_ci_linux': print(job_config)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
     # configure os specific jobs
