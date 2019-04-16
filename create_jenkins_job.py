@@ -178,7 +178,7 @@ def main(argv=None):
         # configure a manual version of the packaging job
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
-                'days_to_keep': 1000,
+                'days_to_keep': 180,
                 'num_to_keep': 100,
             },
             'cmake_build_type': 'RelWithDebInfo',
