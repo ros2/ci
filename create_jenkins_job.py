@@ -222,7 +222,7 @@ def main(argv=None):
         if os_name == 'linux':
             asan_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
-                ' --mixin asan-gcc --packages-up-to test_communication'
+                ' --mixin asan-gcc --packages-up-to rcpputils rcutils'
 
             create_job(os_name, 'nightly_{}_address_sanitizer'.format(os_name), 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
@@ -248,7 +248,7 @@ def main(argv=None):
                 'cmake_build_type': 'Debug',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
-                'build_args_default': data['build_args_default'] + ' --mixin tsan --packages-up-to test_communication',
+                'build_args_default': data['build_args_default'] + ' --mixin tsan --packages-up-to rcpputils rcutils',
                 'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select rcpputils rcutils',
             })
 
