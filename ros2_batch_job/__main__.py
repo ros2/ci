@@ -241,7 +241,7 @@ def process_coverage(args, job):
             gcda_files.extend(
                     [os.path.abspath(os.path.join(root, f))
                         for f in files if f.endswith('.gcda')])
-        if len(gcda_files) is 0:
+        if len(gcda_files) == 0:
             continue
 
         # Run one gcov command for all gcda files for this package.
