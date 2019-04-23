@@ -118,9 +118,9 @@ def main(argv=None):
         'linux-centos': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
-            'build_args_default': '--packages-skip-by-dep qt_gui_cpp --packages-skip qt_gui_cpp ' + data['build_args_default'].replace(
+            'build_args_default': '--packages-skip-by-dep qt_gui_cpp image_tools --packages-skip qt_gui_cpp image_tools ' + data['build_args_default'].replace(
                 '--cmake-args', '--cmake-args -DCMAKE_POLICY_DEFAULT_CMP0072=NEW -DPYTHON_VERSION=3.6'),
-            'test_args_default': '--packages-skip-by-dep qt_gui_cpp --packages-skip qt_gui_cpp ' + data['test_args_default'],
+            'test_args_default': '--packages-skip-by-dep qt_gui_cpp image_tools --packages-skip qt_gui_cpp image_tools ' + data['test_args_default'],
         },
     }
 
