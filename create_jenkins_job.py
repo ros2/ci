@@ -229,7 +229,7 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': asan_build_args,
-                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-up-to rcutils',
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select rcpputils rcutils',
             })
 
         # configure nightly job for compiling with clang+libcxx on linux
@@ -249,7 +249,7 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': data['build_args_default'] + ' --mixin tsan --packages-up-to test_communication',
-                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-up-to rcutils',
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select rcpputils rcutils',
             })
 
         # configure a manually triggered version of the coverage job
