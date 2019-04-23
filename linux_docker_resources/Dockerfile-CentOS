@@ -10,7 +10,6 @@ RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-*
 # Add some COPRs
 RUN yum -y install yum-plugin-copr
 RUN yum -y copr enable cottsay/colcon
-RUN yum -y copr enable cottsay/vcstool
 
 # Install foundation packages
 RUN yum install \
@@ -23,14 +22,16 @@ RUN yum install \
   git \
   matchbox-window-manager \
   net-tools \
-  python34-vcstool \
   python36-colcon-common-extensions \
   python36-devel \
   python36-docutils \
+  python36-lark-parser \
   python36-numpy \
   python36-pip \
   python36-pytest \
+  python36-pytest-repeat \
   python36-setuptools \
+  python36-vcstool \
   python36-virtualenv \
   python-rosdep \
   sudo \
@@ -40,19 +41,17 @@ RUN yum install \
   -y
 
 # Install some stuff via Pip which we don't have available in EPEL
-RUN pip3.6 install flake8 lark-parser lxml matplotlib pep8 pydocstyle pydot pyflakes pytest-repeat pytest-rerunfailures
+RUN pip3.6 install flake8 lxml matplotlib pep8 pydocstyle pydot pyflakes pytest-rerunfailures
 
 # Some support vars for building
 ENV CMAKE_COMMAND /usr/bin/cmake3
 ENV ROS_PYTHON_VERSION 3
-ENV COLCON_PYTHON_EXECUTABLE /usr/bin/python36
 ENV CFLAGS -I/usr/lib64/python3.6/site-packages/numpy/core/include
 ENV CXXFLAGS -Wno-error=int-in-bool-context -I/usr/lib64/python3.6/site-packages/numpy/core/include
 ENV LANG en_US.UTF-8
 
 # Set up rosdep
 RUN rosdep init
-RUN echo "yaml https://cottsay.fedorapeople.org/rosdep/centos7_python36.yaml" > /etc/ros/rosdep/sources.list.d/30-centos7-python36.list
 
 # automatic invalidation once every day.
 RUN echo "@today_str"
