@@ -183,6 +183,10 @@ def main(argv=None):
 
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
+            'build_discard': {
+                'days_to_keep': 370,
+                'num_to_keep': 370,
+            },
             'cmake_build_type': 'RelWithDebInfo',
             'test_bridge_default': 'true',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -194,6 +198,10 @@ def main(argv=None):
         # create a nightly Debug packaging job on Windows
         if os_name == 'windows':
             create_job(os_name, 'packaging_' + os_name + '_debug', 'packaging_job.xml.em', {
+                'build_discard': {
+                    'days_to_keep': 370,
+                    'num_to_keep': 370,
+                    },
                 'cmake_build_type': 'Debug',
                 'test_bridge_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
