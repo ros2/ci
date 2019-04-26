@@ -72,7 +72,7 @@ def build_and_test_and_package(args, job):
                 '--install-base', '"%s"' % args.installspace,
                 '--cmake-args', '-DBUILD_TESTING=ON', '--no-warn-unused-cli',
                 '--event-handlers', 'console_direct+',
-            ] + (['--packages-select', overlay_pkgs]) +
+            ] + ['--packages-select'] + args.mixed_ros_overlay_pkgs +
                 (['--merge-install'] if not args.isolated else []) +
                 (
                     ['--cmake-args', '-DCMAKE_BUILD_TYPE=' +
@@ -91,11 +91,11 @@ def build_and_test_and_package(args, job):
                 '--base-paths', '"%s"' % args.sourcespace,
                 '--build-base', '"%s"' % args.buildspace,
                 '--install-base', '"%s"' % args.installspace,
-            ] + (['--packages-select', overlay_pkgs]) +
+            ] + ['--packages-select'] + args.mixed_ros_overlay_pkgs +
                 # Ignore return codes that indicate test failures;
                 # they'll be picked up later in test reporting.
                 # '--ignore-return-codes',
-                (['--merge-install'] if not args.isolated else []) + \
+                (['--merge-install'] if not args.isolated else []) +
                 args.test_args, exit_on_error=False, shell=True)
             info("test returned: '{0}'".format(ret_test))
             print('# END SUBSECTION')

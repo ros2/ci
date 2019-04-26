@@ -182,7 +182,6 @@ def main(argv=None):
                 'num_to_keep': 100,
             },
             'cmake_build_type': 'RelWithDebInfo',
-            'test_bridge_default': 'true',
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
             'use_connext_debs_default': 'true',
         })
@@ -194,7 +193,6 @@ def main(argv=None):
                 'num_to_keep': 370,
             },
             'cmake_build_type': 'RelWithDebInfo',
-            'test_bridge_default': 'true',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
@@ -209,7 +207,6 @@ def main(argv=None):
                     'num_to_keep': 370,
                     },
                 'cmake_build_type': 'Debug',
-                'test_bridge_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
                 'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
