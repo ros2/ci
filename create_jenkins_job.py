@@ -242,6 +242,11 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': data['build_args_default'] + ' --mixin clang-libcxx',
+                # Only running test from the lowest-level C package to ensure "working" binaries are generated.
+                # We do not want to test more than this as we observe issues with the clang libcxx standard library
+                # we don't plan to tackle for now. The important part of this nightly is to make sure the code compiles
+                # without emitting thread-safety related warnings.
+                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select rcutils',
             })
 
         # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
