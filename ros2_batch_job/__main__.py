@@ -92,6 +92,7 @@ colcon_packages = [
     'colcon-powershell',
     'colcon-python-setup-py',
     'colcon-recursive-crawl',
+    'colcon-sanitizer-reports',
     'colcon-test-result',
     'colcon-cmake',
     'colcon-ros',
