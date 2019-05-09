@@ -19,6 +19,7 @@ RUN yum install \
   cmake \
   cmake3 \
   devtoolset-8 \
+  devtoolset-8-liblsan-devel \
   git \
   matchbox-window-manager \
   net-tools \
