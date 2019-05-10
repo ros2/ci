@@ -10,6 +10,7 @@ RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-*
 # Add some COPRs
 RUN yum -y install yum-plugin-copr
 RUN yum -y copr enable cottsay/colcon
+RUN yum -y copr enable cottsay/devtoolset-8-make-nonblocking
 
 # Install foundation packages
 RUN yum install \
@@ -20,6 +21,7 @@ RUN yum install \
   cmake3 \
   devtoolset-8 \
   devtoolset-8-liblsan-devel \
+  devtoolset-8-make-nonblocking \
   git \
   matchbox-window-manager \
   net-tools \
