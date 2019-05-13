@@ -127,7 +127,7 @@ test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'linux-centos', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos', 'osx']]@
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -170,7 +170,7 @@ if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
 elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
   export CI_ROS1_DISTRO=kinetic
 fi
-@[  if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  else]@
 echo "not building/testing the ros1_bridge on MacOS"
@@ -191,8 +191,8 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-centos']]@
-@[    if os_name in ['linux', 'linux-aarch64']]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos']]@
+@[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 @[    end if]@
@@ -214,6 +214,8 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+@[    elif os_name == 'linux-armhf']@
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
 @[    elif os_name == 'linux-centos']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
 @[    elif os_name == 'linux']@
@@ -226,6 +228,8 @@ echo "# BEGIN SECTION: Run Dockerfile"
 @[    if os_name == 'linux']@
 export CONTAINER_NAME=ros2_packaging
 @[    elif os_name == 'linux-aarch64']@
+export CONTAINER_NAME=ros2_packaging_armhf
+@[    elif os_name == 'linux-armhf']@
 export CONTAINER_NAME=ros2_packaging_aarch64
 @[    elif os_name == 'linux-centos']@
 export CONTAINER_NAME=ros2_packaging_centos
