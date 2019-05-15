@@ -228,9 +228,9 @@ echo "# BEGIN SECTION: Run Dockerfile"
 @[    if os_name == 'linux']@
 export CONTAINER_NAME=ros2_packaging
 @[    elif os_name == 'linux-aarch64']@
-export CONTAINER_NAME=ros2_packaging_armhf
-@[    elif os_name == 'linux-armhf']@
 export CONTAINER_NAME=ros2_packaging_aarch64
+@[    elif os_name == 'linux-armhf']@
+export CONTAINER_NAME=ros2_packaging_armhf
 @[    elif os_name == 'linux-centos']@
 export CONTAINER_NAME=ros2_packaging_centos
 @[    else]@
