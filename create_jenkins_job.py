@@ -117,6 +117,11 @@ def main(argv=None):
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
         },
+        'linux-armhf': {
+            'label_expression': 'linux_armhf',
+            'shell_type': 'Shell',
+            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
+        },
         'linux-centos': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
@@ -135,6 +140,7 @@ def main(argv=None):
     }
 
     launcher_exclude = {
+        'linux-armhf',
         'linux-centos',
     }
 
@@ -177,7 +183,7 @@ def main(argv=None):
             },
             'cmake_build_type': 'RelWithDebInfo',
             'test_bridge_default': 'true',
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name =='linux-aarch64' else set(),
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
             'use_connext_debs_default': 'true',
         })
 
@@ -191,7 +197,7 @@ def main(argv=None):
             'test_bridge_default': 'true',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
             'use_connext_debs_default': 'true',
         })
 
@@ -206,7 +212,7 @@ def main(argv=None):
                 'test_bridge_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name == 'linux-aarch64' else set(),
+                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
                 'use_connext_debs_default': 'true',
             })
 
