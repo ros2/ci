@@ -238,7 +238,7 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': asan_build_args,
                 'test_args_default': (
-                    '--event-handlers console_direct+ --executor sequential '
+                    '--event-handlers console_direct+ sanitizer_report+ --executor sequential '
                     '--retest-until-pass 10 --packages-select rcpputils rcutils'),
             })
 
@@ -273,7 +273,7 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': tsan_build_args,
                 'test_args_default': (
-                    '--event-handlers console_direct+ --executor sequential '
+                    '--event-handlers console_direct+ sanitizer_report+ --executor sequential '
                     '--retest-until-pass 10 --packages-select rcpputils rcutils'),
             })
 
