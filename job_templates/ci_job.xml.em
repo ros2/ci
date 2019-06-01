@@ -213,15 +213,15 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 @[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[      else]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
 @[      end if]@
 @[    elif os_name == 'linux-armhf']@
 @[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_armhf_turtlebot_demo linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_armhf_turtlebot_demo linux_docker_resources
 @[      else]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_armhf linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf -t ros2_batch_ci_armhf linux_docker_resources
 @[      end if]@
 @[    elif os_name == 'linux-centos']@
 @[      if turtlebot_demo]@
