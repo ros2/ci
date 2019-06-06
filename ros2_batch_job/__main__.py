@@ -132,9 +132,10 @@ def main(sysargv=None):
             ]
 
     # There are no debug packages available for PyQt5 and PySide, so we
-    # can't build/run rqt_graph on Windows debug builds.
+    # can't build/run rqt_graph or rqt_py_common on Windows debug builds.
     if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
         blacklisted_package_names.append('rqt_graph')
+        blacklisted_package_names.append('rqt_py_common')
 
     if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
         blacklisted_package_names += [
