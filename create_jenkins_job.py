@@ -121,6 +121,7 @@ def main(argv=None):
             'label_expression': 'linux_armhf',
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
+            'build_args_default': '--cmake-args -DCMAKE_CXX_FLAGS=-Wno-psabi -DCMAKE_C_FLAGS=-Wno-psabi',
         },
         'linux-centos': {
             'label_expression': 'linux',
