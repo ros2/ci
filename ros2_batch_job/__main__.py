@@ -131,10 +131,12 @@ def main(sysargv=None):
                 'tlsf_cpp',
             ]
 
-    # There are no debug packages available for PyQt5 and PySide, so we
-    # can't build/run rqt_graph on Windows debug builds.
+    # There are no Windows debug packages available for PyQt5 and PySide2, so
+    # python_qt_bindings can't be imported to run or test rqt_graph or
+    # rqt_py_common.
     if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
         blacklisted_package_names.append('rqt_graph')
+        blacklisted_package_names.append('rqt_py_common')
 
     if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
         blacklisted_package_names += [
