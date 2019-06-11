@@ -36,7 +36,7 @@ def build_and_test_and_package(args, job):
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ] + (['--merge-install'] if not args.isolated else []) + \
-        (['--packages-skip', ' '.join(args.mixed_ros_overlay_pkgs) + \
+        (['--packages-skip', ' '.join(args.mixed_ros_overlay_pkgs)]) + \
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=OFF', '--no-warn-unused-cli']
