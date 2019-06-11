@@ -46,9 +46,7 @@
 A list of packages - separated by spaces - which explicitly have to be built after sourcing the ROS 1 environment.
 All packages listed here have to be available from either the primary or supplemental repos file.
           </description>
-          <defaultValue>
-            ros1_bridge
-          </defaultValue>
+          <defaultValue>ros1_bridge</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
