@@ -134,7 +134,6 @@ def main(argv=None):
     os_config_overrides = {
         'linux-centos': {
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_opensplice_cpp'},
-            'test_bridge_default': 'false',
             'use_connext_debs_default': 'false',
         },
     }

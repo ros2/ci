@@ -24,20 +24,19 @@ from .util import info
 
 
 def build_and_test_and_package(args, job):
-    skip_pkgs = args.mixed_ros_overlay_pkgs + \
-        (['ros1_bridge'] if 'ros1_bridge' not in args.mixed_ros_overlay_pkgs else [])
-    print('Skipping the following packages from underlay:')
-    for skip_pkg in sorted(skip_pkgs):
-        print('-', skip_pkg)
-
     print('# BEGIN SUBSECTION: build underlay packages')
+    if args.mixed_ros_overlay_pkgs:
+        print('Skipping the following packages from underlay:')
+        for skip_pkg in sorted(args.mixed_ros_overlay_pkgs):
+            print('-', skip_pkg)
+
     cmd = [
         args.colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ] + (['--merge-install'] if not args.isolated else []) + \
-        (['--packages-skip', ' '.join(skip_pkgs)] if skip_pkgs else []) + \
+        (['--packages-skip', ' '.join(args.mixed_ros_overlay_pkgs) + \
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=OFF', '--no-warn-unused-cli']
@@ -58,10 +57,8 @@ def build_and_test_and_package(args, job):
     # the OSX nodes don't have a working ROS 1 installation atm and
     # ROS1 is not supported on Windows
     if args.os in ['linux']:
+        print('# BEGIN SUBSECTION: build overlay packages')
         if args.mixed_ros_overlay_pkgs:
-            print('# BEGIN SUBSECTION: build overlay packages')
-
-            overlay_pkgs = ' '.join(args.mixed_ros_overlay_pkgs)
             # Now run build only for the bridge
             env = dict(os.environ)
             env['MAKEFLAGS'] = '-j1'
@@ -110,11 +107,10 @@ def build_and_test_and_package(args, job):
                 exit_on_error=False, shell=True
             )
             info("test-result returned: '{0}'".format(ret_test_results))
-            print('# END SUBSECTION')
         else:
             print('# BEGIN SUBSECTION: build overlay packages')
             print('no overlay packages specified')
-            print('# END SUBSECTION')
+        print('# END SUBSECTION')
 
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
