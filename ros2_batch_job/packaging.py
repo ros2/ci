@@ -108,7 +108,6 @@ def build_and_test_and_package(args, job):
             )
             info("test-result returned: '{0}'".format(ret_test_results))
         else:
-            print('# BEGIN SUBSECTION: build overlay packages')
             print('no overlay packages specified')
         print('# END SUBSECTION')
 
