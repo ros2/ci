@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 # Add the ROS repositories to the apt sources list.
 RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list
-RUN curl --silent http://repositories.ros.org/repos.key | apt-key add -
+RUN echo "Bust Cache for key update 2019-06-08" && curl --silent http://repositories.ros.org/repos.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
