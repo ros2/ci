@@ -219,9 +219,9 @@ sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-armhf']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
 @[    elif os_name == 'linux-centos']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
 @[    elif os_name == 'linux']@

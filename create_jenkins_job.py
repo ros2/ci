@@ -121,6 +121,8 @@ def main(argv=None):
             'label_expression': 'linux_armhf',
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
+            'build_args_default': data['build_args_default'].replace(
+                '--cmake-args', '--cmake-args -DDISABLE_SANITIZERS=ON'),
         },
         'linux-centos': {
             'label_expression': 'linux',
