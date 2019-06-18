@@ -192,7 +192,7 @@ echo "# END SECTION"
 
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos']]@
 @[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
-@[      if os_name in ['linux-armhf']]@
+@[      if os_name == 'linux-armhf']@
 sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 @[      else]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
