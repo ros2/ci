@@ -69,9 +69,9 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 RUN apt-get update && apt-get install --no-install-recommends -y gcovr
 
 # Install the OpenSplice binary from the OSRF repositories.
-RUN if test \( ${PLATFORM} = aarch64 -o ${PLATFORM} = armhf -o ${PLATFORM} = x86 \) ; then apt-get update && apt-get install --no-install-recommends -y libopensplice69=6.9.190403+osrf1-1~$UBUNTU_DISTRO; fi
+RUN apt-get update && apt-get install --no-install-recommends -y libopensplice69=6.9.190403+osrf1-1~$UBUNTU_DISTRO
 # Update default domain id.
-RUN if test \( ${PLATFORM} = aarch64 -o ${PLATFORM} = x86 \) ; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
+RUN sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-5.3.1; fi
