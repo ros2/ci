@@ -192,7 +192,11 @@ echo "# END SECTION"
 
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos']]@
 @[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
+@[      if os_name == 'linux-armhf']@
+sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
+@[      else]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
+@[      end if]@
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 @[    end if]@
 
@@ -213,15 +217,15 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 @[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
 @[      else]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_aarch64 linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
 @[      end if]@
 @[    elif os_name == 'linux-armhf']@
 @[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_armhf_turtlebot_demo linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_armhf_turtlebot_demo linux_docker_resources
 @[      else]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm -t ros2_batch_ci_armhf linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf -t ros2_batch_ci_armhf linux_docker_resources
 @[      end if]@
 @[    elif os_name == 'linux-centos']@
 @[      if turtlebot_demo]@

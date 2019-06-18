@@ -40,11 +40,14 @@
     ignore_rmw_default=ignore_rmw_default,
     use_connext_debs_default=use_connext_debs_default,
 ))@
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_TEST_BRIDGE</name>
-          <description>By setting this to True, the tests for the ros1_bridge will be run.</description>
-          <defaultValue>@(test_bridge_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CI_MIXED_ROS_OVERLAY_PKGS</name>
+          <description>
+A list of packages - separated by spaces - which explicitly have to be built after sourcing the ROS 1 environment.
+All packages listed here have to be available from either the primary or supplemental repos file.
+          </description>
+          <defaultValue>@(mixed_overlay_pkgs)</defaultValue>
+        </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
           <description>Additional arguments passed to the 'test' verb if testing the bridge.</description>
@@ -117,7 +120,7 @@ use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
-test_bridge: ${build.buildVariableResolver.resolve('CI_TEST_BRIDGE')}, <br/>
+mixed ros overlay packages: ${build.buildVariableResolver.resolve('CI_MIXED_ROS_OVERLAY_PKGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
 """);]]>
         </script>
@@ -162,8 +165,11 @@ if [ -z "${CI_ROS2_REPOS_URL+x}" ]; then
   CI_ROS2_REPOS_URL="@default_repos_url"
 fi
 export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
-if [ "$CI_TEST_BRIDGE" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --test-bridge"
+if [ -n "${CI_ROS2_SUPPLEMENTAL_REPOS_URL+x}" ]; then
+  export CI_ARGS="$CI_ARGS --supplemental-repo-file-url $CI_ROS2_SUPPLEMENTAL_REPOS_URL"
+fi
+if [ -n "${CI_MIXED_ROS_OVERLAY_PKGS+x}" ]; then
+  export CI_ARGS="$CI_ARGS --mixed-ros-overlay-pkgs $CI_MIXED_ROS_OVERLAY_PKGS"
 fi
 if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
   export CI_ROS1_DISTRO=melodic
@@ -213,9 +219,9 @@ sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-armhf']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=arm --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
 @[    elif os_name == 'linux-centos']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
 @[    elif os_name == 'linux']@
