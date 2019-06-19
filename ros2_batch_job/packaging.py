@@ -159,7 +159,10 @@ def build_and_test_and_package(args, job):
     # create an archive
     folder_name = 'ros2-' + args.os
     if args.os == 'linux' or args.os == 'osx':
-        archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, platform.machine())
+        machine = sys.implementation._multiarch.split('-', 1)[0]
+        if machine == 'arm':
+            machine = 'armhf'
+        archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, machine)
 
         def exclude_filter(tarinfo):
             if tarinfo.isfile() and os.path.basename(tarinfo.name) == 'SOURCES.txt':
