@@ -199,7 +199,11 @@ echo "# END SECTION"
 
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos']]@
 @[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
+@[      if os_name == 'linux-armhf']@
+sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
+@[      else]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
+@[      end if]@
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 @[    end if]@
 
