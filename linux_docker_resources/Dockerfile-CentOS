@@ -27,6 +27,7 @@ RUN yum install \
   mesa-dri-drivers \
   net-tools \
   python36-colcon-common-extensions \
+  python36-cryptography \
   python36-devel \
   python36-docutils \
   python36-pip \
