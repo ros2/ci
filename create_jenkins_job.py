@@ -123,6 +123,8 @@ def main(argv=None):
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
             'build_args_default': data['build_args_default'].replace(
                 '--cmake-args', '--cmake-args -DCMAKE_CXX_FLAGS=-Wno-psabi -DCMAKE_C_FLAGS=-Wno-psabi -DDISABLE_SANITIZERS=ON'),
+            # bionic apt python3-pygraphviz (1.4~rc1) is broken on armhf, disabling only the tests since the package is only used by the tests
+            'test_args_default': '--packages-skip qt_dotgraph ' + data['test_args_default'],
         },
         'linux-centos': {
             'label_expression': 'linux',
