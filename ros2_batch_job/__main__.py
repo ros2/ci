@@ -66,7 +66,7 @@ pip_dependencies = [
     'pydocstyle',
     'pyflakes',
     'pyparsing',
-    'pytest',
+    'pytest==4.6.4',
     'pytest-cov',
     'pytest-repeat',
     'pytest-rerunfailures',
