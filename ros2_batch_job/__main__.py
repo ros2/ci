@@ -63,7 +63,7 @@ pip_dependencies = [
     'mock',
     'nose',
     'pep8',
-    'pydocstyle',
+    'pydocstyle==3.0.0',
     'pyflakes',
     'pyparsing',
     'pytest==4.6.4',
