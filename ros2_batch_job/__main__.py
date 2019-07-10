@@ -136,10 +136,14 @@ def main(sysargv=None):
                 'tlsf_cpp',
             ]
 
-    # There are no Windows debug packages available for PyQt5 and PySide2, so
-    # python_qt_bindings can't be imported to run or test rqt_graph or
-    # rqt_py_common.
     if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
+        # There are no Windows debug packages available for opencv-python, so
+        # the image_tools_py test and runtime have no hope of succeeding.
+        blacklisted_package_names.append('image_tools_py')
+
+        # There are no Windows debug packages available for PyQt5 and PySide2, so
+        # python_qt_bindings can't be imported to run or test rqt_graph or
+        # rqt_py_common.
         blacklisted_package_names.append('rqt_graph')
         blacklisted_package_names.append('rqt_py_common')
 
