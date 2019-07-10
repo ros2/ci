@@ -79,6 +79,10 @@ if sys.platform in ('darwin'):
         'cryptography',
         'lxml',
     ]
+if sys.platform == 'win32':
+    pip_dependencies += [
+        'opencv-python',
+    ]
 
 colcon_packages = [
     'colcon-core',
