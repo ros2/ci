@@ -79,7 +79,7 @@ if sys.platform in ('darwin'):
         'cryptography',
         'lxml',
     ]
-if sys.platform == 'win32':
+if sys.platform == 'win32' and not args.cmake_build_type == 'Debug':
     pip_dependencies += [
         'opencv-python',
     ]
