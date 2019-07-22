@@ -107,6 +107,13 @@ def main(argv=None):
             'ci_scripts_repository': args.ci_scripts_repository.replace(
                 'git@github.com:', 'https://github.com/'),
         },
+        'osx_mojave': {
+            'label_expression': 'mojave',
+            'shell_type': 'Shell',
+            # the current OS X agent can't handle  git@github urls
+            'ci_scripts_repository': args.ci_scripts_repository.replace(
+                'git@github.com:', 'https://github.com/'),
+        },
         'windows': {
             'label_expression': 'windows',
             'shell_type': 'BatchFile',

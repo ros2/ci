@@ -41,7 +41,7 @@
         <hudson.plugins.warnings.ConsoleParser>
 @[if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
           <parserName>GNU C Compiler 4 (gcc)</parserName>
-@[elif os_name == 'osx']@
+@[elif os_name in ['osx', 'osx_mojave']]@
           <parserName>Clang (LLVM based)</parserName>
 @[elif os_name == 'windows']@
           <parserName>MSBuild</parserName>
