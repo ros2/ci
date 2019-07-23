@@ -107,7 +107,7 @@ def main(argv=None):
             'ci_scripts_repository': args.ci_scripts_repository.replace(
                 'git@github.com:', 'https://github.com/'),
         },
-        'osx_mojave': {
+        'osx-mojave': {
             'label_expression': 'mojave',
             'shell_type': 'Shell',
             # the current OS X agent can't handle  git@github urls
