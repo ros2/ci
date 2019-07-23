@@ -142,7 +142,6 @@ def main(argv=None):
     }
 
     launcher_exclude = {
-        'linux-armhf',
         'linux-centos',
     }
 
