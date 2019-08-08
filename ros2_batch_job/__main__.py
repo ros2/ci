@@ -69,6 +69,7 @@ pip_dependencies = [
     'pyparsing',
     'pytest',
     'pytest-cov',
+    'pytest-mock',
     'pytest-repeat',
     'pytest-rerunfailures',
     'pytest-runner',
