@@ -18,6 +18,7 @@ import platform
 from shutil import which
 import subprocess
 import sys
+import time
 
 # Make sure we're using Python3
 assert sys.version.startswith('3'), "This script is only meant to work with Python3"
@@ -146,6 +147,16 @@ def main(sysargv=None):
             'image_tools_py',
             'qt_dotgraph',
         ]
+
+    # TODO(wjwwood): remove this when a better solution is found, as
+    #   this is just a work around for https://github.com/ros2/build_cop/issues/161
+    # If on Windows, kill any still running `colcon` processes to avoid
+    # problems when trying to delete files from pip or the workspace during
+    # this job.
+    if sys.platform == 'win32':
+        os.system('taskkill /f /im colcon.exe')
+        time.sleep(2)  # wait a bit to avoid a race
+
     return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
 
 
