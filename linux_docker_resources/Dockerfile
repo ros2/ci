@@ -35,7 +35,6 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
 RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y python3-lark-parser python3-opencv; fi
-RUN update-ccache-symlinks
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -172,6 +171,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     mesa-utils \
     xvfb \
     matchbox-window-manager
+
+# After all packages are installed, update ccache symlinks (see ros2/ci#326).
+# This command is supposed to be invoked whenever a new compiler is installed
+# but that isn't happening. So we invoke it here to make sure all compilers are
+# picked up.
+RUN update-ccache-symlinks
 
 ENV DISPLAY=:99
 
