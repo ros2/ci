@@ -172,6 +172,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     xvfb \
     matchbox-window-manager
 
+# After all packages are installed, update ccache symlinks (see ros2/ci#326).
+# This command is supposed to be invoked whenever a new compiler is installed
+# but that isn't happening. So we invoke it here to make sure all compilers are
+# picked up.
+RUN update-ccache-symlinks
+
 ENV DISPLAY=:99
 
 # Create a user to own the build output.
