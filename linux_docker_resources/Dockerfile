@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-flake8 \
   python3-lxml \
   python3-mock \
-  python3-mypy \
+  $(test ${UBUNTU_DISTRO} != xenial && printf python3-mypy) \
   python3-nose \
   python3-numpy \
   python3-pep8 \
