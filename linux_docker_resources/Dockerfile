@@ -102,7 +102,7 @@ ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libssl-dev libtinyxml2-dev valgrind
 
 # Install the CycloneDDS dependencies unless on Ubuntu Xenial.
-RUN test ${UBUNTU_DISTRO} = xenial || apt-get update && apt-get install --no-install-recommends -y libcunit1-dev maven openjdk-11-jdk
+RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libcunit1-dev maven openjdk-11-jdk; else true; fi
 
 # Install OpenCV.
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
