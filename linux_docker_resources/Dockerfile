@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-flake8 \
   python3-lxml \
   python3-mock \
-  python3-mypy \
+  $(test ${UBUNTU_DISTRO} != xenial && printf python3-mypy) \
   python3-nose \
   python3-numpy \
   python3-pep8 \
@@ -101,8 +101,8 @@ ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 # Install the eProsima dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libssl-dev libtinyxml2-dev valgrind
 
-# Install the CycloneDDS dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y libcunit1-dev maven openjdk-11-jdk; fi
+# Install the CycloneDDS dependencies unless on Ubuntu Xenial.
+RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libcunit1-dev maven openjdk-11-jdk; else true; fi
 
 # Install OpenCV.
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
