@@ -9,7 +9,6 @@ RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-*
 
 # Add some COPRs
 RUN yum -y install yum-plugin-copr
-RUN yum -y copr enable cottsay/colcon
 RUN yum -y copr enable cottsay/devtoolset-8-make-nonblocking
 
 # Install foundation packages
@@ -31,7 +30,9 @@ RUN yum install \
   python36-devel \
   python36-docutils \
   python36-pip \
+  python36-pycodestyle \
   python36-pytest-repeat \
+  python36-snowballstemmer \
   python36-vcstool \
   python36-virtualenv \
   python-rosdep \
@@ -41,13 +42,8 @@ RUN yum install \
   xorg-x11-server-Xvfb \
   -y
 
-# Install some packages still in testing
-RUN yum install --enablerepo=epel-testing \
-  python36-lark-parser \
-  -y
-
 # Install some stuff via Pip which we don't have available in EPEL
-RUN pip3.6 install flake8 lxml matplotlib pep8 pydocstyle pydot pytest-rerunfailures
+RUN pip3.6 install flake8 matplotlib pep8 pydocstyle pydot pytest-rerunfailures
 
 # Some support vars for building
 ENV CMAKE_COMMAND /usr/bin/cmake3
@@ -92,6 +88,7 @@ RUN yum install \
   python36-catkin_pkg \
   python36-empy \
   python36-lark-parser \
+  python36-lxml \
   python36-mock \
   python36-numpy \
   python36-psutil \
@@ -99,6 +96,7 @@ RUN yum install \
   python36-pygraphviz \
   python36-pytest \
   python36-PyYAML \
+  python36-qt5-devel \
   python36-setuptools \
   qt5-qtbase \
   qt5-qtbase-devel \
