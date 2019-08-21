@@ -138,6 +138,7 @@ def main(sysargv=None):
     if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
         blacklisted_package_names.append('rqt_graph')
         blacklisted_package_names.append('rqt_py_common')
+        blacklisted_package_names.append('rqt_reconfigure')
 
     if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
         blacklisted_package_names += [
