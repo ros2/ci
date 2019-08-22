@@ -18,6 +18,7 @@ RUN yum install \
   ccache \
   cmake \
   cmake3 \
+  dbus \
   devtoolset-8 \
   devtoolset-8-liblsan-devel \
   devtoolset-8-make-nonblocking \
@@ -37,10 +38,14 @@ RUN yum install \
   python36-virtualenv \
   python-rosdep \
   sudo \
+  systemd \
   tinyxml2-devel \
   wget \
   xorg-x11-server-Xvfb \
   -y
+
+# Initialize the D-bus machine ID
+RUN dbus-uuidgen >/etc/machine-id
 
 # Install some stuff via Pip which we don't have available in EPEL
 RUN pip3.6 install flake8 matplotlib pep8 pydocstyle pydot pytest-rerunfailures
