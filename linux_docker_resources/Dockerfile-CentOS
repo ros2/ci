@@ -45,7 +45,7 @@ RUN yum install \
   -y
 
 # Initialize the D-bus machine ID
-dbus-uuidgen >/etc/machine-id
+RUN dbus-uuidgen >/etc/machine-id
 
 # Install some stuff via Pip which we don't have available in EPEL
 RUN pip3.6 install flake8 matplotlib pep8 pydocstyle pydot pytest-rerunfailures
