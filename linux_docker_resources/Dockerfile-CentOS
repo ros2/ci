@@ -37,6 +37,7 @@ RUN yum install \
   python36-virtualenv \
   python-rosdep \
   sudo \
+  systemd \
   tinyxml2-devel \
   wget \
   xorg-x11-server-Xvfb \
