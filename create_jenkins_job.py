@@ -127,9 +127,9 @@ def main(argv=None):
         'linux-centos': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
-            'build_args_default': '--packages-skip-by-dep qt_gui_cpp image_tools --packages-skip qt_gui_cpp image_tools ' + data['build_args_default'].replace(
+            'build_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['build_args_default'].replace(
                 '--cmake-args', '--cmake-args -DCMAKE_POLICY_DEFAULT_CMP0072=NEW -DPYTHON_VERSION=3.6 -DDISABLE_SANITIZERS=ON'),
-            'test_args_default': '--packages-skip-by-dep qt_gui_cpp image_tools --packages-skip qt_gui_cpp image_tools rqt_graph rqt_py_common qt_dotgraph python_qt_binding ' + data['test_args_default'],
+            'test_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['test_args_default'],
         },
     }
 
