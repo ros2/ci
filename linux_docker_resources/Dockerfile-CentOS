@@ -1,7 +1,10 @@
 FROM centos:7.6.1810
 
+# Work around for RHBZ#1748819
+RUN yum -y install python36-qt5-devel
+
 # Update existing packages
-RUN yum -y update
+RUN yum -y update --skip-broken
 
 # Add some repos
 RUN yum -y install epel-release centos-release-scl-rh
