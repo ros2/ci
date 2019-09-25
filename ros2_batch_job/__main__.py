@@ -661,6 +661,12 @@ def run(args, build_function, blacklisted_package_names=None):
                 'connext_cmake_module',
                 'rmw_connext_shared_cpp',
             ]
+        if 'rmw_cyclonedds_cpp' in args.ignore_rmw:
+            blacklisted_package_names += [
+                'cyclonedds',
+                'cyclonedds_cmake_module',
+                'rmw_cyclonedds_cpp',
+            ]
         if 'rmw_fastrtps_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'rmw_fastrtps_cpp',

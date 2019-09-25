@@ -78,6 +78,7 @@ def main(argv=None):
         'mailer_recipients': '',
         'ignore_rmw_default': {
             'rmw_connext_dynamic_cpp',
+            'rmw_cyclonedds_cpp',
             'rmw_fastrtps_dynamic_cpp',
             'rmw_opensplice_cpp'},
         'use_connext_debs_default': 'false',
