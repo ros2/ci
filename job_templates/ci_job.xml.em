@@ -92,6 +92,7 @@ branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connext_static: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_STATIC')}, <br/>
 @# use_connext_dynamic: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DYNAMIC')}, <br/>
 use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>
+use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br/>
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
 use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
@@ -136,6 +137,9 @@ if [ "$CI_USE_CONNEXT_STATIC" = "false" ]; then
 fi
 if [ "$CI_USE_CONNEXT_DYNAMIC" = "false" ]; then
   export CI_ARGS="$CI_ARGS rmw_connext_dynamic_cpp"
+fi
+if [ "$CI_USE_CYCLONEDDS" = "false" ]; then
+  export CI_ARGS="$CI_ARGS rmw_cyclonedds_cpp"
 fi
 if [ "$CI_USE_FASTRTPS_STATIC" = "false" ]; then
   export CI_ARGS="$CI_ARGS rmw_fastrtps_cpp"
@@ -290,6 +294,9 @@ if "!CI_USE_CONNEXT_STATIC!" == "false" (
 )
 if "!CI_USE_CONNEXT_DYNAMIC!" == "false" (
   set "CI_ARGS=!CI_ARGS! rmw_connext_dynamic_cpp"
+)
+if "!CI_USE_CYCLONEDDS!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_cyclonedds_cpp"
 )
 if "!CI_USE_FASTRTPS_STATIC!" == "false" (
   set "CI_ARGS=!CI_ARGS! rmw_fastrtps_cpp"
