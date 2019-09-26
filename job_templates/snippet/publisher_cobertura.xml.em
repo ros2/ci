@@ -8,11 +8,11 @@
       <zoomCoverageChart>false</zoomCoverageChart>
       <maxNumberOfBuilds>0</maxNumberOfBuilds>
       <failNoReports>false</failNoReports>
-      @# CoverageTargets values consist of three decimal numbers.
-      @#  First: The target value above which a build is considered "100% healthy/sunny".
-      @#  Second: The target value below which a build is considered "0% healthy/stormy".
-      @#  Third: The target value below which a build is considered "Unstable".
-      @# The values below are the plugin defaults.
+@# CoverageTargets values consist of three decimal numbers.
+@#  First: The target value above which a build is considered "100% healthy/sunny".
+@#  Second: The target value below which a build is considered "0% healthy/stormy".
+@#  Third: The target value below which a build is considered "Unstable".
+@# The values below are the plugin defaults.
       <lineCoverageTargets>80, 0, 0</lineCoverageTargets>
       <methodCoverageTargets>80, 0, 0</methodCoverageTargets>
       <conditionalCoverageTargets>70, 0, 0</conditionalCoverageTargets>
@@ -65,4 +65,5 @@
         </targets>
       </failingTarget>
       <sourceEncoding>ASCII</sourceEncoding>
+      <enableNewApi>false</enableNewApi>
     </hudson.plugins.cobertura.CoberturaPublisher>
