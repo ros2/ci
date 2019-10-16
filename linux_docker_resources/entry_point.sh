@@ -25,7 +25,7 @@ echo "done."
 IGNORED_RMW=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \(.*\)--.*/\1/' | sed -e 's/-.*//'`
 HAS_CONNEXT=`echo ${IGNORED_RMW} | grep rmw_connext_cpp`
 HAS_CONNEXT_DYNAMIC=`echo ${IGNORED_RMW} | grep rmw_connext_dynamic_cpp`
-if [ "${HAS_CONNEXT}" == "" ] && [ "${HAS_CONNEXT_DYNAMIC}" == "" ]; then
+if [ "${HAS_CONNEXT}" = "" ] && [ "${HAS_CONNEXT_DYNAMIC}" = "" ]; then
     echo "NOT installing Connext."
 else
     echo "Installing Connext..."
