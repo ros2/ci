@@ -435,6 +435,12 @@ def run(args, build_function, blacklisted_package_names=None):
         # printing ANSI color codes on Windows.
         os.environ['ConEmuANSI'] = 'ON'
 
+    # Set the appropriate GIT_* env variables in case vcs needs to merge branches
+    os.environ['GIT_AUTHOR_EMAIL'] = 'nobody@osrfoundation.org'
+    os.environ['GIT_AUTHOR_NAME'] = 'nobody'
+    os.environ['GIT_COMMITTER_EMAIL'] = 'nobody@osrfoundation.org'
+    os.environ['GIT_COMMITTER_NAME'] = 'nobody'
+
     info("Using workspace: @!{0}", fargs=(args.workspace,))
     # git doesn't work reliably inside qemu, so we're assuming that somebody
     # already checked out the code on the host and mounted it in at the right
