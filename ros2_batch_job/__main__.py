@@ -81,6 +81,7 @@ if sys.platform in ('darwin'):
     pip_dependencies += [
         'cryptography',
         'lxml',
+        'netifaces'
     ]
 
 colcon_packages = [
@@ -507,12 +508,14 @@ def run(args, build_function, blacklisted_package_names=None):
                     'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.12.3-cp37-cp37dm-win_amd64.whl',  # required by cryptography
                     'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.7-cp37-cp37dm-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/untagged-93329b5a3a72a10cef0c/netifaces-0.10.9-cp37-cp37dm-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.16.2-cp37-cp37dm-win_amd64.whl',
                 ]
             else:
                 pip_packages += [
                     'cryptography',
                     'lxml',
+                    'netifaces',
                     'numpy',
                 ]
         if not args.colcon_branch:

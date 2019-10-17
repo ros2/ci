@@ -30,6 +30,7 @@ RUN yum install \
   python36-cryptography \
   python36-devel \
   python36-docutils \
+  python36-netifaces \
   python36-pip \
   python36-pycodestyle \
   python36-pytest-repeat \
