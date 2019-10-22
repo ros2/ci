@@ -91,8 +91,8 @@ class OSXBatchJob(BatchJob):
             elif os.path.exists(connext_env_file_mojave):
                 connext_env_file = connext_env_file_mojave
             else:
-                warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
-                    connext_env_file))
+                warn("Asked to use Connext but the RTI env was not found at either '{0}' or '{1}'".format(
+                    connext_env_file_sierra, connext_env_file_mojave))
                 connext_env_file = None
         # There is nothing extra to be done for OpenSplice
 
