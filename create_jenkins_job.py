@@ -84,7 +84,7 @@ def main(argv=None):
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
-        'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
+        'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON -DBUILD_IDLC=OFF',
         'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 10',
         'compile_with_clang_default': 'false',
         'enable_c_coverage_default': 'false',
