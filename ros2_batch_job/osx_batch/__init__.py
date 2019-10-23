@@ -80,12 +80,19 @@ class OSXBatchJob(BatchJob):
         connext_env_file = None
         if 'rmw_connext_cpp' not in self.args.ignore_rmw:  # or 'rmw_connext_dynamic_cpp' not in self.args.ignore_rmw:
             # Try to find the connext env file and source it
-            connext_env_file = os.path.join(
+            connext_env_file_sierra = os.path.join(
                 '/Applications', 'rti_connext_dds-5.3.1', 'resource', 'scripts',
                 'rtisetenv_x64Darwin16clang8.0.bash')
-            if not os.path.exists(connext_env_file):
-                warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
-                    connext_env_file))
+            connext_env_file_mojave = os.path.join(
+                '/Applications', 'rti_connext_dds-5.3.1', 'resource', 'scripts',
+                'rtisetenv_x64Darwin17clang9.0.bash')
+            if os.path.exists(connext_env_file_sierra):
+                connext_env_file = connext_env_file_sierra
+            elif os.path.exists(connext_env_file_mojave):
+                connext_env_file = connext_env_file_mojave
+            else:
+                warn("Asked to use Connext but the RTI env was not found at either '{0}' or '{1}'".format(
+                    connext_env_file_sierra, connext_env_file_mojave))
                 connext_env_file = None
         # There is nothing extra to be done for OpenSplice
 
