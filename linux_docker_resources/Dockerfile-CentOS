@@ -75,6 +75,7 @@ RUN yum install \
   console-bridge-devel \
   cppcheck \
   cppunit-devel \
+  CUnit-devel \
   curl \
   eigen3-devel \
   freetype \
@@ -96,6 +97,7 @@ RUN yum install \
   poco-devel \
   python36-catkin_pkg \
   python36-empy \
+  python36-ifcfg \
   python36-lark-parser \
   python36-lxml \
   python36-mock \
@@ -110,6 +112,7 @@ RUN yum install \
   qt5-qtbase \
   qt5-qtbase-devel \
   qt5-qtbase-gui \
+  spdlog-devel \
   tinyxml2-devel \
   tinyxml-devel \
   uncrustify \
