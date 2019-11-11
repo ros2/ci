@@ -30,7 +30,6 @@ RUN yum install \
   python36-cryptography \
   python36-devel \
   python36-docutils \
-  python36-netifaces \
   python36-pip \
   python36-pycodestyle \
   python36-pytest-repeat \
@@ -49,7 +48,7 @@ RUN yum install \
 RUN dbus-uuidgen >/etc/machine-id
 
 # Install some stuff via Pip which we don't have available in EPEL
-RUN pip3.6 install flake8 matplotlib netifaces pep8 pydocstyle pydot pytest-mock pytest-rerunfailures
+RUN pip3.6 install flake8 matplotlib pep8 pydocstyle pydot pytest-mock pytest-rerunfailures
 
 # Some support vars for building
 ENV CMAKE_COMMAND /usr/bin/cmake3
@@ -98,6 +97,7 @@ RUN yum install \
   python36-lark-parser \
   python36-lxml \
   python36-mock \
+  python36-netifaces \
   python36-numpy \
   python36-psutil \
   python36-pyflakes \
