@@ -44,6 +44,16 @@ RUN yum install \
   xorg-x11-server-Xvfb \
   -y
 
+# Try to update to any ROS packages in testing
+RUN sudo yum update \
+  python{2,3[46]}-catkin* \
+  python{2,3[46]}-ros* \
+  python3[46]-colcon* \
+  python3[46]-vcstool \
+  --enablerepo=epel-testing \
+  --skip-broken \
+  -y
+
 # Initialize the D-bus machine ID
 RUN dbus-uuidgen >/etc/machine-id
 
