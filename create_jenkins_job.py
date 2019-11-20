@@ -62,7 +62,7 @@ def main(argv=None):
     )
     parser.add_argument(
         '--commit', action='store_true',
-        help='Actually modify the Jenkis jobs instead of only doing a dry run',
+        help='Actually modify the Jenkins jobs instead of only doing a dry run',
     )
     args = parser.parse_args(argv)
 
@@ -233,7 +233,7 @@ def main(argv=None):
         if os_name == 'linux':
             asan_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
-                ' --mixin asan-gcc --packages-up-to rcpputils rcutils'
+                ' --mixin asan-gcc --packages-up-to rcpputils'
 
             create_job(os_name, 'nightly_{}_address_sanitizer'.format(os_name), 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
@@ -242,7 +242,7 @@ def main(argv=None):
                 'build_args_default': asan_build_args,
                 'test_args_default': (
                     '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 10 --packages-select rcpputils rcutils'),
+                    '--retest-until-pass 10 --packages-up-to rcpputils'),
             })
 
         # configure nightly job for compiling with clang+libcxx on linux
