@@ -119,15 +119,19 @@ def build_and_test_and_package(args, job):
             with open(setup_file, 'rb') as h:
                 content = h.read()
             lines = content.splitlines()
-            start_index = lines.index(b'# source chained prefixes')
-            end_index = lines.index(b'# source this prefix')
-            # remove lines starting with start_index until before end_index
-            print('- removing %d lines from %s' %
-                  (end_index - start_index, setup_file))
-            lines[start_index:end_index] = []
-            with open(setup_file, 'wb') as h:
-                for line in lines:
-                    h.write(line + '\n')
+            try:
+                start_index = lines.index(b'# source chained prefixes')
+            except ValueError:
+                pass
+            else:
+                end_index = lines.index(b'# source this prefix')
+                # remove lines starting with start_index until before end_index
+                print('- removing %d lines from %s' %
+                    (end_index - start_index, setup_file))
+                lines[start_index:end_index] = []
+                with open(setup_file, 'wb') as h:
+                    for line in lines:
+                        h.write(line + '\n')
 
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
