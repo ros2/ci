@@ -111,6 +111,28 @@ def build_and_test_and_package(args, job):
             print('no overlay packages specified')
         print('# END SUBSECTION')
 
+    # Only on Linux update the prefix level setup files
+    # to exclude the chained ROS 1 workspace used for the ros1_bridge
+    if args.os == 'linux':
+        print('# BEGIN SUBSECTION: remove ROS 1 underlay')
+        for setup_file in glob.glob(os.path.join(args.installspace, 'setup.*')):
+            with open(setup_file, 'rb') as h:
+                content = h.read()
+            lines = content.splitlines()
+            try:
+                start_index = lines.index(b'# source chained prefixes')
+            except ValueError:
+                pass
+            else:
+                end_index = lines.index(b'# source this prefix')
+                # remove lines starting with start_index until before end_index
+                print('- removing %d lines from %s' %
+                    (end_index - start_index, setup_file))
+                lines[start_index:end_index] = []
+                with open(setup_file, 'wb') as h:
+                    for line in lines:
+                        h.write(line + b'\n')
+
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
