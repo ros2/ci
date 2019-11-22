@@ -131,7 +131,7 @@ def build_and_test_and_package(args, job):
                 lines[start_index:end_index] = []
                 with open(setup_file, 'wb') as h:
                     for line in lines:
-                        h.write(line + '\n')
+                        h.write(line + b'\n')
 
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
