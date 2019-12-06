@@ -12,8 +12,9 @@ ARG COMPILE_WITH_CLANG=false
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install --no-install-recommends -y locales
-RUN if test ${UBUNTU_DISTRO} != buster; then locale-gen en_US.UTF-8; fi
-RUN if test ${UBUNTU_DISTRO} = buster; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales; fi
+RUN if test ${UBUNTU_DISTRO} != buster; then locale-gen en_US.UTF-8; \
+  else sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+  dpkg-reconfigure --frontend=noninteractive locales; fi
 ENV LANG en_US.UTF-8
 
 # net-tools is for ifconfig
@@ -30,8 +31,8 @@ RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main
 RUN echo "Bust Cache for key update 2019-06-08" && curl --silent http://repositories.ros.org/repos.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
-RUN if test ${UBUNTU_DISTRO} != buster; then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
-RUN if test ${UBUNTU_DISTRO} = buster; then echo "deb http://packages.osrfoundation.org/gazebo/debian-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list ; fi
+RUN if test ${UBUNTU_DISTRO} != buster; then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; \
+  else echo "deb http://packages.osrfoundation.org/gazebo/debian-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list ; fi
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
