@@ -20,11 +20,11 @@ echo "Enabling multicast..."
 ifconfig eth0 multicast
 echo "done."
 
-case "${CI_ARGS}" in
-  *rmw_connext_cpp*)
-    echo "NOT installing Connext."
-    ;;
-  *)
+# extract all ignored rmws
+# extract args between --ignore-rmw until the first appearance of '-'
+IGNORE_CONNEXT=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
+# if we didn't find `rmw_connext_cpp` within the option string, install it!
+if [ -z "${IGNORE_CONNEXT}" ]; then
     echo "Installing Connext..."
     case "${CI_ARGS}" in
       *--connext-debs*)
@@ -46,8 +46,9 @@ case "${CI_ARGS}" in
         ;;
     esac
     echo "done."
-    ;;
-esac
+else
+    echo "NOT installing Connext."
+fi
 
 echo "Fixing permissions..."
 sed -i -e "s/:$ORIG_UID:$ORIG_GID:/:$UID:$GID:/" /etc/passwd
