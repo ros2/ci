@@ -334,10 +334,6 @@ echo "# END SECTION"
   </builders>
   <publishers>
 @(SNIPPET(
-    'publisher_warnings',
-    os_name=os_name,
-))@
-@(SNIPPET(
     'publisher_cobertura',
 ))@
 @(SNIPPET(
