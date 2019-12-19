@@ -41,6 +41,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   clang-format \
   cppcheck \
   git \
+  libbullet-dev \
   liblog4cxx-dev \
   libxml2-dev \
   libxml2-utils \
