@@ -521,15 +521,20 @@ def run(args, build_function, blacklisted_package_names=None):
     with change_directory(args.workspace):
         print('# BEGIN SUBSECTION: install Python packages')
         # Update setuptools
-        job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U', 'pip', 'setuptools'],
-                shell=True)
+        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
+        if args.do_venv or sys.platform == 'win32':
+            # Force reinstall so all dependencies are in virtual environment
+            # On Windows since we switch between the debug and non-debug
+            # interpreter all packages need to be reinstalled too
+            pip_cmd.append('--force-reinstall')
+        job.run(pip_cmd + ['pip', 'setuptools',], shell=True)
         # Print setuptools version
         job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
                 shell=True)
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
-        pip_packages = list(pip_dependencies)
+        pip_packages = ['pip', 'setuptools', ] + list(pip_dependencies)
         if sys.platform == 'win32':
             if args.cmake_build_type == 'Debug':
                 pip_packages += [
@@ -556,12 +561,6 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['cryptography', 'lxml', 'numpy'], shell=True)
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
-        if args.do_venv or sys.platform == 'win32':
-            # Force reinstall so all dependencies are in virtual environment
-            # On Windows since we switch between the debug and non-debug
-            # interpreter all packages need to be reinstalled too
-            pip_cmd.append('--force-reinstall')
         job.run(
             pip_cmd + pip_packages,
             shell=True)
