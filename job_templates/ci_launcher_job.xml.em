@@ -110,7 +110,7 @@ for (item in build_numbers) {
 @#              </configs>
 @#            </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[  end if]@
-@[  if os_name == 'windows']@
+@[  if os_name in ['windows', 'windows-container']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
