@@ -167,6 +167,8 @@ def build_and_test_and_package(args, job):
         print('# END SUBSECTION')
 
     print('# BEGIN SUBSECTION: create archive')
+    # Remove top level COLCON_IGNORE file
+    os.remove(os.path.join(args.installspace, 'COLCON_IGNORE'))
     # Remove "unnecessary" executables
     ros1_bridge_libexec_path = os.path.join(args.installspace, 'lib', 'ros1_bridge')
     if os.path.isdir(ros1_bridge_libexec_path):
