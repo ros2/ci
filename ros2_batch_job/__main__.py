@@ -714,7 +714,7 @@ def run(args, build_function, blacklisted_package_names=None):
             for line in output.decode().splitlines():
                 package_name, package_path, _ = line.split('\t', 2)
                 if package_name in blacklisted_package_names:
-                    marker_file = os.path.join(args.sourcespace, package_path, 'COLCON_IGNORE')
+                    marker_file = os.path.join(package_path, 'COLCON_IGNORE')
                     print('Create marker file: ' + marker_file)
                     with open(marker_file, 'w'):
                         pass
