@@ -87,7 +87,7 @@ def main(argv=None):
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
         'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 10',
         'compile_with_clang_default': 'false',
-        'enable_c_coverage_default': 'false',
+        'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
@@ -284,13 +284,13 @@ def main(argv=None):
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
-                'enable_c_coverage_default': 'true',
+                'enable_coverage_default': 'true',
                 'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
                 'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
             })
             create_job(os_name, 'test_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
-                'enable_c_coverage_default': 'true',
+                'enable_coverage_default': 'true',
                 'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
                 'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
             })
@@ -299,7 +299,7 @@ def main(argv=None):
         if os_name == 'linux':
             create_job(os_name, 'nightly_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
-                'enable_c_coverage_default': 'true',
+                'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
