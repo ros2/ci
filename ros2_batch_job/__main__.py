@@ -313,7 +313,6 @@ def process_coverage(args, job):
 
 
 def build_and_test(args, job):
-    coverage = args.coverage and args.os == 'linux'
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
     print('# BEGIN SUBSECTION: build')
@@ -339,16 +338,18 @@ def build_and_test(args, job):
         cmd.append('--cmake-args')
         cmd.extend(cmake_args)
 
-    if coverage:
-        ament_cmake_args = [
-            '-DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
-            '-DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' + gcov_flags + '"']
-        if '--ament-cmake-args' in cmd:
-            index = cmd.index('--ament-cmake-args')
-            cmd[index + 1:index + 1] = ament_cmake_args
-        else:
-            cmd.append('--ament-cmake-args')
-            cmd.extend(ament_cmake_args)
+    if args.coverage:
+        cmd.append('--pytest-with-coverage')
+        if args.os == 'linux':
+            ament_cmake_args = [
+                '-DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
+                '-DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' + gcov_flags + '"']
+            if '--ament-cmake-args' in cmd:
+                index = cmd.index('--ament-cmake-args')
+                cmd[index + 1:index + 1] = ament_cmake_args
+            else:
+                cmd.append('--ament-cmake-args')
+                cmd.extend(ament_cmake_args)
 
     ret_build = job.run(cmd, shell=True)
     info("colcon build returned: '{0}'".format(ret_build))
@@ -386,7 +387,7 @@ def build_and_test(args, job):
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
-    if coverage:
+    if args.coverage and args.os == 'linux':
         process_coverage(args, job)
 
     # Uncomment this line to failing tests a failrue of this command.

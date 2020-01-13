@@ -34,9 +34,9 @@ This tests the robustness to whitespace being within the different paths.</descr
           <defaultValue>@(compile_with_clang_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
-          <name>CI_ENABLE_C_COVERAGE</name>
-          <description>By setting this to true, the build will report test coverage for C/C++ code (currently ignored on non-Linux).</description>
-          <defaultValue>@(enable_c_coverage_default)</defaultValue>
+          <name>CI_ENABLE_COVERAGE</name>
+          <description>By setting this to true, the build will report test coverage for C/C++ code (currently ignored on non-Linux) and pytest.</description>
+          <defaultValue>@(enable_coverage_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
