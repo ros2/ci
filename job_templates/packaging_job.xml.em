@@ -47,6 +47,7 @@ A list of packages - separated by spaces - which explicitly have to be built aft
 All packages listed here have to be available from either the primary or supplemental repos file.
           </description>
           <defaultValue>@(mixed_overlay_pkgs)</defaultValue>
+          <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
@@ -57,7 +58,7 @@ All packages listed here have to be available from either the primary or supplem
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.12.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@4.0.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -83,6 +84,7 @@ All packages listed here have to be available from either the primary or supplem
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
         <parentCredentials>false</parentCredentials>
+        <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     @
 @[end if]</extensions>
@@ -103,7 +105,7 @@ All packages listed here have to be available from either the primary or supplem
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.66">
+        <script plugin="script-security@@1.68">
           <script><![CDATA[build.setDescription("""\
 @[if 'linux' in os_name]@
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
@@ -352,7 +354,7 @@ echo "# END SECTION"
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.22">
+    <hudson.tasks.Mailer plugin="mailer@@1.29">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>

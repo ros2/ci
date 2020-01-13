@@ -1,4 +1,4 @@
-    <hudson.plugins.warnings.WarningsPublisher plugin="warnings@@5.0.0">
+    <hudson.plugins.warnings.WarningsPublisher plugin="warnings@@5.0.1">
       <healthy/>
       <unHealthy/>
       <thresholdLimit>low</thresholdLimit>

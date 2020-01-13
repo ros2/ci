@@ -40,7 +40,7 @@
     os_name=os_name,
 ))@
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@3.12.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@4.0.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -66,6 +66,7 @@
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
         <parentCredentials>false</parentCredentials>
+        <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     @
 @[end if]</extensions>
@@ -86,7 +87,7 @@
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.66">
+        <script plugin="script-security@@1.68">
           <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connext_static: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_STATIC')}, <br/>
@@ -367,7 +368,7 @@ echo "# END SECTION"
     'publisher_xunit',
 ))@
 @[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.22">
+    <hudson.tasks.Mailer plugin="mailer@@1.29">
       <recipients>@(mailer_recipients)</recipients>
       <dontNotifyEveryUnstableBuild>@(dont_notify_every_unstable_build)</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
