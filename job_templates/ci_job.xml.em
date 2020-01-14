@@ -108,7 +108,7 @@ cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')},
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
 compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
-coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_C_COVERAGE')}\
+coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
 """);]]>
         </script>
           <sandbox>false</sandbox>
@@ -179,7 +179,7 @@ if [ "$CI_COMPILE_WITH_CLANG" = "true" ]; then
   export CI_ARGS="$CI_ARGS --compile-with-clang"
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg COMPILE_WITH_CLANG=$CI_COMPILE_WITH_CLANG"
 fi
-if [ "$CI_ENABLE_C_COVERAGE" = "true" ]; then
+if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf'] and turtlebot_demo]@
@@ -334,7 +334,7 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
 if "!CI_COMPILE_WITH_CLANG!" == "true" (
   set "CI_ARGS=!CI_ARGS! --compile-with-clang"
 )
-if "!CI_ENABLE_C_COVERAGE!" == "true" (
+if "!CI_ENABLE_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
 )
 set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
