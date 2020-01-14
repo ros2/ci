@@ -107,7 +107,7 @@ if sys.platform != 'win32':
         'colcon-zsh',
     ]
 
-gcov_flags = " -fprofile-arcs -ftest-coverage "
+gcov_flags = '--coverage'
 
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
