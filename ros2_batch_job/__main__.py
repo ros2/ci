@@ -239,6 +239,15 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--visual-studio-version', default=None, required=(os.name == 'nt'),
         help='select the Visual Studio version')
+    parser.add_argument(
+        '--source-space', default='src', dest='sourcespace',
+        help='source directory path')
+    parser.add_argument(
+        '--build-space', default='build', dest='buildspace',
+        help='build directory path')
+    parser.add_argument(
+        '--install-space', default='install', dest='installspace',
+        help='install directory path')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, build_args = extract_argument_group(argv, '--build-args')
@@ -249,6 +258,9 @@ def get_args(sysargv=None):
     args = parser.parse_args(argv)
     args.build_args = build_args
     args.test_args = test_args
+    for name in ('sourcespace', 'buildspace', 'installspace'):
+        if name in args.white_space_in and getattr(args, name) != parser.get_default(name):
+            raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
     return args
 
 
@@ -415,9 +427,11 @@ def run(args, build_function, blacklisted_package_names=None):
 
     args.white_space_in = args.white_space_in or []
     args.workspace = 'work space' if 'workspace' in args.white_space_in else 'ws'
-    args.sourcespace = 'source space' if 'sourcespace' in args.white_space_in else 'src'
-    args.buildspace = 'build space' if 'buildspace' in args.white_space_in else 'build'
-    args.installspace = 'install space' if 'installspace' in args.white_space_in else 'install'
+    # Add white space to path. Logic above should prevent conflict of manually specified path and '--white-space-in'
+    for name in ('sourcespace', 'buildspace', 'installspace'):
+        if name in args.white_space_in:
+            path = getattr(args, name) + ' space'
+            setattr(args, name, path)
 
     platform_name = platform.platform().lower()
     if args.os == 'linux' or platform_name.startswith('linux'):
