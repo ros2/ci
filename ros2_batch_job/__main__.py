@@ -18,6 +18,7 @@ import platform
 from shutil import which
 import subprocess
 import sys
+import tempfile
 import time
 
 # Make sure we're using Python3
@@ -254,6 +255,9 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--install-space', dest='installspace',
         help='install directory path')
+    parser.add_argument(
+        '--build-in-tempdir', action='store_true',
+        help='Create a temporary directory, and put build-space inside it')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, build_args = extract_argument_group(argv, '--build-args')
@@ -274,6 +278,9 @@ def get_args(sysargv=None):
             if name in args.white_space_in:
                 space_directory += ' space'
             setattr(args, name, space_directory)
+
+    if args.build_in_tempdir and os.path.isabs(args.buildspace):
+        raise Exception('An absolute path cannot be set for --build-space if building in a temporary directory')
     return args
 
 
@@ -481,6 +488,16 @@ def run(args, build_function, blacklisted_package_names=None):
         remove_folder(args.workspace)
     if not os.path.isdir(args.workspace):
         os.makedirs(args.workspace)
+
+    if args.build_in_tempdir:
+        original_build_space = args.buildspace
+        base_dir = None
+        if args.os == 'windows':
+            # On Windows, MSBuild will give a warning if you build in the standard system's temp directory
+            base_dir = 'C:\\TEMP'
+            os.makedirs(base_dir, exist_ok=True)
+        temp_workspace = tempfile.mkdtemp(dir=base_dir)
+        args.buildspace = os.path.join(temp_workspace, args.buildspace)
 
     # Allow batch job to do OS specific stuff
     job.pre()
@@ -751,6 +768,22 @@ def run(args, build_function, blacklisted_package_names=None):
         rc = build_function(args, job)
 
     job.post()
+    if args.build_in_tempdir:
+        print('# BEGIN SUBSECTION: Moving/Copying files from temporary directory')
+        try:
+            # move() calls os.rename() if possible, otherwise copytree/rmtree
+            shutil.move(args.buildspace, args.workspace)
+        except PermissionError as e:
+            print('Moving buildspace "{}" failed with error.\n{}'.format(args.buildspace, repr(e)), file=sys.stderr)
+
+        try:
+            if os.path.exists(temp_workspace):
+                shutil.rmtree(temp_workspace, ignore_errors=True)
+        except PermissionError as e:
+            print('Cleanup of temporary build dir "{}" failed with error.\n{}'.format(temp_workspace, repr(e)), file=sys.stderr)
+        print('# END SUBSECTION')
+        # Reset args.buildspace before returning if any calling functions depend on args.buildspace.
+        args.buildspace = original_build_space
     return rc
 
 
