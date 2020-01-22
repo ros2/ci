@@ -258,9 +258,11 @@ def get_args(sysargv=None):
     args = parser.parse_args(argv)
     args.build_args = build_args
     args.test_args = test_args
-    for name in ('sourcespace', 'buildspace', 'installspace'):
-        if name in args.white_space_in and getattr(args, name) != parser.get_default(name):
-            raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
+
+    if args.white_space_in is not None:
+        for name in ('sourcespace', 'buildspace', 'installspace'):
+            if name in args.white_space_in and getattr(args, name) != parser.get_default(name):
+                raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
     return args
 
 
