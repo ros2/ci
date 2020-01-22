@@ -183,7 +183,7 @@ def get_args(sysargv=None):
              "doesn't exist fall back to the default branch (default: latest "
              'release)')
     parser.add_argument(
-        '--white-space-in', nargs='*', default=None,
+        '--white-space-in', nargs='*', default=[],
         choices=['sourcespace', 'buildspace', 'installspace', 'workspace'],
         help="which folder structures in which white space should be added")
     parser.add_argument(
@@ -259,10 +259,9 @@ def get_args(sysargv=None):
     args.build_args = build_args
     args.test_args = test_args
 
-    if args.white_space_in is not None:
-        for name in ('sourcespace', 'buildspace', 'installspace'):
-            if name in args.white_space_in and getattr(args, name) != parser.get_default(name):
-                raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
+    for name in ('sourcespace', 'buildspace', 'installspace'):
+        if name in args.white_space_in and getattr(args, name) != parser.get_default(name):
+            raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
     return args
 
 
@@ -427,7 +426,6 @@ def run(args, build_function, blacklisted_package_names=None):
 
     job = None
 
-    args.white_space_in = args.white_space_in or []
     args.workspace = 'work space' if 'workspace' in args.white_space_in else 'ws'
     # Add white space to path. Logic above should prevent conflict of manually specified path and '--white-space-in'
     for name in ('sourcespace', 'buildspace', 'installspace'):
