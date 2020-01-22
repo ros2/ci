@@ -339,7 +339,6 @@ def build_and_test(args, job):
         cmd.extend(cmake_args)
 
     if args.coverage:
-        cmd.append('--pytest-with-coverage')
         if args.os == 'linux':
             ament_cmake_args = [
                 '-DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
@@ -358,13 +357,20 @@ def build_and_test(args, job):
         return ret_build
 
     print('# BEGIN SUBSECTION: test')
-    ret_test = job.run([
+
+    test_cmd = [
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-    ] + (['--merge-install'] if not args.isolated else []) + args.test_args,
-        exit_on_error=False, shell=True)
+    ]
+    if not args.isolated:
+        test_cmd.append('--merge-install')
+    if args.coverage:
+        test_cmd.append('--pytest-with-coverage')
+    test_cmd.extend(args.test_args)
+
+    ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
     if ret_test:
