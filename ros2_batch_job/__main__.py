@@ -368,7 +368,7 @@ def build_and_test(args, job):
         test_cmd.append('--merge-install')
     if args.coverage:
         test_cmd.append('--pytest-with-coverage')
-    test_cmd.append(args.test_args)
+    test_cmd.extend(args.test_args)
 
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
