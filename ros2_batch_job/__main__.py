@@ -157,6 +157,8 @@ def main(sysargv=None):
     # this job.
     if sys.platform == 'win32':
         os.system('taskkill /f /im colcon.exe')
+        import subprocess
+        subprocess.Popen(['python.exe', 'subprocess_reaper.py', str(os.getpid())])
         time.sleep(2)  # wait a bit to avoid a race
 
     return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
