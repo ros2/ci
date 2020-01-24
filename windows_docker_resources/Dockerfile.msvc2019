@@ -119,6 +119,31 @@ RUN choco upgrade -y all
 
 RUN python -m pip install -U pydot PyQt5
 
+COPY rticonnextdds-license\rti_license.dat C:\connext\
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+
+COPY rticonnextdds-src\openssl-1.0.2n-target-x64Win64VS2017.zip C:\TEMP\connext\
+RUN 7z.exe x C:\TEMP\connext\openssl-1.0.2n-target-x64Win64VS2017.zip -aoa -oC:\connext\
+ENV RTI_OPENSSL_BIN C:\connext\openssl-1.0.2n\x64Win64VS2017\release\bin
+ENV RTI_OPENSSL_LIB C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
+
+COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\
+RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
+RUN C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe `
+  --mode unattended `
+  --unattendedmodeui minimalWithDialogs `
+  --prefix "%ProgramFiles%"
+
+COPY rticonnextdds-src\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg"
+COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\
+RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg"
+COPY rticonnextdds-src\rti_security_plugins-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-host-x64Win64.rtipkg"
+COPY rticonnextdds-src\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg C:\TEMP\connext\
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg"
+
 RUN powershell -Command Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1
 RUN mkdir C:\ws
 WORKDIR C:\ci
