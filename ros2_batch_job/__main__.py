@@ -150,13 +150,10 @@ def main(sysargv=None):
             'qt_dotgraph',
         ]
 
-    # TODO(wjwwood): remove this when a better solution is found, as
-    #   this is just a work around for https://github.com/ros2/build_cop/issues/161
-    # If on Windows, kill any still running `colcon` processes to avoid
-    # problems when trying to delete files from pip or the workspace during
-    # this job.
+    # If on Windows, run the subprocess reaper to kill any still running job
+    # processes to avoid problems when trying to delete files from pip or the
+    # workspace during this job.
     if sys.platform == 'win32':
-        os.system('taskkill /f /im colcon.exe')
         import subprocess
         subprocess.Popen(['python.exe', 'subprocess_reaper.py', str(os.getpid())])
         time.sleep(2)  # wait a bit to avoid a race
