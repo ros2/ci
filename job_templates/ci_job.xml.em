@@ -269,6 +269,8 @@ docker network create -o com.docker.network.bridge.enable_icc=false isolated_net
 docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
+echo "# BEGIN SECTION: Install script dependencies"
+/usr/local/bin/python3 -u -m pip install -r requirements.txt
 echo "# BEGIN SECTION: Run script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
@@ -347,6 +349,9 @@ if "!CI_TEST_ARGS!" NEQ "" (
 )
 echo Using args: !CI_ARGS!
 echo "# END SECTION"
+
+echo "# BEGIN SECTION: Install script dependencies"
+python -u -m pip install -r requirements.txt
 
 echo "# BEGIN SECTION: Run script"
 python -u run_ros2_batch.py !CI_ARGS!
