@@ -439,11 +439,6 @@ def run(args, build_function, blacklisted_package_names=None):
     job = None
 
     args.workspace = 'work space' if 'workspace' in args.white_space_in else 'ws'
-    # Add white space to path. Logic above should prevent conflict of manually specified path and '--white-space-in'
-    for name in ('sourcespace', 'buildspace', 'installspace'):
-        if name in args.white_space_in:
-            path = getattr(args, name) + ' space'
-            setattr(args, name, path)
 
     platform_name = platform.platform().lower()
     if args.os == 'linux' or platform_name.startswith('linux'):
