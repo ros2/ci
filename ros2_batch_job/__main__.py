@@ -154,8 +154,12 @@ def main(sysargv=None):
     # processes to avoid problems when trying to delete files from pip or the
     # workspace during this job.
     if sys.platform == 'win32':
+        subprocess_reaper_log = open('subprocess_reaper.log', 'wb', encoding='utf-8')
         subprocess_reaper_path = which('subprocess_reaper.py')
-        subprocess.Popen([sys.executable, subprocess_reaper_path, str(os.getpid())])
+        subprocess.Popen(
+            [sys.executable, subprocess_reaper_path, str(os.getpid())],
+            stdout=subprocess_reaper_log, stderr=subprocess_reaper_log
+        )
         time.sleep(2)  # wait a bit to avoid a race
 
     return run(args, build_function, blacklisted_package_names=blacklisted_package_names)
