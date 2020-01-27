@@ -777,8 +777,7 @@ def run(args, build_function, blacklisted_package_names=None):
             print('Moving buildspace "{}" failed with error.\n{}'.format(args.buildspace, repr(e)), file=sys.stderr)
 
         try:
-            if os.path.exists(temp_workspace):
-                shutil.rmtree(temp_workspace, ignore_errors=True)
+            shutil.rmtree(temp_workspace, ignore_errors=True)
         except PermissionError as e:
             print('Cleanup of temporary build dir "{}" failed with error.\n{}'.format(temp_workspace, repr(e)), file=sys.stderr)
         print('# END SUBSECTION')
