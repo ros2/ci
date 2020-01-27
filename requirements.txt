@@ -1,2 +1,2 @@
 psutil>=2.0
-ros_buildfarm>=3.0
+-e git://github.com/ros-infrastructure/ros_buildfarm@master#egg=ros-buildfarm
