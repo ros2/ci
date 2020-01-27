@@ -109,6 +109,12 @@ if sys.platform != 'win32':
 
 gcov_flags = '--coverage'
 
+colcon_space_defaults = {
+    'sourcespace': 'src',
+    'buildspace': 'build',
+    'installspace': 'install',
+}
+
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
     blacklisted_package_names = []
@@ -240,13 +246,13 @@ def get_args(sysargv=None):
         '--visual-studio-version', default=None, required=(os.name == 'nt'),
         help='select the Visual Studio version')
     parser.add_argument(
-        '--source-space', default='src', dest='sourcespace',
+        '--source-space', dest='sourcespace',
         help='source directory path')
     parser.add_argument(
-        '--build-space', default='build', dest='buildspace',
+        '--build-space', dest='buildspace',
         help='build directory path')
     parser.add_argument(
-        '--install-space', default='install', dest='installspace',
+        '--install-space', dest='installspace',
         help='install directory path')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
@@ -260,8 +266,14 @@ def get_args(sysargv=None):
     args.test_args = test_args
 
     for name in ('sourcespace', 'buildspace', 'installspace'):
-        if name in args.white_space_in and getattr(args, name) != parser.get_default(name):
+        space_directory = getattr(args, name)
+        if name in args.white_space_in and space_directory is not None:
             raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
+        elif space_directory is None:
+            space_directory = colcon_space_defaults[name]
+            if name in args.white_space_in:
+                space_directory += ' space'
+            setattr(args, name, space_directory)
     return args
 
 
