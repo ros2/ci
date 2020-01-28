@@ -1,2 +1,2 @@
 psutil>=2.0
--e git://github.com/ros-infrastructure/ros_buildfarm@master#egg=ros-buildfarm
+-e git://github.com/ros-infrastructure/ros_buildfarm@nuclearsandwich/subprocess-reaper-ignore-sigint-on-win#egg=ros-buildfarm
