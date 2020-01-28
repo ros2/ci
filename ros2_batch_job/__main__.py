@@ -157,7 +157,7 @@ def main(sysargv=None):
         subprocess_reaper_log = open('subprocess_reaper.log', 'wb')
         subprocess_reaper_path = which('subprocess_reaper.py')
         subprocess.Popen(
-            [sys.executable, subprocess_reaper_path, str(os.getpid())],
+            [sys.executable, '-u', subprocess_reaper_path, str(os.getpid())],
             stdout=subprocess_reaper_log, stderr=subprocess_reaper_log
         )
         time.sleep(2)  # wait a bit to avoid a race
