@@ -109,6 +109,12 @@ if sys.platform != 'win32':
 
 gcov_flags = '--coverage'
 
+colcon_space_defaults = {
+    'sourcespace': 'src',
+    'buildspace': 'build',
+    'installspace': 'install',
+}
+
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
     blacklisted_package_names = []
@@ -183,7 +189,7 @@ def get_args(sysargv=None):
              "doesn't exist fall back to the default branch (default: latest "
              'release)')
     parser.add_argument(
-        '--white-space-in', nargs='*', default=None,
+        '--white-space-in', nargs='*', default=[],
         choices=['sourcespace', 'buildspace', 'installspace', 'workspace'],
         help="which folder structures in which white space should be added")
     parser.add_argument(
@@ -239,6 +245,15 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--visual-studio-version', default=None, required=(os.name == 'nt'),
         help='select the Visual Studio version')
+    parser.add_argument(
+        '--source-space', dest='sourcespace',
+        help='source directory path')
+    parser.add_argument(
+        '--build-space', dest='buildspace',
+        help='build directory path')
+    parser.add_argument(
+        '--install-space', dest='installspace',
+        help='install directory path')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
     argv, build_args = extract_argument_group(argv, '--build-args')
@@ -249,6 +264,16 @@ def get_args(sysargv=None):
     args = parser.parse_args(argv)
     args.build_args = build_args
     args.test_args = test_args
+
+    for name in ('sourcespace', 'buildspace', 'installspace'):
+        space_directory = getattr(args, name)
+        if name in args.white_space_in and space_directory is not None:
+            raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
+        elif space_directory is None:
+            space_directory = colcon_space_defaults[name]
+            if name in args.white_space_in:
+                space_directory += ' space'
+            setattr(args, name, space_directory)
     return args
 
 
@@ -413,11 +438,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
     job = None
 
-    args.white_space_in = args.white_space_in or []
     args.workspace = 'work space' if 'workspace' in args.white_space_in else 'ws'
-    args.sourcespace = 'source space' if 'sourcespace' in args.white_space_in else 'src'
-    args.buildspace = 'build space' if 'buildspace' in args.white_space_in else 'build'
-    args.installspace = 'install space' if 'installspace' in args.white_space_in else 'install'
 
     platform_name = platform.platform().lower()
     if args.os == 'linux' or platform_name.startswith('linux'):
