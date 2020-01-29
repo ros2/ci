@@ -165,7 +165,9 @@ fi
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
 fi
-if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
+if [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
+  export CI_ROS1_DISTRO=noetic
+elif [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
   export CI_ROS1_DISTRO=melodic
 elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
   export CI_ROS1_DISTRO=kinetic
