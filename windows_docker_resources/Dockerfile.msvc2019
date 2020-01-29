@@ -4,7 +4,7 @@
 
 # To find this value run in powershell:
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
-ARG WINDOWS_RELEASE_ID=1809
+ARG WINDOWS_RELEASE_ID=1909
 ARG TODAYS_DATE=0
 
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
@@ -54,7 +54,9 @@ ADD https://www.zlatkovic.com/pub/libxml/64bit/iconv-1.14-win32-x86_64.7z C:\TEM
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
 
-# 3010 is an acceptable exit code, but it will confuse docker
+# 3010 is an acceptable exit code (install was successful but restart required), but it will confuse docker.
+# See documentation for installer at:
+# https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019
 RUN C:\TEMP\vs_BuildTools.exe --quiet --wait --norestart --includeRecommended `
   --add Microsoft.Net.Component.4.8.SDK `
   --add Microsoft.VisualStudio.Workload.VCTools `
@@ -72,9 +74,8 @@ RUN C:\TEMP\python-37.exe /quiet `
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # choco installs
-RUN choco install -y cmake curl git KB3035131 KB3033929 KB2919442 vcredist2013 vcredist140 cppcheck
+RUN choco install -y cmake curl git vcredist2013 vcredist140 cppcheck patch
 RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx
-RUN choco install -y patch
 
 RUN C:\TEMP\Win64OpenSSL.exe /VERYSILENT
 
@@ -100,7 +101,7 @@ RUN setx PATH "%PATH%;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Ope
 # Invalidate once a day to cause online installers to check for updates
 RUN echo %TODAYS_DATE%
 
-# Run the same install commands but just with the update/upgrade options
+# Run the same install commands but just with the update/upgrade options.
 RUN C:\TEMP\vs_BuildTools.exe update --quiet --wait --norestart --includeRecommended `
   --add Microsoft.Net.Component.4.8.SDK `
   --add Microsoft.VisualStudio.Workload.VCTools `
