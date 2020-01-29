@@ -177,7 +177,9 @@ fi
 if [ -n "${CI_MIXED_ROS_OVERLAY_PKGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --mixed-ros-overlay-pkgs $CI_MIXED_ROS_OVERLAY_PKGS"
 fi
-if [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
+if [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
+  export CI_ROS1_DISTRO=noetic
+elif [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
   export CI_ROS1_DISTRO=melodic
 elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
   export CI_ROS1_DISTRO=kinetic
