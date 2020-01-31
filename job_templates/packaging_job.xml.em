@@ -329,6 +329,84 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Run packaging script"
 python -u run_ros2_batch.py !CI_ARGS!
 echo "# END SECTION"
+@[elif os_name == 'windows-container']@
+setlocal enableDelayedExpansion
+rmdir /S /Q ws workspace
+
+echo "# BEGIN SECTION: Build DockerFile"
+set CONTAINER_NAME=ros2_windows_ci_msvc%CI_VISUAL_STUDIO_VERSION%
+set DOCKERFILE=windows_docker_resources\Dockerfile.msvc%CI_VISUAL_STUDIO_VERSION%
+
+rem "Finding the ReleaseId is much easier with powershell than cmd"
+powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
+set /p RELEASE_ID=&lt; release_id.txt
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID% --build-arg TODAYS_DATE="%date%"
+docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources
+echo "# END SECTION"
+
+echo "# BEGIN SECTION: Determine arguments"
+set "PATH=!PATH:"=!"
+set "CI_ARGS=--packaging --force-ansi-color"
+if "!CI_BRANCH_TO_TEST!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-branch !CI_BRANCH_TO_TEST!"
+)
+if "!CI_COLCON_BRANCH!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
+)
+set "CI_ARGS=!CI_ARGS! --ignore-rmw"
+if "!CI_USE_CONNEXT_STATIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+)
+if "!CI_USE_CONNEXT_DYNAMIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_connext_dynamic_cpp"
+)
+if "!CI_USE_CYCLONEDDS!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_cyclonedds_cpp"
+)
+if "!CI_USE_FASTRTPS_STATIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_cpp"
+)
+if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_dynamic_cpp"
+)
+if "!CI_USE_OPENSPLICE!" == "false" (
+  set "CI_ARGS=!CI_ARGS! rmw_opensplice_cpp"
+)
+if "!CI_USE_CONNEXT_DEBS!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --connext-debs"
+)
+if "!CI_ROS2_REPOS_URL!" EQU "" (
+  set "CI_ROS2_REPOS_URL=@default_repos_url"
+)
+set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
+if "!CI_TEST_BRIDGE!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --test-bridge"
+)
+if "!CI_COLCON_MIXIN_URL!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
+)
+if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
+  set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
+)
+if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
+  set "CI_ARGS=!CI_ARGS! --python-interpreter python_d"
+)
+set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
+if "!CI_BUILD_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
+)
+if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
+)
+echo Using args: !CI_ARGS!
+echo "# END SECTION"
+
+echo "# BEGIN SECTION: Run packaging script with DockerFile"
+rem If isolated_network doesn't already exist, create it
+set NETWORK_NAME=isolated_network
+docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%
+echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]</command>
@@ -366,7 +444,7 @@ echo "# END SECTION"
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name != 'windows']@
+@[if os_name not in ['windows', 'windows-container']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
         <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>

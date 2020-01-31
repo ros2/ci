@@ -113,6 +113,11 @@ def main(argv=None):
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
         },
+        'windows-container': {
+            'label_expression': 'windows-container',
+            'shell_type': 'BatchFile',
+            'use_isolated_default': 'false',
+        },
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
@@ -189,6 +194,10 @@ def main(argv=None):
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
             'use_connext_debs_default': 'true',
         })
+
+        if os_name == 'windows-container':
+            # Only create ci jobs for windows container builds until full transition
+            continue
 
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
