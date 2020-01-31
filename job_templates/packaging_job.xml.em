@@ -76,18 +76,16 @@ All packages listed here have to be available from either the primary or supplem
       <url></url>
     </browser>
     <submoduleCfg class="list"/>
-    <extensions>@
-@[if os_name != 'windows']
+    <extensions>
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>false</parentCredentials>
+        <parentCredentials>true</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
-    @
-@[end if]</extensions>
+    </extensions>
   </scm>
   <assignedNode>@(label_expression)</assignedNode>
   <canRoam>false</canRoam>
