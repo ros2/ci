@@ -82,7 +82,7 @@ All packages listed here have to be available from either the primary or supplem
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>true</parentCredentials>
+        <parentCredentials>@[if os_name in ['windows', 'windows-container']]true@[else]false@[end if]</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
