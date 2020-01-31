@@ -325,7 +325,7 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
-        # configure nightly triggered job using opensplice
+        # configure nightly triggered job using CycloneDDS
         job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
         if os_name == 'windows':
             job_name = job_name[:25]
@@ -335,7 +335,8 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ignore_rmw_default': {
                 'rmw_connext_cpp',
-                'rmw_connext_dynamic_cpp'},
+                'rmw_connext_dynamic_cpp',
+                'rmw_opensplice_cpp'},
         })
 
         # configure nightly triggered job
