@@ -24,16 +24,19 @@
 // qt-unified-windows-x86-3.1.1-online.exe --verbose --script qt-installer.qs [Option=Value]
 // Options:
 //    MsvcVersion=[2015,2017,2019,...]
+//    TargetQt5Version=['5.12.7', '5.12.5', '5.12.*', '5.12.[1-5]', or '' (for latest LTS)]
 //    ErrorLogArgName='C:\Path\To\Writeable\Logfile'
 
 /* global installer:writeable, gui:writeable, buttons, QMessageBox */
 
+var DefaultQt5Version = '';
 var DefaultMsvcVersion = '2019';
 var BuildToolsPrefix = 'win64_msvc';
 var BuildToolsSuffix = '_64';
 var Qt5ComponentPrefix = 'qt.qt5.';
 var ErrorLogArgName = 'ErrorLogname';
 var MsvcVersionArgName = 'MsvcVersion';
+var TargetQt5VersionArgName = 'TargetQt5Version';
 
 var CheckCategory = function CheckCategory(gui, category, shouldCheck) {
   var page = gui.pageWidgetByObjectName('ComponentSelectionPage');
@@ -69,9 +72,19 @@ var FindLatestCompatibleVersion = function FindLatestCompatibleVersion(regex, fi
   return versions[0];
 };
 
-var FindMostRecentLTS = function FindMostRecentLTS() {
-  var regex = '(?:qt.qt5.)(\\d+)$';
+var FindMostRecentLTS = function FindMostRecentLTS(targetQt5Version) {
+  var regex = '(?:qt.qt5.)';
+  if (targetQt5Version !== '') {
+    // Match only the target versions. Since it's regex all the way down, patterns with
+    // 5.12.*/5.12.[1-5] will also work.
+    // String replace uses regex syntax in javascript, this replaces the '.' with ''
+    regex += '(' + targetQt5Version.replace(/\./g, '') + ')$';
+  }
+  else {
+    regex += '(\\d+)$';
+  }
   // Match component names of the form qt.qt5.5xyz and capture just the 5xyz
+  console.log('Regex: ' + regex);
   return FindLatestCompatibleVersion(regex, function IncludeAll() { return true; });
 };
 
@@ -84,7 +97,9 @@ var FindMostRecentBuildTools = function FindMostRecentBuildTools(prefix, desired
 var SelectQtComponent = function SelectQtComponent() {
   var widget = gui.currentPageWidget();
 
-  var latestVersion = FindMostRecentLTS();
+  var targetQt5Version = installer.value(TargetQt5VersionArgName, DefaultQt5Version);
+
+  var latestVersion = FindMostRecentLTS(targetQt5Version);
   var targetBuildVersion = installer.value(MsvcVersionArgName, DefaultMsvcVersion);
 
   var prefix;
