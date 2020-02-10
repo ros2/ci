@@ -90,6 +90,11 @@ ADD http://download.qt.io/official_releases/online_installers/qt-unified-windows
 # Install Qt5 with automated install script, no msvc2019 version exists but 2017 is compatible
 # Updater/silentUpdate options did not work for me. Install scripts finds and installs the most recent LTS version
 COPY qt-installer.qs C:\TEMP\
+
+# Installing Qt5 requires an account. This file contains a username and secret account token
+RUN mkdir C:\Users\ContainerAdministrator\AppData\Roaming\Qt
+COPY qtaccount.ini C:\Users\ContainerAdministrator\AppData\Roaming\Qt\qtaccount.ini
+
 RUN C:\TEMP\qt-unified-windows-x86-online.exe --script C:\TEMP\qt-installer.qs MsvcVersion=2019 ErrorLogname="%ERROR_FILENAME%"
 RUN IF EXIST "%ERROR_FILENAME%" EXIT 1
 
