@@ -93,7 +93,7 @@ COPY qt-installer.qs C:\TEMP\
 
 # Installing Qt5 requires an account. This file contains a username and secret account token
 RUN mkdir C:\Users\ContainerAdministrator\AppData\Roaming\Qt
-COPY qtaccount.ini C:\Users\ContainerAdministrator\AppData\Roaming\Qt\qtaccount.ini
+COPY qtaccount\qtaccount.ini C:\Users\ContainerAdministrator\AppData\Roaming\Qt\qtaccount.ini
 
 RUN C:\TEMP\qt-unified-windows-x86-online.exe --script C:\TEMP\qt-installer.qs MsvcVersion=2019 ErrorLogname="%ERROR_FILENAME%"
 RUN IF EXIST "%ERROR_FILENAME%" EXIT 1
