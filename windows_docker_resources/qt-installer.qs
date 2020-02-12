@@ -154,9 +154,9 @@ Controller.prototype.ComponentSelectionPageCallback = function ComponentSelectio
   var path = installer.value(ErrorLogArgName, '%temp%\\installer.err');
   var qt5Path;
   // These should be the defaults, but just in case...
-  CheckCategory(gui, 'LTS', true);
+  CheckCategory(gui, 'LTS', false);
   CheckCategory(gui, 'Archive', false);
-  CheckCategory(gui, 'Latest releases', false);
+  CheckCategory(gui, 'Latest releases', true);
   CheckCategory(gui, 'Preview', false);
   if (fetchButton) {
     // Refresh components if any of the checkboxes above changed

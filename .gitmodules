@@ -13,3 +13,6 @@
 	path = windows_docker_resources/rticonnextdds-license
 	url = git@github.com:osrf/rticonnextdds-src.git
 	branch = license
+[submodule "windows_docker_resources/qtaccount"]
+	path = windows_docker_resources/qtaccount
+	url = git@github.com:osrf/qtaccount
