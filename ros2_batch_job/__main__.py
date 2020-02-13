@@ -497,19 +497,11 @@ def run(args, build_function, blacklisted_package_names=None):
     if args.do_venv:
         print('# BEGIN SUBSECTION: enter virtualenv')
 
-        # Make sure virtual env is installed
-        if args.os != 'linux':
-            # Do not try this on Linux, as elevated privileges are needed.
-            # Also there is no good way to get elevated privileges.
-            # So the Linux host or Docker vm will need to ensure a modern
-            # version of virtualenv is available.
-            job.run([sys.executable, '-m', 'pip', 'install', '-U', 'virtualenv'])
-
         venv_subfolder = 'venv'
         remove_folder(venv_subfolder)
         job.run([
-            sys.executable, '-m', 'virtualenv', '--system-site-packages',
-            '-p', sys.executable, venv_subfolder])
+            sys.executable, '-m', 'venv', '--copies', '--system-site-packages',
+            venv_subfolder])
         venv_path = os.path.abspath(os.path.join(os.getcwd(), venv_subfolder))
         venv, venv_python = generated_venv_vars(venv_path)
         job.push_run(venv)  # job.run is now venv
