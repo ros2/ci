@@ -501,7 +501,7 @@ def run(args, build_function, blacklisted_package_names=None):
         remove_folder(venv_subfolder)
         job.run([
             sys.executable, '-m', 'venv', '--copies', '--system-site-packages',
-            '-p', sys.executable, venv_subfolder])
+            venv_subfolder])
         venv_path = os.path.abspath(os.path.join(os.getcwd(), venv_subfolder))
         venv, venv_python = generated_venv_vars(venv_path)
         job.push_run(venv)  # job.run is now venv
