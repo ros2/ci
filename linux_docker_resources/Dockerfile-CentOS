@@ -35,7 +35,6 @@ RUN yum install \
   python36-pytest-repeat \
   python36-snowballstemmer \
   python36-vcstool \
-  python36-virtualenv \
   python-rosdep \
   sudo \
   systemd \
