@@ -195,10 +195,6 @@ def main(argv=None):
             'use_connext_debs_default': 'true',
         })
 
-        if os_name == 'windows-container':
-            # Only create ci jobs for windows container builds until full transition
-            continue
-
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
