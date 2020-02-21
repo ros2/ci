@@ -150,12 +150,6 @@ def main(sysargv=None):
         blacklisted_package_names.append('rqt_py_common')
         blacklisted_package_names.append('rqt_reconfigure')
 
-    if sys.platform.lower().startswith('linux') and platform.linux_distribution()[2] == 'xenial':
-        blacklisted_package_names += [
-            'image_tools_py',
-            'qt_dotgraph',
-        ]
-
     # TODO(wjwwood): remove this when a better solution is found, as
     #   this is just a work around for https://github.com/ros2/build_cop/issues/161
     # If on Windows, kill any still running `colcon` processes to avoid

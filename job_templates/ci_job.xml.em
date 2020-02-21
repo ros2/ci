@@ -167,8 +167,6 @@ if [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
   export CI_ROS1_DISTRO=noetic
 elif [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
   export CI_ROS1_DISTRO=melodic
-elif [ "${CI_UBUNTU_DISTRO}" = "xenial" ]; then
-  export CI_ROS1_DISTRO=kinetic
 fi
 if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
