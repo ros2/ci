@@ -34,7 +34,7 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool python3-venv
-RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y python3-lark-parser python3-opencv; fi
+RUN apt-get update && apt-get install --no-install-recommends -y python3-lark-parser python3-opencv
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -53,7 +53,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-flake8 \
   python3-lxml \
   python3-mock \
-  $(test ${UBUNTU_DISTRO} != xenial && printf python3-mypy) \
+  python3-mypy \
   python3-netifaces \
   python3-nose \
   python3-numpy \
@@ -103,18 +103,17 @@ ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 # Install the eProsima dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libssl-dev libtinyxml2-dev valgrind
 
-# Install the CycloneDDS dependencies unless on Ubuntu Xenial.
-RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libcunit1-dev maven openjdk-11-jdk; else true; fi
+# Install the CycloneDDS dependencies.
+RUN apt-get update && apt-get install --no-install-recommends -y libcunit1-dev maven openjdk-11-jdk
 
 # Install OpenCV.
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
 # Install console_bridge for class_loader et al.
-RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev; fi
+RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
 
 # Install build dependencies for class_loader.
-# We are building poco from source on xenial as we need at least 1.4.1p1 and xenial ships with 1.3.6p1 (https://github.com/ros2/poco_vendor/pull/10)
-RUN if test ${UBUNTU_DISTRO} != xenial; then apt-get update && apt-get install --no-install-recommends -y libpoco-dev; fi
+RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
 
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
@@ -145,8 +144,8 @@ RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-instal
     ros-${ROS1_DISTRO}-rospy-tutorials \
     ros-${ROS1_DISTRO}-tf2-msgs; fi
 
-# Install build dependencies for turtlebot demo (not supported on xenial).
-RUN if test \( ${UBUNTU_DISTRO} != xenial -a ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then \
+# Install build dependencies for turtlebot demo.
+RUN if test \( ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then \
     apt-get update && apt-get install --no-install-recommends -y \
     libatlas-base-dev \
     libboost-iostreams-dev \
