@@ -65,7 +65,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
-RUN pip3 install -U setuptools pip
+RUN pip3 install -U setuptools pip virtualenv
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
