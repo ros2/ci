@@ -26,12 +26,13 @@ ADD https://github.com/ros2/ros2/releases/download/opencv-archives/opencv-3.4.6-
 ADD https://www.python.org/ftp/python/3.7.6/python-3.7.6-amd64.exe C:\TEMP\python-37.exe
 
 # Custom choco packages
-ADD https://github.com/ros2/choco-packages/releases/download/2019-10-24/asio.1.12.1.nupkg C:\TEMP\asio.nupkg
-ADD https://github.com/ros2/choco-packages/releases/download/2019-10-24/cunit.2.1.3.nupkg C:\TEMP\cunit.nupkg
-ADD https://github.com/ros2/choco-packages/releases/download/2019-10-24/eigen.3.3.4.nupkg C:\TEMP\eigen.nupkg
-ADD https://github.com/ros2/choco-packages/releases/download/2019-10-24/log4cxx.0.10.0.nupkg C:\TEMP\log4cxx.nupkg
-ADD https://github.com/ros2/choco-packages/releases/download/2019-10-24/tinyxml-usestl.2.6.2.nupkg C:\TEMP\tinyxml.nupkg
-ADD https://github.com/ros2/choco-packages/releases/download/2019-10-24/tinyxml2.6.0.0.nupkg C:\TEMP\tinyxml2.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg C:\TEMP\asio.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/bullet.2.89.0.nupkg C:\TEMP\bullet.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/cunit.2.1.3.nupkg C:\TEMP\cunit.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/eigen.3.3.4.nupkg C:\TEMP\eigen.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/log4cxx.0.10.0.nupkg C:\TEMP\log4cxx.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml-usestl.2.6.2.nupkg C:\TEMP\tinyxml.nupkg
+ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg C:\TEMP\tinyxml2.nupkg
 
 # xmllint files
 ADD https://www.zlatkovic.com/pub/libxml/64bit/libxml2-2.9.3-win32-x86_64.7z C:\TEMP\libxml2.7z
@@ -52,7 +53,7 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 
 # choco installs
 RUN choco install -y cmake curl git vcredist2013 vcredist140 cppcheck patch
-RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx
+RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx bullet
 
 RUN C:\TEMP\Win64OpenSSL.exe /VERYSILENT
 
