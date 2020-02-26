@@ -1,4 +1,4 @@
-    <xunit plugin="xunit@@1.102">
+    <xunit plugin="xunit@@2.3.8">
       <types>
 @[for prefix in ['ws/build', 'work space/build space']]@
         <CTestType>
@@ -34,19 +34,14 @@
       <thresholds>
         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
           <unstableThreshold>0</unstableThreshold>
-          <unstableNewThreshold></unstableNewThreshold>
-          <failureThreshold></failureThreshold>
-          <failureNewThreshold></failureNewThreshold>
         </org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
-        <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
-          <unstableThreshold></unstableThreshold>
-          <unstableNewThreshold></unstableNewThreshold>
-          <failureThreshold></failureThreshold>
-          <failureNewThreshold></failureNewThreshold>
-        </org.jenkinsci.plugins.xunit.threshold.SkippedThreshold>
+        <org.jenkinsci.plugins.xunit.threshold.SkippedThreshold/>
       </thresholds>
       <thresholdMode>1</thresholdMode>
       <extraConfiguration>
         <testTimeMargin>3000</testTimeMargin>
+        <sleepTime>0</sleepTime>
+        <reduceLog>false</reduceLog>
       </extraConfiguration>
+      <testDataPublishers class="empty-set"/>
     </xunit>
