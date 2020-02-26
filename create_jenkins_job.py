@@ -183,7 +183,7 @@ def main(argv=None):
             'cmake_build_type': 'None',
         })
 
-        packaging_label_expression = job_data['label_expression']
+        packaging_label_expression = os_configs[os_name]['label_expression']
         if os_name == 'osx':
             packaging_label_expression = 'macos && mojave'
 
