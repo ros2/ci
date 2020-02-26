@@ -183,9 +183,9 @@ def main(argv=None):
             'cmake_build_type': 'None',
         })
 
-        packaging_label_expression = job_data['label_expression']
+        packaging_label_expression = os_configs[os_name]['label_expression']
         if os_name == 'osx':
-            packaging_label_expression = 'macos && mojave'
+            packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
