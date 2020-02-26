@@ -183,6 +183,10 @@ def main(argv=None):
             'cmake_build_type': 'None',
         })
 
+        packaging_label_expression = job_data['label_expression']
+        if os_name == 'osx':
+            packaging_label_expression = 'macos && mojave'
+
         # configure a manual version of the packaging job
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
@@ -190,6 +194,7 @@ def main(argv=None):
                 'num_to_keep': 100,
             },
             'cmake_build_type': 'RelWithDebInfo',
+            'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
             'use_connext_debs_default': 'true',
@@ -202,6 +207,7 @@ def main(argv=None):
                 'num_to_keep': 370,
             },
             'cmake_build_type': 'RelWithDebInfo',
+            'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
