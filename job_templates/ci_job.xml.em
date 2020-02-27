@@ -447,6 +447,8 @@ echo "# END SECTION"
   <publishers>
 @(SNIPPET(
     'publisher_warnings_ng',
+    os_name=os_name,
+    compile_with_clang_default=compile_with_clang_default,
 ))@
 @(SNIPPET(
     'publisher_cobertura',
