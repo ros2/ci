@@ -413,6 +413,7 @@ echo "# END SECTION"
   <publishers>
 @(SNIPPET(
     'publisher_warnings_ng',
+    os_name=os_name,
 ))@
 @(SNIPPET(
     'publisher_cobertura',

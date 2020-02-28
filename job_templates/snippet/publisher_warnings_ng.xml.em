@@ -1,4 +1,4 @@
-<io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.2.2">
+<io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.3.0">
   <analysisTools>
     <io.jenkins.plugins.analysis.warnings.Cmake>
       <id></id>
@@ -7,6 +7,16 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Cmake>
+@[if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
+   <io.jenkins.plugins.analysis.warnings.Gcc4>
+      <id></id>
+      <name></name>
+      <pattern></pattern>
+      <reportEncoding></reportEncoding>
+      <skipSymbolicLinks>false</skipSymbolicLinks>
+    </io.jenkins.plugins.analysis.warnings.Gcc4>
+@[end if]
+@[if os_name == 'osx' or os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
     <io.jenkins.plugins.analysis.warnings.Clang>
       <id></id>
       <name></name>
@@ -21,13 +31,7 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.ClangTidy>
-    <io.jenkins.plugins.analysis.warnings.Gcc4>
-      <id></id>
-      <name></name>
-      <pattern></pattern>
-      <reportEncoding></reportEncoding>
-      <skipSymbolicLinks>false</skipSymbolicLinks>
-    </io.jenkins.plugins.analysis.warnings.Gcc4>
+@[elif os_name in ['windows', 'windows-container']]@
     <io.jenkins.plugins.analysis.warnings.MsBuild>
       <id></id>
       <name></name>
@@ -35,6 +39,9 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.MsBuild>
+@[else]@
+@{assert False, 'Unknown os_name: ' + os_name}@
+@[end if]@
   </analysisTools>
   <sourceCodeEncoding></sourceCodeEncoding>
   <sourceDirectory></sourceDirectory>
@@ -52,6 +59,12 @@
   <isAggregatingResults>false</isAggregatingResults>
   <isBlameDisabled>false</isBlameDisabled>
   <isForensicsDisabled>false</isForensicsDisabled>
-  <qualityGates/>
+  <qualityGates>
+    <io.jenkins.plugins.analysis.core.util.QualityGate>
+      <threshold>1</threshold>
+      <type>TOTAL</type>
+      <status>WARNING</status>
+    </io.jenkins.plugins.analysis.core.util.QualityGate>
+  </qualityGates>
   <trendChartType>AGGREGATION_TOOLS</trendChartType>
 </io.jenkins.plugins.analysis.core.steps.IssuesRecorder>
