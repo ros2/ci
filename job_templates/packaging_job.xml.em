@@ -400,6 +400,9 @@ echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Run packaging script with DockerFile"
+rem Kill any running docker containers, which may be leftover from aborted jobs
+powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q)}"
+
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
 docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%
