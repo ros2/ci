@@ -7,7 +7,16 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Cmake>
-@[if os_name == 'osx' or compile_with_clang_default]@
+@[if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
+   <io.jenkins.plugins.analysis.warnings.Gcc4>
+      <id></id>
+      <name></name>
+      <pattern></pattern>
+      <reportEncoding></reportEncoding>
+      <skipSymbolicLinks>false</skipSymbolicLinks>
+    </io.jenkins.plugins.analysis.warnings.Gcc4>
+@[end if]
+@[if os_name == 'osx' or os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
     <io.jenkins.plugins.analysis.warnings.Clang>
       <id></id>
       <name></name>
@@ -22,14 +31,6 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.ClangTidy>
-@[elif os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
-    <io.jenkins.plugins.analysis.warnings.Gcc4>
-      <id></id>
-      <name></name>
-      <pattern></pattern>
-      <reportEncoding></reportEncoding>
-      <skipSymbolicLinks>false</skipSymbolicLinks>
-    </io.jenkins.plugins.analysis.warnings.Gcc4>
 @[elif os_name in ['windows', 'windows-container']]@
     <io.jenkins.plugins.analysis.warnings.MsBuild>
       <id></id>
