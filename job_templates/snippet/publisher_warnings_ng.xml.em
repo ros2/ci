@@ -1,4 +1,4 @@
-<io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.2.2">
+<io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.3.0">
   <analysisTools>
     <io.jenkins.plugins.analysis.warnings.Cmake>
       <id></id>
@@ -59,6 +59,12 @@
   <isAggregatingResults>false</isAggregatingResults>
   <isBlameDisabled>false</isBlameDisabled>
   <isForensicsDisabled>false</isForensicsDisabled>
-  <qualityGates/>
+  <qualityGates>
+    <io.jenkins.plugins.analysis.core.util.QualityGate>
+      <threshold>1</threshold>
+      <type>TOTAL</type>
+      <status>WARNING</status>
+    </io.jenkins.plugins.analysis.core.util.QualityGate>
+  </qualityGates>
   <trendChartType>AGGREGATION_TOOLS</trendChartType>
 </io.jenkins.plugins.analysis.core.steps.IssuesRecorder>
