@@ -78,7 +78,6 @@ def main(argv=None):
         'mailer_recipients': '',
         'ignore_rmw_default': {
             'rmw_connext_dynamic_cpp',
-            'rmw_cyclonedds_cpp',
             'rmw_fastrtps_dynamic_cpp',
             'rmw_opensplice_cpp'},
         'use_connext_debs_default': 'false',
@@ -327,7 +326,7 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
-        # configure nightly triggered job using CycloneDDS
+        # configure nightly triggered job using FastRTPS dynamic
         job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
         if os_name == 'windows':
             job_name = job_name[:25]
