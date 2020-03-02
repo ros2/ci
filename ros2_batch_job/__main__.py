@@ -378,12 +378,15 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: test')
 
     # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
+    pytest_ini = open("pytest.ini", "w")
+    pytest_ini.write("[pytest]\njunit_family=xunit2")
+    pytest_ini.close()
+
     test_cmd = [
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
-        '--pytest-args', '-o junit_family=xunit2',
     ]
     if not args.isolated:
         test_cmd.append('--merge-install')
