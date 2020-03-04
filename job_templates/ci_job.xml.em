@@ -64,7 +64,7 @@
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>@[if os_name in ['windows', 'windows-container']]true@[else]false@[end if]</parentCredentials>
+        <parentCredentials>@[if os_name in ['windows', 'windows-metal']]true@[else]false@[end if]</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
@@ -271,7 +271,7 @@ echo "# BEGIN SECTION: Run script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
 @[  end if]@
-@[elif os_name == 'windows']@
+@[elif os_name == 'windows-metal']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
@@ -349,7 +349,7 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Run script"
 python -u run_ros2_batch.py !CI_ARGS!
 echo "# END SECTION"
-@[elif os_name == 'windows-container']@
+@[elif os_name == 'windows']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
@@ -481,7 +481,7 @@ echo "# END SECTION"
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name not in ['windows', 'windows-container']]@
+@[if os_name not in ['windows', 'windows-metal']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
         <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>

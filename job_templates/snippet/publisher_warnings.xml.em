@@ -43,7 +43,7 @@
           <parserName>GNU C Compiler 4 (gcc)</parserName>
 @[elif os_name == 'osx']@
           <parserName>Clang (LLVM based)</parserName>
-@[elif os_name in ['windows', 'windows-container']]@
+@[elif os_name in ['windows', 'windows-metal']]@
           <parserName>MSBuild</parserName>
 @[else]@
 @{assert False, 'Unknown os_name: ' + os_name}@

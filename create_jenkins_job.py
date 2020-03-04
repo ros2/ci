@@ -107,12 +107,12 @@ def main(argv=None):
             'ci_scripts_repository': args.ci_scripts_repository.replace(
                 'git@github.com:', 'https://github.com/'),
         },
-        'windows': {
+        'windows-metal': {
             'label_expression': 'windows',
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
         },
-        'windows-container': {
+        'windows': {
             'label_expression': 'windows-container',
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
@@ -149,6 +149,7 @@ def main(argv=None):
     launcher_exclude = {
         'linux-armhf',
         'linux-centos',
+        'windows-metal',
     }
 
     jenkins_kwargs = {}
@@ -166,8 +167,8 @@ def main(argv=None):
 
     # configure os specific jobs
     for os_name in sorted(os_configs.keys()):
-        # We need the keep the paths short on Windows, so on that platform make
-        # the os_name shorter just for the jobs
+        # This short name is preserved for historic reasons, but long-paths have been enabled on
+        # windows containers and their hosts
         job_os_name = os_name
         if os_name == 'windows':
             job_os_name = 'win'
@@ -181,6 +182,10 @@ def main(argv=None):
         create_job(os_name, 'test_ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
         })
+
+        if os_name == 'windows-metal':
+            # Don't create nightlies or packaging jobs for bare-metal Windows
+            continue
 
         packaging_label_expression = os_configs[os_name]['label_expression']
         if os_name == 'osx':
