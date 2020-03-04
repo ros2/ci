@@ -74,7 +74,7 @@ class OSXBatchJob(BatchJob):
         # Show what brew has
         self.run(['brew', 'list', '--versions'])
         # Show what pip has
-        self.run(['"%s"' % self.python, '-m', 'pip', 'freeze'], shell=True)
+        self.run(['"%s"' % self.python, '-m', 'pip', 'freeze', '--all'], shell=True)
 
     def setup_env(self):
         connext_env_file = None
