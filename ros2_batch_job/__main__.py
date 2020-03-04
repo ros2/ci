@@ -491,7 +491,7 @@ def run(args, build_function, blacklisted_package_names=None):
     if args.do_venv:
         print('# BEGIN SUBSECTION: enter virtualenv')
 
-        if args.os != 'linux'
+        if args.os != 'linux':
             # Do not try this on Linux as elevated privileges are needed.
             # The Linux host or Docker image will need to ensure the right
             # version of virtualenv is available.
