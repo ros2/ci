@@ -84,7 +84,7 @@ def main(argv=None):
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
-        'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 10',
+        'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 2',
         'compile_with_clang_default': 'false',
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
@@ -260,7 +260,7 @@ def main(argv=None):
                 'build_args_default': asan_build_args,
                 'test_args_default': (
                     '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 10 --packages-up-to rcpputils'),
+                    '--retest-until-pass 2 --packages-up-to rcpputils'),
             })
 
         # configure nightly job for compiling with clang+libcxx on linux
@@ -295,7 +295,7 @@ def main(argv=None):
                 'build_args_default': tsan_build_args,
                 'test_args_default': (
                     '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 10 --packages-select rcpputils rcutils'),
+                    '--retest-until-pass 2 --packages-select rcpputils rcutils'),
             })
 
         # configure a manually triggered version of the coverage job
