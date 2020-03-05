@@ -15,6 +15,7 @@ RUN yum -y copr enable cottsay/devtoolset-8-make-nonblocking
 RUN yum install \
   @buildsys-build \
   asio-devel \
+  bullet \
   ccache \
   cmake \
   cmake3 \
