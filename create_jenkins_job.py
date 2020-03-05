@@ -192,6 +192,9 @@ def main(argv=None):
             packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
+        ignore_rmw_default_packaging = {'rmw_opensplice_cpp'}
+        if os_name in ['linux-aarch64', 'linux-armhf']:
+            ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
                 'days_to_keep': 180,
@@ -200,7 +203,7 @@ def main(argv=None):
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
+            'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
 
@@ -215,7 +218,7 @@ def main(argv=None):
             'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
+            'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
 
@@ -230,7 +233,7 @@ def main(argv=None):
                 'mixed_overlay_pkgs': 'ros1_bridge',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
+                'ignore_rmw_default': ignore_rmw_default_packaging,
                 'use_connext_debs_default': 'true',
             })
 
