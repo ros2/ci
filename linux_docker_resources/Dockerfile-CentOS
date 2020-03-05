@@ -16,6 +16,7 @@ RUN yum install \
   @buildsys-build \
   asio-devel \
   bullet \
+  bullet-dev \
   ccache \
   cmake \
   cmake3 \
