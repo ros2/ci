@@ -377,6 +377,10 @@ def build_and_test(args, job):
 
     print('# BEGIN SUBSECTION: test')
 
+    # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
+    with open('pytest.ini', 'w') as ini_file:
+        ini_file.write('[pytest]\njunit_family=xunit2')
+
     test_cmd = [
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
