@@ -43,7 +43,7 @@
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.68">
+        <script plugin="script-security@@1.70">
           <script>// PREDICT TRIGGERED BUILDS AND GENERATE MARKDOWN FOR BUILD STATUS
 
 import jenkins.model.Jenkins
@@ -110,7 +110,7 @@ for (item in build_numbers) {
 @#              </configs>
 @#            </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[  end if]@
-@[  if os_name in ['windows', 'windows-container']]@
+@[  if os_name in ['windows', 'windows-metal']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>

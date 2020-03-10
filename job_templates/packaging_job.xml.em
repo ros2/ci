@@ -82,7 +82,7 @@ All packages listed here have to be available from either the primary or supplem
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>@[if os_name in ['windows', 'windows-container']]true@[else]false@[end if]</parentCredentials>
+        <parentCredentials>@[if os_name in ['windows', 'windows-metal']]true@[else]false@[end if]</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
@@ -103,7 +103,7 @@ All packages listed here have to be available from either the primary or supplem
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.68">
+        <script plugin="script-security@@1.70">
           <script><![CDATA[build.setDescription("""\
 @[if 'linux' in os_name]@
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
@@ -261,7 +261,7 @@ echo "# BEGIN SECTION: Run packaging script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
 @[  end if]@
-@[elif os_name == 'windows']@
+@[elif os_name == 'windows-metal']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
@@ -327,7 +327,7 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Run packaging script"
 python -u run_ros2_batch.py !CI_ARGS!
 echo "# END SECTION"
-@[elif os_name == 'windows-container']@
+@[elif os_name == 'windows']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
@@ -400,6 +400,9 @@ echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Run packaging script with DockerFile"
+rem Kill any running docker containers, which may be leftover from aborted jobs
+powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q)}"
+
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
 docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%
@@ -442,7 +445,7 @@ echo "# END SECTION"
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name not in ['windows', 'windows-container']]@
+@[if os_name not in ['windows', 'windows-metal']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
         <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>

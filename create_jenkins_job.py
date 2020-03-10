@@ -78,14 +78,13 @@ def main(argv=None):
         'mailer_recipients': '',
         'ignore_rmw_default': {
             'rmw_connext_dynamic_cpp',
-            'rmw_cyclonedds_cpp',
             'rmw_fastrtps_dynamic_cpp',
             'rmw_opensplice_cpp'},
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
-        'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 10',
+        'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 2',
         'compile_with_clang_default': 'false',
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
@@ -108,12 +107,12 @@ def main(argv=None):
             'ci_scripts_repository': args.ci_scripts_repository.replace(
                 'git@github.com:', 'https://github.com/'),
         },
-        'windows': {
+        'windows-metal': {
             'label_expression': 'windows',
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
         },
-        'windows-container': {
+        'windows': {
             'label_expression': 'windows-container',
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
@@ -150,6 +149,7 @@ def main(argv=None):
     launcher_exclude = {
         'linux-armhf',
         'linux-centos',
+        'windows-metal',
     }
 
     jenkins_kwargs = {}
@@ -167,8 +167,8 @@ def main(argv=None):
 
     # configure os specific jobs
     for os_name in sorted(os_configs.keys()):
-        # We need the keep the paths short on Windows, so on that platform make
-        # the os_name shorter just for the jobs
+        # This short name is preserved for historic reasons, but long-paths have been enabled on
+        # windows containers and their hosts
         job_os_name = os_name
         if os_name == 'windows':
             job_os_name = 'win'
@@ -183,11 +183,18 @@ def main(argv=None):
             'cmake_build_type': 'None',
         })
 
+        if os_name == 'windows-metal':
+            # Don't create nightlies or packaging jobs for bare-metal Windows
+            continue
+
         packaging_label_expression = os_configs[os_name]['label_expression']
         if os_name == 'osx':
             packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
+        ignore_rmw_default_packaging = {'rmw_opensplice_cpp'}
+        if os_name in ['linux-aarch64', 'linux-armhf']:
+            ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
                 'days_to_keep': 180,
@@ -196,7 +203,7 @@ def main(argv=None):
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
+            'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
 
@@ -211,7 +218,7 @@ def main(argv=None):
             'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
+            'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
 
@@ -226,7 +233,7 @@ def main(argv=None):
                 'mixed_overlay_pkgs': 'ros1_bridge',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'} if os_name in ['linux-aarch64', 'linux-armhf'] else set(),
+                'ignore_rmw_default': ignore_rmw_default_packaging,
                 'use_connext_debs_default': 'true',
             })
 
@@ -253,7 +260,7 @@ def main(argv=None):
                 'build_args_default': asan_build_args,
                 'test_args_default': (
                     '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 10 --packages-up-to rcpputils'),
+                    '--retest-until-pass 2 --packages-up-to rcpputils'),
             })
 
         # configure nightly job for compiling with clang+libcxx on linux
@@ -288,7 +295,7 @@ def main(argv=None):
                 'build_args_default': tsan_build_args,
                 'test_args_default': (
                     '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 10 --packages-select rcpputils rcutils'),
+                    '--retest-until-pass 2 --packages-select rcpputils rcutils'),
             })
 
         # configure a manually triggered version of the coverage job
@@ -327,7 +334,7 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
-        # configure nightly triggered job using CycloneDDS
+        # configure nightly triggered job using FastRTPS dynamic
         job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
         if os_name == 'windows':
             job_name = job_name[:25]

@@ -15,6 +15,7 @@ RUN yum -y copr enable cottsay/devtoolset-8-make-nonblocking
 RUN yum install \
   @buildsys-build \
   asio-devel \
+  bullet-devel \
   ccache \
   cmake \
   cmake3 \
@@ -35,6 +36,7 @@ RUN yum install \
   python36-pytest-repeat \
   python36-snowballstemmer \
   python36-vcstool \
+  python36-virtualenv \
   python-rosdep \
   sudo \
   systemd \
