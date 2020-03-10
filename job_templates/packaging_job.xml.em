@@ -103,7 +103,7 @@ All packages listed here have to be available from either the primary or supplem
   <builders>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.68">
+        <script plugin="script-security@@1.70">
           <script><![CDATA[build.setDescription("""\
 @[if 'linux' in os_name]@
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
