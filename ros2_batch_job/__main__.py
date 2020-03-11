@@ -381,7 +381,7 @@ def build_and_test(args, job):
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
     # check if packages have a pytest.ini file and add the xunit2
-    # format2 if not present
+    # format if it is not present
     from pathlib import Path
     for path in Path('.').rglob('pytest.ini'):
         with open(path, "r+") as pytest:
