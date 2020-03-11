@@ -383,11 +383,20 @@ def build_and_test(args, job):
     # check if packages have a pytest.ini file and add the xunit2
     # format if it is not present
     from pathlib import Path
+    from configparser import ConfigParser, NoOptionError
     for path in Path('.').rglob('pytest.ini'):
-        with open(path, "r+") as pytest:
-            if 'xunit2' not in pytest.read():
-                print("xunit2 patch applied to " + str(path.resolve()))
-                pytest.write('\njunit_family=xunit2')
+        config = ConfigParser()
+        config.read(str(path.resolve()))
+        try:
+            # only if xunit2 is set continue the loop with the file unpatched
+            if config.get('pytest', 'junit_family') == 'xunit2':
+                continue
+        except NoOptionError:
+            pass
+        print("xunit2 patch applied to " + str(path.resolve()))
+        config.set('pytest', 'junit_family', 'xunit2')
+        with open(path, 'w+') as configfile:
+            config.write(configfile)
 
     test_cmd = [
         args.colcon_script, 'test',
