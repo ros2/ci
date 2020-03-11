@@ -380,12 +380,14 @@ def build_and_test(args, job):
     # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
-
+    # check if packages have a pytest.ini file and add the xunit2
+    # format2 if not present
     from pathlib import Path
     for path in Path('.').rglob('pytest.ini'):
-        print(" !! Found pytest.ini at: " + path.name)
-        with open(path, "a") as pytest:
-            pytest.write('\njunit_family=xunit2')
+        with open(path, "r+") as pytest:
+            if 'xunit2' not in pytest.read():
+                print("xunit2 patch applied to " + str(path.resolve()))
+                pytest.write('\njunit_family=xunit2')
 
     test_cmd = [
         args.colcon_script, 'test',
