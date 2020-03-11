@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import argparse
+import configparser
 import os
+from pathlib import Path
 import platform
 from shutil import which
 import subprocess
@@ -382,18 +384,16 @@ def build_and_test(args, job):
         ini_file.write('[pytest]\njunit_family=xunit2')
     # check if packages have a pytest.ini file and add the xunit2
     # format if it is not present
-    from pathlib import Path
-    from configparser import ConfigParser, NoOptionError
     for path in Path('.').rglob('pytest.ini'):
-        config = ConfigParser()
-        config.read(str(path.resolve()))
+        config = configparser.ConfigParser()
+        config.read(str(path))
         try:
             # only if xunit2 is set continue the loop with the file unpatched
             if config.get('pytest', 'junit_family') == 'xunit2':
                 continue
-        except NoOptionError:
+        except configparser.NoOptionError:
             pass
-        print("xunit2 patch applied to " + str(path.resolve()))
+        print('xunit2 patch applied to ' + str(path))
         config.set('pytest', 'junit_family', 'xunit2')
         with open(path, 'w+') as configfile:
             config.write(configfile)
