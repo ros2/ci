@@ -381,8 +381,11 @@ def build_and_test(args, job):
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
 
-    with open('build/pytest.ini', 'w') as ini_file:
-        ini_file.write('[pytest]\njunit_family=xunit2')
+    from pathlib import Path
+    for path in Path('.').rglob('pytest.ini'):
+        print(" !! Found pytest.ini at: " + path.name)
+        with open(path, "a") as pytest:
+            pytest.write('\njunit_family=xunit2')
 
     test_cmd = [
         args.colcon_script, 'test',
