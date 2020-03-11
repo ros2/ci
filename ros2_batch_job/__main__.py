@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import argparse
-import ConfigParser
+import configparser
 import os
 from pathlib import Path
 import platform
@@ -385,13 +385,13 @@ def build_and_test(args, job):
     # check if packages have a pytest.ini file and add the xunit2
     # format if it is not present
     for path in Path('.').rglob('pytest.ini'):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(str(path))
         try:
             # only if xunit2 is set continue the loop with the file unpatched
             if config.get('pytest', 'junit_family') == 'xunit2':
                 continue
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             pass
         print('xunit2 patch applied to ' + str(path))
         config.set('pytest', 'junit_family', 'xunit2')
