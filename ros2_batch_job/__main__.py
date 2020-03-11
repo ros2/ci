@@ -381,6 +381,9 @@ def build_and_test(args, job):
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
 
+    with open('build/pytest.ini', 'w') as ini_file:
+        ini_file.write('[pytest]\njunit_family=xunit2')
+
     test_cmd = [
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
