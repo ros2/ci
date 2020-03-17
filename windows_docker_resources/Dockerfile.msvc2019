@@ -131,7 +131,9 @@ COPY rticonnextdds-src\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg C
 RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg"
 
 # Visual Studio Build Tools and .Net SDK`
-ADD https://aka.ms/vs/16/release/vs_BuildTools.exe C:\TEMP\
+# TODO (brawner) This downloads an archived version of MS VS BuildTools 16.4.5. Revert when addressed
+# https://github.com/ros2/ci/issues/411
+ADD https://download.visualstudio.microsoft.com/download/pr/378e5eb4-c1d7-4c05-8f5f-55678a94e7f4/b9619acc0f9a1dfbdc1b67fddf9972e169916ceae237cf95f286c9e5547f804f/vs_BuildTools.exe C:\TEMP\
 
 # 3010 is an acceptable exit code (install was successful but restart required), but it will confuse docker.
 # This installer invalidates docker image caches pretty regularly, so it's late in the order. See documentation for installer at:
