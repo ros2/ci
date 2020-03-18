@@ -74,7 +74,7 @@ pip_dependencies = [
     'pytest-cov',
     'pytest-mock',
     'pytest-repeat',
-    'git+https://github.com/RonnyPfannschmidt/pytest-rerunfailures.git@fix-103-support-new-fixturecache',
+    'pytest-rerunfailures',
     'pytest-runner',
     'pyyaml',
     'vcstool',
