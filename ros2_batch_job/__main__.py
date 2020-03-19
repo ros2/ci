@@ -15,8 +15,10 @@
 import argparse
 import configparser
 import os
+from packaging import version
 from pathlib import Path
 import platform
+import pytest
 from shutil import which
 import subprocess
 import sys
@@ -333,6 +335,30 @@ def process_coverage(args, job):
     return 0
 
 
+def force_xunit2_in_pytest_ini_files():
+    for path in Path('.').rglob('pytest.ini'):
+        config = configparser.ConfigParser()
+        config.read(str(path))
+        if version.parse(pytest.__version__) < version.parse('6.0.0'):
+            try:
+                # only if xunit2 is set continue the loop with the file unpatched
+                if config.get('pytest', 'junit_family') == 'xunit2':
+                    continue
+            except configparser.NoOptionError:
+                pass
+        else:
+            try:
+                # only need to correct explicit legacy existing option
+                if config.get('pytest', 'junit_family') != 'legacy':
+                    continue
+            except configparser.NoOptionError:
+                continue
+        print('xunit2 patch applied to ' + str(path))
+        config.set('pytest', 'junit_family', 'xunit2')
+        with open(path, 'w+') as configfile:
+            config.write(configfile)
+
+
 def build_and_test(args, job):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
@@ -382,21 +408,9 @@ def build_and_test(args, job):
     # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
-    # check if packages have a pytest.ini file and add the xunit2
-    # format if it is not present
-    for path in Path('.').rglob('pytest.ini'):
-        config = configparser.ConfigParser()
-        config.read(str(path))
-        try:
-            # only if xunit2 is set continue the loop with the file unpatched
-            if config.get('pytest', 'junit_family') == 'xunit2':
-                continue
-        except configparser.NoOptionError:
-            pass
-        print('xunit2 patch applied to ' + str(path))
-        config.set('pytest', 'junit_family', 'xunit2')
-        with open(path, 'w+') as configfile:
-            config.write(configfile)
+    # check if packages have a pytest.ini file that will override xunit2 setup
+    # and patch configuration if needed to keep the xunit2 configuration
+    force_xunit2_in_pytest_ini_files()
 
     test_cmd = [
         args.colcon_script, 'test',
