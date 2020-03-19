@@ -775,5 +775,13 @@ def _fetch_repos_file(url, filename, job):
     with open(filename, 'r') as f:
         print(f.read())
 
+
+def _combine_colcon_stderr_files():
+    with open('log/combined_stderr.log', 'w') as outfile:
+        for path in Path('log/latest_build/').rglob('stderr.log'):
+            with open(path) as infile:
+                outfile.write(infile.read())
+
+
 if __name__ == '__main__':
     sys.exit(main())
