@@ -90,7 +90,7 @@ def main(argv=None):
         'dont_notify_every_unstable_build': 'false',
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
-        'ubuntu_distro': 'bionic',
+        'ubuntu_distro': 'focal',
     }
 
     jenkins = connect(args.jenkins_url)
