@@ -14,8 +14,8 @@
 
 import argparse
 import configparser
+from distutils.version import StrictVersion
 import os
-from packaging import version
 from pathlib import Path
 import platform
 import pytest
@@ -339,7 +339,7 @@ def force_xunit2_in_pytest_ini_files():
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
         config.read(str(path))
-        if version.parse(pytest.__version__) < version.parse('6.0.0'):
+        if StrictVersion(pytest.__version__) < StrictVersion('6.0.0'):
             try:
                 # only if xunit2 is set continue the loop with the file unpatched
                 if config.get('pytest', 'junit_family') == 'xunit2':
