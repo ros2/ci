@@ -130,7 +130,6 @@ def main(sysargv=None):
             'ros1_bridge',
             'shape_msgs',
             'stereo_msgs',
-            'trajectory_msgs',
             'vision_opencv',
         ]
     else:
