@@ -134,7 +134,6 @@ RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; t
 
 # Install build and test dependencies of ros1_bridge.
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
-    python-rospkg \
     ros-${ROS1_DISTRO}-common-msgs \
     ros-${ROS1_DISTRO}-rosbash \
     ros-${ROS1_DISTRO}-roscpp \
