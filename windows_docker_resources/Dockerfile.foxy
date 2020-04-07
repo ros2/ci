@@ -58,102 +58,28 @@ RUN C:\TEMP\python-38.exe /quiet `
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # choco installs
-RUN choco install -y cmake curl git vcredist2013 vcredist140 patch
-# Pin cppcheck until our builds are compatible with 2.0 https://github.com/ros2/ros2/issues/942
-RUN choco install -y cppcheck --version 1.90
-RUN choco pin add --name=cppcheck --version 1.90
-RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx bullet
+RUN choco install -y git chefdk
 
-RUN C:\TEMP\Win64OpenSSL.exe /VERYSILENT
+# Copy over necessary files into container
+RUN mkdir C:\TEMP
+# COPY rticonnextdds-license C:\TEMP\
+# COPY rticonnextdds-src C:\TEMP\
+COPY install_ros2.json C:\TEMP\
+COPY solo.rb C:\TEMP\
+COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
+COPY qtaccount\qtaccount.ini C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows\files\
 
-# For extracting .7z files
-ADD https://www.7-zip.org/a/7z1900-x64.exe C:\TEMP\
-RUN C:\TEMP\7z1900-x64.exe /S /D="C:\Program Files\7-zip"
-RUN setx PATH "%PATH%;C:\Program Files\7-zip"
+# Download vendor cookbooks
+WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
+RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
-# Install xmllint
-# 7z.exe command line usage https://sevenzip.osdn.jp/chm/cmdline/commands/extract.htm
-RUN 7z.exe x C:\TEMP\libxml2.7z -aoa -oC:\xmllint
-RUN 7z.exe x C:\TEMP\zlib.7z -aoa -oC:\xmllint
-RUN 7z.exe x C:\TEMP\iconv.7z -aoa -oC:\xmllint
-RUN 7z.exe x C:\TEMP\opencv.zip -aoa -oC:\
+# Initial run
+RUN c:\cinc-project\cinc\bin\cinc-solo -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
-RUN 7z.exe x C:\TEMP\OpenSplice.zip -aoa -oC:\opensplice
-
-# Environment setup
-ENV OPENSSL_CONF "C:\Program Files\OpenSSL-Win64\bin\openssl.cfg"
-ENV OpenCV_DIR C:\opencv
-ENV OSPL_HOME C:\opensplice\HDE\x86_64.win64
-# You can't use ENV to append to the PATH https://stackoverflow.com/questions/42092932/appending-to-path-in-a-windows-docker-container
-RUN setx PATH "%PATH%;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Program Files\OpenSSL-Win64\bin\;C:\xmllint\bin;"C:\opencv\x64\vc16\bin"
-
-RUN powershell -Command Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1
-RUN mkdir C:\ws
-WORKDIR C:\ci
-
-# Invalidate once a day to cause online installers to check for updates
+# Invalidate daily to run updates
 RUN echo "@todays_date"
+RUN c:\cinc-project\cinc\bin\cinc-solo -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
-# Qt5 online installer
-ADD http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe C:\TEMP\
-
-# Install Qt5 with automated install script, no msvc2019 version exists but 2017 is compatible
-# Updater/silentUpdate options did not work for me. Install scripts finds and installs the most recent LTS version
-COPY qt-installer.qs C:\TEMP\
-
-# Installing Qt5 requires an account. This file contains a username and secret account token
-RUN mkdir C:\Users\ContainerAdministrator\AppData\Roaming\Qt
-COPY qtaccount\qtaccount.ini C:\Users\ContainerAdministrator\AppData\Roaming\Qt\qtaccount.ini
-
-RUN echo "If this docker build hangs longer than about 10-15 minutes at the following command, then Qt has likely updated the installer and requires updates to 'qt-installer.qs' or your Qt Account. To investigate the script, re-run the command with '--verbose'."
-RUN C:\TEMP\qt-unified-windows-x86-online.exe --script C:\TEMP\qt-installer.qs MsvcVersion=2019 ErrorLogname="%ERROR_FILENAME%"
-RUN IF EXIST "%ERROR_FILENAME%" EXIT 1
-
-RUN choco upgrade -y chocolatey
-RUN choco upgrade -y all
-
-# The rest of the python packages are installed through run_ros2_batch.py
-RUN python -m pip install -U pip setuptools pydot PyQt5
-
-COPY rticonnextdds-license\rti_license.dat C:\connext\
-ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-
-COPY rticonnextdds-src\openssl-1.0.2n-target-x64Win64VS2017.zip C:\TEMP\connext\
-RUN 7z.exe x C:\TEMP\connext\openssl-1.0.2n-target-x64Win64VS2017.zip -aoa -oC:\connext\
-ENV RTI_OPENSSL_BIN C:\connext\openssl-1.0.2n\x64Win64VS2017\release\bin
-ENV RTI_OPENSSL_LIBS C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
-
-COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\
-RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
-RUN C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe `
-  --mode unattended `
-  --unattendedmodeui minimalWithDialogs `
-  --prefix "%ProgramFiles%"
-
-COPY rticonnextdds-src\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg"
-COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\
-RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg"
-COPY rticonnextdds-src\rti_security_plugins-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-host-x64Win64.rtipkg"
-COPY rticonnextdds-src\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg C:\TEMP\connext\
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg"
-
-# Visual Studio Build Tools and .Net SDK`
-# If the most recent MSVS BuildTools causes new issues, previous releases of BuildTools can be found here:
-# https://docs.microsoft.com/en-us/visualstudio/releases/2019/history
-ADD https://aka.ms/vs/16/release/vs_BuildTools.exe C:\TEMP\
-
-# 3010 is an acceptable exit code (install was successful but restart required), but it will confuse docker.
-# This installer invalidates docker image caches pretty regularly, so it's late in the order. See documentation for installer at:
-# https://docs.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2019
-RUN C:\TEMP\vs_BuildTools.exe --quiet --wait --norestart --includeRecommended `
-  --add Microsoft.Net.Component.4.8.SDK `
-  --add Microsoft.VisualStudio.Workload.VCTools `
-  --add Microsoft.Component.MSBuild `
-  --add Microsoft.VisualStudio.Component.VC.CLI.Support `
-  || IF "%ERRORLEVEL%"=="3010" EXIT 0
-
+WORKDIR C:\ci
 CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
      "python", "run_ros2_batch.py", "%CI_ARGS%"]
