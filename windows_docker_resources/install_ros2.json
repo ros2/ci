@@ -1,0 +1,22 @@
+{
+  "default_attributes": {
+    "ros2_windows": {
+      "download_sources": "false",
+      "vs_version": "buildtools",
+      "ros2_ws": "C:/ci",
+      "rti_connext": {
+        "target_platform": "x64Win64",
+        "min_vs_version": "2017",
+        "license_file": "C:\\TEMP\\rticonnextdds-license\\rti_license.dat",
+        "installer_dir": "C:\\TEMP\\rticonnextdds-src",
+        "version": "5.3.1",
+        "edition": "pro",
+        "openssl_version": "1.0.2n"
+      }
+    }
+  },
+  "run_list": [
+    "recipe[ros2_windows::ros2]",
+    "recipe[ros2_windows::opensplice]"
+  ]
+}

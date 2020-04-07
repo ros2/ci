@@ -16,3 +16,7 @@
 [submodule "windows_docker_resources/qtaccount"]
 	path = windows_docker_resources/qtaccount
 	url = git@github.com:osrf/qtaccount
+[submodule "windows_docker_resources/ros2-cookbooks"]
+	path = windows_docker_resources/ros2-cookbooks
+	url = git@github.com:ros-infrastructure/ros2-cookbooks
+	branch = brawner/ros2-windows
