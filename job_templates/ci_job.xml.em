@@ -357,10 +357,13 @@ echo "# BEGIN SECTION: Build DockerFile"
 set CONTAINER_NAME=ros2_windows_ci_msvc%CI_VISUAL_STUDIO_VERSION%
 set DOCKERFILE=windows_docker_resources\Dockerfile.msvc%CI_VISUAL_STUDIO_VERSION%
 
+rem "Change dockerfile once per day to invalidate docker caches"
+powershell "(Get-Content ${Env:DOCKERFILE}).replace('@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
+
 rem "Finding the ReleaseId is much easier with powershell than cmd"
 powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
 set /p RELEASE_ID=&lt; release_id.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID% --build-arg TODAYS_DATE="%date%"
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources
 echo "# END SECTION"
 
