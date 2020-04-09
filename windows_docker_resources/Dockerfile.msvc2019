@@ -5,7 +5,6 @@
 # To find this value run in powershell:
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=1909
-ARG TODAYS_DATE=0
 
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
@@ -84,7 +83,7 @@ RUN mkdir C:\ws
 WORKDIR C:\ci
 
 # Invalidate once a day to cause online installers to check for updates
-RUN echo %TODAYS_DATE%
+RUN echo "@todays_date"
 
 # Qt5 online installer
 ADD http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe C:\TEMP\
