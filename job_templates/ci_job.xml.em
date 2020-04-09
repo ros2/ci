@@ -363,7 +363,7 @@ powershell "(Get-Content ${Env:DOCKERFILE}).replace('@todays_date', $(Get-Date).
 rem "Finding the ReleaseId is much easier with powershell than cmd"
 powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
 set /p RELEASE_ID=&lt; release_id.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID% --build-arg TODAYS_DATE="%date%"
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources
 echo "# END SECTION"
 
