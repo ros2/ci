@@ -78,6 +78,35 @@ ENV OSPL_HOME C:\opensplice\HDE\x86_64.win64
 # You can't use ENV to append to the PATH https://stackoverflow.com/questions/42092932/appending-to-path-in-a-windows-docker-container
 RUN setx PATH "%PATH%;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\OpenSSL-Win64\bin\;C:\xmllint\bin;"C:\opencv\x64\vc16\bin"
 
+# RTI Connext License
+COPY rticonnextdds-license\rti_license.dat C:\connext\
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+
+# RTI Connext OpenSSL
+COPY rticonnextdds-src\openssl-1.0.2n-target-x64Win64VS2017.zip C:\TEMP\connext\
+RUN 7z.exe x C:\TEMP\connext\openssl-1.0.2n-target-x64Win64VS2017.zip -aoa -oC:\connext\
+ENV RTI_OPENSSL_BIN C:\connext\openssl-1.0.2n\x64Win64VS2017\release\bin
+ENV RTI_OPENSSL_LIB C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
+
+# RTI Connext
+COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\
+RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
+RUN C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe `
+  --mode unattended `
+  --unattendedmodeui minimalWithDialogs `
+  --prefix "%ProgramFiles%"
+
+# RTI Connext Packages
+COPY rticonnextdds-src\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg"
+COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\
+RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg"
+COPY rticonnextdds-src\rti_security_plugins-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-host-x64Win64.rtipkg"
+COPY rticonnextdds-src\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg C:\TEMP\connext\
+RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg"
+
 RUN powershell -Command Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1
 RUN mkdir C:\ws
 WORKDIR C:\ci
@@ -104,31 +133,6 @@ RUN choco upgrade -y all
 
 # The rest of the python packages are installed through run_ros2_batch.py
 RUN python -m pip install -U pip setuptools pydot PyQt5
-
-COPY rticonnextdds-license\rti_license.dat C:\connext\
-ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-
-COPY rticonnextdds-src\openssl-1.0.2n-target-x64Win64VS2017.zip C:\TEMP\connext\
-RUN 7z.exe x C:\TEMP\connext\openssl-1.0.2n-target-x64Win64VS2017.zip -aoa -oC:\connext\
-ENV RTI_OPENSSL_BIN C:\connext\openssl-1.0.2n\x64Win64VS2017\release\bin
-ENV RTI_OPENSSL_LIB C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
-
-COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\
-RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
-RUN C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe `
-  --mode unattended `
-  --unattendedmodeui minimalWithDialogs `
-  --prefix "%ProgramFiles%"
-
-COPY rticonnextdds-src\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\openssl-1.0.2n-5.3.1-host-x64Win64.rtipkg"
-COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\
-RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg"
-COPY rticonnextdds-src\rti_security_plugins-5.3.1-host-x64Win64.rtipkg C:\TEMP\connext\
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-host-x64Win64.rtipkg"
-COPY rticonnextdds-src\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg C:\TEMP\connext\
-RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg"
 
 # Visual Studio Build Tools and .Net SDK`
 ADD https://aka.ms/vs/16/release/vs_BuildTools.exe C:\TEMP\
