@@ -376,7 +376,7 @@ def main(argv=None):
             'cmake_build_type': 'None',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': data['test_args_default'].replace('--ctest-args -LE xfail', '--ctest-args -L xfail').replace("--pytest-args -m 'not xfail'", '--pytest-args -m xfail')
+            'test_args_default': data['test_args_default'].replace('--ctest-args -LE xfail', '--ctest-args -L xfail').replace("--pytest-args -m 'not xfail'", '--pytest-args -m xfail --runxfail')
         })
 
         # configure turtlebot jobs on Linux only for now
