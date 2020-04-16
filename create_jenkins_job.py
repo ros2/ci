@@ -370,6 +370,15 @@ def main(argv=None):
             'test_args_default': test_args_default,
         })
 
+        # configure nightly triggered job for excluded test
+        job_name = 'nightly_' + job_os_name + '_xfail'
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'None',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'test_args_default': data['test_args_default'].replace('--ctest-args -LE xfail', '--ctest-args -L xfail').replace("--pytest-args -m 'not xfail'", '--pytest-args -m xfail')
+        })
+
         # configure turtlebot jobs on Linux only for now
         if os_name in ['linux', 'linux-aarch64']:
             create_job(os_name, 'ci_turtlebot-demo_' + os_name, 'ci_job.xml.em', {
