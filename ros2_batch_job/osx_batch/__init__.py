@@ -57,6 +57,18 @@ class OSXBatchJob(BatchJob):
             warn('OSPL_HOME not set; using default value')
             os.environ['OSPL_HOME'] = os.path.join(
                 os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
+        # TODO(nuclearsandwich) remove this when Connext supports system openssl
+        # https://github.com/ros2/system_tests/pull/409
+        if 'RTI_OPENSSL_BIN' not in os.environ:
+            warn('RTI_OPENSSL_BIN unset; using default value')
+            os.environ['RTI_OPENSSL_BIN'] = os.path.join(
+                '/Applications', 'rti_connext_dds-5.3.1', 'openssl-1.0.2n',
+                'x64Darwin17clang9.0', 'release', 'bin')
+        if 'RTI_OPENSSL_LIBS' not in os.environ:
+            warn('RTI_OPENSSL_LIBS unset; using default value')
+            os.environ['RTI_OPENSSL_LIBS'] = os.path.join(
+                '/Applications', 'rti_connext_dds-5.3.1', 'openssl-1.0.2n',
+                'x64Darwin17clang9.0', 'release', 'lib')
         # TODO(wjwwood): remove this when qt5 is linked on macOS by default
         # See: https://github.com/Homebrew/homebrew-core/issues/8392#issuecomment-334328367
         os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + os.pathsep + \
