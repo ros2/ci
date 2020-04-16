@@ -84,7 +84,7 @@ def main(argv=None):
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
-        'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 2',
+        'test_args_default': "--event-handlers console_direct+ --executor sequential --retest-until-pass 2 --ctest-args -LE xfail --pytest-args -m 'not xfail'",
         'compile_with_clang_default': 'false',
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
@@ -258,9 +258,7 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': asan_build_args,
-                'test_args_default': (
-                    '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 2 --packages-up-to rcpputils'),
+                'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
             })
 
         # configure nightly job for compiling with clang+libcxx on linux
@@ -279,7 +277,7 @@ def main(argv=None):
                 # We do not want to test more than this as we observe issues with the clang libcxx standard library
                 # we don't plan to tackle for now. The important part of this nightly is to make sure the code compiles
                 # without emitting thread-safety related warnings.
-                'test_args_default': '--event-handlers console_direct+ --executor sequential --packages-select rcutils',
+                'test_args_default': data['test_args_default'].replace(' --retest-until-pass 2', '') + ' --packages-select rcutils'
             })
 
         # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
@@ -293,9 +291,7 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': tsan_build_args,
-                'test_args_default': (
-                    '--event-handlers console_direct+ --executor sequential '
-                    '--retest-until-pass 2 --packages-select rcpputils rcutils'),
+                'test_args_default': data['test_args_default'] + ' --packages-select rcpputils rcutils',
             })
 
         # configure a manually triggered version of the coverage job
@@ -363,7 +359,7 @@ def main(argv=None):
         if os_name == 'windows':
             job_name = job_name[:15]
         test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-        test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail') + " --ctest-args -LE linter --pytest-args -m 'not linter'"
+        test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail').replace('--ctest-args -LE xfail', "--ctest-args -LE '(linter|xfail)'").replace("--pytest-args -m 'not xfail'", "--pytest-args -m 'not linter and not xfail'")
         if job_os_name == 'linux-aarch64':
             # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
             test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
