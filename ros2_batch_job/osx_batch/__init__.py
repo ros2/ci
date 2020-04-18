@@ -61,14 +61,16 @@ class OSXBatchJob(BatchJob):
         # https://github.com/ros2/system_tests/pull/409
         if 'RTI_OPENSSL_BIN' not in os.environ:
             warn('RTI_OPENSSL_BIN unset; using default value')
-            os.environ['RTI_OPENSSL_BIN'] = os.path.join(
-                '/Applications', 'rti_connext_dds-5.3.1', 'openssl-1.0.2n',
-                'x64Darwin17clang9.0', 'release', 'bin')
+            os.environ['RTI_OPENSSL_BIN'] = '/usr/local/opt/openssl@1.0/bin'
+            # os.environ['RTI_OPENSSL_BIN'] = os.path.join(
+            #     '/Applications', 'rti_connext_dds-5.3.1', 'openssl-1.0.2n',
+            #     'x64Darwin17clang9.0', 'release', 'bin')
         if 'RTI_OPENSSL_LIBS' not in os.environ:
             warn('RTI_OPENSSL_LIBS unset; using default value')
-            os.environ['RTI_OPENSSL_LIBS'] = os.path.join(
-                '/Applications', 'rti_connext_dds-5.3.1', 'openssl-1.0.2n',
-                'x64Darwin17clang9.0', 'release', 'lib')
+            os.environ['RTI_OPENSSL_LIBS'] = '/usr/local/opt/openssl@1.0/lib'
+            # os.environ['RTI_OPENSSL_LIBS'] = os.path.join(
+            #     '/Applications', 'rti_connext_dds-5.3.1', 'openssl-1.0.2n',
+            #     'x64Darwin17clang9.0', 'release', 'lib')
         # TODO(wjwwood): remove this when qt5 is linked on macOS by default
         # See: https://github.com/Homebrew/homebrew-core/issues/8392#issuecomment-334328367
         os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + os.pathsep + \
