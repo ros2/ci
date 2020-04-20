@@ -84,7 +84,7 @@ def main(argv=None):
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
         'build_args_default': '--event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON',
-        'test_args_default': "--event-handlers console_direct+ --executor sequential --retest-until-pass 2 --ctest-args -LE xfail --pytest-args -m 'not xfail'",
+        'test_args_default': '--event-handlers console_direct+ --executor sequential --retest-until-pass 2 --ctest-args -LE xfail --pytest-args -m "not xfail"',
         'compile_with_clang_default': 'false',
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
@@ -360,8 +360,8 @@ def main(argv=None):
             job_name = job_name[:15]
         test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
         test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
-        test_args_default = test_args_default.replace('--ctest-args -LE xfail', "--ctest-args -LE '(linter|xfail)'")
-        test_args_default = test_args_default.replace("--pytest-args -m 'not xfail'", "--pytest-args -m 'not linter and not xfail'")
+        test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -LE "(linter|xfail)"')
+        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
         if job_os_name == 'linux-aarch64':
             # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
             test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
@@ -375,7 +375,7 @@ def main(argv=None):
         # configure nightly triggered job for excluded test
         job_name = 'nightly_' + job_os_name + '_xfail'
         test_args_default = data['test_args_default'].replace('--ctest-args -LE xfail', '--ctest-args -L xfail')
-        test_args_default = test_args_default.replace("--pytest-args -m 'not xfail'", '--pytest-args -m xfail --runxfail')
+        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
