@@ -319,6 +319,8 @@ if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
 if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:"=\"!"
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:|=^|!"
   set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
