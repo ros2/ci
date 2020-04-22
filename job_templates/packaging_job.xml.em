@@ -342,7 +342,7 @@ rem "Finding the ReleaseId is much easier with powershell than cmd"
 powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
 set /p RELEASE_ID=&lt; release_id.txt
 set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID%
-docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources  || exit /b %ERRORLEVEL%
+docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources  || exit /b "!ERRORLEVEL!"
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -408,8 +408,8 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
-docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b %ERRORLEVEL%
-docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b %ERRORLEVEL%
+docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b "!ERRORLEVEL!"
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b "!ERRORLEVEL!"
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
