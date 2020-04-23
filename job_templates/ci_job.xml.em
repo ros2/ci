@@ -362,10 +362,10 @@ set DOCKERFILE=windows_docker_resources\Dockerfile.msvc%CI_VISUAL_STUDIO_VERSION
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 
-rem "Finding the ReleaseId is much easier with powershell than cmd"
-powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
-set /p RELEASE_ID=&lt; release_id.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID%
+rem "Finding the Release Version is much easier with powershell than cmd"
+powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version" > release_version.txt
+set /p RELEASE_VERSION=&lt; release_version.txt
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
