@@ -335,23 +335,28 @@ def process_coverage(args, job):
     return 0
 
 
+def check_xunit2_junit_family_value(config, value):
+    try:
+        if config.get('pytest', 'junit_family') == value:
+            return True
+    except configparser.NoOptionError:
+        return False
+    else:
+        return False
+
+
 def force_xunit2_in_pytest_ini_files():
+    xunit_6_or_greater = StrictVersion(pytest.__version__) >= StrictVersion('6.0.0')
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
         config.read(str(path))
-        if StrictVersion(pytest.__version__) < StrictVersion('6.0.0'):
-            try:
-                # only if xunit2 is set continue the loop with the file unpatched
-                if config.get('pytest', 'junit_family') == 'xunit2':
-                    continue
-            except configparser.NoOptionError:
-                pass
+        if xunit_6_or_greater:
+            # only need to correct explicit legacy option if exists
+            if not check_xunit2_junit_family_value(config, 'legacy'):
+                continue
         else:
-            try:
-                # only need to correct explicit legacy existing option
-                if config.get('pytest', 'junit_family') != 'legacy':
-                    continue
-            except configparser.NoOptionError:
+            # in xunit < 6 need to enforce xunit2 if not set
+            if check_xunit2_junit_family_value(config, 'xunit2'):
                 continue
         print('xunit2 patch applied to ' + str(path))
         config.set('pytest', 'junit_family', 'xunit2')
