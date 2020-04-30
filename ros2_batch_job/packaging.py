@@ -136,18 +136,32 @@ def build_and_test_and_package(args, job):
     # Only on Linux and OSX Python scripts have a shebang line
     if args.os in ['linux', 'osx']:
         print('# BEGIN SUBSECTION: rewrite shebang lines')
-        paths_to_files = []
 
-        bin_path = os.path.join(args.installspace, 'bin')
-        bin_contents = [os.path.join(bin_path, name) for name in os.listdir(bin_path)]
-        paths_to_files.extend([path for path in bin_contents if os.path.isfile(path)])
+        def _get_files_from_install(install_prefix):
+            paths_to_files = []
 
-        # Demo nodes are installed to 'lib/<package_name>'
-        lib_path = os.path.join(args.installspace, 'lib')
-        for lib_sub_dir in next(os.walk(lib_path))[1]:
-            sub_dir_path = os.path.join(lib_path, lib_sub_dir)
-            sub_dir_contents = [os.path.join(sub_dir_path, name) for name in os.listdir(sub_dir_path)]
-            paths_to_files.extend([path for path in sub_dir_contents if os.path.isfile(path)])
+            bin_path = os.path.join(install_prefix, 'bin')
+            if os.path.exists(bin_path):
+                bin_contents = [os.path.join(bin_path, name) for name in os.listdir(bin_path)]
+                paths_to_files.extend([path for path in bin_contents if os.path.isfile(path)])
+
+            # Demo nodes are installed to 'lib/<package_name>'
+            lib_path = os.path.join(install_prefix, 'lib')
+            if os.path.exists(lib_path):
+                for lib_sub_dir in next(os.walk(lib_path))[1]:
+                    sub_dir_path = os.path.join(lib_path, lib_sub_dir)
+                    sub_dir_contents = [os.path.join(sub_dir_path, name) for name in os.listdir(sub_dir_path)]
+                    paths_to_files.extend([path for path in sub_dir_contents if os.path.isfile(path)])
+
+            return paths_to_files
+
+        if not args.isolated:
+            paths_to_files = _get_files_from_install(args.installspace)
+        else:
+            paths_to_files = []
+            for pkg_name in [p for p in os.listdir(args.installspace) if os.path.isdir(p)]:
+                paths_to_files += _get_files_from_install(
+                    os.path.join(args.installspace, pkg_name))
 
         for path in paths_to_files:
             with open(path, 'rb') as h:
