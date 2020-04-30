@@ -38,11 +38,11 @@ WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
 # Initial run
-RUN c:\cinc-project\cinc\bin\cinc-solo -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
-RUN c:\cinc-project\cinc\bin\cinc-solo -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
 WORKDIR C:\ci
 CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
