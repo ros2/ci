@@ -93,3 +93,8 @@ choices.remove(cmake_build_type)
           </choices>
         </hudson.model.ChoiceParameterDefinition>
 @[end if]@
+        <hudson.model.BooleanParameterDefinition>
+          <name>CI_ISOLATED</name>
+          <description>By setting this to True, the build will use the --isolated option.</description>
+          <defaultValue>@(use_isolated_default)</defaultValue>
+        </hudson.model.BooleanParameterDefinition>

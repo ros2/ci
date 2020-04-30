@@ -34,6 +34,7 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     os_name=os_name,
+    use_isolated_default=False,
 ))@
 @(SNIPPET(
     'property_parameter-definition_rmw_implementations',
@@ -118,6 +119,7 @@ use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
 use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
+isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
@@ -174,6 +176,9 @@ if [ -n "${CI_ROS2_SUPPLEMENTAL_REPOS_URL+x}" ]; then
 fi
 if [ -n "${CI_MIXED_ROS_OVERLAY_PKGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --mixed-ros-overlay-pkgs $CI_MIXED_ROS_OVERLAY_PKGS"
+fi
+if [ "$CI_ISOLATED" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --isolated"
 fi
 if [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
   export CI_ROS1_DISTRO=noetic
@@ -303,6 +308,9 @@ set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_TEST_BRIDGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --test-bridge"
 )
+if "!CI_ISOLATED!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --isolated"
+)
 if "!CI_COLCON_MIXIN_URL!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
 )
@@ -384,6 +392,9 @@ if "!CI_ROS2_REPOS_URL!" EQU "" (
 set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_TEST_BRIDGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --test-bridge"
+)
+if "!CI_ISOLATED!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --isolated"
 )
 if "!CI_COLCON_MIXIN_URL!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
