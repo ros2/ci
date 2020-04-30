@@ -17,6 +17,7 @@
   },
   "run_list": [
     "recipe[ros2_windows::ros2]",
-    "recipe[ros2_windows::opensplice]"
+    "recipe[ros2_windows::opensplice]",
+    "recipe[ros2_windows::rti_connext]"
   ]
 }
