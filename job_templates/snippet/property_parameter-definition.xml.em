@@ -10,6 +10,7 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     os_name=os_name,
+    use_isolated_default=use_isolated_default,
 ))@
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_WHITESPACE_IN_PATHS</name>
@@ -23,11 +24,6 @@ This tests the robustness to whitespace being within the different paths.</descr
     ignore_rmw_default=ignore_rmw_default,
     use_connext_debs_default=use_connext_debs_default,
 ))@
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_ISOLATED</name>
-          <description>By setting this to True, the build will use the --isolated option.</description>
-          <defaultValue>@(use_isolated_default)</defaultValue>
-        </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_COMPILE_WITH_CLANG</name>
           <description>By setting this to true, the build will run with clang compiler on Linux (currently ignored on non-Linux).</description>
