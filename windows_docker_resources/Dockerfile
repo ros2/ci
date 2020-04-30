@@ -13,7 +13,7 @@ ARG WINDOWS_RELEASE_ID=1909
 FROM mcr.microsoft.com/windows@sha256:27f1a2a1f2f784f3716c2400d7e1bf93074a75e15f2974861c00275f93487c88
 
 # Install cinc-solo, a compiled binary of chef-solo
-RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install"
+RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 15.10.12"
 
 # Install Chocolatey by powershell script
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
@@ -23,8 +23,11 @@ RUN choco install -y git chefdk
 
 # Copy over necessary files into container
 RUN mkdir C:\TEMP
-# COPY rticonnextdds-license C:\TEMP\
-# COPY rticonnextdds-src C:\TEMP\
+COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
+COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
+RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
+RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg
+
 COPY install_ros2.json C:\TEMP\
 COPY solo.rb C:\TEMP\
 COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
@@ -35,11 +38,11 @@ WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
 # Initial run
-RUN c:\cinc-project\cinc\bin\cinc-solo -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
-RUN c:\cinc-project\cinc\bin\cinc-solo -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
 WORKDIR C:\ci
 CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
