@@ -459,7 +459,7 @@ def run(args, build_function, blacklisted_package_names=None):
         args.os = 'linux'
         from .linux_batch import LinuxBatchJob
         job = LinuxBatchJob(args)
-    elif args.os == 'osx' or platform_name.startswith('darwin'):
+    elif args.os == 'osx' or platform_name.startswith('darwin') or platform_name.startswith('macos'):
         args.os = 'osx'
         from .osx_batch import OSXBatchJob
         job = OSXBatchJob(args)
