@@ -85,7 +85,7 @@ if sys.platform in ('darwin'):
         'lxml',
         'netifaces',
         'numpy',
-        'PyQT5'
+        'PyQt5'
     ]
 
 colcon_packages = [
