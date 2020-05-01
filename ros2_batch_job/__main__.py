@@ -84,7 +84,8 @@ if sys.platform in ('darwin'):
         'cryptography',
         'lxml',
         'netifaces',
-        'numpy'
+        'numpy',
+        'PyQT5'
     ]
 
 colcon_packages = [
