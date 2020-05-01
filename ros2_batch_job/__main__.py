@@ -83,7 +83,8 @@ if sys.platform in ('darwin'):
     pip_dependencies += [
         'cryptography',
         'lxml',
-        'netifaces'
+        'netifaces',
+        'numpy'
     ]
 
 colcon_packages = [
