@@ -374,7 +374,8 @@ def main(argv=None):
 
         # configure nightly triggered job for excluded test
         job_name = 'nightly_' + job_os_name + '_xfail'
-        test_args_default = data['test_args_default'].replace('--ctest-args -LE xfail', '--ctest-args -L xfail')
+        test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
+        test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -L xfail')
         test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
