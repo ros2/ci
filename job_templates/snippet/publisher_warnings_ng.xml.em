@@ -42,6 +42,14 @@
 @[else]@
 @{assert False, 'Unknown os_name: ' + os_name}@
 @[end if]@
+    <io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+      <id />
+      <name />
+      <pattern>ws/log/latest_test/**/stderr.log</pattern>
+      <reportEncoding />
+      <skipSymbolicLinks>false</skipSymbolicLinks>
+      <parserId>python-warnings</parserId>
+    </io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
   </analysisTools>
   <sourceCodeEncoding></sourceCodeEncoding>
   <sourceDirectory></sourceDirectory>
