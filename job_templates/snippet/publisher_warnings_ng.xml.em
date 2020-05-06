@@ -48,7 +48,7 @@
       <pattern>ws/log/latest_test/**/stderr.log</pattern>
       <reportEncoding />
       <skipSymbolicLinks>false</skipSymbolicLinks>
-      <parserId>python-warnings</parserId>
+      <parserId>colcon-log-pytest-warnings</parserId>
     </io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
   </analysisTools>
   <sourceCodeEncoding></sourceCodeEncoding>
