@@ -6,11 +6,17 @@
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=1909
 
+# In order to ensure the image is correctly compatible with the host system a
+# more precise version than the release id is required. To find this value run
+# the following in powershell.
+# $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version"
+# Fall back to the Release ID
+ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
+
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
-#FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_ID
-FROM mcr.microsoft.com/windows@sha256:27f1a2a1f2f784f3716c2400d7e1bf93074a75e15f2974861c00275f93487c88
+FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # These are versioned files, so they shouldn't invalidate caches. Renaming to fixed names.
 # Regularly updated installers are next to their associated code.
