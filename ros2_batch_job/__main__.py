@@ -546,7 +546,7 @@ def run(args, build_function, blacklisted_package_names=None):
             if args.cmake_build_type == 'Debug':
                 pip_packages += [
                     'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.12.3-cp37-cp37dm-win_amd64.whl',  # required by cryptography
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.7-cp37-cp37dm-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.7-cp37-cp37dm-win_amd64-openssl111.whl',
                     'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp37-cp37dm-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.16.2-cp37-cp37dm-win_amd64.whl',
