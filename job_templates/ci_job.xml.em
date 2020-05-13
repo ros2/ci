@@ -358,6 +358,10 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Build DockerFile"
+@# Eloquent uses the Dashing Dockerfile.
+if "!CI_ROS_DISTRO!" == "eloquent" (
+  set "CI_ROS_DISTRO=dashing"
+)
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
 set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%
 
