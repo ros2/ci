@@ -6,6 +6,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     ubuntu_distro=ubuntu_distro,
+    ros_distro=ros_distro,
     colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,

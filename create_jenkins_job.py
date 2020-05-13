@@ -91,6 +91,7 @@ def main(argv=None):
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
         'ubuntu_distro': 'focal',
+        'ros_distro': 'foxy',
     }
 
     jenkins = connect(args.jenkins_url)
