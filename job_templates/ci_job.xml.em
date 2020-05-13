@@ -103,6 +103,7 @@ colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
+ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
@@ -357,8 +358,12 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Build DockerFile"
-set CONTAINER_NAME=ros2_windows_ci_msvc%CI_VISUAL_STUDIO_VERSION%
-set DOCKERFILE=windows_docker_resources\Dockerfile.msvc%CI_VISUAL_STUDIO_VERSION%
+@# Eloquent uses the Dashing Dockerfile.
+if "!CI_ROS_DISTRO!" == "eloquent" (
+  set "CI_ROS_DISTRO=dashing"
+)
+set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
+set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%
 
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
