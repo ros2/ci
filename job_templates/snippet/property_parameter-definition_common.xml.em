@@ -53,6 +53,22 @@ choices.remove(ubuntu_distro)
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>CI_ROS_DISTRO</name>
+          <description>Select the ROS distribution to target.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>@ros_distro</string>
+@{
+choices = ['dashing', 'eloquent', 'foxy']
+choices.remove(ros_distro)
+}@
+@[for choice in choices]@
+              <string>@choice</string>
+@[end for]@
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_COLCON_MIXIN_URL</name>
           <description>A mixin index url for colcon to use.</description>
@@ -93,3 +109,8 @@ choices.remove(cmake_build_type)
           </choices>
         </hudson.model.ChoiceParameterDefinition>
 @[end if]@
+        <hudson.model.BooleanParameterDefinition>
+          <name>CI_ISOLATED</name>
+          <description>By setting this to True, the build will use the --isolated option.</description>
+          <defaultValue>@(use_isolated_default)</defaultValue>
+        </hudson.model.BooleanParameterDefinition>

@@ -30,10 +30,12 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     ubuntu_distro=ubuntu_distro,
+    ros_distro=ros_distro,
     colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     os_name=os_name,
+    use_isolated_default=False,
 ))@
 @(SNIPPET(
     'property_parameter-definition_rmw_implementations',
@@ -108,6 +110,7 @@ All packages listed here have to be available from either the primary or supplem
 @[if 'linux' in os_name]@
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
 @[end if]@
+ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
@@ -118,6 +121,7 @@ use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
 use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
 use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
+isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
@@ -174,6 +178,9 @@ if [ -n "${CI_ROS2_SUPPLEMENTAL_REPOS_URL+x}" ]; then
 fi
 if [ -n "${CI_MIXED_ROS_OVERLAY_PKGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --mixed-ros-overlay-pkgs $CI_MIXED_ROS_OVERLAY_PKGS"
+fi
+if [ "$CI_ISOLATED" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --isolated"
 fi
 if [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
   export CI_ROS1_DISTRO=noetic
@@ -303,6 +310,9 @@ set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_TEST_BRIDGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --test-bridge"
 )
+if "!CI_ISOLATED!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --isolated"
+)
 if "!CI_COLCON_MIXIN_URL!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
 )
@@ -319,6 +329,8 @@ if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
 if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:"=\"!"
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:|=^|!"
   set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
@@ -332,14 +344,21 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
 echo "# BEGIN SECTION: Build DockerFile"
-set CONTAINER_NAME=ros2_windows_ci_msvc%CI_VISUAL_STUDIO_VERSION%
-set DOCKERFILE=windows_docker_resources\Dockerfile.msvc%CI_VISUAL_STUDIO_VERSION%
+@# Eloquent uses the Dashing Dockerfile.
+if "!CI_ROS_DISTRO!" == "eloquent" (
+  set "CI_ROS_DISTRO=dashing"
+)
+set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
+set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%%
 
-rem "Finding the ReleaseId is much easier with powershell than cmd"
-powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
-set /p RELEASE_ID=&lt; release_id.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID% --build-arg TODAYS_DATE="%date%"
-docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources
+rem "Change dockerfile once per day to invalidate docker caches"
+powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
+
+rem "Finding the Release Version is much easier with powershell than cmd"
+powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
+set /p RELEASE_VERSION=&lt; release_version.txt
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION%
+docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -380,6 +399,9 @@ set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_TEST_BRIDGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --test-bridge"
 )
+if "!CI_ISOLATED!" == "true" (
+  set "CI_ARGS=!CI_ARGS! --isolated"
+)
 if "!CI_COLCON_MIXIN_URL!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
 )
@@ -394,6 +416,8 @@ if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
 if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:"=\"!"
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:|=^|!"
   set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
@@ -405,8 +429,8 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
-docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%
-docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%
+docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b !ERRORLEVEL!
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@

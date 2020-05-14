@@ -23,6 +23,7 @@
     use_connext_debs_default=use_connext_debs_default,
     use_isolated_default=use_isolated_default,
     ubuntu_distro=ubuntu_distro,
+    ros_distro=ros_distro,
     colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,

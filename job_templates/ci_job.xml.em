@@ -31,6 +31,7 @@
     use_connext_debs_default=use_connext_debs_default,
     use_isolated_default=use_isolated_default,
     ubuntu_distro=ubuntu_distro,
+    ros_distro=ros_distro,
     cmake_build_type=cmake_build_type,
     colcon_mixin_url=colcon_mixin_url,
     build_args_default=build_args_default,
@@ -102,6 +103,7 @@ colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
+ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
@@ -341,6 +343,8 @@ if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
 if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:"=\"!"
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:|=^|!"
   set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
@@ -354,14 +358,21 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Build DockerFile"
-set CONTAINER_NAME=ros2_windows_ci_msvc%CI_VISUAL_STUDIO_VERSION%
-set DOCKERFILE=windows_docker_resources\Dockerfile.msvc%CI_VISUAL_STUDIO_VERSION%
+@# Eloquent uses the Dashing Dockerfile.
+if "!CI_ROS_DISTRO!" == "eloquent" (
+  set "CI_ROS_DISTRO=dashing"
+)
+set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
+set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%
 
-rem "Finding the ReleaseId is much easier with powershell than cmd"
-powershell $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId > release_id.txt
-set /p RELEASE_ID=&lt; release_id.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_ID=%RELEASE_ID% --build-arg TODAYS_DATE="%date%"
-docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources
+rem "Change dockerfile once per day to invalidate docker caches"
+powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
+
+rem "Finding the Release Version is much easier with powershell than cmd"
+powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
+set /p RELEASE_VERSION=&lt; release_version.txt
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION%
+docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -428,6 +439,8 @@ if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
 )
 if "!CI_TEST_ARGS!" NEQ "" (
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:"=\"!"
+  set "CI_TEST_ARGS=!CI_TEST_ARGS:|=^|!"
   set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
 )
 echo Using args: !CI_ARGS!
@@ -439,8 +452,8 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
-docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%
-docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%
+docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b !ERRORLEVEL!
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@

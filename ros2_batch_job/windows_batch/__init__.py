@@ -91,7 +91,7 @@ class WindowsBatchJob(BatchJob):
             # Use the env file to call the commands
             # ensure that quoted arguments are passed through as quoted arguments
             cmd = ['env.bat'] + [
-                '"%s"' % c if ' ' in c and not (c.startswith('"') and c.endswith('"')) else c
+                '"%s"' % c if (' ' in c or '|' in c) and not (c.startswith('"') and c.endswith('"')) else c
                 for c in cmd]
             # Pass along to the original runner
             return current_run(cmd, **kwargs)

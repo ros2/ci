@@ -14,20 +14,20 @@ https://github.com/ros-infrastructure/ros_buildfarm/blob/master/doc/environment.
 
 This document will tell you what dependencies to install/setup like `jenkinsapi` and `ros_buildfarm`, as well as tell you how to setup authentication for Jenkins so that the script can login into your Jenkins build farm.
 
-Once you've setup your environment, run this:
+Once you've setup your environment, you can do a dry run with the following:
 
 ```
 $ python3 create_jenkins_job.py --jenkins-url http://jenkins.example.com
 ```
 
 The above will contact the Jenkins master at the provided url and try to authenticate.
-If successful, it will create three jobs:
+If successful, it will output the changes that would be made, but not commit them.
 
-- ros2_batch_ci_linux
-- ros2_batch_ci_osx
-- ros2_batch_ci_windows
+If the changes look good, then run the same command with the `--commit` option to actually make the changes:
 
-These three jobs are very similar, with minor changes for the differences in the operating systems.
+```
+$ python3 create_jenkins_job.py --jenkins-url http://jenkins.example.com --commit
+```
 
 You can also change the default location from which these CI scripts are pulled with options `--ci-scripts-repository` and `--ci-scripts-default-branch`.
 They allow you to change the default location from which to get the CI scripts, which is useful if you have forked ros2/ci.

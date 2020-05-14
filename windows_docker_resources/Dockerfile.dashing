@@ -5,12 +5,18 @@
 # To find this value run in powershell:
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=1909
-ARG TODAYS_DATE=0
+
+# In order to ensure the image is correctly compatible with the host system a
+# more precise version than the release id is required. To find this value run
+# the following in powershell.
+# $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version"
+# Fall back to the Release ID
+ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
-FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_ID
+FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # These are versioned files, so they shouldn't invalidate caches. Renaming to fixed names.
 # Regularly updated installers are next to their associated code.
@@ -112,7 +118,7 @@ RUN mkdir C:\ws
 WORKDIR C:\ci
 
 # Invalidate once a day to cause online installers to check for updates
-RUN echo %TODAYS_DATE%
+RUN echo "@todays_date"
 
 # Qt5 online installer
 ADD http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe C:\TEMP\
