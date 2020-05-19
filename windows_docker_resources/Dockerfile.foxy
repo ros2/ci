@@ -29,7 +29,7 @@ ADD https://slproweb.com/download/Win64OpenSSL-1_0_2u.exe C:\TEMP\Win64OpenSSL.e
 ADD https://github.com/ros2/ros2/releases/download/opencv-archives/opencv-3.4.6-vc16.VS2019.zip C:\TEMP\opencv.zip
 
 # Python 3.8
-ADD https://www.python.org/ftp/python/3.8.2/python-3.8.2-amd64.exe C:\TEMP\python-38.exe
+ADD https://www.python.org/ftp/python/3.8.3/python-3.8.3-amd64.exe C:\TEMP\python-38.exe
 
 # Custom choco packages
 ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg C:\TEMP\asio.nupkg
