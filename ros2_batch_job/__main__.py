@@ -308,6 +308,8 @@ def process_coverage(args, job):
             '-k',
             '-r', os.path.abspath('.'),
             '--xml', '--output=' + outfile,
+            '-e' + os.path.join(os.path.abspath('.'), args.installspace),
+            '-e' + os.path.join(os.path.abspath('.'), args.buildspace),
             '-g']
         print(cmd)
         subprocess.run(cmd, check=True)
