@@ -205,6 +205,9 @@ def get_args(sysargv=None):
         '--force-ansi-color', default=False, action='store_true',
         help="forces this program to output ansi color")
     parser.add_argument(
+        '--ros-distro', default='foxy',
+        help="The ROS distribution being built")
+    parser.add_argument(
         '--ros1-path', default=None,
         help="path of ROS 1 workspace to be sourced")
     parser.add_argument(
