@@ -90,10 +90,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 # Get and install the RTI web binaries.
 RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
 RUN cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz
-ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
+# ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
-ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+# ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 
 # Add the RTI binaries we made.
 # ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
