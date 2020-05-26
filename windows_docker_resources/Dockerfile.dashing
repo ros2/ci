@@ -102,6 +102,7 @@ COPY qt-installer.qs C:\TEMP\
 RUN mkdir C:\Users\ContainerAdministrator\AppData\Roaming\Qt
 COPY qtaccount\qtaccount.ini C:\Users\ContainerAdministrator\AppData\Roaming\Qt\qtaccount.ini
 
+RUN echo "If this docker build hangs longer than about 10-15 minutes at the following command, then Qt has likely updated the installer and requires updates to 'qt-installer.qs' or your Qt Account. To investigate the script, re-run the command with '--verbose'."
 RUN C:\TEMP\qt-unified-windows-x86-online.exe --script C:\TEMP\qt-installer.qs MsvcVersion=2019 ErrorLogname="%ERROR_FILENAME%"
 RUN IF EXIST "%ERROR_FILENAME%" EXIT 1
 
