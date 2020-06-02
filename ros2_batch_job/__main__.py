@@ -302,14 +302,15 @@ def process_coverage(args, job):
         # -xml  Output cobertura xml
         # -output=<outfile>  Pass name of output file
         # -g  use existing .gcov files in the directory
+        coverage_package_name = 'rcl_interfaces'
         cmd = [
             'gcovr',
             '--object-directory=' + package_build_path,
             '-k',
             '-r', os.path.abspath('.'),
             '--xml', '--output=' + outfile,
-            '-e' + os.path.join(os.path.abspath('.'), args.installspace),
-            '-e' + os.path.join(os.path.abspath('.'), args.buildspace),
+            '-e .*\.test\..*',
+            '-f .*\.' + coverage_package_name + '\..*',
             '-g']
         print(cmd)
         subprocess.run(cmd, check=True)
