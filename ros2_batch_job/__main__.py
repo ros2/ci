@@ -569,7 +569,7 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['cryptography', 'lxml', 'numpy'], shell=True)
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U', '--progress-bar off']
+        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
         if args.do_venv or sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
             # On Windows since we switch between the debug and non-debug
