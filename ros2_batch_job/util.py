@@ -185,6 +185,7 @@ class MyProtocol(AsyncSubprocessProtocol):
             self.progress.append(data)
             if len(self.progress) == 10:
                 sys.stdout.write(self.progress[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
+                self.progress = []
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
 
