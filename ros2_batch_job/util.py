@@ -167,12 +167,27 @@ def warn(*args, **kwargs):
 
 class MyProtocol(AsyncSubprocessProtocol):
     def __init__(self, cmd, exit_on_error, *args, **kwargs):
-        self.cmd = cmd
+        self.cmd = cmd  
         self.exit_on_error = exit_on_error
+        self.progress_bar = False
+        self.progress = []
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
-        sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+        if b'[?25l' in data:
+            self.progress_bar = True
+        if b'[?25h' in data:
+            if self.progress:
+                for display in self.progress:
+                    sys.stdout.write(display.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+            self.progress_bar = False
+        if self.progress_bar:
+            self.progress.append(data)
+            if len(self.progress) == 10:
+                sys.stdout.write(self.progress[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
+        else:
+            sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
 
     def on_stderr_received(self, data):
         sys.stderr.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
@@ -181,6 +196,7 @@ class MyProtocol(AsyncSubprocessProtocol):
         if self.exit_on_error and returncode != 0:
             log("@{rf}@!<==@| '{0}' exited with return code '{1}'",
                 fargs=(" ".join(self.cmd), returncode))
+
 
 
 def run(cmd, exit_on_error=True, **kwargs):
