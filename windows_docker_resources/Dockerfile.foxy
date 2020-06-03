@@ -140,7 +140,6 @@ RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connex
 # Visual Studio Build Tools and .Net SDK`
 # If the most recent MSVS BuildTools causes new issues, previous releases of BuildTools can be found here:
 # https://docs.microsoft.com/en-us/visualstudio/releases/2019/history
-RUN echo "Temporary echo to purge docker caches for PR #465"
 ADD https://aka.ms/vs/16/release/vs_BuildTools.exe C:\TEMP\
 
 # 3010 is an acceptable exit code (install was successful but restart required), but it will confuse docker.
