@@ -138,6 +138,7 @@ COPY rticonnextdds-src\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg C
 RUN ""%ProgramFiles%\rti_connext_dds-5.3.1\bin\rtipkginstall.bat" C:\TEMP\connext\rti_security_plugins-5.3.1-target-x64Win64VS2017.rtipkg"
 
 # Visual Studio Build Tools and .Net SDK`
+# Pinning to 16.5.5 as building the netifaces wheel fails to find VC++
 ADD https://download.visualstudio.microsoft.com/download/pr/68d6b204-9df0-4fcc-abcc-08ee0eff9cb2/17af83ed545d1287df7575786c326009e459708b60a6821d2a4f5606ef8efb9e/vs_BuildTools.exe C:\TEMP\
 # ADD https://aka.ms/vs/16/release/vs_BuildTools.exe C:\TEMP\
 
