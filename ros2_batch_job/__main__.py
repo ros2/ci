@@ -309,7 +309,7 @@ def process_coverage(args, job):
             '-r', os.path.abspath('.'),
             '--xml', '--output=' + outfile,
             '-e .*\/test\/.*',
-            '--gcov-exclude \/test\/',
+            '--gcov-exclude=\/test\/',
             '-g']
         print(cmd)
         subprocess.run(cmd, check=True)
