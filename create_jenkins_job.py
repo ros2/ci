@@ -296,6 +296,28 @@ def main(argv=None):
             })
 
         # configure a manually triggered version of the coverage job
+
+        # Proposed list of packages to maximize coverage while testing quality level
+        # packages. The list is composed by the list of qualitly level packages plus
+        # packages of ros2.repos that are used by the qualitly level packages during
+        # tests.
+        quality_level_pkgs = ('action_msgs ament_index_cpp builtin_interfaces class_loader composition_interfaces '
+           'console_bridge_vendor diagnostic_msgs foonathan_memory_vendor geometry_msgs libstatistics_collector libyaml_vendor '
+           'lifecycle_msgs nav_msgs rcl rcl_action rcl_interfaces rcl_lifecycle rcl_logging_spdlog rcl_yaml_param_parser rclcpp '
+           'rclcpp_action rclcpp_components rclcpp_lifecycle rcpputils rcutils rmw rmw_dds_common rmw_fastrtps_cpp '
+           'rmw_fastrtps_shared_cpp rmw_implementation rosgraph_msgs rosidl_default_runtime rosidl_runtime_c rosidl_runtime_cpp '
+           'rosidl_typesupport_c rosidl_typesupport_cpp rosidl_typesupport_fastrtps_c rosidl_typesupport_fastrtps_cpp '
+           'rosidl_typesupport_interface sensor_msgs shape_msgs spdlog_vendor statistics_msgs std_msgs std_srvs stereo_msgs '
+           'trajectory_msgs unique_identifier_msgs visualization_msgs rmw_connext rmw_cyclonedds fastcdr fastrtps tracetools')
+        testing_pkgs_for_quality_level = ('interactive_markers launch_testing_ros message_filters ros1_bridge ros2action '
+            'ros2component ros2doctor ros2interface ros2lifecycle ros2lifecycle_test_fixtures ros2param ros2topic rosbag2_compression '
+            'rosbag2_converter_default_plugins rosbag2_cpp rosbag2_storage rosbag2_storage_default_plugins rosbag2_test_common '
+            'rosbag2_tests rosbag2_transport rosidl_generator_c rosidl_generator_cpp rosidl_generator_py rosidl_runtime_py '
+            'rosidl_typesupport_connext_c rosidl_typesupport_connext_cpp rosidl_typesupport_introspection_c '
+            'rosidl_typesupport_introspection_cpp test_cli test_cli_remapping test_communication test_launch_ros test_msgs '
+            'test_quality_of_service test_rclcpp test_security test_tf2 tf2 tf2_bullet tf2_eigen tf2_geometry_msgs tf2_kdl tf2_msgs '
+            'tf2_py tf2_ros tf2_sensor_msgs tracetools_test')
+
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'build_discard': {
@@ -304,8 +326,10 @@ def main(argv=None):
                 },
                 'cmake_build_type': 'Debug',
                 'enable_coverage_default': 'true',
-                'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
-                'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
+                'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
+                                      '--packages-up-to ' + quality_level_pkgs + ' ' + testing_pkgs_for_quality_level,
+                'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
+                                     '--packages-up-to ' + quality_level_pkgs + ' ' + testing_pkgs_for_quality_level,
             })
             create_job(os_name, 'test_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'build_discard': {
@@ -314,8 +338,10 @@ def main(argv=None):
                 },
                 'cmake_build_type': 'Debug',
                 'enable_coverage_default': 'true',
-                'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
-                'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp',
+                'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
+                                      '--packages-up-to ' + quality_level_pkgs + ' ' + testing_pkgs_for_quality_level,
+                'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
+                                     '--packages-up-to ' + quality_level_pkgs + ' ' + testing_pkgs_for_quality_level,
             })
 
         # configure nightly coverage job on x86 Linux only
