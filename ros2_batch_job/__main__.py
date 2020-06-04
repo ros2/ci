@@ -309,7 +309,7 @@ def process_coverage(args, job):
             '-k',
             '-r', os.path.abspath('.'),
             '--xml', '--output=' + outfile,         
-            '--gcov-exclude=.*#test#.*',
+            '--gcov-exclude=.*#tests?#.*',
             '--gcov-exclude=.*#gtest_vendor#.*',
             '-g']
         print(cmd)
