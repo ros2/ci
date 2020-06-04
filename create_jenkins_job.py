@@ -301,15 +301,18 @@ def main(argv=None):
         # packages. The list is composed by the list of qualitly level packages plus
         # packages of ros2.repos that are used by the qualitly level packages during
         # tests.
+
+        # out of the list since ignored by colcon: shape_msgs, stereo_msgs, rmw_connext, rmw_cyclonedds
         quality_level_pkgs = ('action_msgs ament_index_cpp builtin_interfaces class_loader composition_interfaces '
            'console_bridge_vendor diagnostic_msgs foonathan_memory_vendor geometry_msgs libstatistics_collector libyaml_vendor '
            'lifecycle_msgs nav_msgs rcl rcl_action rcl_interfaces rcl_lifecycle rcl_logging_spdlog rcl_yaml_param_parser rclcpp '
            'rclcpp_action rclcpp_components rclcpp_lifecycle rcpputils rcutils rmw rmw_dds_common rmw_fastrtps_cpp '
            'rmw_fastrtps_shared_cpp rmw_implementation rosgraph_msgs rosidl_default_runtime rosidl_runtime_c rosidl_runtime_cpp '
            'rosidl_typesupport_c rosidl_typesupport_cpp rosidl_typesupport_fastrtps_c rosidl_typesupport_fastrtps_cpp '
-           'rosidl_typesupport_interface sensor_msgs shape_msgs spdlog_vendor statistics_msgs std_msgs std_srvs stereo_msgs '
-           'trajectory_msgs unique_identifier_msgs visualization_msgs rmw_connext rmw_cyclonedds fastcdr fastrtps tracetools')
-        testing_pkgs_for_quality_level = ('interactive_markers launch_testing_ros message_filters ros1_bridge ros2action '
+           'rosidl_typesupport_interface sensor_msgs spdlog_vendor statistics_msgs std_msgs std_srvs '
+           'trajectory_msgs unique_identifier_msgs visualization_msgs fastcdr fastrtps tracetools')
+        # out of the list since ignored by colcon: ros1_bridge
+        testing_pkgs_for_quality_level = ('interactive_markers launch_testing_ros message_filters ros2action '
             'ros2component ros2doctor ros2interface ros2lifecycle ros2lifecycle_test_fixtures ros2param ros2topic rosbag2_compression '
             'rosbag2_converter_default_plugins rosbag2_cpp rosbag2_storage rosbag2_storage_default_plugins rosbag2_test_common '
             'rosbag2_tests rosbag2_transport rosidl_generator_c rosidl_generator_cpp rosidl_generator_py rosidl_runtime_py '
