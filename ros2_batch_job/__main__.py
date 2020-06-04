@@ -298,7 +298,7 @@ def process_coverage(args, job):
         # cobertura plugin looks for files of the regex *coverage.xml
         outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
         print('Writing coverage.xml report at path {}'.format(outfile))
-        # --gcov-exlcude remove generated .gcov files from previous gcov call. 
+        # --gcov-exclude remove generated .gcov files from previous gcov call. 
         #                file names are in the form: #dir#sudir#file.*.gcov     
         # -xml  Output cobertura xml
         # -output=<outfile>  Pass name of output file
