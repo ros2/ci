@@ -336,13 +336,7 @@ def process_coverage(args, job):
 
 
 def check_xunit2_junit_family_value(config, value):
-    try:
-        if config.get('pytest', 'junit_family') == value:
-            return True
-    except configparser.NoOptionError:
-        return False
-    else:
-        return False
+    return config.get('pytest', 'junit_family', fallback='') == value
 
 
 def force_xunit2_in_pytest_ini_files():
