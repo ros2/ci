@@ -384,8 +384,8 @@ def build_and_test(args, job):
     # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
-    # check if packages have a pytest.ini file that will override xunit2 setup
-    # and patch configuration if needed to keep the xunit2 configuration
+    # check if packages have a pytest.ini file that doesn't choose junit_family=xunit2
+    # and patch configuration if needed to force the xunit2 value
     xunit_6_or_greater = StrictVersion(pytest.__version__) >= StrictVersion('6.0.0')
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
