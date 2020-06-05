@@ -6,6 +6,7 @@ ARG PLATFORM=x86
 ARG ROS1_DISTRO=noetic
 ARG UBUNTU_DISTRO=focal
 ARG COMPILE_WITH_CLANG=false
+ARG CONNEXT_STATIC=false
 
 # Prevent errors from apt-get.
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
@@ -90,10 +91,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 # Get and install the RTI web binaries.
 RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
 RUN cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz
-ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
+# ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
+RUN if test ${CONNEXT_STATIC} = false; then cp rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py; fi
 
 # Add the RTI license file.
-ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+# ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+RUN if test ${CONNEXT_STATIC} = false; then cp rticonnextdds-license/rti_license.dat /tmp/rti_license.dat; fi
 
 # Add the RTI binaries we made.
 # ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
