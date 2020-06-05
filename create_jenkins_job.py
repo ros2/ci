@@ -349,7 +349,6 @@ def main(argv=None):
             'statistics_msgs',
             'std_msgs',
             'std_srvs',
-            'stereo_msgs',
             'tracetools',
             'trajectory_msgs',
             'unique_identifier_msgs',
