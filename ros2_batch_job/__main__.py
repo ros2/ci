@@ -335,10 +335,6 @@ def process_coverage(args, job):
     return 0
 
 
-def check_xunit2_junit_family_value(config, value):
-    return config.get('pytest', 'junit_family', fallback='') == value
-
-
 def build_and_test(args, job):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
@@ -448,6 +444,10 @@ def build_and_test(args, job):
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
     return 0
+
+
+def check_xunit2_junit_family_value(config, value):
+    return config.get('pytest', 'junit_family', fallback='') == value
 
 
 def run(args, build_function, blacklisted_package_names=None):
