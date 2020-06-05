@@ -339,25 +339,6 @@ def check_xunit2_junit_family_value(config, value):
     return config.get('pytest', 'junit_family', fallback='') == value
 
 
-def force_xunit2_in_pytest_ini_files():
-    xunit_6_or_greater = StrictVersion(pytest.__version__) >= StrictVersion('6.0.0')
-    for path in Path('.').rglob('pytest.ini'):
-        config = configparser.ConfigParser()
-        config.read(str(path))
-        if xunit_6_or_greater:
-            # only need to correct explicit legacy option if exists
-            if not check_xunit2_junit_family_value(config, 'legacy'):
-                continue
-        else:
-            # in xunit < 6 need to enforce xunit2 if not set
-            if check_xunit2_junit_family_value(config, 'xunit2'):
-                continue
-        print("Patch '%s' to override 'pytest.junit_family=xunit2'" % path)
-        config.set('pytest', 'junit_family', 'xunit2')
-        with open(path, 'w+') as configfile:
-            config.write(configfile)
-
-
 def build_and_test(args, job):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
@@ -409,7 +390,22 @@ def build_and_test(args, job):
         ini_file.write('[pytest]\njunit_family=xunit2')
     # check if packages have a pytest.ini file that will override xunit2 setup
     # and patch configuration if needed to keep the xunit2 configuration
-    force_xunit2_in_pytest_ini_files()
+    xunit_6_or_greater = StrictVersion(pytest.__version__) >= StrictVersion('6.0.0')
+    for path in Path('.').rglob('pytest.ini'):
+        config = configparser.ConfigParser()
+        config.read(str(path))
+        if xunit_6_or_greater:
+            # only need to correct explicit legacy option if exists
+            if not check_xunit2_junit_family_value(config, 'legacy'):
+                continue
+        else:
+            # in xunit < 6 need to enforce xunit2 if not set
+            if check_xunit2_junit_family_value(config, 'xunit2'):
+                continue
+        print("Patch '%s' to override 'pytest.junit_family=xunit2'" % path)
+        config.set('pytest', 'junit_family', 'xunit2')
+        with open(path, 'w+') as configfile:
+            config.write(configfile)
 
     test_cmd = [
         args.colcon_script, 'test',
