@@ -358,7 +358,7 @@ def force_xunit2_in_pytest_ini_files():
             # in xunit < 6 need to enforce xunit2 if not set
             if check_xunit2_junit_family_value(config, 'xunit2'):
                 continue
-        print('xunit2 patch applied to ' + str(path))
+        print("Patch '%s' to override 'pytest.junit_family=xunit2'" % path)
         config.set('pytest', 'junit_family', 'xunit2')
         with open(path, 'w+') as configfile:
             config.write(configfile)
