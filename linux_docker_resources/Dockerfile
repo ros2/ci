@@ -6,6 +6,7 @@ ARG PLATFORM=x86
 ARG ROS1_DISTRO=noetic
 ARG UBUNTU_DISTRO=focal
 ARG COMPILE_WITH_CLANG=false
+ARG CONNEXT_STATIC=false
 
 # Prevent errors from apt-get.
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
@@ -94,7 +95,7 @@ ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
 # ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
-RUN cp rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+RUN if test ${CONNEXT_STATIC} = false; then cp rticonnextdds-license/rti_license.dat /tmp/rti_license.dat; fi
 
 # Add the RTI binaries we made.
 # ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
