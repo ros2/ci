@@ -94,7 +94,7 @@ ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
 # ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
-RUN if test ${CONNEXT_STATIC} = false; then cp rticonnextdds-license/rti_license.dat /tmp/rti_license.dat; fi
+RUN if test ${CONNEXT_STATIC} != true; then cp rticonnextdds-license/rti_license.dat /tmp/rti_license.dat; fi
 
 # Add the RTI binaries we made.
 # ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
