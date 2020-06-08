@@ -93,7 +93,8 @@ RUN cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
-ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+# ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
+RUN if test ${CONNEXT_STATIC} = false; then cp rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py; fi
 
 # Add the RTI binaries we made.
 # ADD rticonnextdds-src/librticonnextdds52_5.2.3-1_amd64.deb /tmp/librticonnextdds52_5.2.3-1_amd64.deb
