@@ -387,13 +387,12 @@ def build_and_test(args, job):
     # check if packages have a pytest.ini file that doesn't choose junit_family=xunit2
     # and patch configuration if needed to force the xunit2 value
     xunit_6_or_greater = job.run([
-        '"%s"' % job.python, '-c', '\'',
+        '"%s"' % job.python, '-c', '\''
         'from distutils.version import StrictVersion;'
         'import pytest;'
         'import sys;'
-        'sys.exit\(StrictVersion\(pytest.__version__\) >= StrictVersion\(\'6.0.0\'\)\)'
-        '\''],
-        shell=True)
+        'sys.exit(StrictVersion(pytest.__version__) >= StrictVersion(\\\'6.0.0\\\'))'
+        '\''])
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
         config.read(str(path))
