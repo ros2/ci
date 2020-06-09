@@ -14,7 +14,6 @@
 
 import argparse
 import configparser
-from distutils.version import StrictVersion
 import os
 from pathlib import Path
 import platform
@@ -387,9 +386,13 @@ def build_and_test(args, job):
         ini_file.write('[pytest]\njunit_family=xunit2')
     # check if packages have a pytest.ini file that doesn't choose junit_family=xunit2
     # and patch configuration if needed to force the xunit2 value
-    # Import pytest here instead of the top of the file, see https://github.com/ros2/ci/issues/467
-    import pytest
-    xunit_6_or_greater = StrictVersion(pytest.__version__) >= StrictVersion('6.0.0')
+    xunit_6_or_greater = job.run([
+        '"%s"' % job.python, '-c', '\''
+        'from distutils.version import StrictVersion;'
+        'import pytest;'
+        'import sys;'
+        'sys.exit(StrictVersion(pytest.__version__) >= StrictVersion("6.0.0"))'
+        '\''])
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
         config.read(str(path))
