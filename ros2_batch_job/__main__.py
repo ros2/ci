@@ -391,7 +391,7 @@ def build_and_test(args, job):
         'from distutils.version import StrictVersion;'
         'import pytest;'
         'import sys;'
-        'sys.exit\(StrictVersion(pytest.__version__\) >= StrictVersion\(\'6.0.0\'\)\)'],
+        'sys.exit\(StrictVersion\(pytest.__version__\) >= StrictVersion\(\'6.0.0\'\)\)'],
         shell=True)
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
