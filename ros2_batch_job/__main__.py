@@ -14,7 +14,6 @@
 
 import argparse
 import configparser
-from distutils.version import StrictVersion
 import os
 from pathlib import Path
 import platform
@@ -385,23 +384,18 @@ def build_and_test(args, job):
     # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     with open('pytest.ini', 'w') as ini_file:
         ini_file.write('[pytest]\njunit_family=xunit2')
-    # check if packages have a pytest.ini file that doesn't choose junit_family=xunit2
-    # and patch configuration if needed to force the xunit2 value
-    # Import pytest here instead of the top of the file, see https://github.com/ros2/ci/issues/467
-    import pytest
-    xunit_6_or_greater = StrictVersion(pytest.__version__) >= StrictVersion('6.0.0')
+    # check if packages have a pytest.ini file and add the xunit2
+    # format if it is not present
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
         config.read(str(path))
-        if xunit_6_or_greater:
-            # only need to correct explicit legacy option if exists
-            if not check_xunit2_junit_family_value(config, 'legacy'):
+        try:
+            # only if xunit2 is set continue the loop with the file unpatched
+            if config.get('pytest', 'junit_family') == 'xunit2':
                 continue
-        else:
-            # in xunit < 6 need to enforce xunit2 if not set
-            if check_xunit2_junit_family_value(config, 'xunit2'):
-                continue
-        print("Patch '%s' to override 'pytest.junit_family=xunit2'" % path)
+        except configparser.NoOptionError:
+            pass
+        print('xunit2 patch applied to ' + str(path))
         config.set('pytest', 'junit_family', 'xunit2')
         with open(path, 'w+') as configfile:
             config.write(configfile)
@@ -447,10 +441,6 @@ def build_and_test(args, job):
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
     return 0
-
-
-def check_xunit2_junit_family_value(config, value):
-    return config.get('pytest', 'junit_family', fallback='') == value
 
 
 def run(args, build_function, blacklisted_package_names=None):
