@@ -58,7 +58,10 @@ RUN C:\TEMP\python-38.exe /quiet `
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # choco installs
-RUN choco install -y cmake curl git vcredist2013 vcredist140 cppcheck patch
+RUN choco install -y cmake curl git vcredist2013 vcredist140 patch
+# Pin cppcheck until our builds are compatible with 2.0 https://github.com/ros2/ros2/issues/942
+RUN choco install -y cppcheck --version 1.90
+RUN choco pin add --name=cppcheck --version 1.90
 RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx bullet
 
 RUN C:\TEMP\Win64OpenSSL.exe /VERYSILENT
