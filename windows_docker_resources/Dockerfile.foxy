@@ -23,13 +23,13 @@ FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 ADD https://github.com/ADLINK-IST/opensplice/releases/download/OSPL_V6_9_190925OSS_RELEASE/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.win-vs2019-installer.zip C:\TEMP\OpenSplice.zip
 
 # OpenSSL
-ADD https://slproweb.com/download/Win64OpenSSL-1_0_2u.exe C:\TEMP\Win64OpenSSL.exe
+ADD https://slproweb.com/download/Win64OpenSSL-1_1_1g.exe C:\TEMP\Win64OpenSSL.exe
 
 # OpenCV
 ADD https://github.com/ros2/ros2/releases/download/opencv-archives/opencv-3.4.6-vc16.VS2019.zip C:\TEMP\opencv.zip
 
-# Python 3.7
-ADD https://www.python.org/ftp/python/3.7.6/python-3.7.6-amd64.exe C:\TEMP\python-37.exe
+# Python 3.8
+ADD https://www.python.org/ftp/python/3.8.3/python-3.8.3-amd64.exe C:\TEMP\python-38.exe
 
 # Custom choco packages
 ADD https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg C:\TEMP\asio.nupkg
@@ -48,8 +48,8 @@ ADD https://www.zlatkovic.com/pub/libxml/64bit/iconv-1.14-win32-x86_64.7z C:\TEM
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
 
-RUN C:\TEMP\python-37.exe /quiet `
-  TargetDir=C:\Python37 `
+RUN C:\TEMP\python-38.exe /quiet `
+  TargetDir=C:\Python38 `
   PrependPath=1 `
   Include_debug=1 `
   Include_symbols=1
@@ -58,7 +58,10 @@ RUN C:\TEMP\python-37.exe /quiet `
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # choco installs
-RUN choco install -y cmake curl git vcredist2013 vcredist140 cppcheck patch
+RUN choco install -y cmake curl git vcredist2013 vcredist140 patch
+# Pin cppcheck until our builds are compatible with 2.0 https://github.com/ros2/ros2/issues/942
+RUN choco install -y cppcheck --version 1.90
+RUN choco pin add --name=cppcheck --version 1.90
 RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx bullet
 
 RUN C:\TEMP\Win64OpenSSL.exe /VERYSILENT
@@ -78,11 +81,11 @@ RUN 7z.exe x C:\TEMP\opencv.zip -aoa -oC:\
 RUN 7z.exe x C:\TEMP\OpenSplice.zip -aoa -oC:\opensplice
 
 # Environment setup
-ENV OPENSSL_CONF C:\OpenSSL-Win64\bin\openssl.cfg
+ENV OPENSSL_CONF "C:\Program Files\OpenSSL-Win64\bin\openssl.cfg"
 ENV OpenCV_DIR C:\opencv
 ENV OSPL_HOME C:\opensplice\HDE\x86_64.win64
 # You can't use ENV to append to the PATH https://stackoverflow.com/questions/42092932/appending-to-path-in-a-windows-docker-container
-RUN setx PATH "%PATH%;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\OpenSSL-Win64\bin\;C:\xmllint\bin;"C:\opencv\x64\vc16\bin"
+RUN setx PATH "%PATH%;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Program Files\OpenSSL-Win64\bin\;C:\xmllint\bin;"C:\opencv\x64\vc16\bin"
 
 # RTI Connext License
 COPY rticonnextdds-license\rti_license.dat C:\connext\
@@ -92,7 +95,7 @@ ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
 COPY rticonnextdds-src\openssl-1.0.2n-target-x64Win64VS2017.zip C:\TEMP\connext\
 RUN 7z.exe x C:\TEMP\connext\openssl-1.0.2n-target-x64Win64VS2017.zip -aoa -oC:\connext\
 ENV RTI_OPENSSL_BIN C:\connext\openssl-1.0.2n\x64Win64VS2017\release\bin
-ENV RTI_OPENSSL_LIB C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
+ENV RTI_OPENSSL_LIBS C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
 
 # RTI Connext
 COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\
@@ -131,6 +134,7 @@ COPY qt-installer.qs C:\TEMP\
 RUN mkdir C:\Users\ContainerAdministrator\AppData\Roaming\Qt
 COPY qtaccount\qtaccount.ini C:\Users\ContainerAdministrator\AppData\Roaming\Qt\qtaccount.ini
 
+RUN echo "If this docker build hangs longer than about 10-15 minutes at the following command, then Qt has likely updated the installer and requires updates to 'qt-installer.qs' or your Qt Account. To investigate the script, re-run the command with '--verbose'."
 RUN C:\TEMP\qt-unified-windows-x86-online.exe --script C:\TEMP\qt-installer.qs MsvcVersion=2019 ErrorLogname="%ERROR_FILENAME%"
 RUN IF EXIST "%ERROR_FILENAME%" EXIT 1
 
@@ -141,6 +145,8 @@ RUN choco upgrade -y all
 RUN python -m pip install -U pip setuptools pydot PyQt5
 
 # Visual Studio Build Tools and .Net SDK`
+# If the most recent MSVS BuildTools causes new issues, previous releases of BuildTools can be found here:
+# https://docs.microsoft.com/en-us/visualstudio/releases/2019/history
 ADD https://aka.ms/vs/16/release/vs_BuildTools.exe C:\TEMP\
 
 # 3010 is an acceptable exit code (install was successful but restart required), but it will confuse docker.
