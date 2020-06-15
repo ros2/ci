@@ -167,25 +167,45 @@ def warn(*args, **kwargs):
 
 class MyProtocol(AsyncSubprocessProtocol):
     def __init__(self, cmd, exit_on_error, *args, **kwargs):
-        self.cmd = cmd  
+        self.cmd = cmd
         self.exit_on_error = exit_on_error
-        self.progress_bar = False
-        self.progress = []
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
+        sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
+    def on_stderr_received(self, data):
+        sys.stderr.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
+    def on_process_exited(self, returncode):
+        if self.exit_on_error and returncode != 0:
+            log("@{rf}@!<==@| '{0}' exited with return code '{1}'",
+                fargs=(" ".join(self.cmd), returncode))
+
+
+class PipProtocol(AsyncSubprocessProtocol):
+    def __init__(self, cmd, exit_on_error, *args, **kwargs):
+        self.cmd = cmd
+        self.exit_on_error = exit_on_error
+        self.progress_bar = False
+        self.progress_data = []
+        AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
+
+    def on_stdout_received(self, data):
+        # The 'pip install' progress bar output can be pretty noisy in CI output.  Print only every 10th
+        # output to reduce the noisiness.  We detect the pip progress bar by the beginning sequence of
+        # '[?25l' and the end sequence of '[?25h'.
         if b'[?25l' in data:
             self.progress_bar = True
         if b'[?25h' in data:
-            if self.progress:
-                for display in self.progress:
-                    sys.stdout.write(display.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+            for display_bar in self.progress_data:
+                sys.stdout.write(display_bar.decode('utf-8', 'replace').replace(os.linesep, '\n'))
             self.progress_bar = False
         if self.progress_bar:
-            self.progress.append(data)
-            if len(self.progress) == 10:
-                sys.stdout.write(self.progress[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
-                self.progress = []
+            self.progress_data.append(data)
+            if len(self.progress_data) == 10:
+                sys.stdout.write(self.progress_data[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
+                self.progress_data = []
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
 
@@ -197,7 +217,6 @@ class MyProtocol(AsyncSubprocessProtocol):
         if self.exit_on_error and returncode != 0:
             log("@{rf}@!<==@| '{0}' exited with return code '{1}'",
                 fargs=(" ".join(self.cmd), returncode))
-
 
 
 def run(cmd, exit_on_error=True, **kwargs):
@@ -216,7 +235,10 @@ def run_with_prefix(prefix, cmd, exit_on_error=True, **kwargs):
 
 def _run(cmd, exit_on_error=True, **kwargs):
     def create_protocol(*args, **kwargs):
-        return MyProtocol(cmd, exit_on_error, *args, **kwargs)
+        if "pip" in cmd and "install" in cmd:
+            return PipProtocol(cmd, exit_on_error, *args, **kwargs)
+        else:
+            return MyProtocol(cmd, exit_on_error, *args, **kwargs)
 
     @asyncio.coroutine
     def run_coroutine(future):
