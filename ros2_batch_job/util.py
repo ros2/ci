@@ -199,12 +199,12 @@ class PipProtocol(AsyncSubprocessProtocol):
             self.progress_bar = True
         if b'[?25h' in data:
             for display_bar in self.progress_data:
-                sys.stdout.write(display_bar.decode('utf-8', 'replace').replace(os.linesep, ''))
+                sys.stdout.write(display_bar.decode('utf-8', 'replace').replace(os.linesep, 'ππ'))
             self.progress_bar = False
         if self.progress_bar:
             self.progress_data.append(data)
             if len(self.progress_data) == 10:
-                sys.stdout.write(self.progress_data[-1].decode('utf-8', 'replace').replace(os.linesep, '')+'\n')
+                sys.stdout.write(self.progress_data[-1].decode('utf-8', 'replace').replace(os.linesep, 'ππ')+'\n')
                 self.progress_data = []
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
