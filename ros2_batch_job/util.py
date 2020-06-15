@@ -167,25 +167,25 @@ def warn(*args, **kwargs):
 
 class MyProtocol(AsyncSubprocessProtocol):
     def __init__(self, cmd, exit_on_error, *args, **kwargs):
-        self.cmd = cmd  
+        self.cmd = cmd
         self.exit_on_error = exit_on_error
         self.progress_bar = False
-        self.progress = []
+        self.progress_data = []
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
+        # '[?25l' and '[?25h' can be considered as a sign of begining and end of pip progress bar
         if b'[?25l' in data:
             self.progress_bar = True
         if b'[?25h' in data:
-            if self.progress:
-                for display in self.progress:
-                    sys.stdout.write(display.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+            for display_bar in self.progress_data:
+                sys.stdout.write(display_bar.decode('utf-8', 'replace').replace(os.linesep, '\n'))
             self.progress_bar = False
         if self.progress_bar:
-            self.progress.append(data)
-            if len(self.progress) == 10:
-                sys.stdout.write(self.progress[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
-                self.progress = []
+            self.progress_data.append(data)
+            if len(self.progress_data) == 10:
+                sys.stdout.write(self.progress_data[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
+                self.progress_data = []
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
 
@@ -197,7 +197,6 @@ class MyProtocol(AsyncSubprocessProtocol):
         if self.exit_on_error and returncode != 0:
             log("@{rf}@!<==@| '{0}' exited with return code '{1}'",
                 fargs=(" ".join(self.cmd), returncode))
-
 
 
 def run(cmd, exit_on_error=True, **kwargs):
