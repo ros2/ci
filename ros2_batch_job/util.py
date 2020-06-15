@@ -169,6 +169,24 @@ class MyProtocol(AsyncSubprocessProtocol):
     def __init__(self, cmd, exit_on_error, *args, **kwargs):
         self.cmd = cmd
         self.exit_on_error = exit_on_error
+        AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
+
+    def on_stdout_received(self, data):
+        sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
+    def on_stderr_received(self, data):
+        sys.stderr.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
+    def on_process_exited(self, returncode):
+        if self.exit_on_error and returncode != 0:
+            log("@{rf}@!<==@| '{0}' exited with return code '{1}'",
+                fargs=(" ".join(self.cmd), returncode))
+
+
+class PipProtocol(AsyncSubprocessProtocol):
+    def __init__(self, cmd, exit_on_error, *args, **kwargs):
+        self.cmd = cmd
+        self.exit_on_error = exit_on_error
         self.progress_bar = False
         self.progress_data = []
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
