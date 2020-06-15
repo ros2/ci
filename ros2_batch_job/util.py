@@ -174,7 +174,9 @@ class MyProtocol(AsyncSubprocessProtocol):
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
-        # '[?25l' and '[?25h' can be considered as a sign of begining and end of pip progress bar
+        # The 'pip install' progress bar output can be pretty noisy in CI output.  Print only every 10th
+        # output to reduce the noisiness.  We detect the pip progress bar by the beginning sequence of
+        # '[?25l' and the end sequence of '[?25h'.
         if b'[?25l' in data:
             self.progress_bar = True
         if b'[?25h' in data:
