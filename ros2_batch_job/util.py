@@ -215,7 +215,10 @@ def run_with_prefix(prefix, cmd, exit_on_error=True, **kwargs):
 
 def _run(cmd, exit_on_error=True, **kwargs):
     def create_protocol(*args, **kwargs):
-        return MyProtocol(cmd, exit_on_error, *args, **kwargs)
+        if "pip" in cmd and "install" in cmd:
+            return PipProtocol(cmd, exit_on_error, *args, **kwargs)
+        else:
+            return MyProtocol(cmd, exit_on_error, *args, **kwargs)
 
     @asyncio.coroutine
     def run_coroutine(future):
