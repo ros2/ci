@@ -272,9 +272,9 @@ def get_args(sysargv=None):
     return args
 
 
-def process_coverage(args, job, packages_for_coverage=None):
+def process_coverage(args, job, packages_for_coverage_str=None):
     print('# BEGIN SUBSECTION: coverage analysis')
-    packages_filter = ['--packages-selected', packages_for_coverage] if packages_for_coverage else []
+    packages_filter = ['--packages-selected', packages_for_coverage_str] if packages_for_coverage_str else []
     # Collect all .gcda files in args.workspace
     output = subprocess.check_output(
         [args.colcon_script, 'list', '--base-paths', args.sourcespace] + packages_filter)
@@ -437,7 +437,7 @@ def build_and_test(args, job):
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
     if args.coverage and args.os == 'linux':
-        process_coverage(args, job, ['rlcpp'])
+        process_coverage(args, job, 'rlcpp')
 
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
