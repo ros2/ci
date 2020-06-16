@@ -207,7 +207,7 @@ class PipProtocol(AsyncSubprocessProtocol):
         elif self.progress_bar:
             self.progress_data += data.decode('utf-8', 'replace')
             if len(self.progress_data) >= 1000:
-                sys.stdout.write(self.progress_data.split("\r")[-1]+'\n')
+                sys.stdout.write(self.progress_data.split('\r')[-1] + '\n')
                 self.progress_data = ''
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
