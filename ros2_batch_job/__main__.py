@@ -274,12 +274,10 @@ def get_args(sysargv=None):
 
 def process_coverage(args, job, packages_for_coverage_str=None):
     print('# BEGIN SUBSECTION: coverage analysis')
-    packages_filter = ['--packages-selected', packages_for_coverage_str] if packages_for_coverage_str else []
+    packages_filter = ['--packages-select', packages_for_coverage_str] if packages_for_coverage_str else []
     # Collect all .gcda files in args.workspace
     output = subprocess.check_output(
         [args.colcon_script, 'list', '--base-paths', args.sourcespace] + packages_filter)
-    print(output)
-    print(" ".join([args.colcon_script, 'list', '--base-paths', args.sourcespace] + packages_filter))
     for line in output.decode().splitlines():
         package_name, package_path, _ = line.split('\t', 2)
         print(package_name)
