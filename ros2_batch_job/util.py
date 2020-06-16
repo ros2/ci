@@ -200,7 +200,7 @@ class PipProtocol(AsyncSubprocessProtocol):
             sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', '')+'\n')
         elif b'[?25h' in data:
             for display_line in self.progress_data.replace('\n', '').split('\r'):
-                sys.stdout.write(display_line+'\n' if display_line else '')
+                sys.stdout.write(display_line + '\n' if display_line else '')
             self.progress_bar = False
             self.progress_data = ''
             sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', ''))
