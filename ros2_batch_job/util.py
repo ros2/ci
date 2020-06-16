@@ -188,7 +188,7 @@ class PipProtocol(AsyncSubprocessProtocol):
         self.cmd = cmd
         self.exit_on_error = exit_on_error
         self.progress_bar = False
-        self.progress_data = []
+        self.progress_data = ''
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
@@ -198,14 +198,14 @@ class PipProtocol(AsyncSubprocessProtocol):
         if b'[?25l' in data:
             self.progress_bar = True
         if b'[?25h' in data:
-            for display_bar in self.progress_data:
-                sys.stdout.write(display_bar.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+            for display_line in self.progress_data.split("\r"):
+                sys.stdout.write(display_line+'\n' if display_line else '')
             self.progress_bar = False
         if self.progress_bar:
-            self.progress_data.append(data)
-            if len(self.progress_data) == 10:
-                sys.stdout.write(self.progress_data[-1].decode('utf-8', 'replace').replace(os.linesep, '\n'))
-                self.progress_data = []
+            self.progress_data += data.decode('utf-8', 'replace')
+            if len(self.progress_data) >= 1000:
+                sys.stdout.write(self.progress_data.split("\r")[-1]+'\n')
+                self.progress_data = ''
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
 
