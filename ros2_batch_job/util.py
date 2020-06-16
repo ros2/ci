@@ -188,7 +188,7 @@ class PipProtocol(AsyncSubprocessProtocol):
         self.cmd = cmd
         self.exit_on_error = exit_on_error
         self.progress_bar = False
-        self.progress_data = []
+        self.progress_data = ''
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
@@ -198,16 +198,17 @@ class PipProtocol(AsyncSubprocessProtocol):
         if b'[?25l' in data:
             self.progress_bar = True
         if b'[?25h' in data:
-            for display_bar in self.progress_data:
-                sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', '').replace('\n', '')+'<one line>'+'\n')
+            sys.stdout.write(self.progress_data.decode('utf-8', 'replace').replace('\r', '').replace('\n', '')+'<one line>'+'\n')
 #                 sys.stdout.write(display_bar.decode('utf-8', 'replace').replace('\r', '')+'\n')
             self.progress_bar = False
         if self.progress_bar:
-            self.progress_data.append(data)
-            if len(self.progress_data) == 1:
-                sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', '').replace('\n', '')+'<one line>'+'\n')
+            print("single_line::" + str(len(data)))
+            self.progress_data += data.decode('utf-8', 'replace')
+            if len(self.progress_data) >= 700:
+                print(self.progress_data)
+                sys.stdout.write(self.progress_data.split("\r")[-1]+'\n')
 #                 sys.stdout.write(self.progress_data[-1].decode('utf-8', 'replace').replace('\r', '')+'\n')
-                self.progress_data = []
+                self.progress_data = ''
         else:
             sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
 #             sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', '')+'\n')
