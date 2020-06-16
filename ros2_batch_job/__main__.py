@@ -272,11 +272,12 @@ def get_args(sysargv=None):
     return args
 
 
-def process_coverage(args, job):
+def process_coverage(args, job, packages_for_coverage=None):
     print('# BEGIN SUBSECTION: coverage analysis')
+    packages_filter = ['--packages-selected', packages_for_coverage] if packages_for_coverage else []
     # Collect all .gcda files in args.workspace
     output = subprocess.check_output(
-        [args.colcon_script, 'list', '--base-paths', args.sourcespace])
+        [args.colcon_script, 'list', '--base-paths', args.sourcespace] + packages_filter)
     for line in output.decode().splitlines():
         package_name, package_path, _ = line.split('\t', 2)
         print(package_name)
@@ -298,8 +299,8 @@ def process_coverage(args, job):
         # cobertura plugin looks for files of the regex *coverage.xml
         outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
         print('Writing coverage.xml report at path {}'.format(outfile))
-        # --gcov-exclude remove generated .gcov files from previous gcov call. 
-        #                file names are in the form: #dir#sudir#file.*.gcov     
+        # --gcov-exclude remove generated .gcov files from previous gcov call.
+        #                file names are in the form: #dir#sudir#file.*.gcov
         # -xml  Output cobertura xml
         # -output=<outfile>  Pass name of output file
         # -g  use existing .gcov files in the directory
@@ -308,7 +309,7 @@ def process_coverage(args, job):
             '--object-directory=' + package_build_path,
             '-k',
             '-r', os.path.abspath('.'),
-            '--xml', '--output=' + outfile,         
+            '--xml', '--output=' + outfile,
             '--gcov-exclude=.*#tests?#.*',
             '--gcov-exclude=.*#gtest_vendor#.*',
             '-g']
@@ -436,7 +437,7 @@ def build_and_test(args, job):
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
     if args.coverage and args.os == 'linux':
-        process_coverage(args, job)
+        process_coverage(args, job, ['rlcpp'])
 
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
