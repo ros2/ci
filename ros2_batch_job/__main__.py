@@ -281,9 +281,9 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     print(cmd)
     subprocess.run(cmd, check=True)
 
-    cmd = ['lcov', '--list', '--summary', str(coverage_file)]
-    print(cmd)
-    subprocess.run(cmd, check=True)
+    #cmd = ['lcov', '--list', '--summary', str(coverage_file)]
+    #print(cmd)
+    #subprocess.run(cmd, check=True)
 
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
