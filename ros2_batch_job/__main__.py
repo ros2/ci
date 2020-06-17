@@ -62,6 +62,7 @@ pip_dependencies = [
     'flake8-docstrings',
     'flake8-import-order',
     'flake8-quotes',
+    'lcov_cobertura',
     'lark-parser',
     'mock',
     'mypy',
@@ -274,47 +275,21 @@ def get_args(sysargv=None):
 
 def process_coverage(args, job, packages_for_coverage_str=None):
     print('# BEGIN SUBSECTION: coverage analysis')
-    packages_filter = ['--packages-select', packages_for_coverage_str] if packages_for_coverage_str else []
-    # Collect all .gcda files in args.workspace
-    output = subprocess.check_output(
-        [args.colcon_script, 'list', '--base-paths', args.sourcespace] + packages_filter)
-    for line in output.decode().splitlines():
-        package_name, package_path, _ = line.split('\t', 2)
-        print(package_name)
-        package_build_path = os.path.join(args.buildspace, package_name)
-        gcda_files = []
-        for root, dirs, files in os.walk(package_build_path):
-            gcda_files.extend(
-                    [os.path.abspath(os.path.join(root, f))
-                        for f in files if f.endswith('.gcda')])
-        if len(gcda_files) == 0:
-            continue
+    # Run one gcov command for all gcda files for this package.
+    coverage_file = os.path.join(args.buildspace, 'coverage.info')
+    cmd = ['lcov', args.buildspace, '--output', str(coverage_file)]
+    print(cmd)
+    subprocess.run(cmd, check=True)
 
-        # Run one gcov command for all gcda files for this package.
-        cmd = ['gcov', '--preserve-paths', '--relative-only', '--source-prefix', os.path.abspath('.')] + gcda_files
-        print(cmd)
-        subprocess.run(cmd, check=True, cwd=package_build_path)
+    cmd = ['lcov', '--list', '--summary', str(coverage_file)]
+    print(cmd)
+    subprocess.run(cmd, check=True)
 
-        # Write one report for the entire package.
-        # cobertura plugin looks for files of the regex *coverage.xml
-        outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
-        print('Writing coverage.xml report at path {}'.format(outfile))
-        # --gcov-exclude remove generated .gcov files from previous gcov call.
-        #                file names are in the form: #dir#sudir#file.*.gcov
-        # -xml  Output cobertura xml
-        # -output=<outfile>  Pass name of output file
-        # -g  use existing .gcov files in the directory
-        cmd = [
-            'gcovr',
-            '--object-directory=' + package_build_path,
-            '-k',
-            '-r', os.path.abspath('.'),
-            '--xml', '--output=' + outfile,
-            '--gcov-exclude=.*#tests?#.*',
-            '--gcov-exclude=.*#gtest_vendor#.*',
-            '-g']
-        print(cmd)
-        subprocess.run(cmd, check=True)
+    outfile = os.path.join(args.buildspace, 'coverage.xml')
+    print('Writing coverage.xml report at path {}'.format(outfile))
+    cmd = ['lcov_cobertura', coverage_file, '--output', outfile]
+    # build/coverage.xml --demangle
+    subprocess.run(cmd, check=True)
 
     # remove Docker specific base path from coverage files
     if args.workspace_path:
