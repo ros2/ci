@@ -277,7 +277,7 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Run one gcov command for all gcda files for this package.
     coverage_file = os.path.join(args.buildspace, 'coverage.info')
-    cmd = ['lcov', '--capture', args.buildspace, '--output', str(coverage_file)]
+    cmd = ['lcov', '--capture', '--directory', args.buildspace, '--output', str(coverage_file)]
     print(cmd)
     subprocess.run(cmd, check=True)
 
