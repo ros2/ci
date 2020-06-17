@@ -1,47 +1,49 @@
 <io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.3.0">
   <analysisTools>
+@[for workspace in ['ws', 'work space']]@
     <io.jenkins.plugins.analysis.warnings.Cmake>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@(workspace)/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Cmake>
-@[if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
+@[  if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
    <io.jenkins.plugins.analysis.warnings.Gcc4>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@(workspace)/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Gcc4>
-@[end if]
-@[if os_name in ['osx', 'linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
+@[  end if]
+@[  if os_name in ['osx', 'linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
     <io.jenkins.plugins.analysis.warnings.Clang>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@(workspace)/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Clang>
     <io.jenkins.plugins.analysis.warnings.ClangTidy>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@(workspace)/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.ClangTidy>
-@[elif os_name in ['windows', 'windows-metal']]@
+@[  elif os_name in ['windows', 'windows-metal']]@
     <io.jenkins.plugins.analysis.warnings.MsBuild>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>@(workspace)/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.MsBuild>
-@[else]@
+@[  else]@
 @{assert False, 'Unknown os_name: ' + os_name}@
-@[end if]@
+@[  end if]@
+@[end for]@
   </analysisTools>
   <sourceCodeEncoding></sourceCodeEncoding>
   <sourceDirectory></sourceDirectory>
