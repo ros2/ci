@@ -57,7 +57,7 @@ class OSXBatchJob(BatchJob):
             warn('OSPL_HOME not set; using default value')
             os.environ['OSPL_HOME'] = os.path.join(
                 os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
-        # TODO(nuclearsandwich) COnnext 5.3.1 supports only OpenSSL 1.0.2
+        # TODO(nuclearsandwich) Connext 5.3.1 supports only OpenSSL 1.0.2
         # remove this when upgrading to Connext 6 that supports OpenSSL 1.1.1
         if 'RTI_OPENSSL_BIN' not in os.environ:
             warn('RTI_OPENSSL_BIN unset; using default value')
