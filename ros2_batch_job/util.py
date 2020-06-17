@@ -183,6 +183,44 @@ class MyProtocol(AsyncSubprocessProtocol):
                 fargs=(" ".join(self.cmd), returncode))
 
 
+class PipProtocol(AsyncSubprocessProtocol):
+    def __init__(self, cmd, exit_on_error, *args, **kwargs):
+        self.cmd = cmd
+        self.exit_on_error = exit_on_error
+        self.progress_bar = False
+        self.progress_data = ''
+        AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
+
+    def on_stdout_received(self, data):
+        # The 'pip install' progress bar output can be pretty noisy in CI output. Print only last line 
+        # every 1000 characters to reduce the noisiness.  We detect the pip progress bar by the beginning sequence of
+        # '[?25l' and the end sequence of '[?25h'.
+        if b'[?25l' in data:
+            self.progress_bar = True
+            sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', '') + '\n')
+        elif b'[?25h' in data:
+            for display_line in self.progress_data.replace('\n', '').split('\r'):
+                sys.stdout.write(display_line + '\n' if display_line else '')
+            self.progress_bar = False
+            self.progress_data = ''
+            sys.stdout.write(data.decode('utf-8', 'replace').replace('\r', ''))
+        elif self.progress_bar:
+            self.progress_data += data.decode('utf-8', 'replace')
+            if len(self.progress_data) >= 1000:
+                sys.stdout.write(self.progress_data.split('\r')[-1] + '\n')
+                self.progress_data = ''
+        else:
+            sys.stdout.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
+    def on_stderr_received(self, data):
+        sys.stderr.write(data.decode('utf-8', 'replace').replace(os.linesep, '\n'))
+
+    def on_process_exited(self, returncode):
+        if self.exit_on_error and returncode != 0:
+            log("@{rf}@!<==@| '{0}' exited with return code '{1}'",
+                fargs=(" ".join(self.cmd), returncode))
+
+
 def run(cmd, exit_on_error=True, **kwargs):
     log("@{bf}==>@| @!{0}", fargs=(" ".join(cmd),))
     ret = _run(cmd, exit_on_error=exit_on_error, **kwargs)
@@ -199,7 +237,10 @@ def run_with_prefix(prefix, cmd, exit_on_error=True, **kwargs):
 
 def _run(cmd, exit_on_error=True, **kwargs):
     def create_protocol(*args, **kwargs):
-        return MyProtocol(cmd, exit_on_error, *args, **kwargs)
+        if "pip" in cmd and "install" in cmd:
+            return PipProtocol(cmd, exit_on_error, *args, **kwargs)
+        else:
+            return MyProtocol(cmd, exit_on_error, *args, **kwargs)
 
     @asyncio.coroutine
     def run_coroutine(future):
