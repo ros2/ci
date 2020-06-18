@@ -317,13 +317,13 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     cmd = ['lcov',
            '--remove', raw_coverage_file,
            '--output', str(filtered_coverage_file),
-           '.',
-           '/usr/include/*',
-           '/usr/lib/*',
-           '/usr/lib/*',
+           os.path.abspath(os.getcwd()),  # remove spurious reference to .
+           '/usr/*',  # no system files in reports
+           '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
            '*/test/*',
            '*/tests/*',
-           '*gtest_vendor*']
+           '*gtest_vendor*',
+           '*gmock_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
 
@@ -342,9 +342,6 @@ def process_coverage(args, job, packages_for_coverage_str=None):
 
 def build_and_test(args, job):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
-
-    cmd = ['lcov_cobertura', '--help']
-    subprocess.run(cmd, check=True)
 
     print('# BEGIN SUBSECTION: build')
     cmd = [
