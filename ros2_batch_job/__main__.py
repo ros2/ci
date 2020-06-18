@@ -287,11 +287,12 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     cmd = ['lcov',
            '--remove', raw_coverage_file,
            '--output', str(filtered_coverage_file),
-           '\'/usr/include/*\'',
-           '\'/usr/lib/*\'',
-           '\'/usr/lib/*\'',
-           '\'*tests*\'',
-           '\'*gtest_vendor*\'']
+           '/usr/include/*',
+           '/usr/lib/*',
+           '/usr/lib/*',
+           '*test*',
+           '*tests*',
+           '*gtest_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
     # Transform results to the cobertura format
