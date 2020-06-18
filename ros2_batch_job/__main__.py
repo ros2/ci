@@ -290,8 +290,8 @@ def process_coverage(args, job, packages_for_coverage_str=None):
            '/usr/include/*',
            '/usr/lib/*',
            '/usr/lib/*',
-           '*test*',
-           '*tests*',
+           '*/test/*',
+           '*/tests/*',
            '*gtest_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
