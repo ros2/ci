@@ -277,7 +277,12 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
     src_paths_collection = []
     for package_name in packages_to_filter_str.split(" "):
         # need to get source package path for the package
-        cmd = ['colcon', 'list', '--paths-only', '--base-paths', args.sourcespace, '--packages-select', package_name]
+        cmd = [
+            args.colcon_script,
+            'list',
+            '--paths-only'
+            '--base-paths', args.sourcespace,
+            '--packages-select', package_name]
         print(cmd)
         try:
             src_path = subprocess.check_output(cmd).decode('ascii').strip()
