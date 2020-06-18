@@ -287,12 +287,13 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     cmd = ['lcov',
            '--remove', raw_coverage_file,
            '--output', str(filtered_coverage_file),
-           os.path.abspath(os.path.dirname(__file__)),  # remove spurious reference to .
+           os.path.abspath(os.getcwd()),  # remove spurious reference to .
            '/usr/*',  # no system files in reports
            '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
            '*/test/*',
            '*/tests/*',
-           '*gtest_vendor*']
+           '*gtest_vendor*',
+           '*gmock_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
     # Transform results to the cobertura format
