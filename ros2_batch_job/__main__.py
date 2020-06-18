@@ -62,7 +62,7 @@ pip_dependencies = [
     'flake8-docstrings',
     'flake8-import-order',
     'flake8-quotes',
-    'lcov_cobertura',
+    'lcov_cobertura_fix',
     'lark-parser',
     'mock',
     'mypy',
@@ -275,19 +275,30 @@ def get_args(sysargv=None):
 
 def process_coverage(args, job, packages_for_coverage_str=None):
     print('# BEGIN SUBSECTION: coverage analysis')
-    # Run one gcov command for all gcda files for this package.
-    coverage_file = os.path.join(args.buildspace, 'coverage.info')
-    cmd = ['lcov', '--capture', '--directory', args.buildspace, '--output', str(coverage_file)]
+    # Capture all gdca/gcno files (all them inside buildspace)
+    raw_coverage_file = os.path.join(args.buildspace, 'coverage.info')
+    cmd = ['lcov',
+           '--capture',
+           '--directory', args.buildspace,
+           '--output', str(raw_coverage_file)]
     print(cmd)
     subprocess.run(cmd, check=True)
-
-    #cmd = ['lcov', '--list', '--summary', str(coverage_file)]
-    #print(cmd)
-    #subprocess.run(cmd, check=True)
-
+    # Filter out system coverage and test code
+    filtered_coverage_file = os.path.join(args.buildspace, 'filtered_coverage.info')
+    cmd = ['lcov',
+           '--remove', raw_coverage_file,
+           '--output', str(filtered_coverage_file),
+           '\'/usr/include/*\'',
+           '\'/usr/lib/*\'',
+           '\'/usr/lib/*\'',
+           '\'*tests*\'',
+           '\'*gtest_vendor*\'']
+    print(cmd)
+    subprocess.run(cmd, check=True)
+    # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
-    cmd = ['lcov_cobertura', coverage_file, '--output', outfile]
+    cmd = ['lcov_cobertura', filtered_coverage_file, '--output', outfile]
     # build/coverage.xml --demangle
     subprocess.run(cmd, check=True)
 
