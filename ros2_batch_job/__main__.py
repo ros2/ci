@@ -333,20 +333,12 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     subprocess.run(cmd, check=True)
 
     # TODO: testing
-    filter_unit_coverage(args, filtered_coverage_file, 'rcutils')
-    cmd = ['lcov',
-           '--list', filtered_coverage_file]
-    print(cmd)
-    subprocess.run(cmd, check=True)
+    filter_unit_coverage(args, filtered_coverage_file, 'rclcpp')
 
     # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
     cmd = ['lcov_cobertura', filtered_coverage_file, '--output', outfile]
-    print(cmd)
-    subprocess.run(cmd, check=True)
-
-    cmd = ['cat', outfile]
     subprocess.run(cmd, check=True)
 
     print('# END SUBSECTION')
