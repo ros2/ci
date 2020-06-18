@@ -183,6 +183,9 @@ fi
 if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
+if [ -n "$CI_COVERAGE_FILTER_PKGS" ]; then
+  export CI_ARGS="$CI_ARGS --coverage-filter-packages $CI_COVERAGE_FILTER_PKGS"
+fi
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  end if]@
