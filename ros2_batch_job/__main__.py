@@ -278,6 +278,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
     for package_name in packages_to_filter_str.split(" "):
         # need to get source package path for the package
         cmd = ['colcon', 'list', '--paths-only', '--base-paths', args.sourcespace, '--packages-select', package_name]
+        print(cmd)
         try:
             src_path = subprocess.check_output(cmd).decode('ascii').strip()
         except subprocess.CalledProcessError as e:
@@ -288,14 +289,15 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
             print("Package not found: " + package_name, file=sys.stderr)
             sys.exit(-1)
         # accumulate packages path
-        src_paths_collection.add(src_path)
-        build_paths_collection.add(str(os.path.join(args.buildspace, package_name)))
+        src_paths_collection.append('*%s/*' % (src_path))
+        build_paths_collection.append('*%s/*' % (str(os.path.join(args.buildspace, package_name))))
 
     cmd = [
         'lcov',
         '--extract', coverage_info_file,
-        '--output', coverage_info_file,
-        ' '.join(['*' + p + '/*' for p in src_paths_collection + build_paths_collection])]
+        '--output', coverage_info_file] \
+        + src_paths_collection \
+        + build_paths_collection
     print(cmd)
     subprocess.run(cmd, check=True)
 
@@ -324,6 +326,10 @@ def process_coverage(args, job, packages_for_coverage_str=None):
            '*gtest_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
+
+    # TODO: testing
+    filter_unit_coverage(args, filtered_coverage_file, 'rcutils')
+
     # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
