@@ -72,6 +72,7 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y lcov
+RUN pip3 install -U lcov_cobertura_fix
 
 # Install the OpenSplice binary from the OSRF repositories.
 RUN if test ${UBUNTU_DISTRO} != focal; then apt-get update && apt-get install --no-install-recommends -y libopensplice69=6.9.190705+osrf1-1~$UBUNTU_DISTRO; fi

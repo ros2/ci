@@ -62,7 +62,6 @@ pip_dependencies = [
     'flake8-docstrings',
     'flake8-import-order',
     'flake8-quotes',
-    'lcov_cobertura_fix',
     'lark-parser',
     'mock',
     'mypy',
@@ -324,6 +323,9 @@ def process_coverage(args, job, packages_for_coverage_str=None):
 
 def build_and_test(args, job):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
+
+    cmd = ['lcov_cobertura', '--help']
+    subprocess.run(cmd, check=True)
 
     print('# BEGIN SUBSECTION: build')
     cmd = [
