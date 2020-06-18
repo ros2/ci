@@ -287,6 +287,7 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     cmd = ['lcov',
            '--remove', raw_coverage_file,
            '--output', str(filtered_coverage_file),
+           '.',
            '/usr/include/*',
            '/usr/lib/*',
            '/usr/lib/*',
@@ -299,24 +300,7 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
     cmd = ['lcov_cobertura', filtered_coverage_file, '--output', outfile]
-    # build/coverage.xml --demangle
     subprocess.run(cmd, check=True)
-
-    # remove Docker specific base path from coverage files
-    if args.workspace_path:
-        docker_base_path = os.path.dirname(os.path.abspath('.'))
-        for root, dirs, files in os.walk(args.buildspace):
-            for f in sorted(files):
-                if not f.endswith('coverage.xml'):
-                    continue
-                coverage_path = os.path.join(root, f)
-                with open(coverage_path, 'r') as h:
-                    content = h.read()
-                content = content.replace(
-                    '<source>%s/' % docker_base_path,
-                    '<source>%s/' % args.workspace_path)
-                with open(coverage_path, 'w') as h:
-                    h.write(content)
 
     print('# END SUBSECTION')
     return 0
