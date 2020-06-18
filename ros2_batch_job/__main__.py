@@ -280,7 +280,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
         cmd = [
             args.colcon_script,
             'list',
-            '--paths-only'
+            '--paths-only',
             '--base-paths', args.sourcespace,
             '--packages-select', package_name]
         print(cmd)
