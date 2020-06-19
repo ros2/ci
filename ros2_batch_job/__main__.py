@@ -276,7 +276,20 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
     build_paths_collection = []
     src_paths_collection = []
     for package_name in packages_to_filter_str.split(" "):
-        # need to get source package path for the package
+        # check if it is a python package generating its own coverage.xml
+
+        # DEBUG REMOVE
+        cmd = ['find', args.buildspace, '-name', 'coverage.xml']
+        print(cmd)
+        subprocess.run(cmd, check=True)
+
+        cmd = ['find', os.path.join(args.buildspace, package_name), '-name', 'coverage.xml']
+        coverage_xml_path = subprocess.check_output(cmd).decode('ascii').strip()
+        if coverage_xml_path:
+            # python coverage detected: move the coverage.xml file to buildspace to be reported
+            cmd = ['cp', coverage_xml_path, os.path.join(args.buildspace, package_name, '.coverage.xml')]
+
+        # collect paths to run lcov in order to process C/C++ coverage information
         cmd = [
             args.colcon_script,
             'list',
@@ -285,6 +298,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
             '--packages-select', package_name]
         print(cmd)
         try:
+            # get source package path, not trivial use colcon list
             src_path = subprocess.check_output(cmd).decode('ascii').strip()
         except subprocess.CalledProcessError as e:
             print(e.output, file=sys.stderr)
@@ -293,7 +307,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
         if not src_path:
             print("Package not found: " + package_name, file=sys.stderr)
             sys.exit(-1)
-        # accumulate packages path
+        # accumulate packages path adding the regexp needed to filter
         src_paths_collection.append('*%s/*' % (src_path))
         build_paths_collection.append('*%s/*' % (str(os.path.join(args.buildspace, package_name))))
 
@@ -303,6 +317,11 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
         '--output', coverage_info_file] \
         + src_paths_collection \
         + build_paths_collection
+    print(cmd)
+    subprocess.run(cmd, check=True)
+
+    # DEBUG REMOVE
+    cmd = ['find', args.buildspace, '-name', 'coverage.xml']
     print(cmd)
     subprocess.run(cmd, check=True)
 
