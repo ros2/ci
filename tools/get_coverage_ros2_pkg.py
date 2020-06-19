@@ -74,8 +74,13 @@ if __name__ == '__main__':
                 continue
             # e has children, elements or name
             entry_name = e['name'].replace("'", "")
-            lines_coverage = e['elements'][2]
-            assert lines_coverage['name'] == 'Lines', 'Error expecting lines of coverage'
+            # search for the Lines coverage method
+            lines_coverage = None
+            for coverage_method in e['elements']:
+                if coverage_method['name'] == 'Lines':
+                    lines_coverage = coverage_method
+            assert lines_coverage, 'Did not find Lines metric in coverage'
+
             name_parts = entry_name.split('.')
 
             if len(name_parts) == 1:
