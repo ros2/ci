@@ -279,10 +279,10 @@ def get_args(sysargv=None):
     return args
 
 
-def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
+def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
     build_paths_collection = []
     src_paths_collection = []
-    for package_name in packages_to_filter_str.split(" "):
+    for package_name in packages_to_filter:
         # check if it is a python package generating its own coverage.xml
 
         # DEBUG REMOVE
@@ -335,7 +335,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
     subprocess.run(cmd, check=True)
 
 
-def process_coverage(args, job, packages_for_coverage_str=None):
+def process_coverage(args, job, packages_for_coverage=None):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Capture all gdca/gcno files (all them inside buildspace)
     raw_coverage_file = os.path.join(args.buildspace, 'coverage.info')
@@ -359,8 +359,8 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     print(cmd)
     subprocess.run(cmd, check=True)
     # Extract only desired packages if packages_for_coverage_str is set
-    if packages_for_coverage_str:
-        filter_unit_coverage(args, filtered_coverage_file, packages_for_coverage_str)
+    if packages_for_coverage:
+        filter_unit_coverage(args, filtered_coverage_file, packages_for_coverage)
     # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
