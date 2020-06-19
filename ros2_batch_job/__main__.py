@@ -232,6 +232,9 @@ def get_args(sysargv=None):
         '--coverage', default=False, action='store_true',
         help="enable collection of coverage statistics")
     parser.add_argument(
+        '--coverage-filter-packages', default=None,
+        help='list of packages (space separated) to be displayed in the coverage report')
+    parser.add_argument(
         '--workspace-path', default=None,
         help="base path of the workspace")
     parser.add_argument(
