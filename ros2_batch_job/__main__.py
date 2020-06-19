@@ -326,7 +326,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
     subprocess.run(cmd, check=True)
 
     # DEBUG REMOVE
-    cmd = ['find', args.buildspace, '-name', 'coverage.xml', '--exec', 'rm', '{}', '\;']
+    cmd = ['find', args.buildspace, '-name', 'coverage.xml', '-exec', 'rm', '{}', '\\;']
     print(cmd)
     subprocess.run(cmd, check=True)
 
