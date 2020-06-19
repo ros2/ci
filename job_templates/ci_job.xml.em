@@ -109,7 +109,8 @@ cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')},
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
 compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
-coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
+coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}, <br/>
+coverage_filter: ${build.buildVariableResolver.resolve('CI_COVERAGE_FILTER_PKGS')}\
 """);]]>
         </script>
           <sandbox>false</sandbox>
@@ -182,9 +183,9 @@ if [ "$CI_COMPILE_WITH_CLANG" = "true" ]; then
 fi
 if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
-fi
-if [ -n "$CI_COVERAGE_FILTER_PKGS" ]; then
-  export CI_ARGS="$CI_ARGS --coverage-filter-packages $CI_COVERAGE_FILTER_PKGS"
+  if [ -n "$CI_COVERAGE_FILTER_PKGS" ]; then
+    export CI_ARGS="$CI_ARGS --coverage-filter-packages $CI_COVERAGE_FILTER_PKGS"
+  fi
 fi
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
@@ -340,6 +341,9 @@ if "!CI_COMPILE_WITH_CLANG!" == "true" (
 )
 if "!CI_ENABLE_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
+  if "!CI_COVERAGE_FILTER_PKGS!" NEQ "None" (
+    set "CI_ARGS=!CI_ARGS! --coverage-filter-packages"
+  )
 )
 set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
 if "!CI_BUILD_ARGS!" NEQ "" (
@@ -434,9 +438,12 @@ if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
 if "!CI_COMPILE_WITH_CLANG!" == "true" (
   set "CI_ARGS=!CI_ARGS! --compile-with-clang"
 )
-if "!CI_ENABLE_COVERAGE!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --coverage"
-)
+if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
+  export CI_ARGS="$CI_ARGS --coverage"
+  if [ -n "$CI_COVERAGE_FILTER_PKGS" ]; then
+    export CI_ARGS="$CI_ARGS --coverage-filter-packages $CI_COVERAGE_FILTER_PKGS"
+  fi
+fi
 set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
 if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"

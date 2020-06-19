@@ -341,7 +341,6 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     cmd = ['lcov',
            '--remove', raw_coverage_file,
            '--output', str(filtered_coverage_file),
-           os.path.abspath(os.getcwd()),  # remove spurious reference to .
            '/usr/*',  # no system files in reports
            '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
            '*/test/*',
@@ -350,10 +349,9 @@ def process_coverage(args, job, packages_for_coverage_str=None):
            '*gmock_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
-
-    # TODO: testing
-    filter_unit_coverage(args, filtered_coverage_file, 'rclcpp')
-
+    # Extract only desired packages if packages_for_coverage_str is set
+    if packages_for_coverage_str:
+        filter_unit_coverage(args, filtered_coverage_file, packages_for_coverage_str)
     # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
@@ -465,7 +463,7 @@ def build_and_test(args, job):
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
     if args.coverage and args.os == 'linux':
-        process_coverage(args, job, 'rlcpp')
+        process_coverage(args, job, args.coverage_filter_packages)
 
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
