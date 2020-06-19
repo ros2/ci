@@ -291,6 +291,8 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
         if coverage_xml_path:
             # python coverage detected: move the coverage.xml file to buildspace to be reported
             cmd = ['cp', coverage_xml_path, os.path.join(args.buildspace, package_name, '.coverage.xml')]
+            print(cmd)
+            subprocess.run(cmd, check=True)
 
         # collect paths to run lcov in order to process C/C++ coverage information
         cmd = [
@@ -324,7 +326,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter_str):
     subprocess.run(cmd, check=True)
 
     # DEBUG REMOVE
-    cmd = ['find', args.buildspace, '-name', 'coverage.xml']
+    cmd = ['find', args.buildspace, '-name', 'coverage.xml', '--exec', 'rm', '{}', '\;']
     print(cmd)
     subprocess.run(cmd, check=True)
 
