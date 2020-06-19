@@ -7,6 +7,51 @@ import subprocess
 import sys
 import tempfile
 
+
+# Compare if a list is inside other list in order
+# From here: https://stackoverflow.com/a/20789669
+def is_slice_in_list(s, l):
+    len_s = len(s)
+    return any(s == l[i:len_s + i] for i in range(len(l) - len_s + 1))
+
+
+def create_colcon_workspace():
+    ros2_ws_path = os.path.join(tempfile.gettempdir(), 'ros2_coverage_tool')
+    ros2_repos_path = os.path.join(ros2_ws_path, 'ros2.repos')
+    # create the workspace if it does not exist
+    if not os.path.isdir(ros2_ws_path):
+        os.mkdir(ros2_ws_path)
+        ros2_repos = requests.get('https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos')
+        if ros2_repos.status_code != requests.codes.ok:
+            print('Failed to download ros2.repos file', file=sys.stderr)
+            sys.exit(-1)
+        with open(ros2_repos_path, 'wb') as file:
+            file.write(ros2_repos.content)
+
+    cmd = ['vcs', 'import', ros2_ws_path, '--shallow', '--retry', '5', '--input', ros2_repos_path]
+    try:
+        print('Getting ros2.repos sources to get packages source paths. Please wait')
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print(e.output, file=sys.stderr)
+        sys.exit(-1)
+
+    return ros2_ws_path
+
+
+def get_src_path(package_name, colcon_ws):
+    cmd = ['colcon', 'list', '--paths-only', '--base-paths', colcon_ws, '--packages-select', package_name]
+    try:
+        path = subprocess.check_output(cmd).decode('ascii').strip()
+    except subprocess.CalledProcessError as e:
+        print(e.output, file=sys.stderr)
+        sys.exit(-1)
+    if not path:
+        print('Package not found: ' + input_pkg, file=sys.stderr)
+        sys.exit(-1)
+    return path
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('jenkins_coverage_build', help='URL of a ci.ro2s.org build using coverage (i.e https://ci.ros2.org/job/ci_linux_coverage/182)')
@@ -15,47 +60,6 @@ if __name__ == '__main__':
 
     input_url = args.jenkins_coverage_build
     input_pkg = args.ros_package
-
-    # Compare if a list is inside other list in order
-    # From here: https://stackoverflow.com/a/20789669
-    def is_slice_in_list(s, l):
-        len_s = len(s)
-        return any(s == l[i:len_s + i] for i in range(len(l) - len_s + 1))
-
-    def create_colcon_workspace():
-        ros2_ws_path = os.path.join(tempfile.gettempdir(), 'ros2_coverage_tool')
-        ros2_repos_path = os.path.join(ros2_ws_path, 'ros2.repos')
-        # create the workspace if it does not exist
-        if not os.path.isdir(ros2_ws_path):
-            os.mkdir(ros2_ws_path)
-            ros2_repos = requests.get('https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos')
-            if ros2_repos.status_code != requests.codes.ok:
-                print('Failed to download ros2.repos file', file=sys.stderr)
-                sys.exit(-1)
-            with open(ros2_repos_path, 'wb') as file:
-                file.write(ros2_repos.content)
-
-        cmd = ['vcs', 'import', ros2_ws_path, '--shallow', '--retry', '5', '--input', ros2_repos_path]
-        try:
-            print('Getting ros2.repos sources to get packages source paths. Please wait')
-            subprocess.check_output(cmd)
-        except subprocess.CalledProcessError as e:
-            print(e.output, file=sys.stderr)
-            sys.exit(-1)
-
-        return ros2_ws_path
-
-    def get_src_path(package_name, colcon_ws):
-        cmd = ['colcon', 'list', '--paths-only', '--base-paths', colcon_ws, '--packages-select', package_name]
-        try:
-            path = subprocess.check_output(cmd).decode('ascii').strip()
-        except subprocess.CalledProcessError as e:
-            print(e.output, file=sys.stderr)
-            sys.exit(-1)
-        if not path:
-            print('Package not found: ' + input_pkg, file=sys.stderr)
-            sys.exit(-1)
-        return path
 
     r = requests.get(url=input_url + '/cobertura/api/json?depth=3')
     if r.status_code != 200:
