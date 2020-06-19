@@ -274,62 +274,31 @@ def get_args(sysargv=None):
 
 def process_coverage(args, job):
     print('# BEGIN SUBSECTION: coverage analysis')
-    # Collect all .gcda files in args.workspace
-    output = subprocess.check_output(
-        [args.colcon_script, 'list', '--base-paths', args.sourcespace])
-    for line in output.decode().splitlines():
-        package_name, package_path, _ = line.split('\t', 2)
-        print(package_name)
-        package_build_path = os.path.join(args.buildspace, package_name)
-        gcda_files = []
-        for root, dirs, files in os.walk(package_build_path):
-            gcda_files.extend(
-                    [os.path.abspath(os.path.join(root, f))
-                        for f in files if f.endswith('.gcda')])
-        if len(gcda_files) == 0:
-            continue
-
-        # Run one gcov command for all gcda files for this package.
-        cmd = ['gcov', '--preserve-paths', '--relative-only', '--source-prefix', os.path.abspath('.')] + gcda_files
-        print(cmd)
-        subprocess.run(cmd, check=True, cwd=package_build_path)
-
-        # Write one report for the entire package.
-        # cobertura plugin looks for files of the regex *coverage.xml
-        outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
-        print('Writing coverage.xml report at path {}'.format(outfile))
-        # --gcov-exclude remove generated .gcov files from previous gcov call. 
-        #                file names are in the form: #dir#sudir#file.*.gcov     
-        # -xml  Output cobertura xml
-        # -output=<outfile>  Pass name of output file
-        # -g  use existing .gcov files in the directory
-        cmd = [
-            'gcovr',
-            '--object-directory=' + package_build_path,
-            '-k',
-            '-r', os.path.abspath('.'),
-            '--xml', '--output=' + outfile,         
-            '--gcov-exclude=.*#tests?#.*',
-            '--gcov-exclude=.*#gtest_vendor#.*',
-            '-g']
-        print(cmd)
-        subprocess.run(cmd, check=True)
-
-    # remove Docker specific base path from coverage files
-    if args.workspace_path:
-        docker_base_path = os.path.dirname(os.path.abspath('.'))
-        for root, dirs, files in os.walk(args.buildspace):
-            for f in sorted(files):
-                if not f.endswith('coverage.xml'):
-                    continue
-                coverage_path = os.path.join(root, f)
-                with open(coverage_path, 'r') as h:
-                    content = h.read()
-                content = content.replace(
-                    '<source>%s/' % docker_base_path,
-                    '<source>%s/' % args.workspace_path)
-                with open(coverage_path, 'w') as h:
-                    h.write(content)
+    # Capture all gdca/gcno files (all them inside buildspace)
+    coverage_file = os.path.join(args.buildspace, 'coverage.info')
+    cmd = ['lcov',
+           '--capture',
+           '--directory', args.buildspace,
+           '--output', str(coverage_file)]
+    print(cmd)
+    subprocess.run(cmd, check=True)
+    # Filter out system coverage and test code
+    cmd = ['lcov',
+           '--remove', coverage_file,
+           '--output', coverage_file,
+           '/usr/*',  # no system files in reports
+           '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
+           '*/test/*',
+           '*/tests/*',
+           '*gtest_vendor*',
+           '*gmock_vendor*']
+    print(cmd)
+    subprocess.run(cmd, check=True)
+    # Transform results to the cobertura format
+    outfile = os.path.join(args.buildspace, 'coverage.xml')
+    print('Writing coverage.xml report at path {}'.format(outfile))
+    cmd = ['lcov_cobertura', coverage_file, '--output', outfile]
+    subprocess.run(cmd, check=True)
 
     print('# END SUBSECTION')
     return 0
