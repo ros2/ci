@@ -9,8 +9,8 @@ import tempfile
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("jenkins_coverage_build", help="URL of a ci.ro2s.org build using coverage (i.e https://ci.ros2.org/job/ci_linux_coverage/182)")
-    parser.add_argument("ros_package", help="ROS package name to get the coverage rate from (i.e: rcutils)")
+    parser.add_argument('jenkins_coverage_build', help='URL of a ci.ro2s.org build using coverage (i.e https://ci.ros2.org/job/ci_linux_coverage/182)')
+    parser.add_argument('ros_package', help='ROS package name to get the coverage rate from (i.e: rcutils)')
     args = parser.parse_args()
 
     input_url = args.jenkins_coverage_build
@@ -32,7 +32,7 @@ if __name__ == '__main__':
             if ros2_repos.status_code != requests.codes.ok:
                 print('Failed to download ros2.repos file', file=sys.stderr)
                 sys.exit(-1)
-            with open(ros2_repos_path, "wb") as file:
+            with open(ros2_repos_path, 'wb') as file:
                 file.write(ros2_repos.content)
 
         cmd = ['vcs', 'import', ros2_ws_path, '--shallow', '--retry', '5', '--input', ros2_repos_path]
@@ -53,13 +53,13 @@ if __name__ == '__main__':
             print(e.output, file=sys.stderr)
             sys.exit(-1)
         if not path:
-            print("Package not found: " + input_pkg, file=sys.stderr)
+            print('Package not found: ' + input_pkg, file=sys.stderr)
             sys.exit(-1)
         return path
 
     r = requests.get(url=input_url + '/cobertura/api/json?depth=3')
     if r.status_code != 200:
-        print("Wrong input URL " + input_url, file=sys.stderr)
+        print('Wrong input URL ' + input_url, file=sys.stderr)
         sys.exit(-1)
 
     ros2_ws_path = create_colcon_workspace()
@@ -95,22 +95,22 @@ if __name__ == '__main__':
             # source code: check if coverage entry contains exactly the source path
             package_under_cov = input_pkg
         else:
-            package_under_cov = "NOT-FOUND"
+            package_under_cov = 'NOT-FOUND'
 
         if package_under_cov == input_pkg:
             total_lines_under_testing += lines_coverage['denominator']
             total_lines_tested += lines_coverage['numerator']
-            print(" * %s [%04.2f] -- %i/%i" % (
+            print(' * %s [%04.2f] -- %i/%i' % (
                   entry_name,
                   lines_coverage['ratio'],
                   lines_coverage['numerator'],
                   lines_coverage['denominator']))
 
     if total_lines_under_testing == 0:
-        print("Package not found: " + input_pkg, file=sys.stderr)
+        print('Package not found: ' + input_pkg, file=sys.stderr)
         sys.exit(-1)
 
-    print("\nCombined unit testing for %s: %04.2f%% %i/%i" % (
+    print('\nCombined unit testing for %s: %04.2f%% %i/%i' % (
         input_pkg,
         total_lines_tested / total_lines_under_testing * 100,
         total_lines_tested,
