@@ -25,6 +25,7 @@ def get_src_path(package_name, colcon_ws):
     if not path:
         print('Package not found: ' + input_pkg, file=sys.stderr)
         sys.exit(-1)
+    assert path.count('\n') == 0, 'Found more than one line returned by colcon list'
     return path
 
 
