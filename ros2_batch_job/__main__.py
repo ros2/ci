@@ -259,9 +259,13 @@ def get_args(sysargv=None):
         argv, test_args = extract_argument_group(argv, '--test-args')
     else:
         build_args, test_args = extract_argument_group(build_args, '--test-args')
+    if '--coverage-filter-packages' in argv:
+        argv, coverage_filter_packages = extract_argument_group(argv, '--coverage-filter-packages')
+
     args = parser.parse_args(argv)
     args.build_args = build_args
     args.test_args = test_args
+    args.coverage_filter_packages = coverage_filter_packages
 
     for name in ('sourcespace', 'buildspace', 'installspace'):
         space_directory = getattr(args, name)
