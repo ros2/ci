@@ -325,7 +325,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
                 package_tag.set('name', absolute_path.replace(os.path.sep, '.'))
 
             # python coverage detected: move the coverage.xml file modified to buildspace to be reported
-            tree.write(os.path.join(args.buildspace, package_name, '.coverage.xml')
+            tree.write(os.path.join(args.buildspace, package_name, '.coverage.xml'))
 
         # accumulate packages paths to run lcov in order to process C/C++ coverage information
         src_paths_collection.append('*%s/*' % (get_package_path(args, package_name)))
