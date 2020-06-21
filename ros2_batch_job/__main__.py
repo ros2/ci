@@ -279,6 +279,26 @@ def get_args(sysargv=None):
     return args
 
 
+def get_package_path(args, package_name):
+    # need to get source package path for the package
+    cmd = [
+        args.colcon_script,
+        'list',
+        '--paths-only',
+        '--base-paths', args.sourcespace,
+        '--packages-select', package_name]
+    print(cmd)
+    try:
+        src_path = subprocess.check_output(cmd).decode('ascii').strip()
+    except subprocess.CalledProcessError as e:
+        print(e.output, file=sys.stderr)
+        sys.exit(-1)
+    # Check if found
+    if not src_path:
+        print("Package not found: " + package_name, file=sys.stderr)
+        sys.exit(-1)
+    return src_path
+
 def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
     build_paths_collection = []
     src_paths_collection = []
@@ -298,26 +318,8 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
             print(cmd)
             subprocess.run(cmd, check=True)
 
-        # collect paths to run lcov in order to process C/C++ coverage information
-        cmd = [
-            args.colcon_script,
-            'list',
-            '--paths-only',
-            '--base-paths', args.sourcespace,
-            '--packages-select', package_name]
-        print(cmd)
-        try:
-            # get source package path, not trivial use colcon list
-            src_path = subprocess.check_output(cmd).decode('ascii').strip()
-        except subprocess.CalledProcessError as e:
-            print(e.output, file=sys.stderr)
-            sys.exit(-1)
-        # Check if found
-        if not src_path:
-            print("Package not found: " + package_name, file=sys.stderr)
-            sys.exit(-1)
-        # accumulate packages path adding the regexp needed to filter
-        src_paths_collection.append('*%s/*' % (src_path))
+        # accumulate packages paths to run lcov in order to process C/C++ coverage information
+        src_paths_collection.append('*%s/*' % (get_package_path(args, package_name)))
         build_paths_collection.append('*%s/*' % (str(os.path.join(args.buildspace, package_name))))
 
     cmd = [
