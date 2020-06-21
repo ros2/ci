@@ -300,6 +300,7 @@ def get_package_path(args, package_name):
         sys.exit(-1)
     return src_path
 
+
 def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
     build_paths_collection = []
     src_paths_collection = []
@@ -311,7 +312,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
             tree = ET.parse(coverage_xml_path)
             packages_tag = tree.getroot().find('packages')
             assert packages_tag, "File %s has no packages XML tag" % (coverage_xml_path)
-            source_path = os.path.normpath(get_package_path(package_name))
+            source_path = os.path.normpath(get_package_path(args, package_name))
             for package_tag in packages_tag.iter('package'):
                 name_attibute = package_tag.get('name')
                 if name_attibute == 'test' or name_attibute == 'tests':
