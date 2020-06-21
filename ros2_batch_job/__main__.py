@@ -21,6 +21,7 @@ from shutil import which
 import subprocess
 import sys
 import time
+import xml.etree.ElementTree as ET
 
 # Make sure we're using Python3
 assert sys.version.startswith('3'), "This script is only meant to work with Python3"
@@ -304,19 +305,27 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
     src_paths_collection = []
     for package_name in packages_to_filter:
         # check if it is a python package generating its own coverage.xml
-
-        # DEBUG REMOVE
-        cmd = ['find', args.buildspace, '-name', 'coverage.xml']
-        print(cmd)
-        subprocess.run(cmd, check=True)
-
         cmd = ['find', os.path.join(args.buildspace, package_name), '-name', 'coverage.xml']
         coverage_xml_path = subprocess.check_output(cmd).decode('ascii').strip()
         if coverage_xml_path:
-            # python coverage detected: move the coverage.xml file to buildspace to be reported
-            cmd = ['cp', coverage_xml_path, os.path.join(args.buildspace, package_name, '.coverage.xml')]
-            print(cmd)
-            subprocess.run(cmd, check=True)
+            tree = ET.parse(coverage_xml_path)
+            packages_tag = tree.getroot().find('packages')
+            assert packages_tag, "File %s has no packages XML tag" % (coverage_xml_path)
+            source_path = os.path.normpath(get_package_path(package_name))
+            for package_tag in packages_tag.iter('package'):
+                name_attibute = package_tag.get('name')
+                if name_attibute == 'test' or name_attibute == 'tests':
+                    packages_tag.remove(package_tag)
+                    continue
+                elif name_attibute == '.':
+                    absolute_path = source_path
+                else:
+                    absolute_path = os.path.join(source_path, package_tag.get('name'))
+                # cobertura files use . as filesystem separator
+                package_tag.set('name', absolute_path.replace(os.path.sep, '.'))
+
+            # python coverage detected: move the coverage.xml file modified to buildspace to be reported
+            tree.write(os.path.join(args.buildspace, package_name, '.coverage.xml')
 
         # accumulate packages paths to run lcov in order to process C/C++ coverage information
         src_paths_collection.append('*%s/*' % (get_package_path(args, package_name)))
