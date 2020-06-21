@@ -262,6 +262,8 @@ def get_args(sysargv=None):
         build_args, test_args = extract_argument_group(build_args, '--test-args')
     if '--coverage-filter-packages' in argv:
         argv, coverage_filter_packages = extract_argument_group(argv, '--coverage-filter-packages')
+    else:
+        coverage_filter_packages = None
 
     args = parser.parse_args(argv)
     args.build_args = build_args
