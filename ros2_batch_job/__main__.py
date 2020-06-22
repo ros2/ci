@@ -280,6 +280,7 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     cmd = [
         args.colcon_script, 'lcov-result',
         '--build-base', args.buildspace,
+        '--packages-up-tp', 'rcutils',  # DEBUG REMOVE
         '--filter', '/usr/*',  # no system files in reports
         '--filter', '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
         '--filter', '*/test/*',
