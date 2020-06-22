@@ -314,7 +314,7 @@ def prepare_coverage_xml_pytest_files(args, package_names=None):
     for package_name in package_names:
         # coverage.xml is in build/$package_name/coverage.xml
         coverage_xml_path = os.path.join(args.buildspace, package_name, 'coverage.xml')
-        if not os.isfile(coverage_xml_path):
+        if not os.path.isfile(coverage_xml_path):
             continue
         tree = ET.parse(coverage_xml_path)
         packages_tag = tree.getroot().find('packages')
