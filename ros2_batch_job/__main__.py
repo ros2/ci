@@ -378,10 +378,10 @@ def process_coverage(args, job, packages_for_coverage=None):
     # Extract only desired packages if packages_for_coverage_str is set
     if packages_for_coverage:
         filter_gcov_coverage(args, filtered_coverage_file, packages_for_coverage)
-        prepare_coverage_xml_pytest_files(packages_for_coverage)
+        prepare_coverage_xml_pytest_files(args, packages_for_coverage)
     else:
         # Process all coverage files produced by ptest
-        prepare_coverage_xml_pytest_files()
+        prepare_coverage_xml_pytest_files(args)
 
     # DEBUG REMOVE
     cmd = ['find', args.buildspace, '-name', 'coverage.xml', '-exec', 'rm', '{}', ';']
