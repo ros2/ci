@@ -291,7 +291,7 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     subprocess.run(cmd, check=True)
     total_coverage_file = os.path.join(args.workspace, 'lcov', 'total_coverage.info')
 
-    cmd = ['find', '.', '--name', 'total_coverage.info']
+    cmd = ['find', '.', '-name', 'total_coverage.info']
     print(cmd)
     subprocess.run(cmd, check=True)
 
