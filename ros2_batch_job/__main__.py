@@ -279,6 +279,7 @@ def process_coverage(args, job, packages_for_coverage_str=None):
     # Filter out system coverage and test code
     cmd = [
         args.colcon_script, 'lcov-result',
+        '--verbose',  # DEBUG REMOVE
         '--build-base', args.buildspace,
         '--packages-up-to', 'rcutils',  # DEBUG REMOVE
         '--filter', '/usr/*',  # no system files in reports
