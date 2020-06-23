@@ -104,11 +104,11 @@ if __name__ == '__main__':
                 total_lines_under_testing += lines_coverage['denominator']
                 total_lines_tested += lines_coverage['numerator']
                 print(f' * {entry_name}'
-                      f' [{lines_coverage['ratio']:.2f}] --'
-                      f' {lines_coverage['numerator']:.0f}/{lines_coverage['denominator']:.0f}')
+                      f" [{lines_coverage['ratio']:.2f}] --"
+                      f" {lines_coverage['numerator']:.0f}/{lines_coverage['denominator']:.0f}")
 
         if total_lines_under_testing == 0:
-            print('Package not found: ' + input_pkg, file=sys.stderr)
+            print(f'No coverage found for package {input_pkg}', file=sys.stderr)
             sys.exit(-1)
 
         print(f'\nCombined unit testing for {input_pkg}:'
