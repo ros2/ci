@@ -1,4 +1,4 @@
-# Coverage calculator for ROS 2 packages in ROS2 buildfarm
+# Coverage calculator for ROS 2 packages in ROS 2 buildfarm
 
 Script to get results from a `ci.ros2.org` coverage build through json and
 calculate the coverage rate from all the listed entries corresponding to
