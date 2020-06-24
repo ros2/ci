@@ -73,7 +73,7 @@ if __name__ == '__main__':
             if e['name'] == '.':
                 continue
             # e has children, elements or name
-            entry_name = e['name'].replace("'", "")
+            entry_name = e['name'].replace("'", '')
             # search for the Lines coverage method
             lines_coverage = None
             for coverage_method in e['elements']:
