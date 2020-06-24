@@ -276,22 +276,24 @@ def process_coverage(args, job):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Capture all gdca/gcno files (all them inside buildspace)
     coverage_file = os.path.join(args.buildspace, 'coverage.info')
-    cmd = ['lcov',
-           '--capture',
-           '--directory', args.buildspace,
-           '--output', str(coverage_file)]
+    cmd = [
+        'lcov',
+        '--capture',
+        '--directory', args.buildspace,
+        '--output', str(coverage_file)]
     print(cmd)
     subprocess.run(cmd, check=True)
     # Filter out system coverage and test code
-    cmd = ['lcov',
-           '--remove', coverage_file,
-           '--output', coverage_file,
-           '/usr/*',  # no system files in reports
-           '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
-           '*/test/*',
-           '*/tests/*',
-           '*gtest_vendor*',
-           '*gmock_vendor*']
+    cmd = [
+        'lcov',
+        '--remove', coverage_file,
+        '--output', coverage_file,
+        '/usr/*',  # no system files in reports
+        '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
+        '*/test/*',
+        '*/tests/*',
+        '*gtest_vendor*',
+        '*gmock_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
     # Transform results to the cobertura format
