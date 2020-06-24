@@ -168,8 +168,6 @@ def main(argv=None):
 
     # configure os specific jobs
     for os_name in sorted(os_configs.keys()):
-        if os_name != 'linux-armhf':
-            continue
         # This short name is preserved for historic reasons, but long-paths have been enabled on
         # windows containers and their hosts
         job_os_name = os_name
