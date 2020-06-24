@@ -17,6 +17,7 @@
 import argparse
 import collections
 import os
+import re
 import sys
 
 try:
@@ -59,6 +60,10 @@ def main(argv=None):
     parser.add_argument(
         '--ci-scripts-default-branch', default='master',
         help="default branch of the ci repository to get ci scripts from (this is a job parameter)"
+    )
+    parser.add_argument(
+        '--limit-jobs-to', default='',
+        help='Limit the job creation to those who match the give regexp'
     )
     parser.add_argument(
         '--commit', action='store_true',
@@ -158,6 +163,10 @@ def main(argv=None):
         jenkins_kwargs['dry_run'] = True
 
     def create_job(os_name, job_name, template_file, additional_dict):
+        if args.limit_jobs_to:
+            pattern = re.compile(args.limit_jobs_to)
+            if not pattern.match(job_name):
+                return
         job_data = dict(data)
         job_data['os_name'] = os_name
         job_data.update(os_configs[os_name])
