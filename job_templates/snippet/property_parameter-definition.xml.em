@@ -36,6 +36,11 @@ This tests the robustness to whitespace being within the different paths.</descr
           <defaultValue>@(enable_coverage_default)</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>CI_COVERAGE_FILTER_PKGS</name>
+          <description>List of packages (space separated) to appear in the coverage report. Only when CI_ENABLE_COVERAGE is True. (If empty all coverage entries generated are included)</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
           <description>Additional arguments passed to the 'test' verb.</description>
           <defaultValue>@(test_args_default)</defaultValue>

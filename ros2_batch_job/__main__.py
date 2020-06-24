@@ -233,6 +233,9 @@ def get_args(sysargv=None):
         '--coverage', default=False, action='store_true',
         help="enable collection of coverage statistics")
     parser.add_argument(
+        '--coverage-filter-packages', default=None,
+        help='list of packages (space separated) to be displayed in the coverage report')
+    parser.add_argument(
         '--workspace-path', default=None,
         help="base path of the workspace")
     parser.add_argument(
@@ -257,9 +260,15 @@ def get_args(sysargv=None):
         argv, test_args = extract_argument_group(argv, '--test-args')
     else:
         build_args, test_args = extract_argument_group(build_args, '--test-args')
+    if '--coverage-filter-packages' in argv:
+        argv, coverage_filter_packages = extract_argument_group(argv, '--coverage-filter-packages')
+    else:
+        coverage_filter_packages = None
+
     args = parser.parse_args(argv)
     args.build_args = build_args
     args.test_args = test_args
+    args.coverage_filter_packages = coverage_filter_packages
 
     for name in ('sourcespace', 'buildspace', 'installspace'):
         space_directory = getattr(args, name)
