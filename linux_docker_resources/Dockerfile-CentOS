@@ -59,7 +59,7 @@ RUN sudo yum update \
 RUN dbus-uuidgen >/etc/machine-id
 
 # Install some stuff via Pip which we don't have available in EPEL
-RUN pip3.6 install flake8 matplotlib pep8 pydocstyle pydot pytest-mock pytest-rerunfailures
+RUN pip3.6 install flake8 importlib-resources matplotlib pep8 pydocstyle pydot pytest-mock pytest-rerunfailures
 
 # Some support vars for building
 ENV CMAKE_COMMAND /usr/bin/cmake3
