@@ -168,6 +168,8 @@ def main(argv=None):
 
     # configure os specific jobs
     for os_name in sorted(os_configs.keys()):
+        if os_name != 'linux-armhf':
+            continue
         # This short name is preserved for historic reasons, but long-paths have been enabled on
         # windows containers and their hosts
         job_os_name = os_name
@@ -215,6 +217,7 @@ def main(argv=None):
                 'num_to_keep': 370,
             },
             'cmake_build_type': 'RelWithDebInfo',
+            'disabled': os_name == 'linux-armhf',
             'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -244,6 +247,7 @@ def main(argv=None):
             job_name = job_name[:15]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Debug',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
@@ -452,6 +456,7 @@ def main(argv=None):
             job_name = job_name[:25]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ignore_rmw_default': {
@@ -466,6 +471,7 @@ def main(argv=None):
             job_name = job_name[:15]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
@@ -483,6 +489,7 @@ def main(argv=None):
             test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'test_args_default': test_args_default,
@@ -495,6 +502,7 @@ def main(argv=None):
         test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'test_args_default': test_args_default,
