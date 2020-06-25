@@ -1,0 +1,9 @@
+{
+	"name": "dashing",
+	"default_attributes": {
+		"ros_distro": "dashing"
+	},
+	"json_class": "Chef::Environment",
+	"description": "This in environment is used to enable Dashing compatible chef recipes",
+	"chef_type": "environment"
+}
