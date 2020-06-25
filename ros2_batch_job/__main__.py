@@ -14,10 +14,11 @@
 
 import argparse
 import configparser
+import glob
 import os
 from pathlib import Path
 import platform
-from shutil import which
+from shutil import which, copyfile
 import subprocess
 import sys
 import time
@@ -282,7 +283,56 @@ def get_args(sysargv=None):
     return args
 
 
-def process_coverage(args, job):
+def include_python_coverage_in_report(args, package=None):
+    # no arguments means report all packages in buildspace
+    root_directory_to_report = args.buildspace
+    if package:
+        root_directory_to_report = os.path.join(root_directory_to_report, package)
+
+    coverage_xml_files = glob.glob(
+        os.path.join(root_directory_to_report, '**', 'coverage.xml'),
+        recursive=True)
+    for coverage_xml_path in coverage_xml_files:
+        # python coverage detected: move the coverage.xml file to buildspace to be reported
+        dest_file_to_report = os.path.join(args.buildspace, coverage_xml_path.replace(os.path.sep, '.'))
+        copyfile(coverage_xml_path, dest_file_to_report)
+
+
+def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
+    build_paths_collection = []
+    src_paths_collection = []
+    for package_name in packages_to_filter:
+        # check if it is a python package generating its own coverage.xml
+        include_python_coverage_in_report(args, package_name)
+        # collect paths to run lcov in order to process C/C++ coverage information
+        cmd = [
+            args.colcon_script,
+            'list',
+            '--paths-only',
+            '--base-paths', args.sourcespace,
+            '--packages-select', package_name]
+        print(cmd)
+        src_path = subprocess.check_output(cmd).decode('ascii').strip()
+        if not src_path:
+            print(f'Package not found: {package_name}', file=sys.stderr)
+            sys.exit(-1)
+        assert len(src_path.splitlines()) == 1, 'Found more than one line returned by colcon list'
+
+        # accumulate packages path adding the regexp needed to filter
+        src_paths_collection.append('*%s/*' % (src_path))
+        build_paths_collection.append('*%s/*' % (str(os.path.join(args.buildspace, package_name))))
+
+    cmd = [
+        'lcov',
+        '--extract', coverage_info_file,
+        '--output', coverage_info_file] \
+        + src_paths_collection \
+        + build_paths_collection
+    print(cmd)
+    subprocess.run(cmd, check=True)
+
+
+def process_coverage(args, job, packages_for_coverage=None):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Capture all gdca/gcno files (all them inside buildspace)
     coverage_file = os.path.join(args.buildspace, 'coverage.info')
@@ -306,6 +356,12 @@ def process_coverage(args, job):
         '*gmock_vendor*']
     print(cmd)
     subprocess.run(cmd, check=True)
+
+    if packages_for_coverage:
+        filter_unit_coverage(args, coverage_file, packages_for_coverage)
+    else:
+        include_python_coverage_in_report(args)
+
     # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
@@ -417,7 +473,7 @@ def build_and_test(args, job):
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
     if args.coverage and args.os == 'linux':
-        process_coverage(args, job)
+        process_coverage(args, job, args.coverage_filter_packages)
 
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
