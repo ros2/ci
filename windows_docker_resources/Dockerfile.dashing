@@ -38,7 +38,7 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64V
 ARG ROS_DISTRO
 
 COPY install_ros2.json C:\TEMP\
-COPY ${ROS_DISTRO}.json C:\TEMP\
+COPY environments C:\TEMP\
 COPY solo.rb C:\TEMP\
 COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
 COPY qtaccount\qtaccount.ini C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows\files\
@@ -48,7 +48,7 @@ WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
 # Initial run
-RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json -E C:\TEMP\%ROS_DISTRO%.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json -E %ROS_DISTRO%
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
