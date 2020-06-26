@@ -47,7 +47,7 @@ WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
 # Initial run
-RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json -E %ROS_DISTRO%
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
