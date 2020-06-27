@@ -20,7 +20,8 @@ FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # These are versioned files, so they shouldn't invalidate caches. Renaming to fixed names.
 # OpenSSL
-ADD https://slproweb.com/download/Win64OpenSSL-1_1_1g.exe C:\TEMP\Win64OpenSSL.exe
+ADD https://slproweb.com/download/Win64OpenSSL-1_0_2u.exe C:\TEMP\Win64OpenSSL1_0_2.exe
+ADD https://slproweb.com/download/Win64OpenSSL-1_1_1g.exe C:\TEMP\Win64OpenSSL1_1_1.exe
 
 # OpenCV
 ADD https://github.com/ros2/ros2/releases/download/opencv-archives/opencv-3.4.6-vc16.VS2019.zip C:\TEMP\opencv.zip
@@ -61,7 +62,8 @@ RUN choco install -y cppcheck --version 1.90
 RUN choco pin add --name=cppcheck --version 1.90
 RUN choco install -y -s C:\TEMP asio cunit eigen tinyxml-usestl tinyxml2 log4cxx bullet
 
-RUN C:\TEMP\Win64OpenSSL.exe /VERYSILENT
+RUN C:\TEMP\Win64OpenSSL1_0_2.exe /VERYSILENT
+RUN C:\TEMP\Win64OpenSSL1_1_1.exe /VERYSILENT
 
 # For extracting .7z files
 ADD https://www.7-zip.org/a/7z1900-x64.exe C:\TEMP\
@@ -115,8 +117,8 @@ ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
 
 COPY rticonnextdds-src\openssl-1.0.2n-target-x64Win64VS2017.zip C:\TEMP\connext\
 RUN 7z.exe x C:\TEMP\connext\openssl-1.0.2n-target-x64Win64VS2017.zip -aoa -oC:\connext\
-ENV RTI_OPENSSL_BIN C:\connext\openssl-1.0.2n\x64Win64VS2017\release\bin
-ENV RTI_OPENSSL_LIBS C:\connext\openssl-1.0.2n\x64Win64VS2017\release\lib
+ENV RTI_OPENSSL_BIN C:\OpenSSL-Win64\bin
+ENV RTI_OPENSSL_LIBS C:\OpenSSL-Win64\bin
 
 COPY rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\
 RUN copy /b C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\connext\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
