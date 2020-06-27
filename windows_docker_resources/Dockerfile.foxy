@@ -19,9 +19,6 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # These are versioned files, so they shouldn't invalidate caches. Renaming to fixed names.
-# Regularly updated installers are next to their associated code.
-ADD https://github.com/ADLINK-IST/opensplice/releases/download/OSPL_V6_9_190925OSS_RELEASE/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.win-vs2019-installer.zip C:\TEMP\OpenSplice.zip
-
 # OpenSSL
 ADD https://slproweb.com/download/Win64OpenSSL-1_1_1g.exe C:\TEMP\Win64OpenSSL.exe
 
@@ -77,8 +74,6 @@ RUN 7z.exe x C:\TEMP\libxml2.7z -aoa -oC:\xmllint
 RUN 7z.exe x C:\TEMP\zlib.7z -aoa -oC:\xmllint
 RUN 7z.exe x C:\TEMP\iconv.7z -aoa -oC:\xmllint
 RUN 7z.exe x C:\TEMP\opencv.zip -aoa -oC:\
-
-RUN 7z.exe x C:\TEMP\OpenSplice.zip -aoa -oC:\opensplice
 
 # Environment setup
 ENV OPENSSL_CONF "C:\Program Files\OpenSSL-Win64\bin\openssl.cfg"
