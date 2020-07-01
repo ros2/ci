@@ -361,16 +361,8 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Build DockerFile"
-@# Rolling uses the Foxy Dockerfile.
-if "!CI_ROS_DISTRO!" == "rolling" (
-  set "CI_ROS_DISTRO=foxy"
-)
-@# Eloquent uses the Dashing Dockerfile.
-if "!CI_ROS_DISTRO!" == "eloquent" (
-  set "CI_ROS_DISTRO=dashing"
-)
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
-set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%
+set DOCKERFILE=windows_docker_resources\Dockerfile
 
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
