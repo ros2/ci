@@ -6,11 +6,17 @@
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=1909
 
+# In order to ensure the image is correctly compatible with the host system a
+# more precise version than the release id is required. To find this value run
+# the following in powershell.
+# $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version"
+# Fall back to the Release ID
+ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
+
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
-# FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_ID
-FROM mcr.microsoft.com/windows@sha256:27f1a2a1f2f784f3716c2400d7e1bf93074a75e15f2974861c00275f93487c88
+FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # Install cinc-solo, a compiled binary of chef-solo
 RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 15.10.12"
@@ -28,7 +34,10 @@ COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-target-x64Win64VS2017.rtipkg
 
-COPY install_ros2.json C:\TEMP\
+# ROS_DISTRO argument should be set to install dependencies for the target ROS version.
+ARG ROS_DISTRO
+
+COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
 COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
 COPY qtaccount\qtaccount.ini C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows\files\
@@ -38,11 +47,11 @@ WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
 # Initial run
-RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
-RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2.json
+RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 WORKDIR C:\ci
 CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
