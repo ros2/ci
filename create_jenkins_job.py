@@ -269,7 +269,7 @@ def main(argv=None):
             # Set the logging implementation to noop because log4cxx will not link properly when using libcxx.
             clang_libcxx_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DRCL_LOGGING_IMPLEMENTATION=rcl_logging_noop') + \
-                ' --mixin clang-libcxx'
+                ' --mixin clang-libcxx --packages-skip intra_process_demo'
             create_job(os_name, 'nightly_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'compile_with_clang_default': 'true',
