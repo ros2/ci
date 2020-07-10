@@ -17,6 +17,7 @@
 import argparse
 import collections
 import os
+import re
 import sys
 
 try:
@@ -63,6 +64,10 @@ def main(argv=None):
     parser.add_argument(
         '--commit', action='store_true',
         help='Actually modify the Jenkins jobs instead of only doing a dry run',
+    )
+    parser.add_argument(
+        '--select-jobs-regexp', default='',
+        help='Limit the job creation to those that match the given regular expression'
     )
     args = parser.parse_args(argv)
 
@@ -156,8 +161,12 @@ def main(argv=None):
     jenkins_kwargs = {}
     if not args.commit:
         jenkins_kwargs['dry_run'] = True
+    if args.select_jobs_regexp:
+        args.pattern_select_jobs_regexp = re.compile(args.select_jobs_regexp)
 
     def create_job(os_name, job_name, template_file, additional_dict):
+        if args.select_jobs_regexp and not args.pattern_select_jobs_regexp.match(job_name):
+            return
         job_data = dict(data)
         job_data['os_name'] = os_name
         job_data.update(os_configs[os_name])
@@ -525,18 +534,20 @@ def main(argv=None):
             })
 
     # configure the launch job
-    os_specific_data = collections.OrderedDict()
-    for os_name in sorted(os_configs.keys() - launcher_exclude):
-        os_specific_data[os_name] = dict(data)
-        os_specific_data[os_name].update(os_configs[os_name])
-        os_specific_data[os_name]['job_name'] = 'ci_' + os_name
-    job_data = dict(data)
-    job_data['ci_scripts_default_branch'] = args.ci_scripts_default_branch
-    job_data['label_expression'] = 'master'
-    job_data['os_specific_data'] = os_specific_data
-    job_data['cmake_build_type'] = 'None'
-    job_config = expand_template('ci_launcher_job.xml.em', job_data)
-    configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
+    launcher_job_name = 'ci_launcher'
+    if args.select_jobs_regexp and args.pattern_select_jobs_regexp.match(launcher_job_name):
+        os_specific_data = collections.OrderedDict()
+        for os_name in sorted(os_configs.keys() - launcher_exclude):
+            os_specific_data[os_name] = dict(data)
+            os_specific_data[os_name].update(os_configs[os_name])
+            os_specific_data[os_name]['job_name'] = 'ci_' + os_name
+        job_data = dict(data)
+        job_data['ci_scripts_default_branch'] = args.ci_scripts_default_branch
+        job_data['label_expression'] = 'master'
+        job_data['os_specific_data'] = os_specific_data
+        job_data['cmake_build_type'] = 'None'
+        job_config = expand_template('ci_launcher_job.xml.em', job_data)
+        configure_job(jenkins, launcher_job_name, job_config, **jenkins_kwargs)
 
 
 if __name__ == '__main__':
