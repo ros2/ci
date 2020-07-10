@@ -401,7 +401,7 @@ def build_and_test(args, job):
             if not check_xunit2_junit_family_value(config, 'legacy'):
                 continue
         else:
-            # in xunit < 6 need to enforce xunit2 if not set
+            # in pytest < 6 need to enforce xunit2 if not set
             if check_xunit2_junit_family_value(config, 'xunit2'):
                 continue
         print("Patch '%s' to override 'pytest.junit_family=xunit2'" % path)
