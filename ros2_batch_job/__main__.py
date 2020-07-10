@@ -396,7 +396,7 @@ def build_and_test(args, job):
     for path in Path('.').rglob('pytest.ini'):
         config = configparser.ConfigParser()
         config.read(str(path))
-        if xunit_6_or_greater:
+        if pytest_6_or_greater:
             # only need to correct explicit legacy option if exists
             if not check_xunit2_junit_family_value(config, 'legacy'):
                 continue
