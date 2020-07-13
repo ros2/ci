@@ -299,10 +299,10 @@ def include_python_coverage_in_report(args, package=None):
         copyfile(coverage_xml_path, dest_file_to_report)
 
 
-def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
+def filter_unit_coverage(args, coverage_info_file):
     build_paths_collection = []
     src_paths_collection = []
-    for package_name in packages_to_filter:
+    for package_name in args.packages_for_coverage:
         # check if it is a python package generating its own coverage.xml
         include_python_coverage_in_report(args, package_name)
         # collect paths to run lcov in order to process C/C++ coverage information
@@ -333,7 +333,7 @@ def filter_unit_coverage(args, coverage_info_file, packages_to_filter):
     subprocess.run(cmd, check=True)
 
 
-def process_coverage(args, job, packages_for_coverage=None):
+def process_coverage(args, job):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Capture all gdca/gcno files (all them inside buildspace)
     coverage_file = os.path.join(args.buildspace, 'coverage.info')
@@ -358,8 +358,8 @@ def process_coverage(args, job, packages_for_coverage=None):
     print(cmd)
     subprocess.run(cmd, check=True)
 
-    if packages_for_coverage:
-        filter_unit_coverage(args, coverage_file, packages_for_coverage)
+    if args.packages_for_coverage:
+        filter_unit_coverage(args, coverage_file)
     else:
         include_python_coverage_in_report(args)
 
