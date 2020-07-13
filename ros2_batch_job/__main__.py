@@ -294,7 +294,7 @@ def include_python_coverage_in_report(args, package=None):
         os.path.join(root_directory_to_report, '**', 'coverage.xml'),
         recursive=True)
     for coverage_xml_path in coverage_xml_files:
-        # python coverage detected: move the coverage.xml file to buildspace to be reported
+        # python coverage detected: copy the coverage.xml file to buildspace to be reported
         dest_file_to_report = os.path.join(args.buildspace, coverage_xml_path.replace(os.path.sep, '.'))
         copyfile(coverage_xml_path, dest_file_to_report)
 
