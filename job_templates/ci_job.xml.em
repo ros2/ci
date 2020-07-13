@@ -341,7 +341,7 @@ if "!CI_COMPILE_WITH_CLANG!" == "true" (
 )
 if "!CI_ENABLE_COVERAGE!" == "true" (
   set "CI_ARGS=!CI_ARGS! --coverage"
-  if "!CI_COVERAGE_FILTER_PKGS!" NEQ "None" (
+  if "!CI_COVERAGE_FILTER_PKGS!" NEQ "" (
     set "CI_ARGS=!CI_ARGS! --coverage-filter-packages"
   )
 )
