@@ -18,7 +18,8 @@ import glob
 import os
 from pathlib import Path
 import platform
-from shutil import which, copyfile
+from shutil import copyfile
+from shutil import which
 import subprocess
 import sys
 import time
