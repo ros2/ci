@@ -4,14 +4,21 @@ Running the Windows CI agent as a configurable chef cookbook follows the general
 Making changes can be submitted as pull requests, which in turn can be reviewed and tested before they are deployed.
 Below is the recommended process for submitting changes to the ROS 2 chef cookbook for Windows for use with ci.ros2.org.
 
-1. Create a PR at github.com/ros-infrastructure/ros2-cookbooks for your desired change.
+### Step 1. Create a ros2-cookbooks PR 
+Open a PR at github.com/ros-infrastructure/ros2-cookbooks for your desired change.
 
-1. Create a PR at github.com/ros2/ci which updates the ros2-cookbooks git submodule to your new branch of the ros2-cookbooks repo.
+### Step 2. Create a ros2/ci PR 
+Open corresponding PR at github.com/ros2/ci which updates the ros2-cookbooks git submodule to your new branch of the ros2-cookbooks repo.
 
-1. Verify your ros2-cookbooks PR by submitting a job to https://ci.ros2.org/job/ci_windows and set CI_SCRIPTS_BRANCH to your ros2/ci PR branch.
-
+### Step 3. Verify the ros2-cookbooks PR 
 It can take a while to test changes to the cookbook directly on CI, so it is strongly advised to test locally and verify your change inside a representative docker container.
+See the following section for information on local testing.
+After you have tested it locally, submit jobs to https://ci.ros2.org/job/ci_windows and set CI_SCRIPTS_BRANCH to your ros2/ci PR branch.
+You may need to verify the PR for several different ROS 2 releases.
+You can set `CI_ROS_DISTRO` on ci.ros2.org, which will choose the corresponding chef cookbook configuration to test your updates.
+If testing on different releases, don't forget to specify the correct ros2.repos file.
 
+#### Testing locally
 Do the following on your own machine or VM.
 
 Get the Windows release version with the following powershell command
@@ -44,8 +51,19 @@ docker run --isolation=process -e ROS_DOMAIN_ID=1 -e CI_ARGS=%CI_ARGS% -v "C:\J\
 rclcpp may not be the correct package to test for your change.
 Choose a package to test up to that adequately ensures your change works as intended.
 
-1. After review approval, only merge the ros2-cookbooks PR
+### Step 4. Merge the ros2-cookbooks PR
+After your ros2-cookbooks PR is approved and passes testing, merge this PR first.
+Because the git submodule has not yet been updated in ros2/ci, this merge will not change the behavior of ci.ros2.org.
 
-1. Update the ros2/ci PR to use the master branch of ros2-cookbooks and update the submodule with the latest commit from your PR. 
+### Step 5. Update the ros2/ci PR
+You will need to update your ros2/ci PR to use the master branch of ros2-cookbooks. 
+Update the submodule with the latest commit from your PR and target the main branch.
 
-1. Rerun the ci job to test that git submodule points to the correct commit.
+### Step 6. Rerun the ci job for the ros2/ci PR
+This will help verify that that the updated git submodule points to the correct commit.
+
+### Step 7. Merge the ros2/ci PR
+Once you merge the PR, the docker containers will need to be rebuilt on the ci_windows nodes.
+This can take some time and will slow down the first build for each node.
+Choose a time of day when activity is low, so your change doesn't negatively impact other contributors.
+This author uses 5-6PM US Pacific (1am GMT), which gives some time to revert your change before the nigthly builds should it have introduced an issue.
