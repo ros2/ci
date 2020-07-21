@@ -24,7 +24,7 @@ RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://
 # Install Chocolatey by powershell script
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
-# choco installs
+# choco installs. chefdk is being installed to get berks and download cookbook dependencies
 RUN choco install -y git chefdk
 
 # Copy over necessary files into container
