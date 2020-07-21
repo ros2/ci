@@ -3,6 +3,7 @@
     "download_sources": "false",
     "vs_version": "buildtools",
     "ros2_ws": "C:/ci",
+    "ros_distro": "dashing",
     "rti_connext": {
       "target_platform": "x64Win64",
       "min_vs_version": "2017",

@@ -346,17 +346,8 @@ echo "# END SECTION"
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
-echo "# BEGIN SECTION: Build DockerFile"
-@# Rolling uses the Foxy Dockerfile.
-if "!CI_ROS_DISTRO!" == "rolling" (
-  set "CI_ROS_DISTRO=foxy"
-)
-@# Eloquent uses the Dashing Dockerfile.
-if "!CI_ROS_DISTRO!" == "eloquent" (
-  set "CI_ROS_DISTRO=dashing"
-)
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
-set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%%
+set DOCKERFILE=windows_docker_resources\Dockerfile
 
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
@@ -364,7 +355,7 @@ powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date)
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
 set /p RELEASE_VERSION=&lt; release_version.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION%
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
