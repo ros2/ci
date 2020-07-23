@@ -359,7 +359,7 @@ def build_and_test(args, job):
     # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     # After Foxy, we introduced per-package changes to make local builds and CI
     # builds act the same.
-    if args.ros_distro in ['dashing', 'eloquent', 'foxy']:
+    if args.ros_distro in ('dashing', 'eloquent', 'foxy'):
         with open('pytest.ini', 'w') as ini_file:
             ini_file.write('[pytest]\njunit_family=xunit2')
         # check if packages have a pytest.ini file and add the xunit2
