@@ -1,16 +1,16 @@
 ## Contributing changes to Windows ROS 2 Chef Cookbook
 
-Running the Windows CI agent as a configurable chef cookbook follows the general benefits of "infrastructure as software". 
+Running the Windows CI agent as a configurable chef cookbook follows the general benefits of "infrastructure as software".
 Making changes can be submitted as pull requests, which in turn can be reviewed and tested before they are deployed.
 Below is the recommended process for submitting changes to the ROS 2 chef cookbook for Windows for use with ci.ros2.org.
 
-### Step 1. Create a ros2-cookbooks PR 
+### Step 1. Create a ros2-cookbooks PR
 Open a PR at github.com/ros-infrastructure/ros2-cookbooks for your desired change.
 
-### Step 2. Create a ros2/ci PR 
+### Step 2. Create a ros2/ci PR
 Open corresponding PR at github.com/ros2/ci which updates the ros2-cookbooks git submodule to your new branch of the ros2-cookbooks repo.
 
-### Step 3. Verify the ros2-cookbooks PR 
+### Step 3. Verify the ros2-cookbooks PR
 It can take a while to test changes to the cookbook directly on CI, so it is strongly advised to test locally and verify your change inside a representative docker container.
 See the following section for information on local testing.
 After you have tested it locally, submit jobs to https://ci.ros2.org/job/ci_windows and set CI_SCRIPTS_BRANCH to your ros2/ci PR branch.
@@ -29,7 +29,7 @@ powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentV
 Change your directory to ci repo directory and run the following docker build command.
 Replace the value of WINDOWS_RELEASE_VERSION with the string you found above.
 ```
-docker build  --build-arg WINDOWS_RELEASE_VERSION=10.0.18363.900 -t ros2_windows_ci -f windows_docker_resources\Dockerfile windows_docker_resources
+docker build  --build-arg WINDOWS_RELEASE_VERSION=10.0.18363.900 -t ros2_windows_ci windows_docker_resources
 ```
 
 If it builds correctly, you can be assured your changes to the chef cookbook has been parsed and used by chef correctly.
@@ -56,7 +56,7 @@ After your ros2-cookbooks PR is approved and passes testing, merge this PR first
 Because the git submodule has not yet been updated in ros2/ci, this merge will not change the behavior of ci.ros2.org.
 
 ### Step 5. Update the ros2/ci PR
-You will need to update your ros2/ci PR to use the master branch of ros2-cookbooks. 
+You will need to update your ros2/ci PR to use the master branch of ros2-cookbooks.
 Update the submodule with the latest commit from your PR and target the main branch.
 
 ### Step 6. Rerun the ci job for the ros2/ci PR
