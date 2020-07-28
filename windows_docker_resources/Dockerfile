@@ -28,7 +28,7 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 RUN choco install -y git chefdk
 
 # Copy over necessary files into container
-RUN mkdir C:\TEMP
+RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
 COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-5.3.1-pro-host-x64Win64.exe
