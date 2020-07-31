@@ -3,7 +3,7 @@
     <io.jenkins.plugins.analysis.warnings.Cmake>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>*/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Cmake>
@@ -11,7 +11,7 @@
    <io.jenkins.plugins.analysis.warnings.Gcc4>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>*/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Gcc4>
@@ -20,14 +20,14 @@
     <io.jenkins.plugins.analysis.warnings.Clang>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>*/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Clang>
     <io.jenkins.plugins.analysis.warnings.ClangTidy>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>*/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.ClangTidy>
@@ -35,7 +35,7 @@
     <io.jenkins.plugins.analysis.warnings.MsBuild>
       <id></id>
       <name></name>
-      <pattern></pattern>
+      <pattern>*/log/build_*/*/stdout_stderr.log</pattern>
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.MsBuild>

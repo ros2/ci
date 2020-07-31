@@ -91,7 +91,7 @@ All packages listed here have to be available from either the primary or supplem
   </scm>
   <assignedNode>@(label_expression)</assignedNode>
   <canRoam>false</canRoam>
-  <disabled>false</disabled>
+  <disabled>@('true' if vars().get('disabled') else 'false')</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>@
@@ -193,6 +193,9 @@ export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 echo "not building/testing the ros1_bridge on MacOS"
 # export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
 @[  end if]@
+if [ -n "${CI_ROS_DISTRO+x}" ]; then
+  export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
+fi
 if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
 fi
@@ -344,6 +347,10 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
 echo "# BEGIN SECTION: Build DockerFile"
+@# Rolling uses the Foxy Dockerfile.
+if "!CI_ROS_DISTRO!" == "rolling" (
+  set "CI_ROS_DISTRO=foxy"
+)
 @# Eloquent uses the Dashing Dockerfile.
 if "!CI_ROS_DISTRO!" == "eloquent" (
   set "CI_ROS_DISTRO=dashing"
@@ -369,6 +376,9 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
+)
+if "!CI_ROS_DISTRO!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
 set "CI_ARGS=!CI_ARGS! --ignore-rmw"
 if "!CI_USE_CONNEXT_STATIC!" == "false" (

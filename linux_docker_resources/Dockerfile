@@ -41,6 +41,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   clang-format \
   cppcheck \
   git \
+  libbenchmark-dev \
   libbullet-dev \
   liblog4cxx-dev \
   libxml2-dev \
@@ -71,12 +72,16 @@ RUN pip3 install -U setuptools pip virtualenv==16.7.9
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
 
 # Install coverage build dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y gcovr
+RUN apt-get update && apt-get install --no-install-recommends -y lcov
+RUN pip3 install -U lcov_cobertura_fix
 
 # Install the OpenSplice binary from the OSRF repositories.
 RUN if test ${UBUNTU_DISTRO} != focal; then apt-get update && apt-get install --no-install-recommends -y libopensplice69=6.9.190705+osrf1-1~$UBUNTU_DISTRO; fi
 # Update default domain id.
 RUN if test ${UBUNTU_DISTRO} != focal; then sed -i "s/<Id>0<\/Id>/<Id>108<\/Id>/" /usr/etc/opensplice/config/ospl.xml; fi
+
+# Install importlib-resources for Bionic only.
+RUN if test ${UBUNTU_DISTRO} = bionic; then pip3 install -U importlib-resources; fi
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-5.3.1; fi

@@ -186,6 +186,9 @@ fi
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf'] and turtlebot_demo]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  end if]@
+if [ -n "${CI_ROS_DISTRO+x}" ]; then
+  export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
+fi
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
 fi
@@ -358,6 +361,10 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Build DockerFile"
+@# Rolling uses the Foxy Dockerfile.
+if "!CI_ROS_DISTRO!" == "rolling" (
+  set "CI_ROS_DISTRO=foxy"
+)
 @# Eloquent uses the Dashing Dockerfile.
 if "!CI_ROS_DISTRO!" == "eloquent" (
   set "CI_ROS_DISTRO=dashing"
@@ -383,6 +390,9 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
+)
+if "!CI_ROS_DISTRO!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
 if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"

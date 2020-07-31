@@ -17,6 +17,7 @@
 import argparse
 import collections
 import os
+import re
 import sys
 
 try:
@@ -64,6 +65,10 @@ def main(argv=None):
         '--commit', action='store_true',
         help='Actually modify the Jenkins jobs instead of only doing a dry run',
     )
+    parser.add_argument(
+        '--select-jobs-regexp', default='',
+        help='Limit the job creation to those that match the given regular expression'
+    )
     args = parser.parse_args(argv)
 
     data = {
@@ -91,7 +96,7 @@ def main(argv=None):
         'turtlebot_demo': False,
         'build_timeout_mins': 0,
         'ubuntu_distro': 'focal',
-        'ros_distro': 'foxy',
+        'ros_distro': 'rolling',
     }
 
     jenkins = connect(args.jenkins_url)
@@ -156,8 +161,12 @@ def main(argv=None):
     jenkins_kwargs = {}
     if not args.commit:
         jenkins_kwargs['dry_run'] = True
+    if args.select_jobs_regexp:
+        args.pattern_select_jobs_regexp = re.compile(args.select_jobs_regexp)
 
     def create_job(os_name, job_name, template_file, additional_dict):
+        if args.select_jobs_regexp and not args.pattern_select_jobs_regexp.match(job_name):
+            return
         job_data = dict(data)
         job_data['os_name'] = os_name
         job_data.update(os_configs[os_name])
@@ -215,6 +224,7 @@ def main(argv=None):
                 'num_to_keep': 370,
             },
             'cmake_build_type': 'RelWithDebInfo',
+            'disabled': os_name == 'linux-armhf',
             'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -244,6 +254,7 @@ def main(argv=None):
             job_name = job_name[:15]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Debug',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
@@ -267,7 +278,7 @@ def main(argv=None):
             # Set the logging implementation to noop because log4cxx will not link properly when using libcxx.
             clang_libcxx_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DRCL_LOGGING_IMPLEMENTATION=rcl_logging_noop') + \
-                ' --mixin clang-libcxx'
+                ' --mixin clang-libcxx --packages-skip intra_process_demo'
             create_job(os_name, 'nightly_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'compile_with_clang_default': 'true',
@@ -442,8 +453,10 @@ def main(argv=None):
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'build_args_default': '--packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
-                'test_args_default': '--packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
+                'build_args_default': data['build_args_default'] +
+                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
+                'test_args_default': data['test_args_default'] +
+                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
             })
 
         # configure nightly triggered job using FastRTPS dynamic
@@ -452,6 +465,7 @@ def main(argv=None):
             job_name = job_name[:25]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ignore_rmw_default': {
@@ -466,6 +480,7 @@ def main(argv=None):
             job_name = job_name[:15]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
@@ -483,6 +498,7 @@ def main(argv=None):
             test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'test_args_default': test_args_default,
@@ -495,6 +511,7 @@ def main(argv=None):
         test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
+            'disabled': os_name == 'linux-armhf',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'test_args_default': test_args_default,
@@ -517,18 +534,20 @@ def main(argv=None):
             })
 
     # configure the launch job
-    os_specific_data = collections.OrderedDict()
-    for os_name in sorted(os_configs.keys() - launcher_exclude):
-        os_specific_data[os_name] = dict(data)
-        os_specific_data[os_name].update(os_configs[os_name])
-        os_specific_data[os_name]['job_name'] = 'ci_' + os_name
-    job_data = dict(data)
-    job_data['ci_scripts_default_branch'] = args.ci_scripts_default_branch
-    job_data['label_expression'] = 'master'
-    job_data['os_specific_data'] = os_specific_data
-    job_data['cmake_build_type'] = 'None'
-    job_config = expand_template('ci_launcher_job.xml.em', job_data)
-    configure_job(jenkins, 'ci_launcher', job_config, **jenkins_kwargs)
+    launcher_job_name = 'ci_launcher'
+    if args.select_jobs_regexp and args.pattern_select_jobs_regexp.match(launcher_job_name):
+        os_specific_data = collections.OrderedDict()
+        for os_name in sorted(os_configs.keys() - launcher_exclude):
+            os_specific_data[os_name] = dict(data)
+            os_specific_data[os_name].update(os_configs[os_name])
+            os_specific_data[os_name]['job_name'] = 'ci_' + os_name
+        job_data = dict(data)
+        job_data['ci_scripts_default_branch'] = args.ci_scripts_default_branch
+        job_data['label_expression'] = 'master'
+        job_data['os_specific_data'] = os_specific_data
+        job_data['cmake_build_type'] = 'None'
+        job_config = expand_template('ci_launcher_job.xml.em', job_data)
+        configure_job(jenkins, launcher_job_name, job_config, **jenkins_kwargs)
 
 
 if __name__ == '__main__':

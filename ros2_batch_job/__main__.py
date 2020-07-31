@@ -62,6 +62,7 @@ pip_dependencies = [
     'flake8-docstrings',
     'flake8-import-order',
     'flake8-quotes',
+    'importlib-metadata',
     'lark-parser',
     'mock',
     'mypy',
@@ -205,6 +206,9 @@ def get_args(sysargv=None):
         '--force-ansi-color', default=False, action='store_true',
         help="forces this program to output ansi color")
     parser.add_argument(
+        '--ros-distro', required=True,
+        help="The ROS distribution being built")
+    parser.add_argument(
         '--ros1-path', default=None,
         help="path of ROS 1 workspace to be sourced")
     parser.add_argument(
@@ -274,62 +278,33 @@ def get_args(sysargv=None):
 
 def process_coverage(args, job):
     print('# BEGIN SUBSECTION: coverage analysis')
-    # Collect all .gcda files in args.workspace
-    output = subprocess.check_output(
-        [args.colcon_script, 'list', '--base-paths', args.sourcespace])
-    for line in output.decode().splitlines():
-        package_name, package_path, _ = line.split('\t', 2)
-        print(package_name)
-        package_build_path = os.path.join(args.buildspace, package_name)
-        gcda_files = []
-        for root, dirs, files in os.walk(package_build_path):
-            gcda_files.extend(
-                    [os.path.abspath(os.path.join(root, f))
-                        for f in files if f.endswith('.gcda')])
-        if len(gcda_files) == 0:
-            continue
-
-        # Run one gcov command for all gcda files for this package.
-        cmd = ['gcov', '--preserve-paths', '--relative-only', '--source-prefix', os.path.abspath('.')] + gcda_files
-        print(cmd)
-        subprocess.run(cmd, check=True, cwd=package_build_path)
-
-        # Write one report for the entire package.
-        # cobertura plugin looks for files of the regex *coverage.xml
-        outfile = os.path.join(package_build_path, package_name + '.coverage.xml')
-        print('Writing coverage.xml report at path {}'.format(outfile))
-        # --gcov-exclude remove generated .gcov files from previous gcov call. 
-        #                file names are in the form: #dir#sudir#file.*.gcov     
-        # -xml  Output cobertura xml
-        # -output=<outfile>  Pass name of output file
-        # -g  use existing .gcov files in the directory
-        cmd = [
-            'gcovr',
-            '--object-directory=' + package_build_path,
-            '-k',
-            '-r', os.path.abspath('.'),
-            '--xml', '--output=' + outfile,         
-            '--gcov-exclude=.*#tests?#.*',
-            '--gcov-exclude=.*#gtest_vendor#.*',
-            '-g']
-        print(cmd)
-        subprocess.run(cmd, check=True)
-
-    # remove Docker specific base path from coverage files
-    if args.workspace_path:
-        docker_base_path = os.path.dirname(os.path.abspath('.'))
-        for root, dirs, files in os.walk(args.buildspace):
-            for f in sorted(files):
-                if not f.endswith('coverage.xml'):
-                    continue
-                coverage_path = os.path.join(root, f)
-                with open(coverage_path, 'r') as h:
-                    content = h.read()
-                content = content.replace(
-                    '<source>%s/' % docker_base_path,
-                    '<source>%s/' % args.workspace_path)
-                with open(coverage_path, 'w') as h:
-                    h.write(content)
+    # Capture all gdca/gcno files (all them inside buildspace)
+    coverage_file = os.path.join(args.buildspace, 'coverage.info')
+    cmd = [
+        'lcov',
+        '--capture',
+        '--directory', args.buildspace,
+        '--output', str(coverage_file)]
+    print(cmd)
+    subprocess.run(cmd, check=True)
+    # Filter out system coverage and test code
+    cmd = [
+        'lcov',
+        '--remove', coverage_file,
+        '--output', coverage_file,
+        '/usr/*',  # no system files in reports
+        '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
+        '*/test/*',
+        '*/tests/*',
+        '*gtest_vendor*',
+        '*gmock_vendor*']
+    print(cmd)
+    subprocess.run(cmd, check=True)
+    # Transform results to the cobertura format
+    outfile = os.path.join(args.buildspace, 'coverage.xml')
+    print('Writing coverage.xml report at path {}'.format(outfile))
+    cmd = ['lcov_cobertura', coverage_file, '--output', outfile]
+    subprocess.run(cmd, check=True)
 
     print('# END SUBSECTION')
     return 0
@@ -560,14 +535,24 @@ def run(args, build_function, blacklisted_package_names=None):
         pip_packages = list(pip_dependencies)
         if sys.platform == 'win32':
             if args.cmake_build_type == 'Debug':
-                pip_packages += [
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.1-cp38-cp38d-win_amd64.whl',  # required by mypy
-                ]
+                if args.ros_distro in ['dashing', 'eloquent']:
+                    pip_packages += [
+                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.12.3-cp37-cp37dm-win_amd64.whl',  # required by cryptography
+                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.7-cp37-cp37dm-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp37-cp37dm-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.16.2-cp37-cp37dm-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.0-cp37-cp37dm-win_amd64.whl',  # required by mypy
+                    ]
+                else:
+                    pip_packages += [
+                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
+                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
+                        'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.1-cp38-cp38d-win_amd64.whl',  # required by mypy
+                    ]
             else:
                 pip_packages += [
                     'cryptography',
@@ -640,7 +625,7 @@ def run(args, build_function, blacklisted_package_names=None):
             colcon_script = which('colcon')
         args.colcon_script = colcon_script
         # Show what pip has
-        job.run(['"%s"' % job.python, '-m', 'pip', 'freeze'], shell=True)
+        job.run(['"%s"' % job.python, '-m', 'pip', 'freeze', '--all'], shell=True)
         print('# END SUBSECTION')
 
         # Fetch colcon mixins

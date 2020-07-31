@@ -60,7 +60,7 @@ choices.remove(ubuntu_distro)
             <a class="string-array">
               <string>@ros_distro</string>
 @{
-choices = ['dashing', 'eloquent', 'foxy']
+choices = ['dashing', 'eloquent', 'foxy', 'rolling']
 choices.remove(ros_distro)
 }@
 @[for choice in choices]@
