@@ -356,24 +356,27 @@ def build_and_test(args, job):
 
     print('# BEGIN SUBSECTION: test')
 
-    # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
-    with open('pytest.ini', 'w') as ini_file:
-        ini_file.write('[pytest]\njunit_family=xunit2')
-    # check if packages have a pytest.ini file and add the xunit2
-    # format if it is not present
-    for path in Path('.').rglob('pytest.ini'):
-        config = configparser.ConfigParser()
-        config.read(str(path))
-        try:
-            # only if xunit2 is set continue the loop with the file unpatched
-            if config.get('pytest', 'junit_family') == 'xunit2':
-                continue
-        except configparser.NoOptionError:
-            pass
-        print('xunit2 patch applied to ' + str(path))
-        config.set('pytest', 'junit_family', 'xunit2')
-        with open(path, 'w+') as configfile:
-            config.write(configfile)
+    # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
+    # After Foxy, we introduced per-package changes to make local builds and CI
+    # builds act the same.
+    if args.ros_distro in ('dashing', 'eloquent', 'foxy'):
+        with open('pytest.ini', 'w') as ini_file:
+            ini_file.write('[pytest]\njunit_family=xunit2')
+        # check if packages have a pytest.ini file and add the xunit2
+        # format if it is not present
+        for path in Path('.').rglob('pytest.ini'):
+            config = configparser.ConfigParser()
+            config.read(str(path))
+            try:
+                # only if xunit2 is set continue the loop with the file unpatched
+                if config.get('pytest', 'junit_family') == 'xunit2':
+                    continue
+            except configparser.NoOptionError:
+                pass
+            print('xunit2 patch applied to ' + str(path))
+            config.set('pytest', 'junit_family', 'xunit2')
+            with open(path, 'w+') as configfile:
+                config.write(configfile)
 
     test_cmd = [
         args.colcon_script, 'test',
