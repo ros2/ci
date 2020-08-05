@@ -193,6 +193,9 @@ export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 echo "not building/testing the ros1_bridge on MacOS"
 # export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
 @[  end if]@
+if [ -n "${CI_ROS_DISTRO+x}" ]; then
+  export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
+fi
 if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
 fi
@@ -373,6 +376,9 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
+)
+if "!CI_ROS_DISTRO!" NEQ "" (
+  set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
 set "CI_ARGS=!CI_ARGS! --ignore-rmw"
 if "!CI_USE_CONNEXT_STATIC!" == "false" (
