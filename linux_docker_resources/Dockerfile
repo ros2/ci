@@ -1,6 +1,5 @@
 FROM ubuntu:bionic
 ARG BRIDGE=false
-ARG INSTALL_TURTLEBOT2_DEMO_DEPS=false
 ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
 ARG ROS1_DISTRO=noetic
@@ -135,7 +134,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-RUN if test \( ${BRIDGE} = true -o ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-${ROS1_DISTRO}-catkin; fi
+RUN if test \( ${BRIDGE} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-${ROS1_DISTRO}-catkin; fi
 
 # Install build and test dependencies of ros1_bridge.
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
@@ -147,29 +146,6 @@ RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-instal
     ros-${ROS1_DISTRO}-roscpp-tutorials \
     ros-${ROS1_DISTRO}-rospy-tutorials \
     ros-${ROS1_DISTRO}-tf2-msgs; fi
-
-# Install build dependencies for turtlebot demo.
-RUN if test \( ${INSTALL_TURTLEBOT2_DEMO_DEPS} = true \) ; then \
-    apt-get update && apt-get install --no-install-recommends -y \
-    libatlas-base-dev \
-    libboost-iostreams-dev \
-    libboost-regex-dev \
-    libboost-system-dev \
-    libboost-thread-dev \
-    libcairo2-dev \
-    libceres-dev \
-    libgoogle-glog-dev \
-    liblua5.2-dev \
-    libpcl-dev \
-    libprotobuf-dev \
-    libprotoc-dev \
-    libsdl1.2-dev libsdl-image1.2-dev \
-    libudev-dev \
-    libusb-1.0-0-dev \
-    libyaml-cpp-dev \
-    protobuf-compiler \
-    python3-sphinx \
-    ros-${ROS1_DISTRO}-kobuki-driver ros-${ROS1_DISTRO}-kobuki-ftdi; fi
 
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \

@@ -107,7 +107,6 @@ def main(argv=None):
         'compile_with_clang_default': 'false',
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
-        'turtlebot_demo': False,
         'build_timeout_mins': 0,
         'ubuntu_distro': 'focal',
         'ros_distro': 'rolling',
@@ -530,22 +529,6 @@ def main(argv=None):
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
                 'test_args_default': test_args_default,
-            })
-
-        # configure turtlebot jobs on Linux only for now
-        if os_name in ['linux', 'linux-aarch64']:
-            create_job(os_name, 'ci_turtlebot-demo_' + os_name, 'ci_job.xml.em', {
-                'cmake_build_type': 'None',
-                'turtlebot_demo': True,
-                'supplemental_repos_url': 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos',
-            })
-            create_job(os_name, 'nightly_turtlebot-demo_' + os_name + '_release', 'ci_job.xml.em', {
-                'disabled': True,
-                'cmake_build_type': 'Release',
-                'turtlebot_demo': True,
-                'supplemental_repos_url': 'https://raw.githubusercontent.com/ros2/turtlebot2_demo/master/turtlebot2_demo.repos',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             })
 
     # configure the launch job
