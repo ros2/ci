@@ -183,9 +183,6 @@ fi
 if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf'] and turtlebot_demo]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
-@[  end if]@
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
 fi
@@ -224,37 +221,19 @@ sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
-@[      end if]@
 @[    elif os_name == 'linux-armhf']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_armhf_turtlebot_demo linux_docker_resources
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf -t ros2_batch_ci_armhf linux_docker_resources
-@[      end if]@
 @[    elif os_name == 'linux-centos']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
-@[      end if]@
 @[    elif os_name == 'linux']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci linux_docker_resources
-@[      end if]@
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-@[    if turtlebot_demo]@
-export CONTAINER_NAME=ros2_batch_ci_turtlebot_demo
-@[    elif os_name == 'linux']@
+@[    if os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
 @[    elif os_name == 'linux-centos']@
 export CONTAINER_NAME=ros2_batch_ci_centos
