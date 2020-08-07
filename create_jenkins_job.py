@@ -46,6 +46,14 @@ template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]
 
 
+def nonnegative_int(inval):
+    ret = int(inval)
+    if ret < 0:
+        # The error message here gets completely swallowed by argparse
+        raise ValueError('Value must be positive or zero')
+    return ret
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
@@ -68,6 +76,10 @@ def main(argv=None):
     parser.add_argument(
         '--select-jobs-regexp', default='',
         help='Limit the job creation to those that match the given regular expression'
+    )
+    parser.add_argument(
+        '--context-lines', type=nonnegative_int, default=0,
+        help='Set the number of diff context lines when showing differences between old and new jobs'
     )
     args = parser.parse_args(argv)
 
@@ -159,6 +171,7 @@ def main(argv=None):
     }
 
     jenkins_kwargs = {}
+    jenkins_kwargs['context_lines'] = args.context_lines
     if not args.commit:
         jenkins_kwargs['dry_run'] = True
     if args.select_jobs_regexp:
