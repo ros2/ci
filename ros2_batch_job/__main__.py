@@ -372,7 +372,7 @@ def build_and_test(args, job):
         job.run(["%s -c 'import pytest; print(pytest.__version__)' > %s" % (job.python, pytest_6_version_file)])
         pytest_6_or_greater = False
         with open(pytest_6_version_file, 'r') as current_version_file:
-            pytest_6_or_greater = StrictVersion(str(current_version_file.read()) >= StrictVersion("6.0.0"))
+            pytest_6_or_greater = StrictVersion(current_version_file.read()) >= StrictVersion("6.0.0")
 
         for path in Path('.').rglob('pytest.ini'):
             config = configparser.ConfigParser()
