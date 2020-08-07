@@ -356,45 +356,19 @@ def build_and_test(args, job):
 
     print('# BEGIN SUBSECTION: test')
 
-    # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
-    # After Foxy, we introduced per-package changes to make local builds and CI
-    # builds act the same.
-    if args.ros_distro in ('dashing', 'eloquent', 'foxy'):
-        # xunit2 format is needed to make Jenkins xunit plugin 2.x happy
-        with open('pytest.ini', 'w') as ini_file:
-            ini_file.write('[pytest]\njunit_family=xunit2')
-        # check if packages have a pytest.ini file that doesn't choose junit_family=xunit2
-        # and patch configuration if needed to force the xunit2 value
-        pytest_6_or_greater = job.run([
-            '"%s"' % job.python, '-c', "'"
-            'from distutils.version import StrictVersion;'
-            'import pytest;'
-            'import sys;'
-            'sys.exit(StrictVersion(pytest.__version__) >= StrictVersion("6.0.0"))'
-            "'"],
-            exit_on_error=False)
-        for path in Path('.').rglob('pytest.ini'):
-            config = configparser.ConfigParser()
-            config.read(str(path))
-            if pytest_6_or_greater:
-                # only need to correct explicit legacy option if exists
-                if not check_xunit2_junit_family_value(config, 'legacy'):
-                    continue
-            else:
-                # in pytest < 6 need to enforce xunit2 if not set
-                if check_xunit2_junit_family_value(config, 'xunit2'):
-                    continue
-            print("Patch '%s' to override 'pytest.junit_family=xunit2'" % path)
-            config.set('pytest', 'junit_family', 'xunit2')
-            with open(path, 'w+') as configfile:
-                config.write(configfile)
-
     test_cmd = [
         args.colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ]
+
+    # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
+    # After Foxy, we introduced per-package changes to make local builds and CI
+    # builds act the same.
+    if args.ros_distro in ('dashing', 'eloquent', 'foxy'):
+        test_cmd.extend(['--pytest-args', '-o', 'junit_family=xunit2'])
+
     if not args.isolated:
         test_cmd.append('--merge-install')
     if args.coverage:
