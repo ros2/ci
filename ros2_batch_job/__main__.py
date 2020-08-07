@@ -14,6 +14,7 @@
 
 import argparse
 import configparser
+from distutils.version import StrictVersion
 import os
 from pathlib import Path
 import platform
@@ -365,14 +366,14 @@ def build_and_test(args, job):
             ini_file.write('[pytest]\njunit_family=xunit2')
         # check if packages have a pytest.ini file that doesn't choose junit_family=xunit2
         # and patch configuration if needed to force the xunit2 value
-        pytest_6_or_greater = job.run([
-            '"%s"' % job.python, '-c', "'"
-            'from distutils.version import StrictVersion;'
-            'import pytest;'
-            'import sys;'
-            'sys.exit(StrictVersion(pytest.__version__) >= StrictVersion("6.0.0"))'
-            "'"],
-            exit_on_error=False)
+        # Note: workaround using a file as output since job BatchLinux class does not have
+        # check_output capabilities
+        pytest_6_version_file = os.path.join(args.buildspace, 'pytest6_version_result.txt')
+        job.run(["%s -c 'import pytest; print(pytest.__version__)' > %s" % (job.python, pytest_6_version_file)])
+        pytest_6_or_greater = False
+        with open(pytest_6_version_file, 'r') as current_version_file:
+            pytest_6_or_greater = StrictVersion(current_version_file.read() >= StrictVersion("6.0.0"))
+
         for path in Path('.').rglob('pytest.ini'):
             config = configparser.ConfigParser()
             config.read(str(path))
