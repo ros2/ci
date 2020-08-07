@@ -47,10 +47,12 @@ template_prefix_path[:] = \
 
 
 def nonnegative_int(inval):
-    ret = int(inval)
+    try:
+        ret = int(inval)
+    except ValueError:
+        ret = -1
     if ret < 0:
-        # The error message here gets completely swallowed by argparse
-        raise ValueError('Value must be positive or zero')
+        raise argparse.ArgumentTypeError('Value must be nonnegative integer')
     return ret
 
 
