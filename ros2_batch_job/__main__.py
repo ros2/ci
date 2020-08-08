@@ -361,17 +361,25 @@ def build_and_test(args, job):
         '--install-base', '"%s"' % args.installspace,
     ]
 
-    # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
-    # After Foxy, we introduced per-package changes to make local builds and CI
-    # builds act the same.
-    if args.ros_distro in ('dashing', 'eloquent', 'foxy'):
-        test_cmd.extend(['--pytest-args', '-o', 'junit_family=xunit2'])
-
     if not args.isolated:
         test_cmd.append('--merge-install')
     if args.coverage:
         test_cmd.append('--pytest-with-coverage')
     test_cmd.extend(args.test_args)
+
+    # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
+    # After Foxy, we introduced per-package changes to make local builds and CI
+    # builds act the same.
+    if args.ros_distro in ('dashing', 'eloquent', 'foxy'):
+        pytest_args = ['-o', 'junit_family=xunit2']
+        # We should only have one --pytest-args option, or some options might get ignored
+        if '--pytest-args' in test_cmd:
+            pytest_opts_index = test_cmd.index('--pytest-args') + 1
+            test_cmd = test_cmd[:pytest_opts_index] + pytest_args + test_cmd[pytest_opts_index:]
+        else:
+            test_cmd.extend(['--pytest-args'])
+            test_cmd.extend(pytest_args)
+
 
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
