@@ -376,7 +376,7 @@ def build_and_test(args, job):
             pytest_opts_index = test_cmd.index('--pytest-args') + 1
             test_cmd = test_cmd[:pytest_opts_index] + pytest_args + test_cmd[pytest_opts_index:]
         else:
-            test_cmd.extend(['--pytest-args'])
+            test_cmd.append('--pytest-args')
             test_cmd.extend(pytest_args)
 
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
