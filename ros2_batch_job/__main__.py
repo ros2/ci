@@ -360,7 +360,6 @@ def build_and_test(args, job):
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
     ]
-
     if not args.isolated:
         test_cmd.append('--merge-install')
     if args.coverage:
@@ -379,7 +378,6 @@ def build_and_test(args, job):
         else:
             test_cmd.extend(['--pytest-args'])
             test_cmd.extend(pytest_args)
-
 
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
