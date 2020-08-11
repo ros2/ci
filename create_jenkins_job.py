@@ -264,15 +264,15 @@ def main(argv=None):
             })
 
         # configure nightly triggered job
-        job_name = 'nightly_' + job_os_name + '_debug'
-        if os_name == 'windows':
-            job_name = job_name[:15]
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'Debug',
-            'disabled': os_name == 'linux-armhf',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-        })
+        if os_name != 'linux-armhf':
+            job_name = 'nightly_' + job_os_name + '_debug'
+            if os_name == 'windows':
+                job_name = job_name[:15]
+            create_job(os_name, job_name, 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            })
 
         # configure nightly job for testing with address sanitizer on linux
         if os_name == 'linux':
@@ -475,62 +475,62 @@ def main(argv=None):
             })
 
         # configure nightly triggered job using FastRTPS dynamic
-        job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
-        if os_name == 'windows':
-            job_name = job_name[:25]
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'Release',
-            'disabled': os_name == 'linux-armhf',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'ignore_rmw_default': {
-                'rmw_connext_cpp',
-                'rmw_connext_dynamic_cpp',
-                'rmw_opensplice_cpp'},
-        })
+        if os_name != 'linux-armhf':
+            job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
+            if os_name == 'windows':
+                job_name = job_name[:25]
+            create_job(os_name, job_name, 'ci_job.xml.em', {
+                'cmake_build_type': 'Release',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'ignore_rmw_default': {
+                    'rmw_connext_cpp',
+                    'rmw_connext_dynamic_cpp',
+                    'rmw_opensplice_cpp'},
+            })
 
         # configure nightly triggered job
-        job_name = 'nightly_' + job_os_name + '_release'
-        if os_name == 'windows':
-            job_name = job_name[:15]
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'Release',
-            'disabled': os_name == 'linux-armhf',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-        })
+        if os_name != 'linux-armhf':
+            job_name = 'nightly_' + job_os_name + '_release'
+            if os_name == 'windows':
+                job_name = job_name[:15]
+            create_job(os_name, job_name, 'ci_job.xml.em', {
+                'cmake_build_type': 'Release',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            })
 
         # configure nightly triggered job with repeated testing
-        job_name = 'nightly_' + job_os_name + '_repeated'
-        if os_name == 'windows':
-            job_name = job_name[:15]
-        test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-        test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
-        test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -LE "(linter|xfail)"')
-        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
-        if job_os_name == 'linux-aarch64':
-            # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
-            test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'None',
-            'disabled': os_name == 'linux-armhf',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': test_args_default,
-        })
+        if os_name != 'linux-armhf':
+            job_name = 'nightly_' + job_os_name + '_repeated'
+            if os_name == 'windows':
+                job_name = job_name[:15]
+            test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
+            test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
+            test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -LE "(linter|xfail)"')
+            test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
+            if job_os_name == 'linux-aarch64':
+                # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
+                test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
+            create_job(os_name, job_name, 'ci_job.xml.em', {
+                'cmake_build_type': 'None',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'test_args_default': test_args_default,
+            })
 
         # configure nightly triggered job for excluded test
-        job_name = 'nightly_' + job_os_name + '_xfail'
-        test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-        test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -L xfail')
-        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'None',
-            'disabled': os_name == 'linux-armhf',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': test_args_default,
-        })
+        if os_name != 'linux-armhf':
+            job_name = 'nightly_' + job_os_name + '_xfail'
+            test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
+            test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -L xfail')
+            test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
+            create_job(os_name, job_name, 'ci_job.xml.em', {
+                'cmake_build_type': 'None',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'test_args_default': test_args_default,
+            })
 
         # configure turtlebot jobs on Linux only for now
         if os_name in ['linux', 'linux-aarch64']:
