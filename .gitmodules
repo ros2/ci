@@ -19,3 +19,4 @@
 [submodule "windows_docker_resources/ros2-cookbooks"]
 	path = windows_docker_resources/ros2-cookbooks
 	url = git@github.com:ros-infrastructure/ros2-cookbooks
+	branch = latest
