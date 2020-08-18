@@ -361,7 +361,7 @@ def process_coverage(args, job):
     print(cmd)
     subprocess.run(cmd, check=True)
 
-    if args.packages_for_coverage:
+    if args.coverage_filter_packages:
         filter_unit_coverage(args, coverage_file)
     else:
         include_python_coverage_in_report(args)
@@ -491,7 +491,7 @@ def build_and_test(args, job):
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
     if args.coverage and args.os == 'linux':
-        process_coverage(args, job, args.coverage_filter_packages)
+        process_coverage(args, job)
 
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
