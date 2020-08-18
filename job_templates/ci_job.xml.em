@@ -187,9 +187,6 @@ if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
     export CI_ARGS="$CI_ARGS --coverage-filter-packages $CI_COVERAGE_FILTER_PKGS"
   fi
 fi
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf'] and turtlebot_demo]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
-@[  end if]@
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
 fi
@@ -228,37 +225,19 @@ sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
-@[      end if]@
 @[    elif os_name == 'linux-armhf']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_armhf_turtlebot_demo linux_docker_resources
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf -t ros2_batch_ci_armhf linux_docker_resources
-@[      end if]@
 @[    elif os_name == 'linux-centos']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
-@[      end if]@
 @[    elif os_name == 'linux']@
-@[      if turtlebot_demo]@
-docker build ${DOCKER_BUILD_ARGS} --build-arg INSTALL_TURTLEBOT2_DEMO_DEPS=true -t ros2_batch_ci_turtlebot_demo linux_docker_resources
-@[      else]@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci linux_docker_resources
-@[      end if]@
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
-@[    if turtlebot_demo]@
-export CONTAINER_NAME=ros2_batch_ci_turtlebot_demo
-@[    elif os_name == 'linux']@
+@[    if os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
 @[    elif os_name == 'linux-centos']@
 export CONTAINER_NAME=ros2_batch_ci_centos
@@ -368,16 +347,8 @@ setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
 echo "# BEGIN SECTION: Build DockerFile"
-@# Rolling uses the Foxy Dockerfile.
-if "!CI_ROS_DISTRO!" == "rolling" (
-  set "CI_ROS_DISTRO=foxy"
-)
-@# Eloquent uses the Dashing Dockerfile.
-if "!CI_ROS_DISTRO!" == "eloquent" (
-  set "CI_ROS_DISTRO=dashing"
-)
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
-set DOCKERFILE=windows_docker_resources\Dockerfile.%CI_ROS_DISTRO%
+set DOCKERFILE=windows_docker_resources\Dockerfile
 
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
@@ -385,7 +356,7 @@ powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date)
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
 set /p RELEASE_VERSION=&lt; release_version.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION%
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
