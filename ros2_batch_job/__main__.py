@@ -308,27 +308,23 @@ def include_python_coverage_in_report(args, package=None):
 
 def filter_unit_coverage(args, coverage_info_file):
     build_paths_collection = []
-    src_paths_collection = []
-    for package_name in args.packages_for_coverage:
+    for package_name in args.coverage_filter_packages:
         # check if it is a python package generating its own coverage.xml
         include_python_coverage_in_report(args, package_name)
-        # collect paths to run lcov in order to process C/C++ coverage information
-        cmd = [
-            args.colcon_script,
-            'list',
-            '--paths-only',
-            '--base-paths', args.sourcespace,
-            '--packages-select', package_name]
-        print(cmd)
-        src_path = subprocess.check_output(cmd).decode('ascii').strip()
-        if not src_path:
-            print(f'Package not found: {package_name}', file=sys.stderr)
-            sys.exit(-1)
-        assert len(src_path.splitlines()) == 1, 'Found more than one line returned by colcon list'
-
-        # accumulate packages path adding the regexp needed to filter
-        src_paths_collection.append('*%s/*' % (src_path))
         build_paths_collection.append('*%s/*' % (str(os.path.join(args.buildspace, package_name))))
+
+    # collect paths to run lcov in order to process C/C++ coverage information
+    cmd = [
+        args.colcon_script,
+        'list',
+        '--paths-only',
+        '--base-paths', args.sourcespace,
+        '--packages-select'] + args.coverage_filter_packages
+    print(cmd)
+    src_paths_collection = subprocess.check_output(cmd).decode('ascii').strip().splitlines()
+    if len(src_paths_collection) != len(args.coverage_filter_packages):
+            print('One of the packages to report coverage rate for was not found')
+            sys.exit(-1)
 
     cmd = [
         'lcov',
