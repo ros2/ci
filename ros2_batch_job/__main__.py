@@ -78,9 +78,11 @@ pip_dependencies = [
     'pyyaml',
     'vcstool',
 ]
+# https://github.com/pyca/cryptography/issues/5433
+pip_cryptography_version = '==3.0'
 if sys.platform in ('darwin'):
     pip_dependencies += [
-        'cryptography',
+        f'cryptography{pip_cryptography_version}',
         'lxml',
         'netifaces'
     ]
@@ -534,7 +536,7 @@ def run(args, build_function, blacklisted_package_names=None):
                     ]
             else:
                 pip_packages += [
-                    'cryptography',
+                    f'cryptography{pip_cryptography_version}',
                     'lxml',
                     'netifaces',
                     'numpy',
@@ -548,7 +550,7 @@ def run(args, build_function, blacklisted_package_names=None):
             # to ensure that the build type specific package is installed
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                ['cryptography', 'lxml', 'numpy'], shell=True)
+                [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
         if args.do_venv or sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
