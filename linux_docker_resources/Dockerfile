@@ -62,8 +62,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pytest-mock \
   python3-yaml \
   uncrustify \
-  libgazebo9-dev \
-  gazebo9 \
+  libgazebo11-dev \
+  gazebo11 \
   libboost-all-dev
 
 # Install and self update pip/setuptools to the latest version.
