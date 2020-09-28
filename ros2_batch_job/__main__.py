@@ -69,7 +69,7 @@ pip_dependencies = [
     'pydocstyle',
     'pyflakes',
     'pyparsing',
-    'pytest',
+    'pytest==6.0.2',
     'pytest-cov',
     'pytest-mock',
     'pytest-repeat',
