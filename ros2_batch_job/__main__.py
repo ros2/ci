@@ -515,6 +515,12 @@ def run(args, build_function, blacklisted_package_names=None):
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
         if sys.platform == 'win32':
+            # Install custom fork of python-humanfriendly
+            # TODO(jacobperron): Remove this once the issue is resolved upstream
+            # https://github.com/xolox/python-humanfriendly/pull/45
+            pip_packages += [
+                'git+https://github.com/dirk-thomas/python-humanfriendly@dirk-thomas/skip-pyreadline-py39',
+            ]
             if args.cmake_build_type == 'Debug':
                 if args.ros_distro in ['dashing', 'eloquent']:
                     pip_packages += [
