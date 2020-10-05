@@ -567,12 +567,6 @@ def run(args, build_function, blacklisted_package_names=None):
             pip_cmd + pip_packages,
             shell=True)
 
-        # Workaround for Python version <= 3.8 to avoid deprecation warnings
-        # pyreadline does not support Python 3.9
-        # TODO(jacobperron): Remove when Windows switches to Python 3.9
-        if sys.platform == 'win32':
-            job.run(['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y', 'pyreadline'], shell=True)
-
         # OS X can't invoke a file which has a space in the shebang line
         # therefore invoking vcs explicitly through Python
         if args.do_venv:
@@ -627,6 +621,12 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run([args.colcon_script, 'mixin', 'remove', 'default', '||', true_cmd], shell=True)
             job.run([args.colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
             job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
+
+        # Workaround for Python version <= 3.8 to avoid deprecation warnings
+        # pyreadline does not support Python 3.9
+        # TODO(jacobperron): Remove when Windows switches to Python 3.9
+        if sys.platform == 'win32':
+            job.run(['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y', 'pyreadline'], shell=True)
 
         # Skip git operations on arm because git doesn't work in qemu. Assume
         # that somebody has already pulled the code on the host and mounted it
