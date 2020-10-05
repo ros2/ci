@@ -567,6 +567,12 @@ def run(args, build_function, blacklisted_package_names=None):
             pip_cmd + pip_packages,
             shell=True)
 
+        # Workaround for Python version <= 3.8 to avoid deprecation warnings
+        # pyreadline does not support Python 3.9
+        # TODO(jacobperron): Remove when Windows switches to Python 3.9
+        if sys.platform == 'win32':
+            job.run(['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y', 'pyreadline'], shell=True)
+
         # OS X can't invoke a file which has a space in the shebang line
         # therefore invoking vcs explicitly through Python
         if args.do_venv:
