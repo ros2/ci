@@ -515,6 +515,10 @@ def run(args, build_function, blacklisted_package_names=None):
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
         if sys.platform == 'win32':
+            # Install fork of pyreadline containing fix for deprecation warnings
+            # TODO(jacobperron): Until upstream issue is resolved https://github.com/pyreadline/pyreadline/issues/65
+            pip_packages += ['git+https://github.com/osrf/pyreadline']
+
             if args.cmake_build_type == 'Debug':
                 if args.ros_distro in ['dashing', 'eloquent']:
                     pip_packages += [
