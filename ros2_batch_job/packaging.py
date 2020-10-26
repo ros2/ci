@@ -181,6 +181,10 @@ def build_and_test_and_package(args, job):
         print('# END SUBSECTION')
 
     print('# BEGIN SUBSECTION: create archive')
+    # Add build URL
+    if 'BUILD_URL' in os.environ:
+        with open(os.path.join(args.installspace, 'BUILD_URL'), 'w') as h:
+            h.write('%s\n' % os.environ['BUILD_URL'])
     # Remove top level COLCON_IGNORE file
     os.remove(os.path.join(args.installspace, 'COLCON_IGNORE'))
     # Remove "unnecessary" executables
