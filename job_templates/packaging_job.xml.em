@@ -264,7 +264,7 @@ export CONTAINER_NAME=ros2_packaging_centos
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --privileged -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run packaging script"
@@ -431,7 +431,7 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
 docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b !ERRORLEVEL!
-docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e BUILD_URL="%BUILD_URL%" -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
