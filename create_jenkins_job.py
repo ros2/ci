@@ -483,6 +483,8 @@ def main(argv=None):
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'ros_distro': 'foxy',
+                'ubuntu_distro': 'focal',
                 'build_args_default': data['build_args_default'] +
                                       ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
                 'test_args_default': data['test_args_default'] +
