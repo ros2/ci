@@ -40,7 +40,8 @@ ARG ROS_DISTRO
 COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
 COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
-COPY qtaccount\qtaccount.ini C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows\files\
+RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
+COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
