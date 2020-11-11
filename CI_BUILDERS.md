@@ -20,7 +20,7 @@ To save build time limit the scope CI builds to only packages that are changed b
 These jobs share the same underlying configuration as the manual CI jobs but are run on a schedule.
 Do not trigger these jobs manually as doing so reduces the accuracy of nightly metrics.
 If you want to replicate the results of a nightly job you can trigger a corresponding ci job with the same parameters.
-For example to duplicate the [nightly Windows debug](https://ci.ros2.org/view/nightly/job/nightly_win_deb) job with a [CI Windows job](https://ci.ros2.org/view/job/ci_windows), make sure to set the `CI_CMAKE_BUILD_TYPE` parameter to 'Debug'.
+For example to duplicate the [nightly Windows debug](https://ci.ros2.org/view/nightly/job/nightly_win_deb) job with a [CI Windows job](https://ci.ros2.org/job/ci_windows), make sure to set the `CI_CMAKE_BUILD_TYPE` parameter to 'Debug'.
 
 
 ## Testing packaging jobs
