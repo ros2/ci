@@ -7,6 +7,8 @@ This team is primarily composed of collaborators from other projects that work c
 ## Testing pull requests
 
 For pull requests, use the [CI launcher job](https://ci.ros2.org/job/ci_launcher) to trigger builds against Ubuntu AMD64, Ubuntu ARM64, macOS, and Windows.
+Once triggered, the output of the CI launcher job will include a markdown snippet embedding the build status links for each platform.
+When first rendered, a build may be displayed as "Not run" which indicates that the build is queued but is not yet running on a worker.
 
 When changes are part of the default repository use the `CI_BRANCH_TO_TEST` parameter to checkout and merge that branch against the default branch for all repositories with a matching branch name.
 This works well for testing changes in multiple repositories together.
