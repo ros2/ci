@@ -87,6 +87,9 @@ if sys.platform in ('darwin'):
         'netifaces'
     ]
 
+if sys.platform in ('darwin', 'win32'):
+    pip_dependencies.append('cffi')
+
 colcon_packages = [
     'colcon-core',
     'colcon-defaults',

@@ -103,6 +103,7 @@ RUN yum install \
   pkgconfig \
   poco-devel \
   python36-catkin_pkg \
+  python36-cffi \
   python36-empy \
   python36-ifcfg \
   python36-lark-parser \

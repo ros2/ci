@@ -48,6 +48,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libxslt-dev \
   pydocstyle \
   pyflakes \
+  python3-cffi \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
