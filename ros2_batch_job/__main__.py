@@ -715,7 +715,6 @@ def run(args, build_function, blacklisted_package_names=None):
             ]
         if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
-                'fastcdr',
                 'fastrtps',
                 'fastrtps_cmake_module',
                 'rmw_fastrtps_shared_cpp',
