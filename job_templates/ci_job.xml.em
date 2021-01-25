@@ -118,7 +118,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel', 'osx']]@
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -195,7 +195,7 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos']]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel']]@
 @[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
 @[      if os_name == 'linux-armhf']@
 sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
@@ -224,8 +224,8 @@ echo "# BEGIN SECTION: Build Dockerfile"
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-armhf']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf -t ros2_batch_ci_armhf linux_docker_resources
-@[    elif os_name == 'linux-centos']@
-docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
+@[    elif os_name == 'linux-rhel']@
+docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci linux_docker_resources
 @[    else]@
@@ -235,8 +235,8 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
 @[    if os_name == 'linux']@
 export CONTAINER_NAME=ros2_batch_ci
-@[    elif os_name == 'linux-centos']@
-export CONTAINER_NAME=ros2_batch_ci_centos
+@[    elif os_name == 'linux-rhel']@
+export CONTAINER_NAME=ros2_batch_ci_rhel
 @[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_batch_ci_aarch64
 @[    elif os_name == 'linux-armhf']@

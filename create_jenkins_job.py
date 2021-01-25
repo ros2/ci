@@ -148,7 +148,7 @@ def main(argv=None):
             'build_args_default': data['build_args_default'].replace(
                 '--cmake-args', '--cmake-args -DCMAKE_CXX_FLAGS=-Wno-psabi -DCMAKE_C_FLAGS=-Wno-psabi -DDISABLE_SANITIZERS=ON'),
         },
-        'linux-centos': {
+        'linux-rhel': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
             'build_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['build_args_default'].replace(
@@ -158,7 +158,7 @@ def main(argv=None):
     }
 
     os_config_overrides = {
-        'linux-centos': {
+        'linux-rhel': {
             'mixed_overlay_pkgs': '',
             'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_opensplice_cpp'},
             'use_connext_debs_default': 'false',
@@ -167,7 +167,7 @@ def main(argv=None):
 
     launcher_exclude = {
         'linux-armhf',
-        'linux-centos',
+        'linux-rhel',
         'windows-metal',
     }
 
