@@ -2,6 +2,9 @@
   "ros2_windows": {
     "download_sources": "false",
     "vs_version": "buildtools",
+    "qt5": {
+      "installation_method": "offline"
+    },
     "ros2_ws": "C:/ci",
     "ros_distro": "rolling",
     "rti_connext": {
