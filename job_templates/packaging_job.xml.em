@@ -135,7 +135,7 @@ test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel', 'osx']]@
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -211,7 +211,7 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-centos']]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel']]@
 @[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
 @[      if os_name == 'linux-armhf']@
 sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
@@ -240,8 +240,8 @@ echo "# BEGIN SECTION: Build Dockerfile"
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-armhf']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
-@[    elif os_name == 'linux-centos']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_centos linux_docker_resources -f linux_docker_resources/Dockerfile-CentOS
+@[    elif os_name == 'linux-rhel']@
+docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
 @[    else]@
@@ -255,8 +255,8 @@ export CONTAINER_NAME=ros2_packaging
 export CONTAINER_NAME=ros2_packaging_aarch64
 @[    elif os_name == 'linux-armhf']@
 export CONTAINER_NAME=ros2_packaging_armhf
-@[    elif os_name == 'linux-centos']@
-export CONTAINER_NAME=ros2_packaging_centos
+@[    elif os_name == 'linux-rhel']@
+export CONTAINER_NAME=ros2_packaging_rhel
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@

@@ -7,7 +7,7 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Cmake>
-@[if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
+@[if os_name in ['linux', 'linux-armhf', 'linux-aarch64', 'linux-rhel']]@
    <io.jenkins.plugins.analysis.warnings.Gcc4>
       <id></id>
       <name></name>
@@ -16,7 +16,7 @@
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Gcc4>
 @[end if]
-@[if os_name in ['osx', 'linux', 'linux-armhf', 'linux-aarch64', 'linux-centos']]@
+@[if os_name in ['osx', 'linux', 'linux-armhf', 'linux-aarch64', 'linux-rhel']]@
     <io.jenkins.plugins.analysis.warnings.Clang>
       <id></id>
       <name></name>
