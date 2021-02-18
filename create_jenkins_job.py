@@ -491,21 +491,6 @@ def main(argv=None):
                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
             })
 
-        # configure nightly triggered job using FastRTPS dynamic
-        if os_name != 'linux-armhf':
-            job_name = 'nightly_' + job_os_name + '_extra_rmw' + '_release'
-            if os_name == 'windows':
-                job_name = job_name[:25]
-            create_job(os_name, job_name, 'ci_job.xml.em', {
-                'cmake_build_type': 'Release',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'ignore_rmw_default': {
-                    'rmw_connext_cpp',
-                    'rmw_connext_dynamic_cpp',
-                    'rmw_opensplice_cpp'},
-            })
-
         # configure nightly triggered job
         if os_name != 'linux-armhf':
             job_name = 'nightly_' + job_os_name + '_release'
