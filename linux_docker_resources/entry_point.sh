@@ -22,8 +22,8 @@ echo "done."
 
 # extract all ignored rmws
 # extract args between --ignore-rmw until the first appearance of '-'
-IGNORE_CONNEXT=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
-# if we didn't find `rmw_connext_cpp` within the option string, install it!
+IGNORE_CONNEXT=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connextdds`
+# if we didn't find `rmw_connextdds` within the option string, install it!
 if [ -z "${IGNORE_CONNEXT}" ]; then
     echo "Installing Connext..."
     case "${CI_ARGS}" in
