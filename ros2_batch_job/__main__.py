@@ -692,10 +692,17 @@ def run(args, build_function, blacklisted_package_names=None):
             blacklisted_package_names += [
                 'rmw_connext_dynamic_cpp',
             ]
-        if 'rmw_connext_cpp' in args.ignore_rmw:  # and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
+        if 'rmw_connext_cpp' in args.ignore_rmw and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'connext_cmake_module',
                 'rmw_connext_shared_cpp',
+            ]
+        if 'rmw_connextdds' in args.ignore_rmw:
+            blacklisted_package_names += [
+                'rti_connext_dds_cmake_module',
+                'rmw_connextdds_common',
+                'rmw_connextdds',
+                'rmw_connextddsmicro',
             ]
         if 'rmw_cyclonedds_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
@@ -706,6 +713,9 @@ def run(args, build_function, blacklisted_package_names=None):
         if 'rmw_fastrtps_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'rmw_fastrtps_cpp',
+            ]
+        if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_connextdds' in args.ignore_rmw:
+            blacklisted_package_names += [
                 'rosidl_typesupport_fastrtps_c',
                 'rosidl_typesupport_fastrtps_cpp',
             ]
@@ -713,10 +723,17 @@ def run(args, build_function, blacklisted_package_names=None):
             blacklisted_package_names += [
                 'rmw_fastrtps_dynamic_cpp',
             ]
-        if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
+        if ('rmw_fastrtps_cpp' in args.ignore_rmw and
+            'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw and
+            # TODO(asorbini) Ideally `rmw_connextdds` would only depend on `fastcdr`
+            # via `rosidl_typesupport_fastrtps_c[pp]`, but they depend on `fastrtps`.
+            'rmw_connextdds' in args.ignore_rmw):
             blacklisted_package_names += [
                 'fastrtps',
                 'fastrtps_cmake_module',
+            ]
+        if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
+            blacklisted_package_names += [
                 'rmw_fastrtps_shared_cpp',
             ]
         if 'rmw_opensplice_cpp' in args.ignore_rmw:

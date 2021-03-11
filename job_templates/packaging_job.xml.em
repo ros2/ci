@@ -114,8 +114,7 @@ ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
-use_connext_static: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_STATIC')}, <br/>
-@# use_connext_dynamic: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DYNAMIC')}, <br/>
+use_connextdds: ${build.buildVariableResolver.resolve('CI_USE_CONNEXTDDS')}, <br/>
 use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>
 use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br/>
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
@@ -146,12 +145,18 @@ fi
 if [ -n "${CI_COLCON_BRANCH+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-branch $CI_COLCON_BRANCH"
 fi
-export CI_ARGS="$CI_ARGS --ignore-rmw"
-if [ "$CI_USE_CONNEXT_STATIC" = "false" ]; then
+export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connext_dynamic_cpp"
+# TODO(asorbini) `rmw_connext_cpp` is still the default for dashing and foxy.
+if [ -n "$CI_ROS_DISTRO" -a \( "$CI_ROS_DISTRO" = dashing -o "$CI_ROS_DISTRO" = foxy \) ]; then
+  if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
+    export CI_ARGS="$CI_ARGS rmw_connext_cpp"
+  fi
+else
+  # Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   export CI_ARGS="$CI_ARGS rmw_connext_cpp"
-fi
-if [ "$CI_USE_CONNEXT_DYNAMIC" = "false" ]; then
-  export CI_ARGS="$CI_ARGS rmw_connext_dynamic_cpp"
+  if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
+    export CI_ARGS="$CI_ARGS rmw_connextdds"
+  fi
 fi
 if [ "$CI_USE_CYCLONEDDS" = "false" ]; then
   export CI_ARGS="$CI_ARGS rmw_cyclonedds_cpp"
@@ -284,12 +289,28 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
 )
-set "CI_ARGS=!CI_ARGS! --ignore-rmw"
-if "!CI_USE_CONNEXT_STATIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_dynamic_cpp"
+:: TODO(asorbini) `rmw_connext_cpp` is still the default for dashing and foxy.
+set "CI_CONNEXTDDS_RMW="
+if "!CI_ROS_DISTRO!" NEQ "" (
+  if "!CI_ROS_DISTRO!" == "dashing" (
+    set CI_CONNEXTDDS_RMW=rmw_connext_cpp
+  ) else (
+    if "!CI_ROS_DISTRO!" == "foxy" (
+      set CI_CONNEXTDDS_RMW=rmw_connext_cpp
+    )
+  )
 )
-if "!CI_USE_CONNEXT_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_connext_dynamic_cpp"
+if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
+  if "!CI_USE_CONNEXTDDS!" == "false" (
+    set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+  )
+) else (
+  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
+  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+  if "!CI_USE_CONNEXTDDS!" == "false" (
+    set "CI_ARGS=!CI_ARGS! rmw_connextdds"
+  )
 )
 if "!CI_USE_CYCLONEDDS!" == "false" (
   set "CI_ARGS=!CI_ARGS! rmw_cyclonedds_cpp"
@@ -371,12 +392,28 @@ if "!CI_COLCON_BRANCH!" NEQ "" (
 if "!CI_ROS_DISTRO!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
-set "CI_ARGS=!CI_ARGS! --ignore-rmw"
-if "!CI_USE_CONNEXT_STATIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_dynamic_cpp"
+:: TODO(asorbini) `rmw_connext_cpp` is still the default for dashing and foxy.
+set "CI_CONNEXTDDS_RMW="
+if "!CI_ROS_DISTRO!" NEQ "" (
+  if "!CI_ROS_DISTRO!" == "dashing" (
+    set CI_CONNEXTDDS_RMW=rmw_connext_cpp
+  ) else (
+    if "!CI_ROS_DISTRO!" == "foxy" (
+      set CI_CONNEXTDDS_RMW=rmw_connext_cpp
+    )
+  )
 )
-if "!CI_USE_CONNEXT_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_connext_dynamic_cpp"
+if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
+  if "!CI_USE_CONNEXTDDS!" == "false" (
+    set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+  )
+) else (
+  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
+  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+  if "!CI_USE_CONNEXTDDS!" == "false" (
+    set "CI_ARGS=!CI_ARGS! rmw_connextdds"
+  )
 )
 if "!CI_USE_CYCLONEDDS!" == "false" (
   set "CI_ARGS=!CI_ARGS! rmw_cyclonedds_cpp"

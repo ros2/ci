@@ -22,9 +22,11 @@ echo "done."
 
 # extract all ignored rmws
 # extract args between --ignore-rmw until the first appearance of '-'
-IGNORE_CONNEXT=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
-# if we didn't find `rmw_connext_cpp` within the option string, install it!
-if [ -z "${IGNORE_CONNEXT}" ]; then
+IGNORE_CONNEXTDDS=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connextdds`
+IGNORE_CONNEXTCPP=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
+# Install RTI Connext DDS if we didn't find both `rmw_connextdds` and `rmw_connext_cpp`
+# within the "ignored RMWs" option string.
+if [ -z "${IGNORE_CONNEXTDDS}" -o -z "${IGNORE_CONNEXTCPP}" ]; then
     echo "Installing Connext..."
     case "${CI_ARGS}" in
       *--connext-debs*)
