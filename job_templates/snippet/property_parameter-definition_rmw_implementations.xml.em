@@ -1,13 +1,8 @@
         <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_CONNEXT_STATIC</name>
-          <description>By setting this to True, the build will attempt to use RTI&apos;s Connext (static type support).</description>
-          <defaultValue>@('false' if 'rmw_connext_cpp' in ignore_rmw_default else 'true')</defaultValue>
+          <name>CI_USE_CONNEXTDDS</name>
+          <description>By setting this to True, the build will attempt to use RTI Connext DDS.</description>
+          <defaultValue>@('false' if 'rmw_connextdds' in ignore_rmw_default else 'true')</defaultValue>
         </hudson.model.BooleanParameterDefinition>
-@#        <hudson.model.BooleanParameterDefinition>
-@#          <name>CI_USE_CONNEXT_DYNAMIC</name>
-@#          <description>By setting this to True, the build will attempt to use RTI&apos;s Connext (dynamic type support).</description>
-@#          <defaultValue>@('false' if 'rmw_connext_dynamic_cpp' in ignore_rmw_default else 'true')</defaultValue>
-@#        </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>CI_USE_CONNEXT_DEBS</name>
           <description>By setting this to True, the build will use the Debian packages for Connext, instead of the binaries off the RTI website (applies to Linux only).</description>

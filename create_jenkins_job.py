@@ -96,6 +96,7 @@ def main(argv=None):
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'ignore_rmw_default': {
+            'rmw_connext_cpp',
             'rmw_connext_dynamic_cpp',
             'rmw_fastrtps_dynamic_cpp',
             'rmw_opensplice_cpp'},
@@ -139,12 +140,12 @@ def main(argv=None):
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
-            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
+            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
         },
         'linux-armhf': {
             'label_expression': 'linux_armhf',
             'shell_type': 'Shell',
-            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'},
+            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
             'build_args_default': data['build_args_default'].replace(
                 '--cmake-args', '--cmake-args -DCMAKE_CXX_FLAGS=-Wno-psabi -DCMAKE_C_FLAGS=-Wno-psabi -DDISABLE_SANITIZERS=ON'),
         },
@@ -160,7 +161,7 @@ def main(argv=None):
     os_config_overrides = {
         'linux-rhel': {
             'mixed_overlay_pkgs': '',
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_opensplice_cpp'},
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
             'use_connext_debs_default': 'false',
         },
     }
@@ -216,9 +217,9 @@ def main(argv=None):
             packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
-        ignore_rmw_default_packaging = {'rmw_opensplice_cpp'}
+        ignore_rmw_default_packaging = {}
         if os_name in ['linux-aarch64', 'linux-armhf']:
-            ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp'}
+            ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
                 'days_to_keep': 180,
@@ -327,7 +328,8 @@ def main(argv=None):
         # packages of ros2.repos that are used by the qualitly level packages during
         # tests.
 
-        # out of the list since ignored by colcon: shape_msgs, stereo_msgs, rmw_connext, rmw_cyclonedds
+        # out of the list since ignored by colcon: shape_msgs, stereo_msgs,
+        # rmw_connext, rmw_connextdds, rmw_cyclonedds.
         quality_level_pkgs = [
             'action_msgs',
             'ament_index_cpp',

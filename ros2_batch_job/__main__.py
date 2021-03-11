@@ -687,15 +687,19 @@ def run(args, build_function, blacklisted_package_names=None):
                 'rmw_connext_cpp',
                 'rosidl_typesupport_connext_c',
                 'rosidl_typesupport_connext_cpp',
+                'connext_cmake_module',
+                'rmw_connext_shared_cpp',
             ]
         if 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
                 'rmw_connext_dynamic_cpp',
             ]
-        if 'rmw_connext_cpp' in args.ignore_rmw:  # and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
+        if 'rmw_connextdds' in args.ignore_rmw:
             blacklisted_package_names += [
-                'connext_cmake_module',
-                'rmw_connext_shared_cpp',
+                'rti_connext_dds_cmake_module',
+                'rmw_connextdds_common',
+                'rmw_connextdds',
+                'rmw_connextddsmicro'
             ]
         if 'rmw_cyclonedds_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
