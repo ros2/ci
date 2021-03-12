@@ -394,7 +394,6 @@ def main(argv=None):
             'ros2param',
             'ros2topic',
             'rosbag2_compression',
-            'rosbag2_converter_default_plugins',
             'rosbag2_cpp',
             'rosbag2_storage',
             'rosbag2_storage_default_plugins',
