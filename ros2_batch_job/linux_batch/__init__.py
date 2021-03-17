@@ -58,7 +58,8 @@ class LinuxBatchJob(BatchJob):
     def setup_env(self):
         connext_env_file = None
         # Update the script provided by Connext to work in dash
-        if 'rmw_connextdds' not in self.args.ignore_rmw:
+        if ('rmw_connext_cpp' not in self.args.ignore_rmw or
+            'rmw_connextdds' not in self.args.ignore_rmw):
             # Location of the original Connext script
             if self.args.connext_debs:
                 connext_env_file = '/opt/rti.com'
