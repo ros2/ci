@@ -96,7 +96,6 @@ def main(argv=None):
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'ignore_rmw_default': {
-            'rmw_connext_cpp',
             'rmw_connext_dynamic_cpp',
             'rmw_fastrtps_dynamic_cpp',
             'rmw_opensplice_cpp'},
