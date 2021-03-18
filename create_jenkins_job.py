@@ -216,7 +216,7 @@ def main(argv=None):
             packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
-        ignore_rmw_default_packaging = {}
+        ignore_rmw_default_packaging = set()
         if os_name in ['linux-aarch64', 'linux-armhf']:
             ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
