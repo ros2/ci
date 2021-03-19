@@ -152,7 +152,7 @@ if [ -n "$CI_ROS_DISTRO" -a \( "$CI_ROS_DISTRO" = dashing -o "$CI_ROS_DISTRO" = 
     export CI_ARGS="$CI_ARGS rmw_connext_cpp"
   fi
 else
-  # Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for older releases.
+  # Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   export CI_ARGS="$CI_ARGS rmw_connext_cpp"
   if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
     export CI_ARGS="$CI_ARGS rmw_connextdds"
@@ -306,7 +306,7 @@ if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
     set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
   )
 ) else (
-  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for older releases.
+  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
   if "!CI_USE_CONNEXTDDS!" == "false" (
     set "CI_ARGS=!CI_ARGS! rmw_connextdds"
@@ -409,7 +409,7 @@ if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
     set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
   )
 ) else (
-  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for older releases.
+  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
   if "!CI_USE_CONNEXTDDS!" == "false" (
     set "CI_ARGS=!CI_ARGS! rmw_connextdds"
