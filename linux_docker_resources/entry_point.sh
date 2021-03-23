@@ -20,36 +20,38 @@ echo "Enabling multicast..."
 ifconfig eth0 multicast
 echo "done."
 
-# extract all ignored rmws
-# extract args between --ignore-rmw until the first appearance of '-'
-IGNORE_CONNEXTDDS=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connextdds`
-IGNORE_CONNEXTCPP=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
-# Install RTI Connext DDS if we didn't find both `rmw_connextdds` and `rmw_connext_cpp`
-# within the "ignored RMWs" option string.
-if [ -z "${IGNORE_CONNEXTDDS}" -o -z "${IGNORE_CONNEXTCPP}" ]; then
-    echo "Installing Connext..."
-    case "${CI_ARGS}" in
-      *--connext-debs*)
-        echo "Using Debian package of Connext"
-        ;;
-      *)
-        echo "Installing Connext binaries off RTI website..."
-        python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg
-        if [ $? -ne 0 ]
-        then
-          echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
-          exit 1
-        fi
-        mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
-        export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
-        mv /tmp/openssl-1.0.2n /home/rosbuild/openssl-1.0.2n
-        export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
-        export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
-        ;;
-    esac
-    echo "done."
-else
-    echo "NOT installing Connext."
+# We only attempt to install Connext on amd64
+if [ "${ARCH}" != "aarch64" ]; then
+    # extract all ignored rmws
+    # extract args between --ignore-rmw until the first appearance of '-'
+    IGNORE_CONNEXTDDS=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connextdds`
+    IGNORE_CONNEXTCPP=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
+    # Install RTI Connext DDS if we didn't find both `rmw_connextdds` and `rmw_connext_cpp`
+    # within the "ignored RMWs" option string.
+    if [ -z "${IGNORE_CONNEXTDDS}" -o -z "${IGNORE_CONNEXTCPP}" ]; then
+        echo "Installing Connext..."
+        case "${CI_ARGS}" in
+          *--connext-debs*)
+            echo "Using Debian package of Connext"
+            ;;
+          *)
+            echo "Installing Connext binaries off RTI website..."
+            python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg
+            if [ $? -ne 0 ]; then
+                echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
+                exit 1
+            fi
+            mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
+            export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
+            mv /tmp/openssl-1.0.2n /home/rosbuild/openssl-1.0.2n
+            export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
+            export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
+            ;;
+        esac
+        echo "done."
+    else
+        echo "NOT installing Connext."
+    fi
 fi
 
 echo "Fixing permissions..."
