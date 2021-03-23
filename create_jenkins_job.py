@@ -175,11 +175,12 @@ def main(argv=None):
     jenkins_kwargs['context_lines'] = args.context_lines
     if not args.commit:
         jenkins_kwargs['dry_run'] = True
+    pattern_select_jobs_regexp = ''
     if args.select_jobs_regexp:
-        args.pattern_select_jobs_regexp = re.compile(args.select_jobs_regexp)
+        pattern_select_jobs_regexp = re.compile(args.select_jobs_regexp)
 
     def create_job(os_name, job_name, template_file, additional_dict):
-        if args.select_jobs_regexp and not args.pattern_select_jobs_regexp.match(job_name):
+        if pattern_select_jobs_regexp and not pattern_select_jobs_regexp.match(job_name):
             return
         job_data = dict(data)
         job_data['os_name'] = os_name
@@ -536,7 +537,7 @@ def main(argv=None):
 
     # configure the launch job
     launcher_job_name = 'ci_launcher'
-    if args.select_jobs_regexp and args.pattern_select_jobs_regexp.match(launcher_job_name):
+    if not pattern_select_jobs_regexp or (pattern_select_jobs_regexp and pattern_select_jobs_regexp.match(launcher_job_name)):
         os_specific_data = collections.OrderedDict()
         for os_name in sorted(os_configs.keys() - launcher_exclude):
             os_specific_data[os_name] = dict(data)
