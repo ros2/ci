@@ -41,7 +41,8 @@ class WindowsBatchJob(BatchJob):
     def setup_env(self):
         # Try to find the connext env file and source it
         connext_env_file = None
-        if 'rmw_connext_cpp' not in self.args.ignore_rmw:  # or 'rmw_connext_dynamic_cpp' not in self.args.ignore_rmw:
+        if ('rmw_connext_cpp' not in self.args.ignore_rmw or
+            'rmw_connextdds' not in self.args.ignore_rmw):
             pf = os.environ.get('ProgramFiles', "C:\\Program Files\\")
             connext_env_file = os.path.join(
                 pf, 'rti_connext_dds-5.3.1', 'resource', 'scripts', 'rtisetenv_x64Win64VS2017.bat')

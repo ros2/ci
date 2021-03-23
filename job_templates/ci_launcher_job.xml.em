@@ -97,19 +97,11 @@ for (item in build_numbers) {
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
-                  <name>CI_USE_CONNEXT_STATIC</name>
+                  <name>CI_USE_CONNEXTDDS</name>
                   <value>false</value>
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
-@#            <hudson.plugins.parameterizedtrigger.BooleanParameters>
-@#              <configs>
-@#                <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
-@#                  <name>CI_USE_CONNEXT_DYNAMIC</name>
-@#                  <value>false</value>
-@#                </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
-@#              </configs>
-@#            </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[  end if]@
 @[  if os_name in ['windows', 'windows-metal']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
