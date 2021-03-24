@@ -537,7 +537,7 @@ def main(argv=None):
 
     # configure the launch job
     launcher_job_name = 'ci_launcher'
-    if not pattern_select_jobs_regexp or (pattern_select_jobs_regexp and pattern_select_jobs_regexp.match(launcher_job_name)):
+    if not pattern_select_jobs_regexp or pattern_select_jobs_regexp.match(launcher_job_name):
         os_specific_data = collections.OrderedDict()
         for os_name in sorted(os_configs.keys() - launcher_exclude):
             os_specific_data[os_name] = dict(data)
