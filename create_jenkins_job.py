@@ -325,7 +325,7 @@ def main(argv=None):
 
         # Proposed list of packages to maximize coverage while testing quality level
         # packages. The list is composed by the list of qualitly level packages plus
-        # packages of ros2.repos that are used by the qualitly level packages during
+        # packages of ros2.repos that are used by the quality level packages during
         # tests.
 
         # out of the list since ignored by colcon: shape_msgs, stereo_msgs,
@@ -406,8 +406,6 @@ def main(argv=None):
             'rosidl_generator_cpp',
             'rosidl_generator_py',
             'rosidl_runtime_py',
-            'rosidl_typesupport_connext_c',
-            'rosidl_typesupport_connext_cpp',
             'rosidl_typesupport_introspection_c',
             'rosidl_typesupport_introspection_cpp',
             'test_cli',
