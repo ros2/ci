@@ -151,8 +151,7 @@ def main(argv=None):
         'linux-rhel': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
-            'build_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['build_args_default'].replace(
-                '--cmake-args', '--cmake-args -DCMAKE_POLICY_DEFAULT_CMP0072=NEW -DPYTHON_VERSION=3.6 -DDISABLE_SANITIZERS=ON'),
+            'build_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['build_args_default'],
             'test_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['test_args_default'],
         },
     }
@@ -160,7 +159,7 @@ def main(argv=None):
     os_config_overrides = {
         'linux-rhel': {
             'mixed_overlay_pkgs': '',
-            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_opensplice_cpp', 'rmw_connextdds'},
+            'ignore_rmw_default': {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
             'use_connext_debs_default': 'false',
         },
     }

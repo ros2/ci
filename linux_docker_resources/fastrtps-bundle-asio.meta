@@ -1,0 +1,7 @@
+{
+    "names": {
+        "fastrtps": {
+            "cmake-args": [ "-DTHIRDPARTY_Asio=ON" ]
+        }
+    }
+}
