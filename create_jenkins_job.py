@@ -151,8 +151,8 @@ def main(argv=None):
         'linux-rhel': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
-            'build_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['build_args_default'],
-            'test_args_default': '--packages-skip-by-dep image_tools ros1_bridge --packages-skip image_tools ros1_bridge ' + data['test_args_default'],
+            'build_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + data['build_args_default'],
+            'test_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + data['test_args_default'],
         },
     }
 
