@@ -287,23 +287,30 @@ def main(argv=None):
                 'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
             })
 
-        # configure nightly job for compiling with clang+libcxx on linux
+        # configure jobs for compiling with clang+libcxx on linux
         if os_name == 'linux':
             # Set the logging implementation to noop because log4cxx will not link properly when using libcxx.
-            clang_libcxx_build_args = data['build_args_default'].replace('--cmake-args',
-                '--cmake-args -DRCL_LOGGING_IMPLEMENTATION=rcl_logging_noop') + \
-                ' --mixin clang-libcxx --packages-skip intra_process_demo'
+            clang_libcxx_build_args = data['build_args_default'] + ' --mixin clang-libcxx --packages-skip intra_process_demo'
+            # Only running tests from the lowest-level C package to ensure "working" binaries are generated.
+            # We do not want to test more than this as we observe issues with the clang libcxx standard library
+            # we don't plan to tackle for now. The important part of the jobs is to make sure the code compiles
+            # without emitting thread-safety related warnings.
+            clang_libcxx_test_args = data['test_args_default'].replace(' --retest-until-pass 2', '') + ' --packages-select rcutils'
+            # nightly job
             create_job(os_name, 'nightly_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'compile_with_clang_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
                 'build_args_default': clang_libcxx_build_args,
-                # Only running test from the lowest-level C package to ensure "working" binaries are generated.
-                # We do not want to test more than this as we observe issues with the clang libcxx standard library
-                # we don't plan to tackle for now. The important part of this nightly is to make sure the code compiles
-                # without emitting thread-safety related warnings.
-                'test_args_default': data['test_args_default'].replace(' --retest-until-pass 2', '') + ' --packages-select rcutils'
+                'test_args_default': clang_libcxx_test_args,
+            })
+            # manually triggered job
+            create_job(os_name, 'ci_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
+                'cmake_build_type': 'None',
+                'compile_with_clang_default': 'true',
+                'build_args_default': clang_libcxx_build_args,
+                'test_args_default': clang_libcxx_test_args,
             })
 
         # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
