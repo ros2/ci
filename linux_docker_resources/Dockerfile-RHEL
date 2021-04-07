@@ -130,6 +130,9 @@ WORKDIR "@workdir"
 
 # RHEL 8 doesn't have Asio yet, but Fast-DDS can bundle it
 ADD fastrtps-bundle-asio.meta /home/rosbuild/.colcon/metadata/fastrtps.meta
+# The version of Eigen in RHEL-8 (3.3.4) has a bug in it that causes
+# many warnings from "-Wint-in-bool-context".  Suppress it here.
+ADD tf2_eigen-disable-compiler-warning.meta /home/rosbuild/.colcon/metadata/tf2_eigen.meta
 RUN chown rosbuild: /home/rosbuild/.colcon -R
 
 # Add an entry point which changes rosbuild's UID from 1234 to the UID of the invoking user.

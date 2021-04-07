@@ -1,0 +1,7 @@
+{
+    "names": {
+        "tf2_eigen": {
+            "cmake-args": [ "-DCMAKE_CXX_FLAGS=-Wno-int-in-bool-context" ]
+        }
+    }
+}
