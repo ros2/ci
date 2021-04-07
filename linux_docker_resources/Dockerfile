@@ -156,6 +156,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     xvfb \
     matchbox-window-manager
 
+# Install dependencies for iceoryx
+RUN apt-get update && apt-get install -y \
+    acl \
+    libacl1-dev \
+    libncurses5-dev
+
 # After all packages are installed, update ccache symlinks (see ros2/ci#326).
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
