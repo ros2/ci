@@ -287,15 +287,13 @@ def main(argv=None):
                 'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
             })
 
-        # configure job for compiling with clang+libcxx on linux
+        # configure jobs for compiling with clang+libcxx on linux
         if os_name == 'linux':
             # Set the logging implementation to noop because log4cxx will not link properly when using libcxx.
-            clang_libcxx_build_args = data['build_args_default'].replace('--cmake-args',
-                '--cmake-args -DRCL_LOGGING_IMPLEMENTATION=rcl_logging_noop') + \
-                ' --mixin clang-libcxx --packages-skip intra_process_demo'
-            # Only running test from the lowest-level C package to ensure "working" binaries are generated.
+            clang_libcxx_build_args = data['build_args_default'] + ' --mixin clang-libcxx --packages-skip intra_process_demo'
+            # Only running tests from the lowest-level C package to ensure "working" binaries are generated.
             # We do not want to test more than this as we observe issues with the clang libcxx standard library
-            # we don't plan to tackle for now. The important part of this nightly is to make sure the code compiles
+            # we don't plan to tackle for now. The important part of the jobs is to make sure the code compiles
             # without emitting thread-safety related warnings.
             clang_libcxx_test_args = data['test_args_default'].replace(' --retest-until-pass 2', '') + ' --packages-select rcutils'
             # nightly job
