@@ -152,7 +152,8 @@ def main(argv=None):
             'label_expression': 'linux',
             'shell_type': 'Shell',
             'build_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + data['build_args_default'],
-            'test_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + data['test_args_default'],
+            'test_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + re.sub(
+                r'(--ctest-args -LE )"?([^ "]+)"?', r'\1"(cppcheck|\2)"', data['test_args_default']),
         },
     }
 
@@ -514,7 +515,7 @@ def main(argv=None):
                 job_name = job_name[:15]
             test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
             test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
-            test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -LE "(linter|xfail)"')
+            test_args_default = re.sub(r'(--ctest-args -LE )"?([^ "]+)"?', r'\1"(linter|\2)"', test_args_default)
             test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
             if job_os_name == 'linux-aarch64':
                 # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
@@ -530,7 +531,7 @@ def main(argv=None):
         if os_name != 'linux-armhf':
             job_name = 'nightly_' + job_os_name + '_xfail'
             test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-            test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -L xfail')
+            test_args_default = re.sub(r'--ctest-args -LE "?[^ "]+"?', r'--ctest-args -L xfail', test_args_default)
             test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
             create_job(os_name, job_name, 'ci_job.xml.em', {
                 'cmake_build_type': 'None',
