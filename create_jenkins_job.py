@@ -534,9 +534,6 @@ def main(argv=None):
             test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
             test_args_default = test_args_default.replace('--ctest-args -LE xfail', '--ctest-args -LE "(linter|xfail)"')
             test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
-            if job_os_name == 'linux-aarch64':
-                # skipping known to be flaky tests https://github.com/ros2/rviz/issues/368
-                test_args_default += ' --packages-skip rviz_common rviz_default_plugins rviz_rendering rviz_rendering_tests'
             create_job(os_name, job_name, 'ci_job.xml.em', {
                 'cmake_build_type': 'None',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
