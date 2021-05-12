@@ -51,7 +51,8 @@ RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 # Invalidate daily to run updates
-RUN echo "@todays_date"
+# TODO: Pinned due to slproweb.com outage
+RUN echo "Tuesday, May 11, 2021"
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 WORKDIR C:\ci
