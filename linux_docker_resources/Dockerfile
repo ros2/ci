@@ -19,6 +19,7 @@ ENV LANG en_US.UTF-8
 # Get https transport for APT.
 RUN apt-get update && apt-get install --no-install-recommends -y \
   lsb-release net-tools sudo \
+  ca-certificates \
   curl \
   gnupg2 \
   apt-transport-https
