@@ -604,7 +604,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['colcon/%s' % name for name in colcon_packages],
                 shell=True)
 
-        if sys.platform != 'win32':
+        if args.do_venv and sys.platform != 'win32':
             colcon_script = os.path.join(venv_path, 'bin', 'colcon')
         else:
             colcon_script = which('colcon')
