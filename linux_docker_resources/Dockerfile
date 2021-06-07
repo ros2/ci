@@ -19,13 +19,14 @@ ENV LANG en_US.UTF-8
 # Get https transport for APT.
 RUN apt-get update && apt-get install --no-install-recommends -y \
   lsb-release net-tools sudo \
+  ca-certificates \
   curl \
   gnupg2 \
   apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
 RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list
-RUN echo "Bust Cache for key update 2019-06-08" && curl --silent http://repositories.ros.org/repos.key | apt-key add -
+RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
