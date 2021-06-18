@@ -63,7 +63,6 @@ pip_dependencies = [
     'importlib-metadata',
     'lark-parser',
     'mock',
-    'mypy==0.761',
     'nose',
     'pep8',
     'pydocstyle',
@@ -78,6 +77,10 @@ pip_dependencies = [
     'pyyaml',
     'vcstool',
 ]
+# mypy is installed system wide on Linux.
+if sys.platform != 'linux':
+    pip_dependencies += ['mypy==0.761']
+
 # https://github.com/pyca/cryptography/issues/5433
 pip_cryptography_version = '==3.0'
 if sys.platform in ('darwin'):
