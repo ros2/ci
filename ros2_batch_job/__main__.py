@@ -63,7 +63,7 @@ pip_dependencies = [
     'importlib-metadata',
     'lark-parser',
     'mock',
-    'mypy',
+    'mypy==0.761',
     'nose',
     'pep8',
     'pydocstyle',
