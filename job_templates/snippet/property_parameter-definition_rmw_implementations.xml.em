@@ -23,8 +23,3 @@
           <description>By setting this to True, the build will attempt to use eProsima&apos;s FastRTPS (dynamic type support).</description>
           <defaultValue>@('false' if 'rmw_fastrtps_dynamic_cpp' in ignore_rmw_default else 'true')</defaultValue>
         </hudson.model.BooleanParameterDefinition>
-        <hudson.model.BooleanParameterDefinition>
-          <name>CI_USE_OPENSPLICE</name>
-          <description>By setting this to True, the build will attempt to use ADLINK&apos;s OpenSplice.</description>
-          <defaultValue>@('false' if 'rmw_opensplice_cpp' in ignore_rmw_default else 'true')</defaultValue>
-        </hudson.model.BooleanParameterDefinition>

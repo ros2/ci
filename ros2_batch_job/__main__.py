@@ -736,13 +736,6 @@ def run(args, build_function, blacklisted_package_names=None):
             blacklisted_package_names += [
                 'rmw_fastrtps_shared_cpp',
             ]
-        if 'rmw_opensplice_cpp' in args.ignore_rmw:
-            blacklisted_package_names += [
-                'opensplice_cmake_module',
-                'rmw_opensplice_cpp',
-                'rosidl_typesupport_opensplice_c',
-                'rosidl_typesupport_opensplice_cpp',
-            ]
 
         # Allow the batch job to push custom sourcing onto the run command
         job.setup_env()
