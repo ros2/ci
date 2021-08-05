@@ -37,12 +37,6 @@ RUN dnf update \
     python3-vcstool \
     --enablerepo=epel-testing --skip-broken --refresh -y
 
-# Install packages currently in testing
-RUN dnf install \
-    assimp-devel \
-    python3-pygraphviz \
-    --enablerepo=epel-testing --refresh -y
-
 # Initialize rosdep
 RUN rosdep init && rosdep update
 
