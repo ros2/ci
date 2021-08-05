@@ -14,6 +14,7 @@ RUN dnf install \
     make \
     matchbox-window-manager \
     mesa-dri-drivers \
+    net-tools \
     patch \
     python3-bloom \
     python3-colcon-common-extensions \
