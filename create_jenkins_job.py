@@ -424,6 +424,7 @@ def main(argv=None):
             'test_rclcpp',
             'test_security',
             'test_tf2',
+            'test_tracetools',
             'tf2',
             'tf2_bullet',
             'tf2_eigen',
@@ -433,7 +434,6 @@ def main(argv=None):
             'tf2_py',
             'tf2_ros',
             'tf2_sensor_msgs',
-            'tracetools_test',
         ]
 
         if os_name == 'linux':
