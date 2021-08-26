@@ -223,7 +223,7 @@ def main(argv=None):
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
                 'days_to_keep': 180,
-                'num_to_keep': 100,
+                'num_to_keep': 60,
             },
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
@@ -235,8 +235,8 @@ def main(argv=None):
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
-                'days_to_keep': 370,
-                'num_to_keep': 370,
+                'days_to_keep': 300,
+                'num_to_keep': 300,
             },
             'cmake_build_type': 'RelWithDebInfo',
             'disabled': os_name == 'linux-armhf',
@@ -252,8 +252,8 @@ def main(argv=None):
         if os_name == 'windows':
             create_job(os_name, 'packaging_' + os_name + '_debug', 'packaging_job.xml.em', {
                 'build_discard': {
-                    'days_to_keep': 370,
-                    'num_to_keep': 370,
+                    'days_to_keep': 300,
+                    'num_to_keep': 300,
                     },
                 'cmake_build_type': 'Debug',
                 'mixed_overlay_pkgs': 'ros1_bridge',
