@@ -371,7 +371,7 @@ def build_and_test(args, job):
     # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     # After Foxy, we introduced per-package changes to make local builds and CI
     # builds act the same.
-    if args.ros_distro in ('dashing', 'foxy'):
+    if args.ros_distro == 'foxy'
         pytest_args = ['-o', 'junit_family=xunit2']
         # We should only have one --pytest-args option, or some options might get ignored
         if '--pytest-args' in test_cmd:
@@ -520,24 +520,14 @@ def run(args, build_function, blacklisted_package_names=None):
             pip_packages += ['git+https://github.com/osrf/pyreadline']
 
             if args.cmake_build_type == 'Debug':
-                if args.ros_distro == 'dashing':
-                    pip_packages += [
-                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.12.3-cp37-cp37dm-win_amd64.whl',  # required by cryptography
-                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.7-cp37-cp37dm-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.3.2-cp37-cp37dm-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp37-cp37dm-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.16.2-cp37-cp37dm-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.0-cp37-cp37dm-win_amd64.whl',  # required by mypy
-                    ]
-                else:
-                    pip_packages += [
-                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
-                        'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
-                        'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.1-cp38-cp38d-win_amd64.whl',  # required by mypy
-                    ]
+                pip_packages += [
+                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
+                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
+                    'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.1-cp38-cp38d-win_amd64.whl',  # required by mypy
+                ]
             else:
                 pip_packages += [
                     f'cryptography{pip_cryptography_version}',
