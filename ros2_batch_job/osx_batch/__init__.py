@@ -53,10 +53,6 @@ class OSXBatchJob(BatchJob):
                     brew_openssl_prefix_result.stdout.decode().strip('\n')
             else:
                 raise KeyError('Failed to find openssl')
-        if 'OSPL_HOME' not in os.environ:
-            warn('OSPL_HOME not set; using default value')
-            os.environ['OSPL_HOME'] = os.path.join(
-                os.environ['HOME'], 'opensplice', 'HDE', 'x86_64.darwin10_clang')
         # TODO(nuclearsandwich) Connext 5.3.1 supports only OpenSSL 1.0.2
         # remove this when upgrading to Connext 6 that supports OpenSSL 1.1.1
         if 'RTI_OPENSSL_BIN' not in os.environ:
@@ -103,7 +99,6 @@ class OSXBatchJob(BatchJob):
                 warn("Asked to use Connext but the RTI env was not found at either '{0}' or '{1}'".format(
                     connext_env_file_sierra, connext_env_file_mojave))
                 connext_env_file = None
-        # There is nothing extra to be done for OpenSplice
 
         ros1_setup_file = None
         if self.args.ros1_path:

@@ -97,8 +97,7 @@ def main(argv=None):
         'mailer_recipients': '',
         'ignore_rmw_default': {
             'rmw_connext_dynamic_cpp',
-            'rmw_fastrtps_dynamic_cpp',
-            'rmw_opensplice_cpp'},
+            'rmw_fastrtps_dynamic_cpp'},
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
@@ -217,7 +216,7 @@ def main(argv=None):
             packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
-        ignore_rmw_default_packaging = {'rmw_opensplice_cpp'}
+        ignore_rmw_default_packaging = set()
         if os_name in ['linux-aarch64', 'linux-armhf']:
             ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {

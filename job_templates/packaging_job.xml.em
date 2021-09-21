@@ -119,7 +119,6 @@ use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')},
 use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br/>
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
 use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
-use_opensplice: ${build.buildVariableResolver.resolve('CI_USE_OPENSPLICE')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
@@ -166,9 +165,6 @@ if [ "$CI_USE_FASTRTPS_STATIC" = "false" ]; then
 fi
 if [ "$CI_USE_FASTRTPS_DYNAMIC" = "false" ]; then
   export CI_ARGS="$CI_ARGS rmw_fastrtps_dynamic_cpp"
-fi
-if [ "$CI_USE_OPENSPLICE" = "false" ]; then
-  export CI_ARGS="$CI_ARGS rmw_opensplice_cpp"
 fi
 if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg INSTALL_CONNEXT_DEBS=$CI_USE_CONNEXT_DEBS"
@@ -317,9 +313,6 @@ if "!CI_USE_FASTRTPS_STATIC!" == "false" (
 if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
   set "CI_ARGS=!CI_ARGS! rmw_fastrtps_dynamic_cpp"
 )
-if "!CI_USE_OPENSPLICE!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_opensplice_cpp"
-)
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"
 )
@@ -415,9 +408,6 @@ if "!CI_USE_FASTRTPS_STATIC!" == "false" (
 )
 if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
   set "CI_ARGS=!CI_ARGS! rmw_fastrtps_dynamic_cpp"
-)
-if "!CI_USE_OPENSPLICE!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_opensplice_cpp"
 )
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"

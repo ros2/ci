@@ -51,18 +51,6 @@ class WindowsBatchJob(BatchJob):
                     connext_env_file))
                 connext_env_file = None
 
-        # Try to find the OpenSplice env file
-        opensplice_env_file = None
-        if 'rmw_opensplice_cpp' not in self.args.ignore_rmw:
-            default_home = os.path.join(
-                os.path.abspath(os.sep), 'dev', 'opensplice', 'HDE', 'x86_64.win64')
-            ospl_home = os.environ.get('OSPL_HOME', default_home)
-            opensplice_env_file = os.path.join(ospl_home, 'release.bat')
-            if not os.path.exists(opensplice_env_file):
-                warn("Asked to use OpenSplice but the env file was not found at '{0}'".format(
-                    opensplice_env_file))
-                opensplice_env_file = None
-
         # Generate the env file
         if os.path.exists('env.bat'):
             os.remove('env.bat')
@@ -75,8 +63,6 @@ class WindowsBatchJob(BatchJob):
                 self.args.visual_studio_version + 'x86_amd64' + os.linesep)
             if connext_env_file is not None:
                 f.write('call "%s"%s' % (connext_env_file, os.linesep))
-            if opensplice_env_file is not None:
-                f.write('call "%s"%s' % (opensplice_env_file, os.linesep))
             f.write("%*" + os.linesep)
             f.write("if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%" + os.linesep)
 

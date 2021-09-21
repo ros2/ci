@@ -82,7 +82,6 @@ class LinuxBatchJob(BatchJob):
                 warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
                     connext_env_file))
                 connext_env_file = None
-        # There is nothing extra to be done for OpenSplice
 
         ros1_setup_file = None
         if self.args.ros1_path:
