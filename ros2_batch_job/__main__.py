@@ -371,7 +371,7 @@ def build_and_test(args, job):
     # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
     # After Foxy, we introduced per-package changes to make local builds and CI
     # builds act the same.
-    if args.ros_distro == 'foxy'
+    if args.ros_distro == 'foxy':
         pytest_args = ['-o', 'junit_family=xunit2']
         # We should only have one --pytest-args option, or some options might get ignored
         if '--pytest-args' in test_cmd:
