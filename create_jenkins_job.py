@@ -16,6 +16,7 @@
 
 import argparse
 import collections
+import copy
 import os
 import re
 import sys
@@ -435,6 +436,11 @@ def main(argv=None):
             'tf2_sensor_msgs',
         ]
 
+        foxy_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
+        foxy_testing_pkgs_for_quality_level.remove('test_tracetools')
+        foxy_testing_pkgs_for_quality_level.append('tracetools_test')
+        galactic_testing_pkgs_for_quality_level = copy.copy(foxy_testing_pkgs_for_quality_level)
+
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'build_discard': {
@@ -491,9 +497,9 @@ def main(argv=None):
                 'ros_distro': 'foxy',
                 'ubuntu_distro': 'focal',
                 'build_args_default': data['build_args_default'] +
-                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
+                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + foxy_testing_pkgs_for_quality_level),
                 'test_args_default': data['test_args_default'] +
-                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
+                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + foxy_testing_pkgs_for_quality_level),
             })
             # Add a coverage job targeting Galactic.
             create_job(os_name, 'nightly_' + os_name + '_galactic_coverage', 'ci_job.xml.em', {
@@ -509,9 +515,9 @@ def main(argv=None):
                 'ros_distro': 'galactic',
                 'ubuntu_distro': 'focal',
                 'build_args_default': data['build_args_default'] +
-                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
+                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + galactic_testing_pkgs_for_quality_level),
                 'test_args_default': data['test_args_default'] +
-                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
+                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + galactic_testing_pkgs_for_quality_level),
             })
 
         # configure nightly triggered job
