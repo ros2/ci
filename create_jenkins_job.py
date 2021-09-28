@@ -160,7 +160,6 @@ def main(argv=None):
     os_config_overrides = {
         'linux-rhel': {
             'mixed_overlay_pkgs': '',
-            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connextdds'},
             'use_connext_debs_default': 'false',
         },
     }
