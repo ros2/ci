@@ -21,6 +21,14 @@ FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 # Install cinc-solo, a compiled binary of chef-solo
 RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 16"
 
+# Update certificate bundle to work Let's Encrypt root certificate expiration
+# https://www.openssl.org/blog/blog/2021/09/13/LetsEncryptRootCertExpire/
+# (in the parlance of the above post we're using workaround 1)
+# This workaround is being incorporated directly in future releases of Cinc 16 and 17.
+# Our application of the work around should be removed when updating to such a version.
+COPY cacert.pem c:\cinc-project\cinc\embedded\ssl\certs\cacert.pem
+COPY cacert.pem c:\cinc-project\cinc\embedded\lib\ruby\gems\2.7.0\gems\httpclient-2.8.3\lib\httpclient\cacert.pem
+
 # Install Chocolatey by powershell script
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
