@@ -19,7 +19,7 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # Install cinc-solo, a compiled binary of chef-solo
-RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 15.10.12"
+RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 15"
 
 # Install Chocolatey by powershell script
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
