@@ -19,13 +19,21 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # Install cinc-solo, a compiled binary of chef-solo
-RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 15.10.12"
+RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 16.15.22"
+
+# Update certificate bundle to work Let's Encrypt root certificate expiration
+# https://www.openssl.org/blog/blog/2021/09/13/LetsEncryptRootCertExpire/
+# (in the parlance of the above post we're using workaround 1)
+# This workaround is being incorporated directly in future releases of Cinc 16 and 17.
+# Our application of the work around should be removed when updating to such a version.
+COPY cacert.pem c:\cinc-project\cinc\embedded\ssl\certs\cacert.pem
+COPY cacert.pem c:\cinc-project\cinc\embedded\lib\ruby\gems\2.7.0\gems\httpclient-2.8.3\lib\httpclient\cacert.pem
 
 # Install Chocolatey by powershell script
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
-# choco installs. chefdk is being installed to get berks and download cookbook dependencies
-RUN choco install -y git chefdk
+# choco installs. chef-workstation is being installed to get berks and download cookbook dependencies
+RUN choco install -y git chef-workstation
 
 # Copy over necessary files into container
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
@@ -45,7 +53,7 @@ COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
-RUN C:\opscode\chefdk\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
+RUN C:\opscode\chef-workstation\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
 
 # Initial run
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
