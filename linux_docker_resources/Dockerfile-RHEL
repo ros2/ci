@@ -1,9 +1,5 @@
 FROM centos:8
 
-# Work around a broken binutils release
-RUN dnf downgrade https://ftp.osuosl.org/pub/ros/download.ros.org/downloads/binutils/binutils-2.30-79.el8.x86_64.rpm -y
-RUN echo 'excludepkgs=binutils' >> /etc/yum.repos.d/CentOS-Linux-BaseOS.repo
-
 # Add some repos
 RUN dnf install epel-release epel-release 'dnf-command(config-manager)' --refresh -y && \
     dnf config-manager --set-enabled powertools && \
