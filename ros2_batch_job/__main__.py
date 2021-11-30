@@ -47,6 +47,8 @@ from .util import UnbufferedIO
 sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
+# One of the maintainers of pyparsing suggests pinning to 2.4.7 for now;
+# see https://github.com/pyparsing/pyparsing/issues/323
 pip_dependencies = [
     'EmPy',
     'coverage',
@@ -68,7 +70,7 @@ pip_dependencies = [
     'pep8',
     'pydocstyle',
     'pyflakes',
-    'pyparsing',
+    'pyparsing==2.4.7',
     'pytest',
     'pytest-cov',
     'pytest-mock',
