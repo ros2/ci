@@ -1,4 +1,4 @@
-FROM centos:8
+FROM almalinux:8
 
 # Add some repos
 RUN dnf install epel-release epel-release 'dnf-command(config-manager)' --refresh -y && \
