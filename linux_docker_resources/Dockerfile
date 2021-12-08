@@ -35,7 +35,7 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
-RUN apt-get update && apt-get install --no-install-recommends -y python3-lark-parser python3-opencv
+RUN if test ${UBUNTU_DISTRO} = bionic; then LARK_PKG=python3-lark-parser; else LARK_PKG=python3-lark; fi && apt-get update && apt-get install --no-install-recommends -y $LARK_PKG python3-opencv
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
