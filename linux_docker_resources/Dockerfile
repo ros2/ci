@@ -25,7 +25,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
-RUN echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list
+RUN if test ${UBUNTU_DISTRO} != jammy; then echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list; fi
+RUN if test ${UBUNTU_DISTRO} = jammy; then echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list; fi
 RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
@@ -34,7 +35,7 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
-RUN apt-get update && apt-get install --no-install-recommends -y python3-lark-parser python3-opencv
+RUN if test ${UBUNTU_DISTRO} = bionic; then LARK_PKG=python3-lark-parser; else LARK_PKG=python3-lark; fi && apt-get update && apt-get install --no-install-recommends -y $LARK_PKG python3-opencv
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -48,7 +49,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libxml2-utils \
   libxslt-dev \
   pydocstyle \
-  pyflakes \
+  python3-pyflakes \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
