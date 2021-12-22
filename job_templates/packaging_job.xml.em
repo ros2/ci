@@ -133,7 +133,7 @@ test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-rhel', 'osx']]@
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -190,7 +190,7 @@ elif [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
 elif [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
   export CI_ROS1_DISTRO=melodic
 fi
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
+@[  if os_name in ['linux', 'linux-aarch64']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
 @[  else]@
 echo "not building/testing the ros1_bridge on MacOS"
@@ -214,13 +214,9 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel']]@
-@[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
-@[      if os_name == 'linux-armhf']@
-sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-@[      else]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-rhel']]@
+@[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-@[      end if]@
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 @[    end if]@
 
@@ -241,8 +237,6 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
-@[    elif os_name == 'linux-armhf']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf --build-arg BRIDGE=true -t ros2_packaging_armhf linux_docker_resources
 @[    elif os_name == 'linux-rhel']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
@@ -256,8 +250,6 @@ echo "# BEGIN SECTION: Run Dockerfile"
 export CONTAINER_NAME=ros2_packaging
 @[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_packaging_aarch64
-@[    elif os_name == 'linux-armhf']@
-export CONTAINER_NAME=ros2_packaging_armhf
 @[    elif os_name == 'linux-rhel']@
 export CONTAINER_NAME=ros2_packaging_rhel
 @[    else]@

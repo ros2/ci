@@ -93,7 +93,7 @@ for (item in build_numbers) {
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
             <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
-@[  if os_name in ['linux-aarch64', 'linux-armhf']]@
+@[  if os_name in ['linux-aarch64']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
