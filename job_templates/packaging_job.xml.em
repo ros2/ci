@@ -187,8 +187,6 @@ if [ "${CI_UBUNTU_DISTRO}" = "jammy" ]; then
   export CI_ROS1_DISTRO=''
 elif [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
   export CI_ROS1_DISTRO=noetic
-elif [ "${CI_UBUNTU_DISTRO}" = "bionic" ]; then
-  export CI_ROS1_DISTRO=melodic
 fi
 @[  if os_name in ['linux', 'linux-aarch64']]@
 export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
