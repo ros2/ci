@@ -141,13 +141,6 @@ def main(argv=None):
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
         },
-        'linux-armhf': {
-            'label_expression': 'linux_armhf',
-            'shell_type': 'Shell',
-            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
-            'build_args_default': data['build_args_default'].replace(
-                '--cmake-args', '--cmake-args -DCMAKE_CXX_FLAGS=-Wno-psabi -DCMAKE_C_FLAGS=-Wno-psabi -DDISABLE_SANITIZERS=ON'),
-        },
         'linux-rhel': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
@@ -165,7 +158,6 @@ def main(argv=None):
     }
 
     launcher_exclude = {
-        'linux-armhf',
         'linux-rhel',
         'windows-metal',
     }
@@ -217,7 +209,7 @@ def main(argv=None):
 
         # configure a manual version of the packaging job
         ignore_rmw_default_packaging = set()
-        if os_name in ['linux-aarch64', 'linux-armhf']:
+        if os_name in ['linux-aarch64']:
             ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'build_discard': {
@@ -238,7 +230,7 @@ def main(argv=None):
                 'num_to_keep': 300,
             },
             'cmake_build_type': 'RelWithDebInfo',
-            'disabled': os_name == 'linux-armhf',
+            'disabled': False,
             'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -263,15 +255,14 @@ def main(argv=None):
             })
 
         # configure nightly triggered job
-        if os_name != 'linux-armhf':
-            job_name = 'nightly_' + job_os_name + '_debug'
-            if os_name == 'windows':
-                job_name = job_name[:15]
-            create_job(os_name, job_name, 'ci_job.xml.em', {
-                'cmake_build_type': 'Debug',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            })
+        job_name = 'nightly_' + job_os_name + '_debug'
+        if os_name == 'windows':
+            job_name = job_name[:15]
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'Debug',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+        })
 
         # configure nightly job for testing with address sanitizer on linux
         if os_name == 'linux':
@@ -520,44 +511,41 @@ def main(argv=None):
             })
 
         # configure nightly triggered job
-        if os_name != 'linux-armhf':
-            job_name = 'nightly_' + job_os_name + '_release'
-            if os_name == 'windows':
-                job_name = job_name[:15]
-            create_job(os_name, job_name, 'ci_job.xml.em', {
-                'cmake_build_type': 'Release',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            })
+        job_name = 'nightly_' + job_os_name + '_release'
+        if os_name == 'windows':
+            job_name = job_name[:15]
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'Release',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+        })
 
         # configure nightly triggered job with repeated testing
-        if os_name != 'linux-armhf':
-            job_name = 'nightly_' + job_os_name + '_repeated'
-            if os_name == 'windows':
-                job_name = job_name[:15]
-            test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-            test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
-            test_args_default = re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(linter|\2)"', test_args_default)
-            test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
-            create_job(os_name, job_name, 'ci_job.xml.em', {
-                'cmake_build_type': 'None',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'test_args_default': test_args_default,
-            })
+        job_name = 'nightly_' + job_os_name + '_repeated'
+        if os_name == 'windows':
+            job_name = job_name[:15]
+        test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
+        test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
+        test_args_default = re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(linter|\2)"', test_args_default)
+        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m "not linter and not xfail"')
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'None',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'test_args_default': test_args_default,
+        })
 
         # configure nightly triggered job for excluded test
-        if os_name != 'linux-armhf':
-            job_name = 'nightly_' + job_os_name + '_xfail'
-            test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-            test_args_default = re.sub(r'--ctest-args +-LE +"?[^ "]+"?', r'--ctest-args -L xfail', test_args_default)
-            test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
-            create_job(os_name, job_name, 'ci_job.xml.em', {
-                'cmake_build_type': 'None',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'test_args_default': test_args_default,
-            })
+        job_name = 'nightly_' + job_os_name + '_xfail'
+        test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
+        test_args_default = re.sub(r'--ctest-args +-LE +"?[^ "]+"?', r'--ctest-args -L xfail', test_args_default)
+        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
+        create_job(os_name, job_name, 'ci_job.xml.em', {
+            'cmake_build_type': 'None',
+            'time_trigger_spec': PERIODIC_JOB_SPEC,
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+            'test_args_default': test_args_default,
+        })
 
     # configure the launch job
     launcher_job_name = 'ci_launcher'

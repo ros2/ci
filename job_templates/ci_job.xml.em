@@ -116,7 +116,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-rhel', 'osx']]@
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
@@ -198,13 +198,9 @@ fi
 echo "Using args: $CI_ARGS"
 echo "# END SECTION"
 
-@[  if os_name in ['linux', 'linux-aarch64', 'linux-armhf', 'linux-rhel']]@
-@[    if os_name in ['linux', 'linux-aarch64', 'linux-armhf']]@
-@[      if os_name == 'linux-armhf']@
-sed -i "s+^FROM.*$+FROM osrf/ubuntu_armhf:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-@[      else]@
+@[  if os_name in ['linux', 'linux-aarch64', 'linux-rhel']]@
+@[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-@[      end if]@
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
 @[    end if]@
 
@@ -225,8 +221,6 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
-@[    elif os_name == 'linux-armhf']@
-docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=armhf -t ros2_batch_ci_armhf linux_docker_resources
 @[    elif os_name == 'linux-rhel']@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
@@ -242,8 +236,6 @@ export CONTAINER_NAME=ros2_batch_ci
 export CONTAINER_NAME=ros2_batch_ci_rhel
 @[    elif os_name == 'linux-aarch64']@
 export CONTAINER_NAME=ros2_batch_ci_aarch64
-@[    elif os_name == 'linux-armhf']@
-export CONTAINER_NAME=ros2_batch_ci_armhf
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@

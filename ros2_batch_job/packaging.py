@@ -205,8 +205,6 @@ def build_and_test_and_package(args, job):
             machine = platform.machine()
         else:
             machine = sys.implementation._multiarch.split('-', 1)[0]
-            if machine == 'arm':
-                machine = 'armhf'
         archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, machine)
 
         def exclude_filter(tarinfo):
