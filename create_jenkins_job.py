@@ -159,6 +159,7 @@ def main(argv=None):
 
     launcher_exclude = {
         'linux-rhel',
+        'osx',
         'windows-metal',
     }
 
