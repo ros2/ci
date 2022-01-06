@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 ARG BRIDGE=false
 ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
@@ -35,7 +35,7 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-setuptools python3-vcstool
-RUN if test ${UBUNTU_DISTRO} = bionic; then LARK_PKG=python3-lark-parser; else LARK_PKG=python3-lark; fi && apt-get update && apt-get install --no-install-recommends -y $LARK_PKG python3-opencv
+RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -75,9 +75,6 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y lcov
 RUN pip3 install -U lcov_cobertura_fix
-
-# Install importlib-resources for Bionic only.
-RUN if test ${UBUNTU_DISTRO} = bionic; then pip3 install -U importlib-resources; fi
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-5.3.1; fi
