@@ -120,6 +120,7 @@ def main(argv=None):
             'shell_type': 'Shell',
         },
         'osx': {
+            'disabled': True,
             'label_expression': 'macos',
             'shell_type': 'Shell',
             # the current OS X agent can't handle  git@github urls
@@ -159,6 +160,7 @@ def main(argv=None):
 
     launcher_exclude = {
         'linux-rhel',
+        'osx',
         'windows-metal',
     }
 
