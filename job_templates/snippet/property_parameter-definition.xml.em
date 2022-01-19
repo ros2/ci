@@ -37,7 +37,7 @@ This tests the robustness to whitespace being within the different paths.</descr
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
-          <description>Additional arguments passed to the 'test' verb.</description>
+          <description>Arbitrary arguments passed to the colcon 'test' verb.</description>
           <defaultValue>@(test_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
