@@ -111,6 +111,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 # Install console_bridge for class_loader et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
 
+# Install build dependencies for class_loader.
+RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
+
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
 
