@@ -1,11 +1,12 @@
         <hudson.model.StringParameterDefinition>
           <name>CI_BRANCH_TO_TEST</name>
           <description>Branch to test across the repositories in the .repos file that have it.
-For example, if you have a few repositories with the &apos;feature&apos; branch.
-Then you can set this to &apos;feature&apos;.
+For example, if you have a few repositories with the &apos;feature&apos; branch, then you can set this to &apos;feature&apos;.
 The repositories with the &apos;feature&apos; branch will be changed to that branch.
 Other repositories will stay on the default branch, usually &apos;master&apos;.
-To use the default branch on all repositories, use an empty string.</description>
+To use the default branch on all repositories, use an empty string.
+This only works if the branches are on the origin; forks cannot be used.
+To use forks or different named branches, see CI_ROS2_REPOS_URL.</description>
           <defaultValue></defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
@@ -18,7 +19,9 @@ To use the default branch on all repositories, use an empty string.</description
         <hudson.model.StringParameterDefinition>
           <name>CI_ROS2_REPOS_URL</name>
           <description>Custom .repos file to use instead of the default (@default_repos_url).
-For example, copy the content of the .repos file to a GitHub Gist, modify it to your needs, and then pass the raw URL here.</description>
+For example, copy the content of the .repos file to a GitHub Gist, modify it to your needs, and then pass the raw URL here.
+The repos file can contain forks, different branches on different repositories, additional repositories, etc.
+The repos file here should contain all of the ROS 2 repositories necessary to build; individual packages to build and test can be selected using CI_BUILD_ARGS and CI_TEST_ARGS.</description>
           <defaultValue></defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
@@ -55,7 +58,8 @@ choices.remove(ubuntu_distro)
         </hudson.model.ChoiceParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_ROS_DISTRO</name>
-          <description>Select the ROS distribution to target.</description>
+          <description>Select the ROS distribution to target.
+Note that this only changes some of the underlying system packages installed; it does not change the default .repos file to the correct branch.</description>
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
               <string>@ros_distro</string>
@@ -93,7 +97,7 @@ choices.remove(cmake_build_type)
         </hudson.model.ChoiceParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CI_BUILD_ARGS</name>
-          <description>Additional arguments passed to the 'build' verb.</description>
+          <description>Arbitrary arguments passed to the colcon 'build' verb.</description>
           <defaultValue>@(build_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
