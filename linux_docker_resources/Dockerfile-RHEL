@@ -108,6 +108,7 @@ RUN dnf install \
     tinyxml-devel \
     tinyxml2-devel \
     uncrustify \
+    yamllint \
     --refresh -y
 
 # Install dependencies of Connext and its installer

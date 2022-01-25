@@ -79,6 +79,7 @@ pip_dependencies = [
     'pytest-runner',
     'pyyaml',
     'vcstool',
+    'yamllint',
 ]
 # https://github.com/pyca/cryptography/issues/5433
 pip_cryptography_version = '==3.0'
