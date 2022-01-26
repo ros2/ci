@@ -103,16 +103,13 @@ ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libssl-dev libtinyxml2-dev valgrind
 
 # Install the CycloneDDS dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y bison libcunit1-dev maven openjdk-11-jdk
+RUN apt-get update && apt-get install --no-install-recommends -y bison libcunit1-dev
 
 # Install OpenCV.
 RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 
 # Install console_bridge for class_loader et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
-
-# Install build dependencies for class_loader.
-RUN apt-get update && apt-get install --no-install-recommends -y libpoco-dev
 
 # Install build dependencies for rviz et al.
 RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
@@ -129,10 +126,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-RUN if test \( ${BRIDGE} = true \) ; then apt-get update && apt-get install --no-install-recommends -y ros-${ROS1_DISTRO}-catkin; fi
-
 # Install build and test dependencies of ros1_bridge.
 RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
+    ros-${ROS1_DISTRO}-catkin \
     ros-${ROS1_DISTRO}-common-msgs \
     ros-${ROS1_DISTRO}-rosbash \
     ros-${ROS1_DISTRO}-roscpp \
