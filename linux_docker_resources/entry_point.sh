@@ -33,6 +33,12 @@ if [ "${ARCH}" != "aarch64" ]; then
         case "${CI_ARGS}" in
           *--connext-debs*)
             echo "Using Debian package of Connext"
+            if test -r /opt/rti.com/rti_connext_dds-6.0.1/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh; then
+                echo "Sourcing RTI setenv script /opt/rti.com/rti_connext_dds-6.0.1/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh"
+                . /opt/rti.com/rti_connext_dds-6.0.1/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh
+            elif test -r /opt/rti.com/rti_connext_dds-5.3.1/resource/scripts/rtisetenv_x64Linux3gcc5.4.0.bash
+                echo "rti_connextdds_cmake_module will guess the location of Connext 5.3.1 so don't source anything."
+            fi
             ;;
           *)
             echo "Installing Connext binaries off RTI website..."
