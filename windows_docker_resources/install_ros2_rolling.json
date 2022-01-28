@@ -12,9 +12,9 @@
       "min_vs_version": "2017",
       "license_file": "C:/TEMP/rticonnextdds-license/rti_license.dat",
       "installer_dir": "C:/TEMP/rticonnextdds-src",
-      "version": "5.3.1",
+      "version": "6.0.1",
       "edition": "pro",
-      "openssl_version": "1.0.2n"
+      "openssl_version": "1.1.1k"
     }
   },
   "run_list": [
