@@ -88,8 +88,11 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
 # Get and install the RTI web binaries.
-RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
-RUN cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz
+# Connext 5.3.1 for focal and earlier.
+RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz; fi
+RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz;
+# Connext 6.0.1 for jammy
+RUN if test ${UBUNTU_DISTRO} = jammy; then cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/6.0.1/Evaluation/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run; fi
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
