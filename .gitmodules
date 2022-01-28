@@ -8,7 +8,7 @@
 [submodule "windows_docker_resources/rticonnextdds-src"]
 	path = windows_docker_resources/rticonnextdds-src
 	url = git@github.com:osrf/rticonnextdds-src.git
-	branch = binaries/windows/amd64/5.3.1
+	branch = binaries/windows/amd64/omnibus
 [submodule "windows_docker_resources/rticonnextdds-license"]
 	path = windows_docker_resources/rticonnextdds-license
 	url = git@github.com:osrf/rticonnextdds-src.git
