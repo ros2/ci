@@ -45,7 +45,7 @@ if [ "${ARCH}" != "aarch64" ]; then
 	    if test -r /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run -a -r /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg -a -r /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg; then
 		    python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg
 	    elif test -r /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run; then
-		    python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run /home/rosbuild/rti_connext_dds-6.0.1
+		    /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run --mode unattended --prefix /home/rosbuild/rti_connext_dds-6.0.1
 	    fi
             if [ $? -ne 0 ]; then
                 echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
