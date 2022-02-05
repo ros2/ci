@@ -108,7 +108,7 @@ def main(argv=None):
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'build_timeout_mins': 0,
-        'ubuntu_distro': 'focal',
+        'ubuntu_distro': 'jammy',
         'ros_distro': 'rolling',
     }
 
