@@ -64,9 +64,9 @@ if [ "${ARCH}" != "aarch64" ]; then
                         exit 1
                     fi
                     export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
-	    else
-		    echo "No connext installation files found found." >&2
-		    exit 1
+            else
+                    echo "No connext installation files found found." >&2
+                    exit 1
             fi
             mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
             export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
