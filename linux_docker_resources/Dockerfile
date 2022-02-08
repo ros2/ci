@@ -100,6 +100,7 @@ RUN for splitpkg in \
   cat $(echo ${splitpkg}.0?? | sort) > $splitpkg \
   done
 
+# Add the connextdds installation script used in entry_point.sh
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
