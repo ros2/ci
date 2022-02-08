@@ -95,8 +95,8 @@ RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && tar -xvf /tmp/openssl-1.0
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 RUN for splitpkg in \
   /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
-  rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg; do \
+  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done
 RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run
