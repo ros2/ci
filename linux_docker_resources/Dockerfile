@@ -97,7 +97,7 @@ RUN for splitpkg in \
   /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
   rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
   /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg; do \
-  cat $(echo ${splitpkg}.0?? | sort) > $splitpkg \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done
 RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run
 
