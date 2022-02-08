@@ -99,6 +99,7 @@ RUN for splitpkg in \
   /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg; do \
   cat $(echo ${splitpkg}.0?? | sort) > $splitpkg \
   done
+RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run
 
 # Add the connextdds installation script used in entry_point.sh
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
