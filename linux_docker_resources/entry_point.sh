@@ -52,7 +52,7 @@ if [ "${ARCH}" != "aarch64" ]; then
                     export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
                     export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
             elif test -x /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run; then
-                    python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run \
+                    python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
                             /home/rosbuild/rti_connext_dds-6.0.1 --rtipkg_paths \
                             /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
                             /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg \
