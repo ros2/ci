@@ -56,7 +56,7 @@ if [ "${ARCH}" != "aarch64" ]; then
                             /home/rosbuild/rti_connext_dds-6.0.1 --rtipkg_paths \
                             /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
                             /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg \
-                            /tmp/rticonnextdds-src/openssl-1.1.k-6.0.1.25-host-x64Linux.rtipkg \
+                            /tmp/rticonnextdds-src/openssl-1.1.1k-6.0.1.25-host-x64Linux.rtipkg \
                             /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-host-x64Linux.rtipkg \
                             /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-target-x64Linux4gcc7.3.0.rtipkg
                     if [ $? -ne 0 ]; then
