@@ -91,8 +91,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 # Connext 5.3.1 for focal and earlier.
 RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz; fi
 RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; fi
-# Connext 6.0.1 for jammy
-RUN if test ${UBUNTU_DISTRO} = jammy; then cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/6.0.1/Evaluation/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run > rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run; chmod 755 rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run; fi
+# Connext 6.0.1 for jammy, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
+COPY rticonnextdds-src/ /tmp/rticonnextdds-src
+RUN for splitpkg in \
+  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+  rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg; do \
+  cat $(echo ${splitpkg}.0?? | sort) > $splitpkg \
+  done
+
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
