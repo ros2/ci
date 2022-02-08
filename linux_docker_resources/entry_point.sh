@@ -51,8 +51,14 @@ if [ "${ARCH}" != "aarch64" ]; then
                     mv /tmp/openssl-1.0.2n /home/rosbuild/openssl-1.0.2n
                     export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
                     export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
-            elif test -r /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run; then
-                    python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run /home/rosbuild/rti_connext_dds-6.0.1
+            elif test -r /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-x64Linux.run; then
+                    python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-6.0.1-eval-x64Linux4gcc7.3.0.run \
+                            /home/rosbuild/rti_connext_dds-6.0.1 --rtipkg_paths \
+                            /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+                            /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg \
+                            /tmp/rticonnextdds-src/openssl-1.1.k-6.0.1.25-host-x64Linux.rtipkg \
+                            /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-host-x64Linux.rtipkg \
+                            /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-target-x64Linux4gcc7.3.0.rtipkg
                     export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
             fi
             mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
