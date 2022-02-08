@@ -59,6 +59,10 @@ if [ "${ARCH}" != "aarch64" ]; then
                             /tmp/rticonnextdds-src/openssl-1.1.k-6.0.1.25-host-x64Linux.rtipkg \
                             /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-host-x64Linux.rtipkg \
                             /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-target-x64Linux4gcc7.3.0.rtipkg
+                    if [ $? -ne 0 ]; then
+                        echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
+                        exit 1
+                    fi
                     export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
             fi
             mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
