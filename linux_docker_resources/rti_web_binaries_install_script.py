@@ -19,7 +19,6 @@ import pexpect
 
 
 def install_connext(installer_path, install_directory):
-
     child = pexpect.spawn(installer_path + ' --mode text', encoding='utf8')
 
     try:
