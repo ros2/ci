@@ -64,7 +64,7 @@ def install_plugin(pkg_path, install_directory):
     try:
         child.expect_exact('Do you want to continue? [Y/n]:')
         child.sendline('y')
-        child.expect(pexpect.EOF)
+        child.expect(pexpect.EOF, timeout=120)
 
     except (pexpect.TIMEOUT, pexpect.EOF):
         raise RuntimeError(

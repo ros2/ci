@@ -33,19 +33,43 @@ if [ "${ARCH}" != "aarch64" ]; then
         case "${CI_ARGS}" in
           *--connext-debs*)
             echo "Using Debian package of Connext"
+            if test -r /opt/rti.com/rti_connext_dds-6.0.1/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh; then
+                echo "Sourcing RTI setenv script /opt/rti.com/rti_connext_dds-6.0.1/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh"
+                . /opt/rti.com/rti_connext_dds-6.0.1/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh
+            elif test -r /opt/rti.com/rti_connext_dds-5.3.1/resource/scripts/rtisetenv_x64Linux3gcc5.4.0.bash; then
+                echo "rti_connextdds_cmake_module will guess the location of Connext 5.3.1 so don't source anything."
+            fi
             ;;
           *)
             echo "Installing Connext binaries off RTI website..."
-            python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg
-            if [ $? -ne 0 ]; then
-                echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
+            if test -x /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run -a -r /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg -a -r /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg; then
+                python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rti_connext_dds-5.3.1-eval-x64Linux3gcc5.4.0.run /home/rosbuild/rti_connext_dds-5.3.1 --rtipkg_paths /tmp/rti_security_plugins-5.3.1-eval-x64Linux3gcc5.4.0.rtipkg /tmp/openssl-1.0.2n-5.3.1-host-x64Linux.rtipkg
+                if [ $? -ne 0 ]; then
+                    echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
+                    exit 1
+                fi
+                mv /tmp/openssl-1.0.2n /home/rosbuild/openssl-1.0.2n
+                export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
+                export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
+            elif test -x /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run; then
+                python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+                    /home/rosbuild/rti_connext_dds-6.0.1 --rtipkg_paths \
+                    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg \
+                    /tmp/rticonnextdds-src/openssl-1.1.1k-6.0.1.25-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/rti_security_plugins-6.0.1.25-target-x64Linux4gcc7.3.0.rtipkg
+                if [ $? -ne 0 ]; then
+                    echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
+                    exit 1
+                fi
+                export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
+            else
+                echo "No connext installation files found found." >&2
                 exit 1
             fi
             mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
             export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
-            mv /tmp/openssl-1.0.2n /home/rosbuild/openssl-1.0.2n
-            export RTI_OPENSSL_BIN=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/bin
-            export RTI_OPENSSL_LIBS=/home/rosbuild/openssl-1.0.2n/x64Linux3gcc5.4.0/release/lib
             ;;
         esac
         echo "done."
