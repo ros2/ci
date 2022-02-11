@@ -431,6 +431,7 @@ def main(argv=None):
 
         foxy_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
         foxy_testing_pkgs_for_quality_level.remove('test_tracetools')
+        foxy_testing_pkgs_for_quality_level.remove('rosidl_typesupport_introspection_tests')
         foxy_testing_pkgs_for_quality_level.append('tracetools_test')
         galactic_testing_pkgs_for_quality_level = copy.copy(foxy_testing_pkgs_for_quality_level)
 
