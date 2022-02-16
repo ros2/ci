@@ -65,7 +65,6 @@ pip_dependencies = [
     'importlib-metadata',
     'lark-parser',
     'mock',
-    'mypy==0.761',
     'nose',
     'pep8',
     'pydocstyle',
@@ -516,6 +515,21 @@ def run(args, build_function, blacklisted_package_names=None):
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
+
+        # Mypy is a special case.  We prefer to get it from the distribution, if it exists there.
+        # If not, we want to install it via pip.  So we try to import it here to see if it exists.
+        need_mypy_from_pipy = False
+        try:
+            import mypy
+        except ModuleNotFoundError:
+            need_mypy_from_pipy = True
+
+        if need_mypy_from_pipy:
+            if args.ros_distro in ["foxy", "galactic"]:
+                pip_packages += ["mypy==0.761"]
+            else:
+                pip_packages += ["mypy==0.931"]
+
         if sys.platform == 'win32':
             # Install fork of pyreadline containing fix for deprecation warnings
             # TODO(jacobperron): Until upstream issue is resolved https://github.com/pyreadline/pyreadline/issues/65

@@ -42,7 +42,7 @@ RUN dnf update \
 RUN rosdep init && rosdep update
 
 # Install some stuff via Pip which we don't have available in EPEL
-RUN python3 -m pip install mypy==0.761 pydocstyle
+RUN python3 -m pip install pydocstyle
 
 # Install a newer version of pytest
 RUN python3 -m pip install -U pytest pytest-rerunfailures
