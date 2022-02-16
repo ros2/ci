@@ -518,13 +518,13 @@ def run(args, build_function, blacklisted_package_names=None):
 
         # Mypy is a special case.  We prefer to get it from the distribution, if it exists there.
         # If not, we want to install it via pip.  So we try to import it here to see if it exists.
-        need_mypy_from_pip = False
+        need_mypy_from_pipy = False
         try:
             import mypy
         except ModuleNotFoundError:
-            need_mypy_from_pip = True
+            need_mypy_from_pipy = True
 
-        if need_mypy_from_pip:
+        if need_mypy_from_pipy:
             if args.ros_distro in ["foxy", "galactic"]:
                 pip_packages += ["mypy==0.761"]
             else:
