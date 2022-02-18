@@ -64,7 +64,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyparsing \
   python3-pytest-mock \
   python3-yaml \
-  uncrustify
+  uncrustify \
+  yamllint
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
