@@ -126,13 +126,9 @@ def main(sysargv=None):
     if not args.packaging:
         build_function = build_and_test
         blacklisted_package_names += [
-            'actionlib_msgs',
-            'common_interfaces',
             'cv_bridge',
             'opencv_tests',
             'ros1_bridge',
-            'shape_msgs',
-            'stereo_msgs',
             'vision_opencv',
         ]
     else:
