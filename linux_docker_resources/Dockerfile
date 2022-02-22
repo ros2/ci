@@ -135,8 +135,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # automatic invalidation once every day.
 RUN echo "@today_str"
 
-# Install build and test dependencies of ros1_bridge.
-RUN if test ${BRIDGE} = true; then apt-get update && apt-get install --no-install-recommends -y \
+# Install build and test dependencies of ros1_bridge if there is a valid ROS 1 distro.
+RUN if test ${BRIDGE} = true -a -n "${ROS1_DISTRO}"; then apt-get update && apt-get install --no-install-recommends -y \
     ros-${ROS1_DISTRO}-catkin \
     ros-${ROS1_DISTRO}-common-msgs \
     ros-${ROS1_DISTRO}-rosbash \
