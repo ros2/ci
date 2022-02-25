@@ -797,7 +797,6 @@ def check_branch_exists(filename, branch):
     for repo in urls :
         # Check if 'branch' exists in 'repo'
         ret = os.system("git ls-remote --exit-code --heads " + repo + " " + branch)
-        print(repo, branch, ret)
         if not ret : return True
 
     return False
