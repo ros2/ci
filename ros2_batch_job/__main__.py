@@ -654,6 +654,10 @@ def run(args, build_function, blacklisted_package_names=None):
                 info('Attempting to create a well known branch name for all the default branches')
                 job.run(vcs_cmd + ['custom', '.', '--git', '--args', 'checkout', '-b', '__ci_default'])
 
+                # Check if the branch exists in at least one repo from the given repos file
+                for filename in repos_filenames:
+                    branch_found = check_branch_exists(filename, args.test_branch)
+                    if not branch_found: return False
                 # Attempt to switch all the repositories to a given branch
                 info("Attempting to switch all repositories to the '{0}' branch"
                      .format(args.test_branch))
@@ -776,6 +780,26 @@ def _fetch_repos_file(url, filename, job):
     log("@{bf}==>@| Contents of `%s`:" % filename)
     with open(filename, 'r') as f:
         print(f.read())
+
+# Checks if the given branch exists in at least one repo
+def check_branch_exists(filename, branch):
+    # Populate all .git repos
+    lines = []
+    with open(filename) as f: lines = f.readlines()
+
+    urls = []
+    for line in lines:
+        text = line.strip()
+        if text[-4:] == ".git":
+            urls.append(text.replace("url: ", ""))
+
+    for repo in urls :
+        # Check if 'branch' exists in 'repo'
+        ret = os.system("git ls-remote --exit-code --heads " + repo + " " + branch)
+        print(repo, branch, ret)
+        if not ret : return True
+
+    return False
 
 if __name__ == '__main__':
     sys.exit(main())
