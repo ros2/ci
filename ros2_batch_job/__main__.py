@@ -657,7 +657,8 @@ def run(args, build_function, blacklisted_package_names=None):
                 # Check if the branch exists in at least one repo from the given repos file
                 for filename in repos_filenames:
                     branch_found = check_branch_exists(filename, args.test_branch)
-                    if not branch_found: return False
+                    if not branch_found:
+                        print('Warning: None of the repos in ', filename, ' contain the branch ', args.test_branch)
                 # Attempt to switch all the repositories to a given branch
                 info("Attempting to switch all repositories to the '{0}' branch"
                      .format(args.test_branch))
