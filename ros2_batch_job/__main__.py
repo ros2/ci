@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+import importlib
 import os
 import platform
 from shutil import which
@@ -63,7 +64,6 @@ pip_dependencies = [
     'flake8-import-order',
     'flake8-quotes',
     'importlib-metadata',
-    'lark-parser',
     'mock',
     'nose',
     'pep8',
@@ -517,19 +517,28 @@ def run(args, build_function, blacklisted_package_names=None):
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
 
-        # Mypy is a special case.  We prefer to get it from the distribution, if it exists there.
-        # If not, we want to install it via pip.  So we try to import it here to see if it exists.
-        need_mypy_from_pipy = False
-        try:
-            import mypy
-        except ModuleNotFoundError:
-            need_mypy_from_pipy = True
+        def has_local_python_package(pkg_name):
+            need_pkg_from_pipy = False
+            try:
+                importlib.import_module(pkg_name)
+            except ModuleNotFoundError:
+                need_pkg_from_pipy = True
 
-        if need_mypy_from_pipy:
+            return need_pkg_from_pipy
+
+        # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
+        if not has_local_python_package("mypy"):
             if args.ros_distro in ["foxy", "galactic"]:
                 pip_packages += ["mypy==0.761"]
             else:
                 pip_packages += ["mypy==0.931"]
+
+        # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
+        if not has_local_python_package("lark"):
+            if args.ros_distro in ["foxy", "galactic"]:
+                pip_packages += ["lark-parser==0.8.1"]
+            else:
+                pip_packages += ["lark==1.1.1"]
 
         if sys.platform == 'win32':
             # Install fork of pyreadline containing fix for deprecation warnings
