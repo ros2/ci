@@ -517,24 +517,23 @@ def run(args, build_function, blacklisted_package_names=None):
         # Install pip dependencies
         pip_packages = list(pip_dependencies)
 
-        def has_local_python_package(pkg_name):
-            need_pkg_from_pipy = False
+        def need_package_from_pipy(pkg_name):
             try:
                 importlib.import_module(pkg_name)
             except ModuleNotFoundError:
-                need_pkg_from_pipy = True
+                return True
 
-            return need_pkg_from_pipy
+            return False
 
         # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
-        if not has_local_python_package("mypy"):
+        if need_package_from_pipy("mypy"):
             if args.ros_distro in ["foxy", "galactic"]:
                 pip_packages += ["mypy==0.761"]
             else:
                 pip_packages += ["mypy==0.931"]
 
         # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
-        if not has_local_python_package("lark"):
+        if need_package_from_pipy("lark"):
             if args.ros_distro in ["foxy", "galactic"]:
                 pip_packages += ["lark-parser==0.8.1"]
             else:
