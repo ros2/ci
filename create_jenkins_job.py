@@ -49,18 +49,16 @@ template_prefix_path[:] = \
 
 def retention_data_by_job_type(job_name):
     build_discard = None
-    if 'coverage' in job_name:
-        build_discard = {'days_to_keep': 100, 'num_to_keep': 100}
-    elif job_name.startswith('test_'):
-        build_discard = {'days_to_keep': 1000, 'num_to_keep': 3000}
+    if job_name.startswith('test_'):
+        build_discard = {'days_to_keep': 300, 'num_to_keep': 10}
     elif job_name.startswith('ci_packaging'):
-        build_discard = {'days_to_keep': 180, 'num_to_keep': 60}
+        build_discard = {'days_to_keep': 300, 'num_to_keep': 30}
     elif job_name.startswith('ci_'):
-        build_discard = {'days_to_keep': 1000, 'num_to_keep': 3000}
+        build_discard = {'days_to_keep': 732, 'num_to_keep': 500}
     elif job_name.startswith('packaging_'):
-        build_discard = {'days_to_keep': 300, 'num_to_keep': 300}
+        build_discard = {'days_to_keep': 732, 'num_to_keep': 300}
     elif job_name.startswith('nightly_'):
-        build_discard = {'days_to_keep': 1000, 'num_to_keep': 3000}
+        build_discard = {'days_to_keep': 732, 'num_to_keep': 732}
     else:
         raise f'Please set a retention level for {job_name}'
     return {'build_discard': build_discard}
