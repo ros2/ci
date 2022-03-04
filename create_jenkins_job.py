@@ -47,6 +47,25 @@ template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]
 
 
+def retention_data_by_job_type(job_name):
+    build_discard = None
+    if 'coverage' in job_name:
+        build_discard = {'days_to_keep': 100, 'num_to_keep': 100}
+    elif job_name.startswith('test_'):
+        build_discard = {'days_to_keep': 1000, 'num_to_keep': 3000}
+    elif job_name.startswith('ci_packaging'):
+        build_discard = {'days_to_keep': 180, 'num_to_keep': 60}
+    elif job_name.startswith('ci_'):
+        build_discard = {'days_to_keep': 1000, 'num_to_keep': 3000}
+    elif job_name.startswith('packaging_'):
+        build_discard = {'days_to_keep': 300, 'num_to_keep': 300}
+    elif job_name.startswith('nightly_'):
+        build_discard = {'days_to_keep': 1000, 'num_to_keep': 3000}
+    else:
+        raise f'Please set a retention level for {job_name}'
+    return {'build_discard': build_discard}
+
+
 def nonnegative_int(inval):
     try:
         ret = int(inval)
@@ -87,9 +106,6 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     data = {
-        'build_discard': {
-            'days_to_keep': 1000,
-            'num_to_keep': 3000},
         'ci_scripts_repository': args.ci_scripts_repository,
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
         'default_repos_url': DEFAULT_REPOS_URL,
@@ -180,6 +196,7 @@ def main(argv=None):
         job_data.update(os_configs[os_name])
         job_data.update(additional_dict)
         job_data.update(os_config_overrides.get(os_name, {}))
+        job_data.update(retention_data_by_job_type(job_name))
         job_config = expand_template(template_file, job_data)
         configure_job(jenkins, job_name, job_config, **jenkins_kwargs)
 
@@ -214,10 +231,6 @@ def main(argv=None):
         if os_name in ['linux-aarch64']:
             ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
-            'build_discard': {
-                'days_to_keep': 180,
-                'num_to_keep': 60,
-            },
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
             'mixed_overlay_pkgs': 'ros1_bridge',
@@ -227,10 +240,6 @@ def main(argv=None):
 
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
-            'build_discard': {
-                'days_to_keep': 300,
-                'num_to_keep': 300,
-            },
             'cmake_build_type': 'RelWithDebInfo',
             'disabled': False,
             'label_expression': packaging_label_expression,
@@ -244,10 +253,6 @@ def main(argv=None):
         # create a nightly Debug packaging job on Windows
         if os_name == 'windows':
             create_job(os_name, 'packaging_' + os_name + '_debug', 'packaging_job.xml.em', {
-                'build_discard': {
-                    'days_to_keep': 300,
-                    'num_to_keep': 300,
-                    },
                 'cmake_build_type': 'Debug',
                 'mixed_overlay_pkgs': 'ros1_bridge',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -437,10 +442,6 @@ def main(argv=None):
 
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
-                'build_discard': {
-                    'days_to_keep': 100,
-                    'num_to_keep': 100,
-                },
                 'cmake_build_type': 'Debug',
                 'enable_coverage_default': 'true',
                 'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
@@ -449,10 +450,6 @@ def main(argv=None):
                                      '--packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
             })
             create_job(os_name, 'test_' + os_name + '_coverage', 'ci_job.xml.em', {
-                'build_discard': {
-                    'days_to_keep': 100,
-                    'num_to_keep': 100,
-                },
                 'cmake_build_type': 'Debug',
                 'enable_coverage_default': 'true',
                 'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
@@ -464,10 +461,6 @@ def main(argv=None):
         # configure nightly coverage job on x86 Linux only
         if os_name == 'linux':
             create_job(os_name, 'nightly_' + os_name + '_coverage', 'ci_job.xml.em', {
-                'build_discard': {
-                    'days_to_keep': 100,
-                    'num_to_keep': 100,
-                },
                 'cmake_build_type': 'Debug',
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -479,10 +472,6 @@ def main(argv=None):
             })
             # Add a coverage job targeting Foxy.
             create_job(os_name, 'nightly_' + os_name + '_foxy_coverage', 'ci_job.xml.em', {
-                'build_discard': {
-                    'days_to_keep': 100,
-                    'num_to_keep': 100,
-                },
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/foxy/ros2.repos',
                 'enable_coverage_default': 'true',
@@ -497,10 +486,6 @@ def main(argv=None):
             })
             # Add a coverage job targeting Galactic.
             create_job(os_name, 'nightly_' + os_name + '_galactic_coverage', 'ci_job.xml.em', {
-                'build_discard': {
-                    'days_to_keep': 100,
-                    'num_to_keep': 100,
-                },
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/galactic/ros2.repos',
                 'enable_coverage_default': 'true',
@@ -564,6 +549,7 @@ def main(argv=None):
         job_data['label_expression'] = 'built-in || master'
         job_data['os_specific_data'] = os_specific_data
         job_data['cmake_build_type'] = 'None'
+        job_data.update(retention_data_by_job_type(launcher_job_name))
         job_config = expand_template('ci_launcher_job.xml.em', job_data)
         configure_job(jenkins, launcher_job_name, job_config, **jenkins_kwargs)
 
