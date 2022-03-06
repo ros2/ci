@@ -107,7 +107,7 @@ def main(argv=None):
         'compile_with_clang_default': 'false',
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
-        'build_timeout_mins': 0,
+        'build_timeout_mins': 200,
         'ubuntu_distro': 'jammy',
         'ros_distro': 'rolling',
     }
