@@ -56,7 +56,7 @@ def retention_data_by_job_type(job_name):
     elif job_name.startswith('ci_'):
         build_discard = {'days_to_keep': 732, 'num_to_keep': 500}
     elif job_name.startswith('packaging_'):
-        build_discard = {'days_to_keep': 732, 'num_to_keep': 300}
+        build_discard = {'days_to_keep': 732, 'num_to_keep': 200}
     elif job_name.startswith('nightly_'):
         build_discard = {'days_to_keep': 732, 'num_to_keep': 732}
     else:
