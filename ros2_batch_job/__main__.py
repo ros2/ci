@@ -123,6 +123,14 @@ colcon_space_defaults = {
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
     blacklisted_package_names = []
+    if sys.version_info.minor == 10:
+        # There is a problem with pyside2/shiboken2 on Jammy related to the python3.10 transition.
+        blacklisted_package_names += [
+            'qt_gui_core',
+            'qt_gui_cpp',
+            'rqt',
+            'rqt_gui_cpp',
+        ]
     if not args.packaging:
         build_function = build_and_test
         blacklisted_package_names += [
