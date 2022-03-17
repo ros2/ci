@@ -76,6 +76,7 @@ pip_dependencies = [
     'pytest-repeat',
     'pytest-rerunfailures',
     'pytest-runner',
+    'pytest-timeout',
     'pyyaml',
     'vcstool',
     'yamllint',
