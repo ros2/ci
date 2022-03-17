@@ -76,7 +76,6 @@ pip_dependencies = [
     'pytest-repeat',
     'pytest-rerunfailures',
     'pytest-runner',
-    'pytest-timeout',
     'pyyaml',
     'vcstool',
     'yamllint',
@@ -537,6 +536,10 @@ def run(args, build_function, blacklisted_package_names=None):
                 pip_packages += ["mypy==0.761"]
             else:
                 pip_packages += ["mypy==0.931"]
+
+        # We prefer to get pytest-timeout from the distribution if it exists.  If not we install it via pip.
+        if need_package_from_pipy("pytest-timeout"):
+            pip_packages += ["pytest-timeout==2.1.0"]
 
         # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("lark"):
