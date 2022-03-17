@@ -99,6 +99,7 @@ colcon_packages = [
     'colcon-package-information',
     'colcon-package-selection',
     'colcon-parallel-executor',
+    'colcon-pkg-config',
     'colcon-powershell',
     'colcon-python-setup-py',
     'colcon-recursive-crawl',
