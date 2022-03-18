@@ -493,9 +493,15 @@ def run(args, build_function, blacklisted_package_names=None):
 
         venv_subfolder = 'venv'
         remove_folder(venv_subfolder)
-        job.run([
-            sys.executable, '-m', 'virtualenv', '--system-site-packages',
-            '-p', sys.executable, venv_subfolder])
+        venv_cmd = [sys.executable -m 'virtualenv']
+        # Virtualenv's default "creator" backend appears to be having trouble
+        # on Jammy.  When using the builtin creator the virtualenv is created
+        # incomplete and non-functional.  Use the venv creator instead in that
+        # scenario.
+        if sys.version_info.minor == 10:
+            venv_cmd += ['--creator', 'venv']
+        venv_cmd += ['--system-site-packages', '-p', sys.executable, venv_subfolder]
+        job.run(venv_cmd)
         venv_path = os.path.abspath(os.path.join(os.getcwd(), venv_subfolder))
         venv, venv_python = generated_venv_vars(venv_path)
         job.push_run(venv)  # job.run is now venv
