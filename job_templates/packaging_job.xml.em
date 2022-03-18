@@ -138,6 +138,9 @@ rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
 export CI_ARGS="--packaging --force-ansi-color"
+if [ -n "$CI_ROS_DISTRO" -a \( "$CI_ROS_DISTRO" = foxy -o "$CI_ROS_DISTRO" = galactic \) ]; then
+  export CI_ARGS="$CI_ARGS --do-venv"
+fi
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi
