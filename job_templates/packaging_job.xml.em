@@ -228,10 +228,6 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Inject date into Dockerfile"
 sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile*
 echo "# END SECTION"
-echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
-sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile*
-sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
-echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
