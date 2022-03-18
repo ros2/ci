@@ -218,22 +218,38 @@ sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Pull/Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-docker pull osrf/ros2_batch_ci_aarch64_jammy_39_snapshot
+if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
+  docker pull osrf/ros2_batch_ci_aarch64_jammy_39_snapshot
+else
+  docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
+fi
 @[    elif os_name == 'linux-rhel']@
 docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
-docker pull osrf/ros2_batch_ci_jammy_39_snapshot
+if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
+  docker pull osrf/ros2_batch_ci_jammy_39_snapshot
+else
+  docker build ${DOCKER_BUILD_ARGS} -t ros2_batch_ci linux_docker_resources
+fi
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
 @[    if os_name == 'linux']@
-export CONTAINER_NAME=osrf/ros2_batch_ci_jammy_39_snapshot
+if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
+  export CONTAINER_NAME=osrf/ros2_batch_ci_jammy_39_snapshot
+else
+  export CONTAINER_NAME=ros2_batch_ci
+fi
 @[    elif os_name == 'linux-rhel']@
 export CONTAINER_NAME=ros2_batch_ci_rhel
 @[    elif os_name == 'linux-aarch64']@
-export CONTAINER_NAME=osrf/ros2_batch_ci_aarch64_jammy_39_snapshot
+if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
+  export CONTAINER_NAME=osrf/ros2_batch_ci_aarch64_jammy_39_snapshot
+else
+  export CONTAINER_NAME=ros2_batch_ci_aarch64
+fi
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
