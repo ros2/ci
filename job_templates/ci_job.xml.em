@@ -120,7 +120,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"
-export CI_ARGS="--do-venv --force-ansi-color --workspace-path $WORKSPACE"
+export CI_ARGS="--force-ansi-color --workspace-path $WORKSPACE"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi

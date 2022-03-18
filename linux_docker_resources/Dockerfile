@@ -63,13 +63,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-psutil \
   python3-pyparsing \
   python3-pytest-mock \
+  python3-virtualenv \
   python3-yaml \
   uncrustify \
   yamllint
 
 # Install and self update pip/setuptools to the latest version.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pip
-RUN pip3 install -U setuptools pip virtualenv==16.7.9
+RUN pip3 install -U setuptools pip
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
