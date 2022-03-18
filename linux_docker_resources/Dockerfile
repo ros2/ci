@@ -176,4 +176,5 @@ RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
 RUN sudo -H -u rosbuild -- git config --global user.name "Jenkins ROS 2"
 RUN echo 'rosbuild ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+ENTRYPOINT ["/entry_point.sh"]
 CMD ["matchbox-window-manager > /dev/null 2>&1 & python3 -u run_ros2_batch.py $CI_ARGS"]
