@@ -175,13 +175,5 @@ RUN useradd -u 1234 -m rosbuild
 RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
 RUN sudo -H -u rosbuild -- git config --global user.name "Jenkins ROS 2"
 RUN echo 'rosbuild ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-WORKDIR "@workdir"
-
-# Add an entry point which changes rosbuild's UID from 1234 to the UID of the invoking user.
-# This means that the generated files will have the same ownership as the host OS user.
-ADD entry_point.sh /entry_point.sh
-RUN chmod 755 /entry_point.sh
-
-ENTRYPOINT ["/entry_point.sh"]
 
 CMD ["matchbox-window-manager > /dev/null 2>&1 & python3 -u run_ros2_batch.py $CI_ARGS"]
