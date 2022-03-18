@@ -27,6 +27,8 @@ class LinuxBatchJob(BatchJob):
         BatchJob.__init__(self, python_interpreter=args.python_interpreter)
 
     def pre(self):
+        # Prepend the PATH with `~/.local/bin` for pip-installed binaries not in a venv
+        os.environ['PATH'] = os.path.expanduser('~/.local/bin') + os.pathsep + os.environ.get('PATH', '')
         # Linux jobs are run on machines in the cloud
         # Assume machines won't crosstalk even if they have the same default ROS_DOMAIN_ID
         if 'ROS_DOMAIN_ID' not in os.environ:
