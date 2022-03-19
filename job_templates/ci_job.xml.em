@@ -237,7 +237,7 @@ export CONTAINER_NAME=ros2_batch_ci_aarch64
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`/linux_docker_resources/entry_point.sh:/entry_point.sh:ro -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run script"
