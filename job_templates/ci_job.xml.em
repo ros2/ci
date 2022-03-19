@@ -218,7 +218,7 @@ sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
 echo "# BEGIN SECTION: Pull/Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
+if [ "$CI_UBUNTU_DISTRO" = "jammy" ]; then
   docker pull osrf/ros2_batch_ci_aarch64_jammy_39_snapshot
 else
   docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_batch_ci_aarch64 linux_docker_resources
