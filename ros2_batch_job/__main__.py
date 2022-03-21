@@ -505,18 +505,6 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Now inside of the workspace...
     with change_directory(args.workspace):
-        print('# BEGIN SUBSECTION: install Python packages')
-        # Update setuptools
-        job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U', 'pip', 'setuptools'],
-                shell=True)
-        # Print setuptools version
-        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
-                shell=True)
-        # Print the pip version
-        job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
-        # Install pip dependencies
-        pip_packages = list(pip_dependencies)
-
         def need_package_from_pipy(pkg_name):
             try:
                 importlib.import_module(pkg_name)
@@ -524,6 +512,20 @@ def run(args, build_function, blacklisted_package_names=None):
                 return True
 
             return False
+
+        print('# BEGIN SUBSECTION: install Python packages')
+
+        # Update setuptools if it is not already available.
+        if need_package_from_pipy('setuptools'):
+            job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U', 'pip', 'setuptools'],
+                    shell=True)
+        # Print setuptools version
+        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
+                shell=True)
+        # Print the pip version
+        job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
+        # Install pip dependencies
+        pip_packages = list(pip_dependencies)
 
         # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("mypy"):
