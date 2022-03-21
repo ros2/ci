@@ -484,6 +484,13 @@ def run(args, build_function, blacklisted_package_names=None):
     # Enter a venv if asked to, the venv must be in a path without spaces
     if args.do_venv:
         print('# BEGIN SUBSECTION: enter virtualenv')
+
+        if args.os != 'linux':
+            # Do not try this on Linux as elevated privileges are needed.
+            # The Linux host or Docker image will need to ensure the right
+            # version of virtualenv is available.
+            job.run([sys.executable, '-m', 'pip', 'install', '-U', 'virtualenv==16.7.9'])
+
         venv_subfolder = 'venv'
         remove_folder(venv_subfolder)
         job.run([
