@@ -232,38 +232,22 @@ echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
 sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile*
 sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
 echo "# END SECTION"
-echo "# BEGIN SECTION: Pull/Build Dockerfile"
+echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
-  docker pull osrf/ros2_packaging_aarch64_jammy_39_snapshot
-else
-  docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
-fi
+docker build ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-rhel']@
 docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
-if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
-  docker pull osrf/ros2_packaging_jammy_39_snapshot
-else
-  docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
-fi
+docker build ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
 echo "# END SECTION"
 echo "# BEGIN SECTION: Run Dockerfile"
 @[    if os_name == 'linux']@
-if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
-  export CONTAINER_NAME=osrf/ros2_packaging_jammy_39_snapshot
-else
-  export CONTAINER_NAME=ros2_packaging
-fi
+export CONTAINER_NAME=ros2_packaging
 @[    elif os_name == 'linux-aarch64']@
-if [ $CI_UBUNTU_DISTRO = "jammy" ]; then
-  export CONTAINER_NAME=osrf/ros2_packaging_aarch64_jammy_39_snapshot
-else
-  export CONTAINER_NAME=ros2_packaging_aarch64
-fi
+export CONTAINER_NAME=ros2_packaging_aarch64
 @[    elif os_name == 'linux-rhel']@
 export CONTAINER_NAME=ros2_packaging_rhel
 @[    else]@
@@ -273,7 +257,7 @@ export CONTAINER_NAME=ros2_packaging_rhel
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`/linux_docker_resources/entry_point.sh:/entry_point.sh -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --privileged -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run packaging script"
