@@ -514,11 +514,6 @@ def run(args, build_function, blacklisted_package_names=None):
             return False
 
         print('# BEGIN SUBSECTION: install Python packages')
-
-        # Update setuptools if it is not already available.
-        if need_package_from_pipy('setuptools'):
-            job.run(['"%s"' % job.python, '-m', 'pip', 'install', '-U', 'pip', 'setuptools'],
-                    shell=True)
         # Print setuptools version
         job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
                 shell=True)
