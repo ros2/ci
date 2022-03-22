@@ -22,7 +22,6 @@ RUN dnf install \
     python3-pip \
     python3-rosdep \
     python3-vcstool \
-    python3-venv \
     sudo \
     vim \
     wget \
