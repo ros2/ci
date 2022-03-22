@@ -493,13 +493,14 @@ def run(args, build_function, blacklisted_package_names=None):
 
         venv_subfolder = 'venv'
         remove_folder(venv_subfolder)
-        # With later versions of Python, setuptools, and venv, use the venv
-        # utility rather than virtualenv.
         venv_cmd = [sys.executable, '-m']
-        if sys.version_info >= 10:
-            venv_cmd += ['venv']
-        else:
+        # There is an issue with the interplay between virtualenv, setuptools,
+        # and ROS 2 Foxy which requires the continued use of virtualenv.
+        # https://github.com/ros2/ci/issues/400
+        if args.ros_distro == 'foxy':
             venv_cmd += ['virtualenv', '-p', sys.executable]
+        else:
+            venv_cmd += ['venv']
         venv_cmd += ['--system-site-packages', venv_subfolder]
 
         job.run(venv_cmd)
