@@ -34,8 +34,10 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` 
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
-RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool python3-venv
 RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
+# Install virtualenv 16.7.9 needed for Foxy builds on Focal. https://github.com/ros2/ci/issues/400
+RUN if test ${UBUNTU_DISTRO} = focal; then python3 -m pip install virtualenv==16.7.9; fi
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
