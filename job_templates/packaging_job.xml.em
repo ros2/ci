@@ -228,10 +228,6 @@ echo "# END SECTION"
 echo "# BEGIN SECTION: Inject date into Dockerfile"
 sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile*
 echo "# END SECTION"
-echo "# BEGIN SECTION: Use same basepath in Docker as on the host"
-sed -i "s|@@workdir|`pwd`|" linux_docker_resources/Dockerfile*
-sed -i "s|@@workdir|`pwd`|" linux_docker_resources/entry_point.sh
-echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build --pull ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
@@ -257,7 +253,7 @@ export CONTAINER_NAME=ros2_packaging_rhel
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --privileged -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run packaging script"
