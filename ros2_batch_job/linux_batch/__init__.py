@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
 import os
 
 from ..batch_job import BatchJob
@@ -66,8 +67,10 @@ class LinuxBatchJob(BatchJob):
             else:
                 connext_env_file = os.path.expanduser('~')
             connext_env_file = os.path.join(
-                connext_env_file, 'rti_connext_dds-5.3.1',
-                'resource', 'scripts', 'rtisetenv_x64Linux3gcc5.4.0.bash')
+                connext_env_file, 'rti_connext_dds-*',
+                'resource', 'scripts', 'rtisetenv_x64Linux*gcc*.bash')
+            connext_env_files = glob.glob(connext_env_file)
+            connext_env_file = next(iter(connext_env_files), connext_env_file)
 
             if os.path.exists(connext_env_file):
                 # Make script compatible with dash
