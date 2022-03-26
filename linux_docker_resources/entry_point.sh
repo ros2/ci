@@ -64,6 +64,7 @@ if [ "${ARCH}" != "aarch64" ]; then
                     exit 1
                 fi
                 export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
+                export LD_LIBRARY_PATH=$CONNEXTDDS_DIR/resource/app/lib/x64Linux2.6gcc4.4.5
             else
                 echo "No connext installation files found found." >&2
                 exit 1
@@ -85,4 +86,4 @@ sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$GID:/" /etc/group
 chown -R ${UID}:${GID} "${ORIG_HOME}"
 echo "done."
 
-exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
+exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/env LD_LIBRARY_PATH="$LD_LIBRARY_PATH" /bin/sh -c "$*"
