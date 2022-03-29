@@ -99,6 +99,7 @@ RUN dnf install \
     python3-pyflakes \
     python3-pygraphviz \
     python3-pytest-mock \
+    python3-pytest-timeout \
     python3-qt5-devel \
     qt5-qtbase \
     qt5-qtbase-devel \
