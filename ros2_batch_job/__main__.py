@@ -553,6 +553,10 @@ def run(args, build_function, blacklisted_package_names=None):
             # TODO(jacobperron): Until upstream issue is resolved https://github.com/pyreadline/pyreadline/issues/65
             pip_packages += ['git+https://github.com/osrf/pyreadline']
 
+            # Setuptools > 61 somehow have broken Windows Debug.  Pin it to 59.6.0 here which
+            # matches Ubuntu Jammy, and wait until upstream setuptools settles down.
+            pip_packages += ["setuptools==59.6.0"]
+
             if args.cmake_build_type == 'Debug':
                 pip_packages += [
                     'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
