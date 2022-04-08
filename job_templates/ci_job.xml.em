@@ -185,6 +185,7 @@ if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
   export CI_ARGS="$CI_ARGS --coverage"
 fi
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
+  export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg ROS_DISTRO=${CI_ROS_DISTRO}"
   export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
 fi
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
