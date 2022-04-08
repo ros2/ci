@@ -135,6 +135,7 @@ RUN if [ "$ROS_DISTRO" != "foxy" -a "$ROS_DISTRO" != "galactic" ]; then \
       do \
         cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
       done; \
+      chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run; \
     fi
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
