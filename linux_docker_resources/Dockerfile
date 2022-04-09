@@ -89,18 +89,23 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
 # Get and install the RTI web binaries.
-# Connext 5.3.1 for focal and earlier.
-RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz; fi
-RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; fi
+# Connext 5.3.1 for Galactic and earlier.
+RUN if [ "$ROS_DISTRO" != "galactic" -o "$ROS_DISTRO" != "foxy" ]; then \
+      cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz && \
+      tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; \
+    fi
 # Connext 6.0.1 for jammy, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
-RUN for splitpkg in \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
-    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
-  done
-RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run
+RUN if [ "$ROS_DISTRO" != "galactic" -o "$ROS_DISTRO" != "foxy" ]; then \
+      for splitpkg in \
+        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; \
+      do \
+        cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+      done; \
+      chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+    fi
 
 # Add the connextdds installation script used in entry_point.sh
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
