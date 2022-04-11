@@ -96,7 +96,7 @@ RUN if [ "$ROS_DISTRO" = "galactic" -o "$ROS_DISTRO" = "foxy" ]; then \
     fi
 # Connext 6.0.1 for jammy, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
-RUN if [ "$ROS_DISTRO" != "galactic" -o "$ROS_DISTRO" != "foxy" ]; then \
+RUN if [ "$ROS_DISTRO" != "galactic" -a "$ROS_DISTRO" != "foxy" ]; then \
       for splitpkg in \
         /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
         /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
