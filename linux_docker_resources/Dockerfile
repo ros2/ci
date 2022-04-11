@@ -90,7 +90,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
 # Get and install the RTI web binaries.
 # Connext 5.3.1 for Galactic and earlier.
-RUN if [ "$ROS_DISTRO" != "galactic" -o "$ROS_DISTRO" != "foxy" ]; then \
+RUN if [ "$ROS_DISTRO" = "galactic" -o "$ROS_DISTRO" = "foxy" ]; then \
       cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz && \
       tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; \
     fi
