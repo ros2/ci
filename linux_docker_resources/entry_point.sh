@@ -64,6 +64,7 @@ if [ "${ARCH}" != "aarch64" ]; then
                     exit 1
                 fi
                 export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
+                export RTI_OPENSSL_LIBS=$CONNEXTDDS_DIR/resource/app/lib/x64Linux2.6gcc4.4.5
             else
                 echo "No connext installation files found found." >&2
                 exit 1

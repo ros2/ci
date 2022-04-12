@@ -99,6 +99,7 @@ colcon_packages = [
     'colcon-package-information',
     'colcon-package-selection',
     'colcon-parallel-executor',
+    'colcon-pkg-config',
     'colcon-powershell',
     'colcon-python-setup-py',
     'colcon-recursive-crawl',
@@ -537,6 +538,10 @@ def run(args, build_function, blacklisted_package_names=None):
             else:
                 pip_packages += ["mypy==0.931"]
 
+        # We prefer to get pytest-timeout from the distribution if it exists.  If not we install it via pip.
+        if need_package_from_pipy("pytest_timeout"):
+            pip_packages += ["pytest-timeout==2.1.0"]
+
         # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("lark"):
             if args.ros_distro in ["foxy", "galactic"]:
@@ -548,6 +553,10 @@ def run(args, build_function, blacklisted_package_names=None):
             # Install fork of pyreadline containing fix for deprecation warnings
             # TODO(jacobperron): Until upstream issue is resolved https://github.com/pyreadline/pyreadline/issues/65
             pip_packages += ['git+https://github.com/osrf/pyreadline']
+
+            # Setuptools > 61 somehow have broken Windows Debug.  Pin it to 59.6.0 here which
+            # matches Ubuntu Jammy, and wait until upstream setuptools settles down.
+            pip_packages += ["setuptools==59.6.0"]
 
             if args.cmake_build_type == 'Debug':
                 pip_packages += [

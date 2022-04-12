@@ -1,4 +1,5 @@
 FROM almalinux:8
+ARG ROS_DISTRO=rolling
 
 # Add some repos
 RUN dnf install epel-release epel-release 'dnf-command(config-manager)' --refresh -y && \
@@ -139,8 +140,23 @@ RUN dnf install \
     --refresh -y
 
 # Get and install the RTI web binaries.
-RUN cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz
-RUN cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz
+# Connext 5.3.1 for galactic and earlier.
+RUN if [ "$ROS_DISTRO" = "foxy" -o "$ROS_DISTRO" = "galactic" ]; then \
+       cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz \
+       && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; \
+    fi
+# Connext 6.0.1 for humble and beyond, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
+COPY rticonnextdds-src/ /tmp/rticonnextdds-src
+RUN if [ "$ROS_DISTRO" != "foxy" -a "$ROS_DISTRO" != "galactic" ]; then \
+      for splitpkg in \
+        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; \
+      do \
+        cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+      done; \
+      chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run; \
+    fi
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
