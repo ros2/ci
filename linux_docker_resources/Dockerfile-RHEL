@@ -128,6 +128,7 @@ RUN dnf install \
     tinyxml-devel \
     tinyxml2-devel \
     uncrustify \
+    yaml-cpp-vendor \
     yamllint \
     --refresh -y
 
