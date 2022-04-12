@@ -51,6 +51,7 @@ RUN dnf install \
     CUnit-devel \
     acl \
     assimp-devel \
+    bison \
     boost-devel \
     bullet-devel \
     clang \
