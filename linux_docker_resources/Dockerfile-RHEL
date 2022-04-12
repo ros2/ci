@@ -58,6 +58,7 @@ RUN dnf install \
     cmake3 \
     console-bridge-devel \
     cppcheck \
+    cppunit-devel \
     curl \
     doxygen \
     eigen3-devel \
