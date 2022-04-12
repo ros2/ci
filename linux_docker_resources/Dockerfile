@@ -51,6 +51,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libxml2-dev \
   libxml2-utils \
   libxslt-dev \
+  libyaml-cpp-dev \
   pydocstyle \
   python3-pyflakes \
   python3-coverage \
