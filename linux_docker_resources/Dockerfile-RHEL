@@ -117,7 +117,6 @@ RUN dnf install \
     python3-importlib-metadata \
     python3-importlib-resources \
     python3-lark-parser \
-    python3-lttng \
     python3-lxml \
     python3-matplotlib \
     python3-netifaces \
