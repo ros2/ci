@@ -65,6 +65,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-numpy \
   python3-pep8 \
   python3-psutil \
+  python3-pykdl \
   python3-pyparsing \
   python3-pytest-mock \
   python3-pytest-timeout \
