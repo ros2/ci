@@ -437,6 +437,7 @@ def main(argv=None):
         foxy_testing_pkgs_for_quality_level.remove('rosidl_typesupport_introspection_tests')
         foxy_testing_pkgs_for_quality_level.append('tracetools_test')
         galactic_testing_pkgs_for_quality_level = copy.copy(foxy_testing_pkgs_for_quality_level)
+        humble_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
 
         if os_name == 'linux':
             create_job(os_name, 'ci_' + os_name + '_coverage', 'ci_job.xml.em', {
@@ -495,6 +496,20 @@ def main(argv=None):
                                       ' --packages-up-to ' + ' '.join(quality_level_pkgs + galactic_testing_pkgs_for_quality_level),
                 'test_args_default': data['test_args_default'] +
                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + galactic_testing_pkgs_for_quality_level),
+            })
+            # Add a coverage job targeting Humble.
+            create_job(os_name, 'nightly_' + os_name + '_humble_coverage', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/humble/ros2.repos',
+                'enable_coverage_default': 'true',
+                'time_trigger_spec': PERIODIC_JOB_SPEC,
+                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
+                'ros_distro': 'humble',
+                'ubuntu_distro': 'jammy',
+                'build_args_default': data['build_args_default'] +
+                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + humble_testing_pkgs_for_quality_level),
+                'test_args_default': data['test_args_default'] +
+                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + humble_testing_pkgs_for_quality_level),
             })
 
         # configure nightly triggered job
