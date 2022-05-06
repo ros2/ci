@@ -47,6 +47,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
+  liblog4cxx-dev \
   libspdlog-dev \
   libxml2-dev \
   libxml2-utils \
