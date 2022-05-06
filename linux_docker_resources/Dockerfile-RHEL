@@ -99,6 +99,7 @@ RUN dnf install \
     libxml2 \
     libyaml-devel \
     libzstd-devel \
+    log4cxx-devel \
     mesa-libGL-devel \
     mesa-libGLU-devel \
     opencv-devel \
@@ -119,6 +120,7 @@ RUN dnf install \
     python3-lark-parser \
     python3-lxml \
     python3-matplotlib \
+    python3-mock \
     python3-netifaces \
     python3-nose \
     python3-numpy \
