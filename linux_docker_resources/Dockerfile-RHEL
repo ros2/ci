@@ -105,6 +105,7 @@ RUN dnf install \
     opencv-devel \
     openssl \
     openssl-devel \
+    orocos-kdl-devel \
     pkgconfig \
     pybind11-devel \
     python3-PyYAML \
@@ -132,6 +133,7 @@ RUN dnf install \
     python3-pydot \
     python3-pyflakes \
     python3-pygraphviz \
+    python3-pykdl \
     python3-pytest \
     python3-pytest-cov \
     python3-pytest-mock \
