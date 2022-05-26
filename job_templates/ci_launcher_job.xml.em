@@ -7,6 +7,13 @@
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
+@[if build_discard]@
+@(SNIPPET(
+    'property_build-discard',
+    days_to_keep=build_discard['days_to_keep'],
+    num_to_keep=build_discard['num_to_keep'],
+))@
+@[end if]@
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.31">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
