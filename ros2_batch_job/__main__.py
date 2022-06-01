@@ -667,7 +667,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 os.makedirs(args.sourcespace)
             for filename in repos_filenames:
                 job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force', '--retry', '5',
-                                   '--input', filename], shell=True)
+                                   '--input', f"'{filename}'"], shell=True)
             print('# END SUBSECTION')
 
             if args.test_branch is not None:
