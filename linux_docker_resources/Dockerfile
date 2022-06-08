@@ -11,6 +11,10 @@ ARG COMPILE_WITH_CLANG=false
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
 ENV DEBIAN_FRONTEND noninteractive
 
+# Opt-out of phased updates, which can create inconsistencies between installed package versions as different containers end up on different phases.
+# https://wiki.ubuntu.com/PhasedUpdates
+RUN echo 'APT::Get::Never-Include-Phased-Updates: True;' > /etc/apt/apt.conf.d/90-phased-updates
+
 RUN apt-get update && apt-get install --no-install-recommends -y locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
