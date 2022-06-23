@@ -153,7 +153,8 @@ RUN if test ${BRIDGE} = true -a -n "${ROS1_DISTRO}"; then apt-get update && apt-
     ros-${ROS1_DISTRO}-rosmsg \
     ros-${ROS1_DISTRO}-roscpp-tutorials \
     ros-${ROS1_DISTRO}-rospy-tutorials \
-    ros-${ROS1_DISTRO}-tf2-msgs; fi
+    ros-${ROS1_DISTRO}-tf2-msgs \
+    ros-${ROS1_DISTRO}-xmlrpcpp; fi
 
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \
