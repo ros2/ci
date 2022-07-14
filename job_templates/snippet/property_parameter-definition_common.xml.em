@@ -3,7 +3,7 @@
           <description>Branch to test across the repositories in the .repos file that have it.
 For example, if you have a few repositories with the &apos;feature&apos; branch, then you can set this to &apos;feature&apos;.
 The repositories with the &apos;feature&apos; branch will be changed to that branch.
-Other repositories will stay on the default branch, usually &apos;master&apos;.
+Other repositories will stay on the default branch, usually &apos;rolling&apos;.
 To use the default branch on all repositories, use an empty string.
 This only works if the branches are on the origin; forks cannot be used.
 To use forks or different named branches, see CI_ROS2_REPOS_URL.</description>

@@ -57,7 +57,7 @@ Note this option will not be there for Windows because I could not get the ssh-a
 Each of the batch CI jobs have the same set of parameters.
 The parameters have their own descriptions, but the main one to look at is the `CI_BRANCH_TO_TEST` parameter.
 It allows you to select a branch name across all of the repositories in the `.repos` file that should be tested.
-Repositories which have this branch will be switched to it, others will be left on the default branch, usually `master`.
+Repositories which have this branch will be switched to it, others will be left on the default branch, usually `rolling`.
 
 ### Notes about MacOS, Windows Agents
 

@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # Create colcon workspace, checkout sources
     with tempfile.TemporaryDirectory() as ros2_ws_path:
         ros2_repos_path = os.path.join(ros2_ws_path, 'ros2.repos')
-        ros2_repos = requests.get('https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos')
+        ros2_repos = requests.get('https://raw.githubusercontent.com/ros2/ros2/rolling/ros2.repos')
         if ros2_repos.status_code != requests.codes.ok:
             print('Failed to download ros2.repos file', file=sys.stderr)
             sys.exit(-1)
