@@ -39,7 +39,7 @@ try:
 except ImportError:
     sys.exit("Could not import symbol from ros_buildfarm, please update ros_buildfarm.")
 
-DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos'
+DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/rolling/ros2.repos'
 DEFAULT_MAIL_RECIPIENTS = 'ros2-buildfarm@googlegroups.com'
 PERIODIC_JOB_SPEC = '30 7 * * *'
 
