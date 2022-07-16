@@ -41,7 +41,7 @@ except ImportError:
 
 DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/rolling/ros2.repos'
 DEFAULT_MAIL_RECIPIENTS = 'ros2-buildfarm@googlegroups.com'
-PERIODIC_JOB_SPEC = '0 3 * * *'
+PERIODIC_JOB_SPEC = '0 4 * * *'
 
 template_prefix_path[:] = \
     [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'job_templates')]
