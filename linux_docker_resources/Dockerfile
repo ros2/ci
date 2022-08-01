@@ -63,6 +63,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
+  python3-flake8-docstrings \
   python3-lxml \
   python3-mock \
   python3-mypy \
@@ -78,6 +79,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-yaml \
   uncrustify \
   yamllint
+
+RUN if test ${UBUNTU_DISTRO} = jammy; then apt-get update && apt-get install --no-install-recommends -y python3-flake8-blind-except python3-flake8-builtins python3-flake8-class-newline python3-flake8-comprehensions python3-flake8-deprecated python3-flake8-import-order python3-flake8-quotes ; fi
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi

@@ -54,15 +54,6 @@ pip_dependencies = [
     'EmPy',
     'coverage',
     'catkin_pkg',
-    'flake8',
-    'flake8-blind-except==0.1.1',
-    'flake8-builtins',
-    'flake8-class-newline',
-    'flake8-comprehensions',
-    'flake8-deprecated',
-    'flake8-docstrings',
-    'flake8-import-order',
-    'flake8-quotes',
     'importlib-metadata',
     'mock',
     'nose',
@@ -514,14 +505,6 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Now inside of the workspace...
     with change_directory(args.workspace):
-        def need_package_from_pipy(pkg_name):
-            try:
-                importlib.import_module(pkg_name)
-            except ModuleNotFoundError:
-                return True
-
-            return False
-
         print('# BEGIN SUBSECTION: install Python packages')
         # Print setuptools version
         job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
@@ -529,25 +512,45 @@ def run(args, build_function, blacklisted_package_names=None):
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
         # Install pip dependencies
-        pip_packages = list(pip_dependencies)
+        pip_packages = pip_dependencies
 
-        # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("mypy"):
+        def need_pkg_from_pypi(importname, foxy_galactic_tuple, new_distro_tuple):
+            pkg_found = True
+            try:
+                importlib.import_module(importname)
+            except ModuleNotFoundError:
+                pkg_found = False
+
+            if pkg_found:
+                # The package is already installed, skip
+                return
+
             if args.ros_distro in ["foxy", "galactic"]:
-                pip_packages += ["mypy==0.761"]
+                pkg_tuple = foxy_galactic_tuple
             else:
-                pip_packages += ["mypy==0.931"]
+                pkg_tuple = new_distro_tuple
 
-        # We prefer to get pytest-timeout from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("pytest_timeout"):
-            pip_packages += ["pytest-timeout==2.1.0"]
+            pkg_string = pkg_tuple[0]
+            if pkg_tuple[1]:
+                pkg_string += '==' + pkg_tuple[1]
 
-        # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("lark"):
-            if args.ros_distro in ["foxy", "galactic"]:
-                pip_packages += ["lark-parser==0.8.1"]
-            else:
-                pip_packages += ["lark==1.1.1"]
+            pip_packages.append(pkg_string)
+
+        # We prefer to get these packages from the distribution if they exist.  Otherwise we install via pip.
+        need_pkg_from_pypi('mypy', ('mypy', '0.761'), ('mypy', '0.931'))
+        need_pkg_from_pypi('pytest_timeout', ('pytest-timeout', '2.1.0'), ('pytest-timeout', '2.1.0'))
+        need_pkg_from_pypi('lark', ('lark-parser', '0.8.1'), ('lark', '1.1.1'))
+        need_pkg_from_pypi('flake8', ('flake8', '3.7.9'), ('flake8', '4.0.1'))
+        need_pkg_from_pypi('flake8_blind_except', ('flake8-blind-except', '0.1.1'), ('flake8-blind-except', '0.1.1'))
+        need_pkg_from_pypi('flake8_builtins', ('flake8-builtins', '1.5.3'), ('flake8-builtins', '1.5.3'))
+        need_pkg_from_pypi('flake8_class_newline', ('flake8-class-newline', '1.6.0'), ('flake8-class-newline', '1.6.0'))
+        # The version of flake8-comprehensions available to older Python versions, such as that in RHEL-8,
+        # is limited to 3.7.0.  Rather than try to force an exact version here, just allow any version that works.
+        need_pkg_from_pypi('flake8_comprehensions', ('flake8-comprehensions', ''), ('flake8-comprehensions', ''))
+        need_pkg_from_pypi('flake8_deprecated', ('flake8-deprecated', '1.3'), ('flake8-deprecated', '1.3'))
+        need_pkg_from_pypi('flake8_docstrings', ('flake8-docstrings', '1.6.0'), ('flake8-docstrings', '1.6.0'))
+        need_pkg_from_pypi('flake8_import_order', ('flake8-import-order', '0.18.1'), ('flake8-import-order', '0.18.1'))
+        need_pkg_from_pypi('flake8_quotes', ('flake8-quotes', '3.3.1'), ('flake8-quotes', '3.3.1'))
 
         if sys.platform == 'win32':
             # Install fork of pyreadline containing fix for deprecation warnings
@@ -584,7 +587,7 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
+        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U', '--upgrade-strategy=only-if-needed']
         if args.do_venv or sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
             # On Windows since we switch between the debug and non-debug
