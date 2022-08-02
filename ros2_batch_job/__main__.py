@@ -584,7 +584,10 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U']
+        with open('constraints.txt', 'w') as outfp:
+            outfp.write('flake8 < 5.0.0\n')
+
+        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
         if args.do_venv or sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
             # On Windows since we switch between the debug and non-debug
