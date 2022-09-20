@@ -291,7 +291,6 @@ def main(argv=None):
                 'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
             })
 
-
         # configure jobs for compiling with clang+libcxx on linux
         if os_name == 'linux':
             # Set the logging implementation to noop because log4cxx will not link properly when using libcxx.
@@ -339,7 +338,6 @@ def main(argv=None):
                 'build_args_default': tsan_build_args,
                 'test_args_default': data['test_args_default'] + ' --packages-select rcpputils rcutils',
             })
-
 
         # configure a manually triggered version of the coverage job
 
