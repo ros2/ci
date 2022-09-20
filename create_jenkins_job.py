@@ -269,12 +269,13 @@ def main(argv=None):
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
-        # configure nightly job for testing with address sanitizer on linux
+        # configure jobs for testing with address sanitizer on linux
         if os_name == 'linux':
             asan_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
                 ' --mixin asan-gcc --packages-up-to rcpputils'
 
+            # nightly job
             create_job(os_name, 'nightly_{}_address_sanitizer'.format(os_name), 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -282,6 +283,14 @@ def main(argv=None):
                 'build_args_default': asan_build_args,
                 'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
             })
+
+            # manually triggered job
+            create_job(os_name, 'ci_{}_address_sanitizer'.format(os_name), 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'build_args_default': asan_build_args,
+                'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
+            })
+
 
         # configure jobs for compiling with clang+libcxx on linux
         if os_name == 'linux':
@@ -309,12 +318,13 @@ def main(argv=None):
                 'test_args_default': clang_libcxx_test_args,
             })
 
-        # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
+        # configure jobs for testing rmw/rcl based packages with thread sanitizer on linux
         if os_name == 'linux':
             tsan_build_args = data['build_args_default'].replace('--cmake-args',
                 '--cmake-args -DOSRF_TESTING_TOOLS_CPP_DISABLE_MEMORY_TOOLS=ON') + \
                 ' --mixin tsan --packages-up-to rcpputils rcutils'
 
+            # nightly job
             create_job(os_name, 'nightly_' + os_name + '_thread_sanitizer', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -322,6 +332,14 @@ def main(argv=None):
                 'build_args_default': tsan_build_args,
                 'test_args_default': data['test_args_default'] + ' --packages-select rcpputils rcutils',
             })
+
+            # manually triggered job
+            create_job(os_name, 'ci_' + os_name + '_thread_sanitizer', 'ci_job.xml.em', {
+                'cmake_build_type': 'Debug',
+                'build_args_default': tsan_build_args,
+                'test_args_default': data['test_args_default'] + ' --packages-select rcpputils rcutils',
+            })
+
 
         # configure a manually triggered version of the coverage job
 
