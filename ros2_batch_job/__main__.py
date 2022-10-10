@@ -59,7 +59,7 @@ pip_dependencies = [
     'flake8-builtins',
     'flake8-class-newline',
     'flake8-comprehensions',
-    'flake8-deprecated',
+    'flake8-deprecated==1.3',
     'flake8-docstrings',
     'flake8-import-order',
     'flake8-quotes',
