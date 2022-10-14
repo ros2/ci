@@ -1,18 +1,18 @@
 [submodule "linux_docker_resources/rticonnextdds-src"]
 	path = linux_docker_resources/rticonnextdds-src
-	url = git@github.com:osrf/rticonnextdds-src.git
+	url = git@github.com:osrf/rticonnextdds-bins.git
 	branch = binaries/linux/amd64/6.0.1
 [submodule "linux_docker_resources/rticonnextdds-license"]
 	path = linux_docker_resources/rticonnextdds-license
-	url = git@github.com:osrf/rticonnextdds-src.git
+	url = git@github.com:osrf/rticonnextdds-license.git
 	branch = license
 [submodule "windows_docker_resources/rticonnextdds-src"]
 	path = windows_docker_resources/rticonnextdds-src
-	url = git@github.com:osrf/rticonnextdds-src.git
+	url = git@github.com:osrf/rticonnextdds-bins.git
 	branch = binaries/windows/amd64/omnibus
 [submodule "windows_docker_resources/rticonnextdds-license"]
 	path = windows_docker_resources/rticonnextdds-license
-	url = git@github.com:osrf/rticonnextdds-src.git
+	url = git@github.com:osrf/rticonnextdds-license.git
 	branch = license
 [submodule "windows_docker_resources/qtaccount"]
 	path = windows_docker_resources/qtaccount
