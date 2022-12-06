@@ -107,7 +107,6 @@ RUN dnf install \
     openssl-devel \
     orocos-kdl-devel \
     pkgconfig \
-    pybind11-devel \
     python3-PyYAML \
     python3-argcomplete \
     python3-cairo \
