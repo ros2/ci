@@ -19,5 +19,5 @@
 	url = git@github.com:osrf/qtaccount
 [submodule "windows_docker_resources/ros2-cookbooks"]
 	path = windows_docker_resources/ros2-cookbooks
-	url = git@github.com:ros-infrastructure/ros2-cookbooks
-	branch = latest
+	url = git@github.com:Crola1702/ros2-cookbooks.git
+	branch = Back-to-CMake3.25-installation
