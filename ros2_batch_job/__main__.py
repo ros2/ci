@@ -533,7 +533,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("mypy"):
-            if args.ros_distro in ["foxy", "galactic"]:
+            if args.ros_distro in ["foxy"]:
                 pip_packages += ["mypy==0.761"]
             else:
                 pip_packages += ["mypy==0.931"]
@@ -544,7 +544,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("lark"):
-            if args.ros_distro in ["foxy", "galactic"]:
+            if args.ros_distro in ["foxy"]:
                 pip_packages += ["lark-parser==0.8.1"]
             else:
                 pip_packages += ["lark==1.1.1"]
