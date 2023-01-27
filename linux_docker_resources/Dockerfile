@@ -54,6 +54,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libignition-cmake2-dev \
   libignition-math6-dev \
   liblog4cxx-dev \
+  liblttng-ust-dev \
   liborocos-kdl-dev \
   libspdlog-dev \
   libsqlite3-dev \
@@ -66,10 +67,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   pybind11-dev \
   pydocstyle \
   python3-pyflakes \
+  python3-babeltrace \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
   python3-jsonschema \
+  python3-lttng \
   python3-lxml \
   python3-mock \
   python3-mypy \
