@@ -2,7 +2,7 @@ FROM almalinux:8
 ARG ROS_DISTRO=rolling
 
 # Add some repos
-RUN dnf install epel-release epel-release 'dnf-command(config-manager)' --refresh -y && \
+RUN dnf install epel-release 'dnf-command(config-manager)' --refresh -y && \
     dnf config-manager --set-enabled powertools && \
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-*
 
@@ -17,7 +17,6 @@ RUN dnf install \
     mesa-dri-drivers \
     net-tools \
     patch \
-    python3-bloom \
     python3-colcon-bash \
     python3-colcon-cmake \
     python3-colcon-core \
@@ -99,7 +98,7 @@ RUN dnf install \
     libxml2 \
     libyaml-devel \
     libzstd-devel \
-    log4cxx-devel \
+    $(if [ "$ROS_DISTRO" = "foxy" ]; then echo log4cxx-devel; fi) \
     mesa-libGL-devel \
     mesa-libGLU-devel \
     opencv-devel \
@@ -146,6 +145,7 @@ RUN dnf install \
     qt5-qtbase-gui \
     redhat-rpm-config \
     spdlog-devel \
+    sqlite-devel \
     tango-icon-theme \
     tinyxml-devel \
     tinyxml2-devel \
