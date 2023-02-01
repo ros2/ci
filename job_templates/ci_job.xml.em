@@ -31,6 +31,7 @@
     use_connext_debs_default=use_connext_debs_default,
     use_isolated_default=use_isolated_default,
     ubuntu_distro=ubuntu_distro,
+    el_release=el_release,
     ros_distro=ros_distro,
     cmake_build_type=cmake_build_type,
     colcon_mixin_url=colcon_mixin_url,
@@ -101,6 +102,7 @@ colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
+el_release: ${build.buildVariableResolver.resolve('CI_EL_RELEASE')}, <br/>
 ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
@@ -201,6 +203,9 @@ echo "# END SECTION"
 @[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+@[    elif os_name == 'linux-rhel']@
+sed -i "s+^FROM.*$+FROM almalinux:$CI_EL_RELEASE+" linux_docker_resources/Dockerfile-RHEL
+export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg EL_RELEASE=$CI_EL_RELEASE"
 @[    end if]@
 
 mkdir -p $HOME/.ccache
