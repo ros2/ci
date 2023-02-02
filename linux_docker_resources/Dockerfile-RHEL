@@ -1,6 +1,6 @@
-FROM almalinux:9
+FROM almalinux:8
 ARG ROS_DISTRO=rolling
-ARG EL_RELEASE=9
+ARG EL_RELEASE=8
 
 # Add some repos
 RUN dnf install epel-release 'dnf-command(config-manager)' --refresh -y && \
