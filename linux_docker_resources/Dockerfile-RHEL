@@ -144,7 +144,7 @@ RUN dnf install \
     python3-psutil \
     python3-pycodestyle \
     python3-pydocstyle \
-    $(if test ${EL_RELEASE} = 9; then echo https://kojipkgs.fedoraproject.org/packages/pydot/1.4.2/6.el9/noarch/python3-pydot-1.4.2-6.el9.noarch.rpm; else echo python3-pydot; fi) \
+    python3-pydot \
     python3-pyflakes \
     $(if test ${EL_RELEASE} != 9; then echo python3-pygraphviz; fi) \
     python3-pykdl \
