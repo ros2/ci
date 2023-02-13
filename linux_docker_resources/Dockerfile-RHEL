@@ -82,8 +82,7 @@ RUN dnf install \
     $(if test ${EL_RELEASE} != 9; then echo assimp-devel; fi) \
     bison \
     boost-devel \
-    $(if test ${EL_RELEASE} = 9; then echo https://kojipkgs.fedoraproject.org/packages/bullet/3.08/6.el9/x86_64/bullet-3.08-6.el9.x86_64.rpm; fi) \
-    $(if test ${EL_RELEASE} = 9; then echo https://kojipkgs.fedoraproject.org/packages/bullet/3.08/6.el9/x86_64/bullet-devel-3.08-6.el9.x86_64.rpm; else echo bullet-devel; fi) \
+    bullet-devel \
     clang \
     clang-tools-extra \
     cmake3 \
