@@ -73,18 +73,18 @@ def predict_build_number(job_name) {
   return build_number
 }
 
-build_numbers = [:]
-@[for os_name in os_specific_data.keys()]@
-build_numbers["@(os_name)"] = predict_build_number("ci_@(os_name)")
+predicted_jobs = [:]
+@[for os_name, os_data in os_specific_data.items()]@
+predicted_jobs["@(os_name)"] = new Tuple("@(os_data['job_name'])", predict_build_number("@(os_data['job_name'])"))
 @[end for]@
 
-for (item in build_numbers) {
+for (item in predicted_jobs) {
   name = item.key[0].toUpperCase() + item.key[1..-1].toLowerCase()
   if (name == "Osx") {
     name = "macOS"
   }
-  job_name = "ci_${item.key}"
-  build_number = item.value
+  job_name = item.value[0]
+  build_number = item.value[1]
   println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
 }
 </script>
