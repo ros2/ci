@@ -57,6 +57,22 @@ choices.remove(ubuntu_distro)
           </choices>
         </hudson.model.ChoiceParameterDefinition>
         <hudson.model.ChoiceParameterDefinition>
+          <name>CI_EL_RELEASE</name>
+          <description>Select the RHEL release to use.</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>@el_release</string>
+@{
+choices = ['9', '8']
+choices.remove(el_release)
+}@
+@[for choice in choices]@
+              <string>@choice</string>
+@[end for]@
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
           <name>CI_ROS_DISTRO</name>
           <description>Select the ROS distribution to target.
 Note that this only changes some of the underlying system packages installed; it does not change the default .repos file to the correct branch.</description>

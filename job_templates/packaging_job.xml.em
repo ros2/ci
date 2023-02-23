@@ -30,6 +30,7 @@
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
     ubuntu_distro=ubuntu_distro,
+    el_release=el_release,
     ros_distro=ros_distro,
     colcon_mixin_url=colcon_mixin_url,
     cmake_build_type=cmake_build_type,
@@ -109,6 +110,7 @@ All packages listed here have to be available from either the primary or supplem
           <script><![CDATA[build.setDescription("""\
 @[if 'linux' in os_name]@
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
+el_release: ${build.buildVariableResolver.resolve('CI_EL_RELEASE')}, <br/>
 @[end if]@
 ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
