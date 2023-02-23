@@ -51,13 +51,19 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
+  libignition-cmake2-dev \
+  libignition-math6-dev \
   liblog4cxx-dev \
   liborocos-kdl-dev \
   libspdlog-dev \
+  libsqlite3-dev \
   libxml2-dev \
   libxml2-utils \
   libxslt-dev \
   libyaml-cpp-dev \
+  libyaml-dev \
+  libzstd-dev \
+  pybind11-dev \
   pydocstyle \
   python3-pyflakes \
   python3-coverage \
