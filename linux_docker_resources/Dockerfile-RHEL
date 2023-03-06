@@ -37,6 +37,7 @@ RUN dnf install \
     python3-colcon-test-result \
     python3-colcon-zsh \
     python3-devel \
+    python3-jsonschema \
     python3-pip \
     python3-rosdep \
     python3-vcstool \
