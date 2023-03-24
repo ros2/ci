@@ -113,6 +113,7 @@ RUN dnf install \
     libyaml-devel \
     libzstd-devel \
     $(if [ "$ROS_DISTRO" = "foxy" ]; then echo log4cxx-devel; fi) \
+    lttng-ust \
     mesa-libGL-devel \
     mesa-libGLU-devel \
     opencv-devel \
@@ -133,6 +134,7 @@ RUN dnf install \
     python3-importlib-metadata \
     $(if test ${EL_RELEASE} = 8; then echo python3-importlib-resources; fi) \
     python3-lark-parser \
+    $(if test ${EL_RELEASE} != 8; then echo python3-lttng; fi) \
     python3-lxml \
     $(if test ${EL_RELEASE} != 9; then echo python3-matplotlib; fi) \
     $(if test ${EL_RELEASE} = 8; then echo python3-mock; fi) \
