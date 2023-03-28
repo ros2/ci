@@ -54,7 +54,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libignition-cmake2-dev \
   libignition-math6-dev \
   liblog4cxx-dev \
-  liblttng-ust-dev \
   liborocos-kdl-dev \
   libspdlog-dev \
   libsqlite3-dev \
@@ -67,12 +66,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   pybind11-dev \
   pydocstyle \
   python3-pyflakes \
-  python3-babeltrace \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
   python3-jsonschema \
-  python3-lttng \
   python3-lxml \
   python3-mock \
   python3-mypy \
@@ -88,6 +85,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-yaml \
   uncrustify \
   yamllint
+
+# Install LTTng-related packages starting from Iron only.
+RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
+  liblttng-ust-dev \
+  python3-babeltrace \
+  python3-lttng; fi
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
