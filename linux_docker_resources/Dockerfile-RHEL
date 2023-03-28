@@ -113,7 +113,7 @@ RUN dnf install \
     libyaml-devel \
     libzstd-devel \
     $(if [ "$ROS_DISTRO" = "foxy" ]; then echo log4cxx-devel; fi) \
-    $(if test ${EL_RELEASE} != 8; then echo lttng-ust; fi) \
+    $(if test ${EL_RELEASE} != 8; then echo lttng-ust-devel; fi) \
     mesa-libGL-devel \
     mesa-libGLU-devel \
     opencv-devel \
