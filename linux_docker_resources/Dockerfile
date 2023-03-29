@@ -89,6 +89,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 # Install LTTng-related packages starting from Iron only.
 RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
   liblttng-ust-dev \
+  lttng-tools \
   python3-babeltrace \
   python3-lttng; fi
 
