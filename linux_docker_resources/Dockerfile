@@ -86,6 +86,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   uncrustify \
   yamllint
 
+# Install LTTng-related packages starting from Iron only.
+RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
+  liblttng-ust-dev \
+  lttng-tools \
+  python3-babeltrace \
+  python3-lttng; fi
+
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
 
