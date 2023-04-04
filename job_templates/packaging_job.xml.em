@@ -219,6 +219,9 @@ echo "# END SECTION"
 @[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+@[    elif os_name == 'linux-rhel']@
+sed -i "s+^FROM.*$+FROM almalinux:$CI_EL_RELEASE+" linux_docker_resources/Dockerfile-RHEL
+export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg EL_RELEASE=$CI_EL_RELEASE"
 @[    end if]@
 
 mkdir -p $HOME/.ccache
