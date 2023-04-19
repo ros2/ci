@@ -80,7 +80,7 @@ Note that this only changes some of the underlying system packages installed; it
             <a class="string-array">
               <string>@ros_distro</string>
 @{
-choices = ['foxy', 'humble', 'rolling']
+choices = ['foxy', 'humble', 'iron', 'rolling']
 choices.remove(ros_distro)
 }@
 @[for choice in choices]@
