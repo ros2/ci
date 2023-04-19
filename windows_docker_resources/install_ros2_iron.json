@@ -6,7 +6,7 @@
       "installation_method": "offline"
     },
     "ros2_ws": "C:/ci",
-    "ros_distro": "rolling",
+    "ros_distro": "iron",
     "rti_connext": {
       "target_platform": "x64Win64",
       "min_vs_version": "2017",
