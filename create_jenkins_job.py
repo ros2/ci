@@ -236,6 +236,14 @@ def main(argv=None):
             'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
+        # configure manual test packaging job 
+        create_job(os_name, 'test_packaging_' + os_name, 'packaging_job.xml.em', {
+            'cmake_build_type': 'RelWithDebInfo',
+            'label_expression': packaging_label_expression,
+            'mixed_overlay_pkgs': 'ros1_bridge',
+            'ignore_rmw_default': ignore_rmw_default_packaging,
+            'use_connext_debs_default': 'true',
+        })
 
         # configure packaging job
         create_job(os_name, 'packaging_' + os_name, 'packaging_job.xml.em', {
