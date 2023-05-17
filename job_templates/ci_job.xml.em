@@ -472,6 +472,13 @@ echo "# END SECTION"
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
 @[end if]@
+@[if with_eof_recovery]@
+@(SNIPPET(
+    'recovery_process.xml.em',
+    regex="error waiting for container: unexpected EOF"
+    error="Docker container running OOM"
+))@
+@[end if]@
   </publishers>
   <buildWrappers>
 @[if build_timeout_mins]@
