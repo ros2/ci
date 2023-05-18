@@ -533,8 +533,7 @@ def main(argv=None):
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,              
-
+            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
         })
 
         # configure nightly triggered job with repeated testing

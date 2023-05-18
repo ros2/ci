@@ -1,6 +1,15 @@
 @# RECOVERY PROCESS SNIPPET
-@# This adds 
-@# 
+@# -------------------------------------------------------------------------------
+@# Snippet that adds the following recovery process logic to the postbuild of jobs:
+@#      if build failed and "regex" is found in logs then:
+@#          add recovery label to agent
+@#          restart it 
+@#          rebuild the job
+@#      endif
+@# PARAMS:
+@#         regex -> regex to match the log against 
+@#         error -> text to add as description of the error
+
 
 @{
 code = FILE('scripts/add_recovery_label_on_regex')
@@ -27,8 +36,7 @@ code = FILE('scripts/add_recovery_label_on_regex')
             @[if os_name not in ['windows']]@
                 <command>sudo shutdown -r +1</command>
             @[endif]@
-            @[if os_name in ['windows']]@
-                @# TODO: 
+            @[if os_name in ['windows']]@ 
                 <command>shutdown /r /t 600</command>
             @[endif]@
             <configuredLocalRules/>

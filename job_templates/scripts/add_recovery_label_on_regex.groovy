@@ -23,6 +23,3 @@
     }
     println('# END SECTION: NVIDIA MISMATCH RECOVERY')
   """.stripIndent()
-  
-
-
