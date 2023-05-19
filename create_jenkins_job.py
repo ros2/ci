@@ -270,13 +270,18 @@ def main(argv=None):
 
         # configure nightly triggered job
         job_name = 'nightly_' + job_os_name + '_debug'
-        if os_name == 'windows':
-            job_name = job_name[:15]
-        create_job(os_name, job_name, 'ci_job.xml.em', {
+        debug_config = {
             'cmake_build_type': 'Debug',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-        })
+        }
+        if os_name == 'windows':
+            job_name = job_name[:15]
+        if os_name == 'linux':
+            # Temporarily pin the debug jobs to larger instances.
+            # https://github.com/ros2/ci/issues/702
+            debug_config['label_expression'] = 'linux &amp;&amp; 2xlarge'
+        create_job(os_name, job_name, 'ci_job.xml.em', debug_config)
 
         # configure nightly job for testing with address sanitizer on linux
         if os_name == 'linux':
