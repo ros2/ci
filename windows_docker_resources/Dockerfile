@@ -4,7 +4,7 @@
 
 # To find this value run in powershell:
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
-ARG WINDOWS_RELEASE_ID=2009
+ARG WINDOWS_RELEASE_ID=1909
 
 # In order to ensure the image is correctly compatible with the host system a
 # more precise version than the release id is required. To find this value run
@@ -16,7 +16,7 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
-FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
+FROM mcr.microsoft.com/windows:$WINDOWS_RELEASE_VERSION
 
 # Install cinc-solo, a compiled binary of chef-solo
 RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 16.15.22"
