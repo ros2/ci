@@ -13,10 +13,10 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Opt-out of phased updates, which can create inconsistencies between installed package versions as different containers end up on different phases.
 # https://wiki.ubuntu.com/PhasedUpdates
-RUN echo 'APT::Get::Never-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/90-phased-updates
+RUN echo 'APT::Get::Never-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/99-phased-updates
 
 RUN apt-get update && apt-get install --no-install-recommends -y locales
-RUN locale-gen en_US.UTF-8
+RUN locale-gen en_US.UTF-89
 ENV LANG en_US.UTF-8
 
 # net-tools is for ifconfig
