@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'APT::Get::Never-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/99-phased-updates
 
 RUN apt-get update && apt-get install --no-install-recommends -y locales
-RUN locale-gen en_US.UTF-89
+RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # net-tools is for ifconfig
