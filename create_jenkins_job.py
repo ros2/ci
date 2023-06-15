@@ -299,8 +299,11 @@ def main(argv=None):
 
         # configure jobs for compiling with clang+libcxx on linux
         if os_name == 'linux':
-            # Set the logging implementation to noop because log4cxx will not link properly when using libcxx.
-            clang_libcxx_build_args = data['build_args_default'] + ' --mixin clang-libcxx --packages-skip intra_process_demo'
+            # Make sure to force building vendor packages, since we need these to have been built by
+            # clang as well to link successfully.
+            clang_libcxx_build_args = data['build_args_default'].replace('--cmake-args',
+                '--cmake-args -DFORCE_BUILD_VENDOR_PKG=ON') + \
+                ' --mixin clang-libcxx --packages-skip intra_process_demo qt_gui_cpp rqt_gui_cpp qt_gui_core rqt'
             # Only running tests from the lowest-level C package to ensure "working" binaries are generated.
             # We do not want to test more than this as we observe issues with the clang libcxx standard library
             # we don't plan to tackle for now. The important part of the jobs is to make sure the code compiles
