@@ -11,9 +11,14 @@ ARG COMPILE_WITH_CLANG=false
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
 ENV DEBIAN_FRONTEND noninteractive
 
-# Opt-out of phased updates, which can create inconsistencies between installed package versions as different containers end up on different phases.
+# Fresh installation will always pull in contents from updates repositories regardless of the phased update percentage.
+# To maintain working installations, always include updates regardless of rollout phase and set a machine ID so that 
+# changes in rollout behavior will at least be consistent across image buildtime and runtime.
 # https://wiki.ubuntu.com/PhasedUpdates
-RUN echo 'APT::Get::Never-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/90-phased-updates
+# The closest thing to a canonical source I can find for this behavior is:
+# https://discourse.ubuntu.com/t/phased-updates-in-apt-in-21-04/20345
+RUN echo 'ros2-ci-container' > /etc/machine-id
+RUN echo 'APT::Get::Always-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/90-phased-updates
 
 RUN apt-get update && apt-get install --no-install-recommends -y locales
 RUN locale-gen en_US.UTF-8
