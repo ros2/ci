@@ -111,7 +111,7 @@ for (item in predicted_jobs) {
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[  end if]@
-@[  if os_name in ['windows', 'windows-metal']]@
+@[  if os_name in ['windows']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>

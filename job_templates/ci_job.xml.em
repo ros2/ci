@@ -66,7 +66,7 @@
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>@[if os_name in ['windows', 'windows-metal']]true@[else]false@[end if]</parentCredentials>
+        <parentCredentials>@[if os_name in ['windows']]true@[else]false@[end if]</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
@@ -235,79 +235,6 @@ echo "# BEGIN SECTION: Run script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
 @[  end if]@
-@[elif os_name == 'windows-metal']@
-setlocal enableDelayedExpansion
-rmdir /S /Q ws workspace "work space"
-
-echo "# BEGIN SECTION: Determine arguments"
-set "PATH=!PATH:"=!"
-set "CI_ARGS=--force-ansi-color --workspace-path !WORKSPACE!"
-if "!CI_BRANCH_TO_TEST!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --test-branch !CI_BRANCH_TO_TEST!"
-)
-if "!CI_COLCON_BRANCH!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
-)
-if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
-)
-if "!CI_USE_CONNEXTDDS!" == "false" (
-  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
-)
-if "!CI_USE_CYCLONEDDS!" == "false" (
-  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_cyclonedds_cpp"
-)
-if "!CI_USE_FASTRTPS_STATIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_cpp"
-)
-if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_dynamic_cpp"
-)
-if "!CI_USE_CONNEXT_DEBS!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --connext-debs"
-)
-if "!CI_ROS2_REPOS_URL!" EQU "" (
-  set "CI_ROS2_REPOS_URL=@default_repos_url"
-)
-set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
-if "!CI_ROS2_SUPPLEMENTAL_REPOS_URL!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --supplemental-repo-file-url !CI_ROS2_SUPPLEMENTAL_REPOS_URL!"
-)
-if "!CI_ISOLATED!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --isolated"
-)
-if "!CI_COLCON_MIXIN_URL!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --colcon-mixin-url !CI_COLCON_MIXIN_URL!"
-)
-if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
-  set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
-)
-if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
-  where python_d &gt; python_debug_interpreter.txt
-  set /p PYTHON_DEBUG_INTERPRETER=&lt;python_debug_interpreter.txt
-  set "CI_ARGS=!CI_ARGS! --python-interpreter !PYTHON_DEBUG_INTERPRETER!"
-)
-if "!CI_COMPILE_WITH_CLANG!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --compile-with-clang"
-)
-if "!CI_ENABLE_COVERAGE!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --coverage"
-)
-set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
-if "!CI_BUILD_ARGS!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
-)
-if "!CI_TEST_ARGS!" NEQ "" (
-  set "CI_TEST_ARGS=!CI_TEST_ARGS:"=\"!"
-  set "CI_TEST_ARGS=!CI_TEST_ARGS:|=^|!"
-  set "CI_ARGS=!CI_ARGS! --test-args !CI_TEST_ARGS!"
-)
-echo Using args: !CI_ARGS!
-echo "# END SECTION"
-
-echo "# BEGIN SECTION: Run script"
-python -u run_ros2_batch.py !CI_ARGS!
-echo "# END SECTION"
 @[elif os_name == 'windows']@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
@@ -441,7 +368,7 @@ echo "# END SECTION"
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name not in ['windows', 'windows-metal']]@
+@[if os_name not in ['windows']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
         <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>

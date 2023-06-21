@@ -140,11 +140,6 @@ def main(argv=None):
             'ci_scripts_repository': args.ci_scripts_repository.replace(
                 'git@github.com:', 'https://github.com/'),
         },
-        'windows-metal': {
-            'label_expression': 'windows',
-            'shell_type': 'BatchFile',
-            'use_isolated_default': 'false',
-        },
         'windows': {
             'label_expression': 'windows-container',
             'shell_type': 'BatchFile',
@@ -172,7 +167,6 @@ def main(argv=None):
     launcher_exclude = {
         'linux-rhel',
         'osx',
-        'windows-metal',
     }
 
     jenkins_kwargs = {}
@@ -212,10 +206,6 @@ def main(argv=None):
         create_job(os_name, 'test_ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
         })
-
-        if os_name == 'windows-metal':
-            # Don't create nightlies or packaging jobs for bare-metal Windows
-            continue
 
         packaging_label_expression = os_configs[os_name]['label_expression']
         if os_name == 'osx':
