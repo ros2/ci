@@ -168,11 +168,6 @@ fi
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
 fi
-if [ "${CI_UBUNTU_DISTRO}" = "jammy" ]; then
-  export CI_ROS1_DISTRO=''
-elif [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
-  export CI_ROS1_DISTRO=noetic
-fi
 if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
 fi
@@ -202,7 +197,7 @@ echo "# END SECTION"
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-rhel']]@
 @[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO"
 @[    elif os_name == 'linux-rhel']@
 sed -i "s+^FROM.*$+FROM almalinux:$CI_EL_RELEASE+" linux_docker_resources/Dockerfile-RHEL
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg EL_RELEASE=$CI_EL_RELEASE"

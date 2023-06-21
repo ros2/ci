@@ -192,7 +192,7 @@ class PipProtocol(AsyncSubprocessProtocol):
         AsyncSubprocessProtocol.__init__(self, *args, **kwargs)
 
     def on_stdout_received(self, data):
-        # The 'pip install' progress bar output can be pretty noisy in CI output. Print only last line 
+        # The 'pip install' progress bar output can be pretty noisy in CI output. Print only last line
         # every 1000 characters to reduce the noisiness.  We detect the pip progress bar by the beginning sequence of
         # '[?25l' and the end sequence of '[?25h'.
         if b'[?25l' in data:
