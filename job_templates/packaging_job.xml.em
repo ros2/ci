@@ -44,17 +44,8 @@
     use_connext_debs_default=use_connext_debs_default,
 ))@
         <hudson.model.StringParameterDefinition>
-          <name>CI_MIXED_ROS_OVERLAY_PKGS</name>
-          <description>
-A list of packages - separated by spaces - which explicitly have to be built after sourcing the ROS 1 environment.
-All packages listed here have to be available from either the primary or supplemental repos file.
-          </description>
-          <defaultValue>@(mixed_overlay_pkgs)</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
           <name>CI_TEST_ARGS</name>
-          <description>Additional arguments passed to the 'test' verb if testing the bridge.</description>
+          <description>Additional arguments passed to the 'test' verb.</description>
           <defaultValue>@(test_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
@@ -125,7 +116,6 @@ isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
 colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')}, <br/>
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
-mixed ros overlay packages: ${build.buildVariableResolver.resolve('CI_MIXED_ROS_OVERLAY_PKGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
 """);]]>
         </script>
@@ -179,23 +169,9 @@ export CI_ARGS="$CI_ARGS --repo-file-url $CI_ROS2_REPOS_URL"
 if [ -n "${CI_ROS2_SUPPLEMENTAL_REPOS_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --supplemental-repo-file-url $CI_ROS2_SUPPLEMENTAL_REPOS_URL"
 fi
-if [ -n "${CI_MIXED_ROS_OVERLAY_PKGS+x}" ]; then
-  export CI_ARGS="$CI_ARGS --mixed-ros-overlay-pkgs $CI_MIXED_ROS_OVERLAY_PKGS"
-fi
 if [ "$CI_ISOLATED" = "true" ]; then
   export CI_ARGS="$CI_ARGS --isolated"
 fi
-if [ "${CI_UBUNTU_DISTRO}" = "jammy" ]; then
-  export CI_ROS1_DISTRO=''
-elif [ "${CI_UBUNTU_DISTRO}" = "focal" ]; then
-  export CI_ROS1_DISTRO=noetic
-fi
-@[  if os_name in ['linux', 'linux-aarch64']]@
-export CI_ARGS="$CI_ARGS --ros1-path /opt/ros/$CI_ROS1_DISTRO"
-@[  else]@
-echo "not building/testing the ros1_bridge on MacOS"
-# export CI_ARGS="$CI_ARGS --ros1-path /Users/osrf/melodic/install_isolated"
-@[  end if]@
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg ROS_DISTRO=${CI_ROS_DISTRO}"
   export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
@@ -218,7 +194,7 @@ echo "# END SECTION"
 @[  if os_name in ['linux', 'linux-aarch64', 'linux-rhel']]@
 @[    if os_name in ['linux', 'linux-aarch64']]@
 sed -i "s+^FROM.*$+FROM ubuntu:$CI_UBUNTU_DISTRO+" linux_docker_resources/Dockerfile
-export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO --build-arg ROS1_DISTRO=$CI_ROS1_DISTRO"
+export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg UBUNTU_DISTRO=$CI_UBUNTU_DISTRO"
 @[    elif os_name == 'linux-rhel']@
 sed -i "s+^FROM.*$+FROM almalinux:$CI_EL_RELEASE+" linux_docker_resources/Dockerfile-RHEL
 export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg EL_RELEASE=$CI_EL_RELEASE"
@@ -236,11 +212,11 @@ sed -i "s/@@today_str/`date +%Y-%m-%d`/" linux_docker_resources/Dockerfile*
 echo "# END SECTION"
 echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
-docker build --pull ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 --build-arg BRIDGE=true -t ros2_packaging_aarch64 linux_docker_resources
+docker build --pull ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-rhel']@
-docker build --pull ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=false -t ros2_packaging_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
+docker build --pull ${DOCKER_BUILD_ARGS} -t ros2_packaging_rhel linux_docker_resources -f linux_docker_resources/Dockerfile-RHEL
 @[    elif os_name == 'linux']@
-docker build --pull ${DOCKER_BUILD_ARGS} --build-arg BRIDGE=true -t ros2_packaging linux_docker_resources
+docker build --pull ${DOCKER_BUILD_ARGS} -t ros2_packaging linux_docker_resources
 @[    else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[    end if]@
@@ -314,9 +290,6 @@ if "!CI_ROS2_REPOS_URL!" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
 set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
-if "!CI_TEST_BRIDGE!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --test-bridge"
-)
 if "!CI_ISOLATED!" == "true" (
   set "CI_ARGS=!CI_ARGS! --isolated"
 )
@@ -410,9 +383,6 @@ if "!CI_ROS2_REPOS_URL!" EQU "" (
   set "CI_ROS2_REPOS_URL=@default_repos_url"
 )
 set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
-if "!CI_TEST_BRIDGE!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --test-bridge"
-)
 if "!CI_ISOLATED!" == "true" (
   set "CI_ARGS=!CI_ARGS! --isolated"
 )

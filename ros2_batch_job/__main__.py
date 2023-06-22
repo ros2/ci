@@ -131,7 +131,6 @@ def main(sysargv=None):
             'common_interfaces',
             'cv_bridge',
             'opencv_tests',
-            'ros1_bridge',
             'shape_msgs',
             'stereo_msgs',
             'vision_opencv',
@@ -141,7 +140,6 @@ def main(sysargv=None):
         if sys.platform in ('darwin', 'win32'):
             blacklisted_package_names += [
                 'pendulum_control',
-                'ros1_bridge',
                 'rttest',
                 'tlsf',
                 'tlsf_cpp',
@@ -169,7 +167,7 @@ def main(sysargv=None):
 
 def get_args(sysargv=None):
     parser = argparse.ArgumentParser(
-        description="Builds the ROS2 repositories as a single batch job")
+        description="Builds the ROS 2 repositories as a single batch job")
     parser.add_argument(
         '--packaging', default=False, action='store_true',
         help='create an archive of the install space')
@@ -211,12 +209,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--ros-distro', required=True,
         help="The ROS distribution being built")
-    parser.add_argument(
-        '--ros1-path', default=None,
-        help="path of ROS 1 workspace to be sourced")
-    parser.add_argument(
-        '--mixed-ros-overlay-pkgs', nargs='*', default=[],
-        help='space separated list of packages to be built in an overlay workspace with ROS 1')
     parser.add_argument(
         '--colcon-mixin-url', default=None,
         help='A mixin index url to be included by colcon')

@@ -1,8 +1,6 @@
 FROM ubuntu:focal
-ARG BRIDGE=false
 ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
-ARG ROS1_DISTRO=noetic
 ARG ROS_DISTRO=rolling
 ARG UBUNTU_DISTRO=focal
 ARG COMPILE_WITH_CLANG=false
@@ -12,7 +10,7 @@ ARG COMPILE_WITH_CLANG=false
 ENV DEBIAN_FRONTEND noninteractive
 
 # Fresh installation will always pull in contents from updates repositories regardless of the phased update percentage.
-# To maintain working installations, always include updates regardless of rollout phase and set a machine ID so that 
+# To maintain working installations, always include updates regardless of rollout phase and set a machine ID so that
 # changes in rollout behavior will at least be consistent across image buildtime and runtime.
 # https://wiki.ubuntu.com/PhasedUpdates
 # The closest thing to a canonical source I can find for this behavior is:
@@ -161,19 +159,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 
 # automatic invalidation once every day.
 RUN echo "@today_str"
-
-# Install build and test dependencies of ros1_bridge if there is a valid ROS 1 distro.
-RUN if test ${BRIDGE} = true -a -n "${ROS1_DISTRO}"; then apt-get update && apt-get install --no-install-recommends -y \
-    ros-${ROS1_DISTRO}-actionlib \
-    ros-${ROS1_DISTRO}-catkin \
-    ros-${ROS1_DISTRO}-common-msgs \
-    ros-${ROS1_DISTRO}-rosbash \
-    ros-${ROS1_DISTRO}-roscpp \
-    ros-${ROS1_DISTRO}-roslaunch \
-    ros-${ROS1_DISTRO}-rosmsg \
-    ros-${ROS1_DISTRO}-roscpp-tutorials \
-    ros-${ROS1_DISTRO}-rospy-tutorials \
-    ros-${ROS1_DISTRO}-tf2-msgs; fi
 
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \

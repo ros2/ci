@@ -160,15 +160,13 @@ def main(argv=None):
         'linux-rhel': {
             'label_expression': 'linux',
             'shell_type': 'Shell',
-            'build_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + data['build_args_default'],
-            'test_args_default': '--packages-skip-by-dep ros1_bridge --packages-skip ros1_bridge ' + re.sub(
-                r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(cppcheck|\2)"', data['test_args_default']),
+            'build_args_default': data['build_args_default'],
+            'test_args_default': re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(cppcheck|\2)"', data['test_args_default']),
         },
     }
 
     os_config_overrides = {
         'linux-rhel': {
-            'mixed_overlay_pkgs': '',
             'use_connext_debs_default': 'false',
         },
     }
@@ -232,15 +230,13 @@ def main(argv=None):
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
-            'mixed_overlay_pkgs': 'ros1_bridge',
             'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
-        # configure manual test packaging job 
+        # configure manual test packaging job
         create_job(os_name, 'test_packaging_' + os_name, 'packaging_job.xml.em', {
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
-            'mixed_overlay_pkgs': 'ros1_bridge',
             'ignore_rmw_default': ignore_rmw_default_packaging,
             'use_connext_debs_default': 'true',
         })
@@ -250,7 +246,6 @@ def main(argv=None):
             'cmake_build_type': 'RelWithDebInfo',
             'disabled': False,
             'label_expression': packaging_label_expression,
-            'mixed_overlay_pkgs': 'ros1_bridge',
             'time_trigger_spec': PERIODIC_JOB_SPEC,
             'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
             'ignore_rmw_default': ignore_rmw_default_packaging,
@@ -261,7 +256,6 @@ def main(argv=None):
         if os_name == 'windows':
             create_job(os_name, 'packaging_' + os_name + '_debug', 'packaging_job.xml.em', {
                 'cmake_build_type': 'Debug',
-                'mixed_overlay_pkgs': 'ros1_bridge',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
                 'ignore_rmw_default': ignore_rmw_default_packaging,
@@ -403,7 +397,6 @@ def main(argv=None):
             'visualization_msgs',
         ]
 
-        # out of the list since ignored by colcon: ros1_bridge
         testing_pkgs_for_quality_level = [
             'interactive_markers',
             'launch_testing_ros',
