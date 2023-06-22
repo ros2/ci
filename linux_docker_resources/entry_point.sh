@@ -23,17 +23,18 @@ echo "done."
 # We only attempt to install Connext on amd64
 if [ "${ARCH}" != "aarch64" ]; then
     IGNORE_CONNEXTDDS=""
+    IGNORE_CONNEXTCPP=""
     ignore_rwm_seen="false"
     for arg in ${CI_ARGS} ; do
         case $arg in
             ("--ignore-rmw") ignore_rmw_seen="true" ;;
             ("-"*) ignore_rmw_seen="false" ;;
-            (*) if [ $ignore_rmw_seen = "true" -a $arg = "rmw_connextdds" ] ; then IGNORE_CONNEXTDDS="true" ; break ; fi
+            (*) if [ $ignore_rmw_seen = "true" ] ; then [ $arg = "rmw_connextdds" ] && IGNORE_CONNEXTDDS="true" ; [ $arg = "rmw_connext_cpp" ] && IGNORE_CONNEXTCPP="true" ; fi
         esac
     done
 
-    # Install RTI Connext DDS if we didn't find `rmw_connextdds` within the "ignored RMWs" option string.
-    if [ -z "${IGNORE_CONNEXTDDS}" ]; then
+    # Install RTI Connext DDS if we didn't find 'rmw_connextdds' and 'rmw_connext_cpp' within the "ignore-rmw" option strings.
+    if [ -z "${IGNORE_CONNEXTDDS}" -o -z "${IGNORE_CONNEXTCPP}" ]; then
         echo "Installing Connext..."
         case "${CI_ARGS}" in
           *--connext-debs*)
