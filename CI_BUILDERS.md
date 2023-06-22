@@ -16,7 +16,7 @@ Many of the other arguments should be reasonably self-explanatory and its likely
 `CI_BUILD_ARGS` and `CI_TEST_ARGS` are basically passed directly to colcon build and test respectively so you should be familiar with those.
 
 Our CI has limited capacity, and the default `ros2.repos` file is constantly growing.
-To save build time limit the scope CI builds to only packages that are changed by the pull request being tested or are likely to be affected by the changes.
+To save build time limit the scope CI builds to only packages that are changed by the pull request being tested or are likely to be affected by the changes. 
 
 ## Nightly and packaging jobs
 
