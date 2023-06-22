@@ -82,8 +82,7 @@ class OSXBatchJob(BatchJob):
 
     def setup_env(self):
         connext_env_file = None
-        if ('rmw_connext_cpp' not in self.args.ignore_rmw or
-            'rmw_connextdds' not in self.args.ignore_rmw):
+        if 'rmw_connextdds' not in self.args.ignore_rmw:
             # Try to find the connext env file and source it
             connext_env_file_sierra = os.path.join(
                 '/Applications', 'rti_connext_dds-5.3.1', 'resource', 'scripts',
