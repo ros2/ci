@@ -140,23 +140,23 @@ export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connext_dynamic_cpp"
 # TODO(asorbini) `rmw_connext_cpp` is still the default for foxy.
 if [ -n "$CI_ROS_DISTRO" -a \( "$CI_ROS_DISTRO" = foxy \) ]; then
   if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
-    export CI_ARGS="$CI_ARGS rmw_connext_cpp"
+    export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connext_cpp"
   fi
 else
   # Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   export CI_ARGS="$CI_ARGS rmw_connext_cpp"
   if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
-    export CI_ARGS="$CI_ARGS rmw_connextdds"
+    export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connextdds"
   fi
 fi
 if [ "$CI_USE_CYCLONEDDS" = "false" ]; then
-  export CI_ARGS="$CI_ARGS rmw_cyclonedds_cpp"
+  export CI_ARGS="$CI_ARGS --ignore-rmw rmw_cyclonedds_cpp"
 fi
 if [ "$CI_USE_FASTRTPS_STATIC" = "false" ]; then
-  export CI_ARGS="$CI_ARGS rmw_fastrtps_cpp"
+  export CI_ARGS="$CI_ARGS --ignore-rmw rmw_fastrtps_cpp"
 fi
 if [ "$CI_USE_FASTRTPS_DYNAMIC" = "false" ]; then
-  export CI_ARGS="$CI_ARGS rmw_fastrtps_dynamic_cpp"
+  export CI_ARGS="$CI_ARGS --ignore-rmw rmw_fastrtps_dynamic_cpp"
 fi
 if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg INSTALL_CONNEXT_DEBS=$CI_USE_CONNEXT_DEBS"
@@ -265,23 +265,23 @@ if "!CI_ROS_DISTRO!" NEQ "" (
 )
 if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
   if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_cpp"
   )
 ) else (
   :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
   if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! rmw_connextdds"
+    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
   )
 )
 if "!CI_USE_CYCLONEDDS!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_cyclonedds_cpp"
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_cyclonedds_cpp"
 )
 if "!CI_USE_FASTRTPS_STATIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_cpp"
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_cpp"
 )
 if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_dynamic_cpp"
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_dynamic_cpp"
 )
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"
@@ -358,23 +358,23 @@ if "!CI_ROS_DISTRO!" NEQ "" (
 )
 if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
   if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
+    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_cpp"
   )
 ) else (
   :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
   set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
   if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! rmw_connextdds"
+    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
   )
 )
 if "!CI_USE_CYCLONEDDS!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_cyclonedds_cpp"
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_cyclonedds_cpp"
 )
 if "!CI_USE_FASTRTPS_STATIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_cpp"
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_cpp"
 )
 if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! rmw_fastrtps_dynamic_cpp"
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_dynamic_cpp"
 )
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"
