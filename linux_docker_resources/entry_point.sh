@@ -22,12 +22,18 @@ echo "done."
 
 # We only attempt to install Connext on amd64
 if [ "${ARCH}" != "aarch64" ]; then
-    # extract all ignored rmws
-    # extract args between --ignore-rmw until the first appearance of '-'
-    IGNORE_CONNEXTDDS=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connextdds`
-    IGNORE_CONNEXTCPP=`echo ${CI_ARGS} | sed -e 's/.*ignore-rmw \([^-]*\).*/\1/' | sed -e 's/-.*//' | grep rmw_connext_cpp`
-    # Install RTI Connext DDS if we didn't find both `rmw_connextdds` and `rmw_connext_cpp`
-    # within the "ignored RMWs" option string.
+    IGNORE_CONNEXTDDS=""
+    IGNORE_CONNEXTCPP=""
+    ignore_rwm_seen="false"
+    for arg in ${CI_ARGS} ; do
+        case $arg in
+            ("--ignore-rmw") ignore_rmw_seen="true" ;;
+            ("-"*) ignore_rmw_seen="false" ;;
+            (*) if [ $ignore_rmw_seen = "true" ] ; then [ $arg = "rmw_connextdds" ] && IGNORE_CONNEXTDDS="true" ; [ $arg = "rmw_connext_cpp" ] && IGNORE_CONNEXTCPP="true" ; fi
+        esac
+    done
+
+    # Install RTI Connext DDS if we didn't find 'rmw_connextdds' and 'rmw_connext_cpp' within the "ignore-rmw" option strings.
     if [ -z "${IGNORE_CONNEXTDDS}" -o -z "${IGNORE_CONNEXTCPP}" ]; then
         echo "Installing Connext..."
         case "${CI_ARGS}" in

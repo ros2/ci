@@ -195,7 +195,7 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--os', default=None, choices=['linux', 'osx', 'windows'])
     parser.add_argument(
-        '--ignore-rmw', nargs='*', default=[],
+        '--ignore-rmw', nargs='*', default=[], action='extend',
         help='ignore the passed RMW implementations as well as supporting packages')
     parser.add_argument(
         '--connext-debs', default=False, action='store_true',
