@@ -132,18 +132,8 @@ fi
 if [ "$CI_USE_WHITESPACE_IN_PATHS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --white-space-in sourcespace buildspace installspace workspace"
 fi
-export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connext_dynamic_cpp"
-# TODO(asorbini) `rmw_connext_cpp` is still the default for foxy.
-if [ -n "$CI_ROS_DISTRO" -a \( "$CI_ROS_DISTRO" = foxy \) ]; then
-  if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
-    export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connext_cpp"
-  fi
-else
-  # Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
-  export CI_ARGS="$CI_ARGS rmw_connext_cpp"
-  if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
-    export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connextdds"
-  fi
+if [ "$CI_USE_CONNEXTDDS" = "false" ]; then
+  export CI_ARGS="$CI_ARGS --ignore-rmw rmw_connextdds"
 fi
 if [ "$CI_USE_CYCLONEDDS" = "false" ]; then
   export CI_ARGS="$CI_ARGS --ignore-rmw rmw_cyclonedds_cpp"
@@ -261,24 +251,8 @@ if "!CI_COLCON_BRANCH!" NEQ "" (
 if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
 )
-set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_dynamic_cpp"
-:: TODO(asorbini) `rmw_connext_cpp` is still the default for foxy.
-set "CI_CONNEXTDDS_RMW="
-if "!CI_ROS_DISTRO!" NEQ "" (
-  if "!CI_ROS_DISTRO!" == "foxy" (
-    set CI_CONNEXTDDS_RMW=rmw_connext_cpp
-  )
-)
-if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
-  if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_cpp"
-  )
-) else (
-  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
-  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
-  if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
-  )
+if "!CI_USE_CONNEXTDDS!" == "false" (
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
 )
 if "!CI_USE_CYCLONEDDS!" == "false" (
   set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_cyclonedds_cpp"
@@ -367,24 +341,8 @@ if "!CI_ROS_DISTRO!" NEQ "" (
 if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
 )
-set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_dynamic_cpp"
-:: TODO(asorbini) `rmw_connext_cpp` is still the default for foxy.
-set "CI_CONNEXTDDS_RMW="
-if "!CI_ROS_DISTRO!" NEQ "" (
-  if "!CI_ROS_DISTRO!" == "foxy" (
-    set CI_CONNEXTDDS_RMW=rmw_connext_cpp
-  )
-)
-if "!CI_CONNEXTDDS_RMW!" == "rmw_connext_cpp" (
-  if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connext_cpp"
-  )
-) else (
-  :: Always ignore `rmw_connext_cpp` in favor of `rmw_connextdds` for newer releases.
-  set "CI_ARGS=!CI_ARGS! rmw_connext_cpp"
-  if "!CI_USE_CONNEXTDDS!" == "false" (
-    set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
-  )
+if "!CI_USE_CONNEXTDDS!" == "false" (
+  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
 )
 if "!CI_USE_CYCLONEDDS!" == "false" (
   set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_cyclonedds_cpp"

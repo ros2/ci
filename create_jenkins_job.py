@@ -110,9 +110,7 @@ def main(argv=None):
         'supplemental_repos_url': '',
         'time_trigger_spec': '',
         'mailer_recipients': '',
-        'ignore_rmw_default': {
-            'rmw_connext_dynamic_cpp',
-            'rmw_fastrtps_dynamic_cpp'},
+        'ignore_rmw_default': {'rmw_fastrtps_dynamic_cpp'},
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
@@ -155,7 +153,7 @@ def main(argv=None):
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
-            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'},
+            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connextdds'},
         },
         'linux-rhel': {
             'label_expression': 'linux',
@@ -226,7 +224,7 @@ def main(argv=None):
         # configure a manual version of the packaging job
         ignore_rmw_default_packaging = set()
         if os_name in ['linux-aarch64']:
-            ignore_rmw_default_packaging |= {'rmw_connext_cpp', 'rmw_connext_dynamic_cpp', 'rmw_connextdds'}
+            ignore_rmw_default_packaging |= {'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
@@ -342,7 +340,7 @@ def main(argv=None):
         # tests.
 
         # out of the list since ignored by colcon: shape_msgs, stereo_msgs,
-        # rmw_connext, rmw_connextdds, rmw_cyclonedds.
+        # rmw_connextdds, rmw_cyclonedds.
         quality_level_pkgs = [
             'action_msgs',
             'ament_index_cpp',

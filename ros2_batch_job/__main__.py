@@ -706,21 +706,6 @@ def run(args, build_function, blacklisted_package_names=None):
             print('# END SUBSECTION')
 
         # blacklist rmw packages as well as their dependencies where possible
-        if 'rmw_connext_cpp' in args.ignore_rmw:
-            blacklisted_package_names += [
-                'rmw_connext_cpp',
-                'rosidl_typesupport_connext_c',
-                'rosidl_typesupport_connext_cpp',
-            ]
-        if 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
-            blacklisted_package_names += [
-                'rmw_connext_dynamic_cpp',
-            ]
-        if 'rmw_connext_cpp' in args.ignore_rmw and 'rmw_connext_dynamic_cpp' in args.ignore_rmw:
-            blacklisted_package_names += [
-                'connext_cmake_module',
-                'rmw_connext_shared_cpp',
-            ]
         if 'rmw_connextdds' in args.ignore_rmw:
             blacklisted_package_names += [
                 'rti_connext_dds_cmake_module',
