@@ -39,17 +39,6 @@ class WindowsBatchJob(BatchJob):
         self.run([self.python, '-m', 'pip', 'freeze', '--all'])
 
     def setup_env(self):
-        # Try to find the connext env file and source it
-        connext_env_file = None
-        if 'rmw_connextdds' not in self.args.ignore_rmw:
-            pf = os.environ.get('ProgramFiles', "C:\\Program Files\\")
-            connext_env_file = os.path.join(
-                pf, 'rti_connext_dds-5.3.1', 'resource', 'scripts', 'rtisetenv_x64Win64VS2017.bat')
-            if not os.path.exists(connext_env_file):
-                warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
-                    connext_env_file))
-                connext_env_file = None
-
         # Generate the env file
         if os.path.exists('env.bat'):
             os.remove('env.bat')
@@ -60,8 +49,6 @@ class WindowsBatchJob(BatchJob):
                 'call '
                 '"C:\\Program Files (x86)\\Microsoft Visual Studio\\%s\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" ' %
                 self.args.visual_studio_version + 'x86_amd64' + os.linesep)
-            if connext_env_file is not None:
-                f.write('call "%s"%s' % (connext_env_file, os.linesep))
             f.write("%*" + os.linesep)
             f.write("if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%" + os.linesep)
 

@@ -184,11 +184,6 @@ RUN dnf install \
     --refresh -y
 
 # Get and install the RTI web binaries.
-# Connext 5.3.1 for Foxy.
-RUN if [ "$ROS_DISTRO" = "foxy" ]; then \
-       cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz \
-       && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; \
-    fi
 # Connext 6.0.1 for humble and beyond, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 RUN if [ "$ROS_DISTRO" != "foxy" ]; then \
