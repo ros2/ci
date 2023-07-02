@@ -104,7 +104,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 RUN pip3 install -U lcov_cobertura_fix
 
 # Install the Connext binary from the OSRF repositories.
-RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true -a ${UBUNTU_DISTRO} != jammy \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-5.3.1; fi
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true -a ${UBUNTU_DISTRO} = jammy \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; fi
 
 # Install the RTI dependencies.
@@ -114,9 +113,6 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
 # Get and install the RTI web binaries.
-# Connext 5.3.1 for focal and earlier.
-RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && curl --silent https://s3.amazonaws.com/RTI/Bundles/5.3.1/Evaluation/rti_connext_dds_secure-5.3.1-eval-x64Linux3gcc5.4.0.tar.gz | tar -xz; fi
-RUN if test ${UBUNTU_DISTRO} != jammy; then cd /tmp && tar -xvf /tmp/openssl-1.0.2n-target-x64Linux3gcc5.4.0.tar.gz; fi
 # Connext 6.0.1 for jammy, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 RUN for splitpkg in \

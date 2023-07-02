@@ -53,14 +53,6 @@ class OSXBatchJob(BatchJob):
                     brew_openssl_prefix_result.stdout.decode().strip('\n')
             else:
                 raise KeyError('Failed to find openssl')
-        # TODO(nuclearsandwich) Connext 5.3.1 supports only OpenSSL 1.0.2
-        # remove this when upgrading to Connext 6 that supports OpenSSL 1.1.1
-        if 'RTI_OPENSSL_BIN' not in os.environ:
-            warn('RTI_OPENSSL_BIN unset; using default value')
-            os.environ['RTI_OPENSSL_BIN'] = '/Users/osrf/openssl-1.0.2n/x64Darwin17clang9.0/release/bin'
-        if 'RTI_OPENSSL_LIBS' not in os.environ:
-            warn('RTI_OPENSSL_LIBS unset; using default value')
-            os.environ['RTI_OPENSSL_LIBS'] = '/Users/osrf/openssl-1.0.2n/x64Darwin17clang9.0/release/lib'
         # TODO(wjwwood): remove this when qt5 is linked on macOS by default
         # See: https://github.com/Homebrew/homebrew-core/issues/8392#issuecomment-334328367
         os.environ['CMAKE_PREFIX_PATH'] = os.environ.get('CMAKE_PREFIX_PATH', '') + os.pathsep + \
@@ -81,33 +73,11 @@ class OSXBatchJob(BatchJob):
         self.run(['"%s"' % self.python, '-m', 'pip', 'freeze', '--all'], shell=True)
 
     def setup_env(self):
-        connext_env_file = None
-        if 'rmw_connextdds' not in self.args.ignore_rmw:
-            # Try to find the connext env file and source it
-            connext_env_file_sierra = os.path.join(
-                '/Applications', 'rti_connext_dds-5.3.1', 'resource', 'scripts',
-                'rtisetenv_x64Darwin16clang8.0.bash')
-            connext_env_file_mojave = os.path.join(
-                '/Applications', 'rti_connext_dds-5.3.1', 'resource', 'scripts',
-                'rtisetenv_x64Darwin17clang9.0.bash')
-            if os.path.exists(connext_env_file_sierra):
-                connext_env_file = connext_env_file_sierra
-            elif os.path.exists(connext_env_file_mojave):
-                connext_env_file = connext_env_file_mojave
-            else:
-                warn("Asked to use Connext but the RTI env was not found at either '{0}' or '{1}'".format(
-                    connext_env_file_sierra, connext_env_file_mojave))
-                connext_env_file = None
-
         current_run = self.run
 
         def with_vendors(cmd, **kwargs):
             # Ensure shell is on since we're using &&
             kwargs['shell'] = True
-            # If the connext file is there, source it.
-            if connext_env_file is not None:
-                cmd = ['.', '"%s"' % connext_env_file, '&&'] + cmd
-                log('(RTI)')
             # Pass along to the original runner
             return current_run(cmd, **kwargs)
 

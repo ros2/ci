@@ -56,41 +56,11 @@ class LinuxBatchJob(BatchJob):
         self.run(['"%s"' % self.python, '-m', 'pip', 'freeze', '--all'], shell=True)
 
     def setup_env(self):
-        connext_env_file = None
-        # Update the script provided by Connext to work in dash
-        if 'rmw_connextdds' not in self.args.ignore_rmw:
-            # Location of the original Connext script
-            if self.args.connext_debs:
-                connext_env_file = '/opt/rti.com'
-            else:
-                connext_env_file = os.path.expanduser('~')
-            connext_env_file = os.path.join(
-                connext_env_file, 'rti_connext_dds-5.3.1',
-                'resource', 'scripts', 'rtisetenv_x64Linux3gcc5.4.0.bash')
-
-            if os.path.exists(connext_env_file):
-                # Make script compatible with dash
-                with open(connext_env_file, 'r') as env_file:
-                    env_file_data = env_file.read()
-                env_file_data = env_file_data.replace('${BASH_SOURCE[0]}', connext_env_file)
-                # Create the new script to a writable location
-                connext_env_file = os.path.join(os.getcwd(), 'rti.sh')
-                with open(connext_env_file, 'w') as env_file:
-                    env_file.write(env_file_data)
-            else:
-                warn("Asked to use Connext but the RTI env was not found at '{0}'".format(
-                    connext_env_file))
-                connext_env_file = None
-
         current_run = self.run
 
         def with_vendors(cmd, **kwargs):
             # Ensure shell is on since we're using &&
             kwargs['shell'] = True
-            # If the connext file is there, source it.
-            if connext_env_file is not None:
-                cmd = ['.', '"%s"' % connext_env_file, '&&'] + cmd
-                log('(RTI)')
             # Pass along to the original runner
             return current_run(cmd, **kwargs)
 
