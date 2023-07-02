@@ -132,14 +132,6 @@ def main(argv=None):
             'label_expression': 'linux',
             'shell_type': 'Shell',
         },
-        'osx': {
-            'disabled': True,
-            'label_expression': 'macos',
-            'shell_type': 'Shell',
-            # the current OS X agent can't handle  git@github urls
-            'ci_scripts_repository': args.ci_scripts_repository.replace(
-                'git@github.com:', 'https://github.com/'),
-        },
         'windows': {
             'label_expression': 'windows-container',
             'shell_type': 'BatchFile',
@@ -166,7 +158,6 @@ def main(argv=None):
 
     launcher_exclude = {
         'linux-rhel',
-        'osx',
     }
 
     jenkins_kwargs = {}
@@ -208,8 +199,6 @@ def main(argv=None):
         })
 
         packaging_label_expression = os_configs[os_name]['label_expression']
-        if os_name == 'osx':
-            packaging_label_expression = 'macos &amp;&amp; mojave'
 
         # configure a manual version of the packaging job
         ignore_rmw_default_packaging = set()
