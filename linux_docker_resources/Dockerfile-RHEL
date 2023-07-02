@@ -115,7 +115,6 @@ RUN dnf install \
     libxml2 \
     libyaml-devel \
     libzstd-devel \
-    $(if [ "$ROS_DISTRO" = "foxy" ]; then echo log4cxx-devel; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-tools; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-ust-devel; fi) \
     mesa-libGL-devel \
@@ -186,16 +185,14 @@ RUN dnf install \
 # Get and install the RTI web binaries.
 # Connext 6.0.1 for humble and beyond, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
-RUN if [ "$ROS_DISTRO" != "foxy" ]; then \
-      for splitpkg in \
-        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
-        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
-        /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; \
-      do \
-        cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
-      done; \
-      chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run; \
-    fi
+RUN for splitpkg in \
+      /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+      /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+      /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; \
+    do \
+      cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+    done; \
+    chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run;
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.

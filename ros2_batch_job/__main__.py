@@ -363,19 +363,6 @@ def build_and_test(args, job):
         test_cmd.append('--pytest-with-coverage')
     test_cmd.extend(args.test_args)
 
-    # In Foxy and prior, xunit2 format is needed to make Jenkins xunit plugin 2.x happy
-    # After Foxy, we introduced per-package changes to make local builds and CI
-    # builds act the same.
-    if args.ros_distro == 'foxy':
-        pytest_args = ['-o', 'junit_family=xunit2']
-        # We should only have one --pytest-args option, or some options might get ignored
-        if '--pytest-args' in test_cmd:
-            pytest_opts_index = test_cmd.index('--pytest-args') + 1
-            test_cmd = test_cmd[:pytest_opts_index] + pytest_args + test_cmd[pytest_opts_index:]
-        else:
-            test_cmd.append('--pytest-args')
-            test_cmd.extend(pytest_args)
-
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
@@ -486,15 +473,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         venv_subfolder = 'venv'
         remove_folder(venv_subfolder)
-        venv_cmd = [sys.executable, '-m']
-        # There is an issue with the interplay between virtualenv, setuptools,
-        # and ROS 2 Foxy which requires the continued use of virtualenv.
-        # https://github.com/ros2/ci/issues/400
-        if args.ros_distro == 'foxy':
-            venv_cmd += ['virtualenv', '-p', sys.executable]
-        else:
-            venv_cmd += ['venv']
-        venv_cmd += ['--system-site-packages', venv_subfolder]
+        venv_cmd = [sys.executable, '-m', 'venv', '--system-site-packages', venv_subfolder]
 
         job.run(venv_cmd)
         venv_path = os.path.abspath(os.path.join(os.getcwd(), venv_subfolder))
@@ -525,10 +504,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("mypy"):
-            if args.ros_distro in ["foxy"]:
-                pip_packages += ["mypy==0.761"]
-            else:
-                pip_packages += ["mypy==0.931"]
+            pip_packages += ["mypy==0.931"]
 
         # We prefer to get pytest-timeout from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("pytest_timeout"):
@@ -536,10 +512,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
         if need_package_from_pipy("lark"):
-            if args.ros_distro in ["foxy"]:
-                pip_packages += ["lark-parser==0.8.1"]
-            else:
-                pip_packages += ["lark==1.1.1"]
+            pip_packages += ["lark==1.1.1"]
 
         if sys.platform == 'win32':
             # Install fork of pyreadline containing fix for deprecation warnings
