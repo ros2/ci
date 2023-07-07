@@ -1,8 +1,8 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
 ARG ROS_DISTRO=rolling
-ARG UBUNTU_DISTRO=focal
+ARG UBUNTU_DISTRO=jammy
 ARG COMPILE_WITH_CLANG=false
 
 # Prevent errors from apt-get.
@@ -33,8 +33,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   apt-transport-https
 
 # Add the ROS repositories to the apt sources list.
-RUN if test ${UBUNTU_DISTRO} != jammy; then echo "deb http://repositories.ros.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list; fi
-RUN if test ${UBUNTU_DISTRO} = jammy; then echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list; fi
+RUN echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list
 RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
@@ -44,8 +43,6 @@ RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool python3-venv
 RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
-# Install virtualenv 16.7.9 needed for Foxy builds on Focal. https://github.com/ros2/ci/issues/400
-RUN if test ${UBUNTU_DISTRO} = focal; then python3 -m pip install virtualenv==16.7.9; fi
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
