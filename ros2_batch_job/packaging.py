@@ -49,7 +49,7 @@ def build_and_test_and_package(args, job):
     print('# END SUBSECTION')
 
     # Only on Linux Python scripts have a shebang line
-    if args.os in ['linux']:
+    if args.os == 'linux':
         print('# BEGIN SUBSECTION: rewrite shebang lines')
 
         def _get_files_from_install(install_prefix):
