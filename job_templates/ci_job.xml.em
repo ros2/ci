@@ -118,7 +118,7 @@ coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
     </hudson.plugins.groovy.SystemGroovy>
     <hudson.tasks.@(shell_type)>
       <command>@
-@[if os_name in ['linux', 'linux-aarch64', 'linux-rhel', 'osx']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-rhel']]@
 rm -rf ws workspace "work space"
 
 echo "# BEGIN SECTION: Determine arguments"

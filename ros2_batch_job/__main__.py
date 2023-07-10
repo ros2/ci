@@ -82,12 +82,6 @@ pip_dependencies = [
 ]
 # https://github.com/pyca/cryptography/issues/5433
 pip_cryptography_version = '==3.0'
-if sys.platform in ('darwin'):
-    pip_dependencies += [
-        f'cryptography{pip_cryptography_version}',
-        'lxml',
-        'netifaces'
-    ]
 
 colcon_packages = [
     'colcon-core',
@@ -137,7 +131,7 @@ def main(sysargv=None):
         ]
     else:
         build_function = build_and_test_and_package
-        if sys.platform in ('darwin', 'win32'):
+        if sys.platform == 'win32':
             blacklisted_package_names += [
                 'pendulum_control',
                 'rttest',
@@ -193,7 +187,7 @@ def get_args(sysargv=None):
         '--do-venv', default=False, action='store_true',
         help="create and use a virtual env in the build process")
     parser.add_argument(
-        '--os', default=None, choices=['linux', 'osx', 'windows'])
+        '--os', default=None, choices=['linux', 'windows'])
     parser.add_argument(
         '--ignore-rmw', nargs='*', default=[], action='extend',
         help='ignore the passed RMW implementations as well as supporting packages')
@@ -413,10 +407,6 @@ def run(args, build_function, blacklisted_package_names=None):
         args.os = 'linux'
         from .linux_batch import LinuxBatchJob
         job = LinuxBatchJob(args)
-    elif args.os == 'osx' or platform_name.startswith('darwin') or platform_name.startswith('macos'):
-        args.os = 'osx'
-        from .osx_batch import OSXBatchJob
-        job = OSXBatchJob(args)
     elif args.os == 'windows' or platform_name.startswith('windows'):
         args.os = 'windows'
         from .windows_batch import WindowsBatchJob

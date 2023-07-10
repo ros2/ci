@@ -16,7 +16,7 @@
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.Gcc4>
 @[end if]
-@[if os_name in ['osx', 'linux', 'linux-aarch64', 'linux-rhel']]@
+@[if os_name in ['linux', 'linux-aarch64', 'linux-rhel']]@
     <io.jenkins.plugins.analysis.warnings.Clang>
       <id></id>
       <name></name>

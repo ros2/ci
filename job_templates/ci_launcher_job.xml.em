@@ -81,9 +81,6 @@ predicted_jobs["@(os_name)"] = new Tuple("@(os_data['job_name'])", predict_build
 
 for (item in predicted_jobs) {
   name = item.key[0].toUpperCase() + item.key[1..-1].toLowerCase()
-  if (name == "Osx") {
-    name = "macOS"
-  }
   job_name = item.value[0]
   build_number = item.value[1]
   println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"

@@ -48,8 +48,8 @@ def build_and_test_and_package(args, job):
     job.run(cmd)
     print('# END SUBSECTION')
 
-    # Only on Linux and OSX Python scripts have a shebang line
-    if args.os in ['linux', 'osx']:
+    # Only on Linux Python scripts have a shebang line
+    if args.os == 'linux':
         print('# BEGIN SUBSECTION: rewrite shebang lines')
 
         def _get_files_from_install(install_prefix):
@@ -85,11 +85,8 @@ def build_and_test_and_package(args, job):
             if content[0:len(shebang)] != shebang:
                 continue
             print('- %s' % path)
-            if args.os == 'osx':
-                new_shebang = b'#!/usr/local/bin/python3'
-            else:
-                # in the linux case
-                new_shebang = b'#!/usr/bin/env python3'
+            # in the linux case
+            new_shebang = b'#!/usr/bin/env python3'
             with open(path, 'wb') as h:
                 h.write(new_shebang)
                 h.write(content[len(shebang):])
@@ -105,11 +102,8 @@ def build_and_test_and_package(args, job):
 
     # create an archive
     folder_name = 'ros2-' + args.os
-    if args.os == 'linux' or args.os == 'osx':
-        if args.os == 'osx':
-            machine = platform.machine()
-        else:
-            machine = sys.implementation._multiarch.split('-', 1)[0]
+    if args.os == 'linux':
+        machine = sys.implementation._multiarch.split('-', 1)[0]
         archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, machine)
 
         def exclude_filter(tarinfo):
