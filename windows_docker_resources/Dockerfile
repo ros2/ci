@@ -33,8 +33,7 @@ COPY cacert.pem c:\cinc-project\cinc\embedded\lib\ruby\gems\2.7.0\gems\httpclien
 # Pining chocolatey version to 1.4.0 previous one to major bump to 2.0.0 due to issues with chocolatey_package chef resource 
 # See https://github.com/chef/chef/issues/13751 for more detail of the issue
 # This should be solved for chef version 18; see https://github.com/chef/chef/pull/13833
-RUN powershell -noexit "$Env:chocolateyDownloadUrl = 'https://community.chocolatey.org/api/v2/package/chocolatey/1.4.0'"
-RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+RUN powershell -noexit "$env:chocolateyDownloadUrl = 'https://community.chocolatey.org/api/v2/package/chocolatey/1.4.0'; Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # choco installs. chef-workstation is being installed to get berks and download cookbook dependencies
 RUN choco install -y git chef-workstation
