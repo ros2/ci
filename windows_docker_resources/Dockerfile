@@ -20,7 +20,6 @@ FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
 # Install cinc-solo, a compiled binary of chef-solo
 RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 16.15.22"
-RUN powershell "Test-NetConnection"
 # Update certificate bundle to work Let's Encrypt root certificate expiration
 # https://www.openssl.org/blog/blog/2021/09/13/LetsEncryptRootCertExpire/
 # (in the parlance of the above post we're using workaround 1)
@@ -30,6 +29,11 @@ COPY cacert.pem c:\cinc-project\cinc\embedded\ssl\certs\cacert.pem
 COPY cacert.pem c:\cinc-project\cinc\embedded\lib\ruby\gems\2.7.0\gems\httpclient-2.8.3\lib\httpclient\cacert.pem
 
 # Install Chocolatey by powershell script
+
+# Pining chocolatey version to 1.4.0 previous one to major bump to 2.0.0 due to issues with chocolatey_package chef resource 
+# See https://github.com/chef/chef/issues/13751 for more detail of the issue
+# This should be solved for chef version 18; see https://github.com/chef/chef/pull/13833
+RUN powershell -noexit "$Env:chocolateyDownloadUrl = 'https://community.chocolatey.org/api/v2/package/chocolatey/1.4.0'"
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # choco installs. chef-workstation is being installed to get berks and download cookbook dependencies
