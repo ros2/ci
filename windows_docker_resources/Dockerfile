@@ -20,7 +20,7 @@ FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
 # Install cinc-solo, a compiled binary of chef-solo
 RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 16.15.22"
-
+RUN powershell "Test-NetConnection"
 # Update certificate bundle to work Let's Encrypt root certificate expiration
 # https://www.openssl.org/blog/blog/2021/09/13/LetsEncryptRootCertExpire/
 # (in the parlance of the above post we're using workaround 1)
