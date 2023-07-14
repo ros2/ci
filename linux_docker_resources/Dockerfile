@@ -181,7 +181,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     libosmesa6 \
     mesa-utils \
     xvfb \
-    matchbox-window-manager
+    matchbox-window-manager \
   # Install dependencies for iceoryx \
     acl \
     libacl1-dev \
