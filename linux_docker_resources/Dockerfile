@@ -185,7 +185,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
   # Install dependencies for iceoryx \
     acl \
     libacl1-dev \
-    libncurses5-dev
+    libncurses5-dev \
   # Install build dependencies for rqt et al. \
     pyqt5-dev \ 
     python3-pyqt5 \
