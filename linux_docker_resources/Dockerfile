@@ -20,7 +20,7 @@ RUN echo 'ros2-ci-container' > /etc/machine-id
 RUN echo 'APT::Get::Always-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/90-phased-updates
 
 # Remove configuration file that clean OS cache. 
-RUN RUN rm -f /etc/apt/apt.conf.d/docker-clean
+RUN rm -f /etc/apt/apt.conf.d/docker-clean
 
 
 
