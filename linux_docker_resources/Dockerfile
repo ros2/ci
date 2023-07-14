@@ -44,7 +44,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
   python3-empy \
   python3-pip \
   python3-setuptools \
-  python3-vcstool \
+  python3-vcstools \
   python3-venv \
   python3-lark \
   python3-opencv
