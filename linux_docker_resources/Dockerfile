@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:1.2
 FROM ubuntu:jammy
 ARG INSTALL_CONNEXT_DEBS=false
 ARG PLATFORM=x86
