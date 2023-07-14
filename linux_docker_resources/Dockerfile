@@ -18,19 +18,38 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'ros2-ci-container' > /etc/machine-id
 RUN echo 'APT::Get::Always-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/90-phased-updates
 
-RUN apt-get update && apt-get install --no-install-recommends -y locales
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
+# Remove configuration file that clean OS cache. 
+RUN RUN rm -f /etc/apt/apt.conf.d/docker-clean
+
+
 
 # net-tools is for ifconfig
 # Get curl for fetching the repo keys.
 # Get https transport for APT.
-RUN apt-get update && apt-get install --no-install-recommends -y \
+# Install some development tools.
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+  apt-get update && apt-get install --no-install-recommends -y \
   lsb-release net-tools sudo \
   ca-certificates \
   curl \
   gnupg2 \
-  apt-transport-https
+  apt-transport-https \
+  locales \
+  # Install dev tools \
+  build-essential \
+  ccache cmake \
+  pkg-config \
+  python3-empy \
+  python3-pip \
+  python3-setuptools \
+  python3-vcstool \
+  python3-venv \
+  python3-lark \
+  python3-opencv
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
 
 # Add the ROS repositories to the apt sources list.
 RUN echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list
@@ -40,12 +59,14 @@ RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubu
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
-# Install some development tools.
-RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool python3-venv
-RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
+
+# Install virtualenv 16.7.9 needed for Foxy builds on Focal. https://github.com/ros2/ci/issues/400
+RUN if test ${UBUNTU_DISTRO} = focal; then python3 -m pip install virtualenv==16.7.9; fi
 
 # Install build and test dependencies of ROS 2 packages.
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+  apt-get update && apt-get install --no-install-recommends -y \
   clang-format \
   cppcheck \
   git \
@@ -126,47 +147,61 @@ ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 # Add the RTI license file.
 ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 
-# Install the eProsima dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y libasio-dev libssl-dev libtinyxml2-dev valgrind
-
-# Install the CycloneDDS dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y bison libcunit1-dev
-
-# Install OpenCV.
-RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
-
-# Install console_bridge for class_loader et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
-
-# Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libqt5core5a libqt5gui5 libqt5opengl5 libqt5widgets5 libxaw7-dev libxrandr-dev qtbase5-dev
-
-# Install build dependencies for rqt et al.
-RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev python3-pydot python3-pygraphviz
-
-# Install dependencies for robot_model and robot_state_publisher
-RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
-
-# Install Python3 development files.
-RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
-
-# automatic invalidation once every day.
-RUN echo "@today_str"
-
-# Install dependencies for RViz visual tests
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+     apt-get update && apt-get install --no-install-recommends -y \
+  # Install the eProsima dependencies. \
+    libasio-dev \ 
+    libssl-dev \
+    libtinyxml2-dev \
+    valgrind \
+  # Install the CycloneDDS dependencies. \
+    bison \ 
+    libcunit1-dev \
+  # Install OpenCV. \
+    libopencv-dev \
+  # Install console_bridge for class_loader et al. \
+    libconsole-bridge-dev \
+  # Install build dependencies for rviz et al. \
+    libassimp-dev \
+    libcurl4-openssl-dev \ 
+    libfreetype6-dev \
+    libgles2-mesa-dev \
+    libglu1-mesa-dev \ 
+    libqt5core5a \
+    libqt5gui5 \
+    libqt5opengl5 \
+    libqt5widgets5 \
+    libxaw7-dev \
+    libxrandr-dev \
+    qtbase5-dev \
+  # Install dependencies for RViz visual tests \
     libgl1-mesa-dri \
     libglapi-mesa \
     libosmesa6 \
     mesa-utils \
     xvfb \
     matchbox-window-manager
-
-# Install dependencies for iceoryx
-RUN apt-get update && apt-get install -y \
+  # Install dependencies for iceoryx \
     acl \
     libacl1-dev \
     libncurses5-dev
+  # Install build dependencies for rqt et al. \
+    pyqt5-dev \ 
+    python3-pyqt5 \
+    python3-pyqt5.qtsvg \
+    python3-sip-dev \
+    python3-pydot \
+    python3-pygraphviz \
+  # Install dependencies for robot_model and robot_state_publisher \
+    libtinyxml-dev \
+    libeigen3-dev \
+  # Install Python3 development files.
+    python3-dev
+
+
+# automatic invalidation once every day.
+RUN echo "@today_str"
 
 # After all packages are installed, update ccache symlinks (see ros2/ci#326).
 # This command is supposed to be invoked whenever a new compiler is installed
