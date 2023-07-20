@@ -162,6 +162,19 @@ def main(sysargv=None):
 def get_args(sysargv=None):
     parser = argparse.ArgumentParser(
         description="Builds the ROS 2 repositories as a single batch job")
+
+    # TODO(clalancette): Python 3.6 on RHEL-8 doesn't have the 'extend' action
+    # available in argparse.  If we are on a Python version earlier than 3.8
+    # (where 'extend' was added), register it ourselves.
+    if sys.version_info < (3, 8):
+        class ExtendAction(argparse.Action):
+            def __call__(self, parser, namespace, values, option_string=None):
+                items = getattr(namespace, self.dest) or []
+                items.extend(values)
+                setattr(namespace, self.dest, items)
+
+        parser.register('action', 'extend', ExtendAction)
+
     parser.add_argument(
         '--packaging', default=False, action='store_true',
         help='create an archive of the install space')
