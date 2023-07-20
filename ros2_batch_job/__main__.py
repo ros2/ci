@@ -166,7 +166,7 @@ def get_args(sysargv=None):
     # TODO(clalancette): Python 3.6 on RHEL-8 doesn't have the 'extend' action
     # available in argparse.  If we are on a Python version earlier than 3.8
     # (where 'extend' was added), register it ourselves.
-    if sys.version_info.major == 3 and sys.version_info.minor < 8:
+    if sys.version_info < (3, 8):
         class ExtendAction(argparse.Action):
             def __call__(self, parser, namespace, values, option_string=None):
                 items = getattr(namespace, self.dest) or []
