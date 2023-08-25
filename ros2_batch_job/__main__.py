@@ -100,6 +100,7 @@ colcon_packages = [
     'colcon-test-result',
     'colcon-cmake',
     'colcon-ros',
+    'colcon-ros-domain-id-coordinator',
 ]
 if sys.platform != 'win32':
     colcon_packages += [
