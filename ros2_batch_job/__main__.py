@@ -555,6 +555,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
         with open('constraints.txt', 'w') as outfp:
             outfp.write('flake8 < 5.0.0\n')
+            outfp.write('setuptools==59.6.0\n')
 
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
         if args.do_venv or sys.platform == 'win32':
