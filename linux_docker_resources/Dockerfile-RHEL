@@ -116,6 +116,7 @@ RUN dnf install \
     libyaml-devel \
     libzstd-devel \
     $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-tools; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${ROS_DISTRO} = rolling; then echo lttng-tools-devel; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-ust-devel; fi) \
     mesa-libGL-devel \
     mesa-libGLU-devel \
@@ -137,7 +138,7 @@ RUN dnf install \
     python3-importlib-metadata \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-importlib-resources; fi) \
     python3-lark-parser \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-lttng; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${ROS_DISTRO} != rolling; then echo python3-lttng; fi) \
     python3-lxml \
     $(if test ${EL_RELEASE/.*/} != 9; then echo python3-matplotlib; fi) \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-mock; fi) \
