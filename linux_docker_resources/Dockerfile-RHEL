@@ -159,7 +159,6 @@ RUN dnf install \
     python3-pyflakes \
     $(if test ${EL_RELEASE/.*/} != 9; then echo python3-pygraphviz; fi) \
     python3-pykdl \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-pyside2-devel; fi) \
     python3-pytest \
     python3-pytest-cov \
     python3-pytest-mock \
@@ -181,6 +180,8 @@ RUN dnf install \
     yaml-cpp-devel \
     yamllint \
     --refresh -y
+
+RUN $(if test ${EL_RELEASE/.*/} != 8; then dnf install -y  python3-pyside2-devel; fi) 
 
 # Install dependencies of Connext and its installer
 RUN dnf install \
