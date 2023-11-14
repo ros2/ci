@@ -14,7 +14,7 @@ RUN dnf install epel-release 'dnf-command(config-manager)' --refresh -y && \
 RUN dnf -v repolist --enabled
 
 # Picking qtcharts from EPEL 8 url instead of EPEL 9 due to error https://github.com/ros2/ci/issues/727
-RUN dnf install https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/q/qt5-qtcharts-5.15.3-1.el8.x86_64.rpm
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/q/qt5-qtcharts-5.15.3-1.el8.x86_64.rpm
 
 # Install foundation packages
 RUN dnf install \
