@@ -71,8 +71,6 @@ RUN if test ${EL_RELEASE/.*/} = 9; then \
     dnf install \
       gcc \
       graphviz-devel \
-      # Adds Devel package repository to fulfill missing dependencies for shiboken. See https://github.com/ros2/ci/pull/726 for more info.
-      almalinux-release-devel \ 
       -y && \
     python3 -m pip install \
       matplotlib \
