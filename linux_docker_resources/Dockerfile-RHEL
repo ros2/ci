@@ -10,9 +10,6 @@ RUN dnf install epel-release 'dnf-command(config-manager)' --refresh -y && \
     dnf config-manager --set-enabled $(if test ${EL_RELEASE/.*/} = 8; then echo powertools; else echo crb; fi) && \
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-*
 
-# Adds Devel package repository to fulfill missing dependencies for shiboken. See https://github.com/ros2/ci/pull/726 for more info.   
-RUN $( if test ${EL_RELEASE/.*/} = 9; then dnf install almalinux-release-devel; fi) 
-
 # Install foundation packages
 RUN dnf install \
     cmake \
@@ -74,6 +71,8 @@ RUN if test ${EL_RELEASE/.*/} = 9; then \
     dnf install \
       gcc \
       graphviz-devel \
+      # Adds Devel package repository to fulfill missing dependencies for shiboken. See https://github.com/ros2/ci/pull/726 for more info.
+      almalinux-release-devel \ 
       -y && \
     python3 -m pip install \
       matplotlib \
