@@ -18,7 +18,10 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Pac
                   #  https://aws.repo.almalinux.org/8.8/BaseOS/x86_64/os/Packages/libevent-2.1.8-5.el8.x86_64.rpm \
                   #  https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/8/Everything/x86_64/Packages/q/qt5-qtwebengine-5.15.8-5.el8.1.x86_64.rpm
 
-RUN dnf install -y https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm
+RUN dnf install -y https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-libs-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
+                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-devel-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
+                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm  
+
 
 # Install foundation packages
 RUN dnf install \
