@@ -10,6 +10,9 @@ RUN dnf install epel-release 'dnf-command(config-manager)' --refresh -y && \
     dnf config-manager --set-enabled $(if test ${EL_RELEASE/.*/} = 8; then echo powertools; else echo crb; fi) && \
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-*
 
+# DEBUG: repo listing for package repositories
+RUN dnf -v repolist --enabled
+
 # Install foundation packages
 RUN dnf install \
     cmake \
