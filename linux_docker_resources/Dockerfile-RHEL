@@ -48,6 +48,7 @@ RUN dnf install -y https://aws.repo.almalinux.org/8/AppStream/x86_64/os/Packages
 # Install foundation packages
 RUN dnf install \
     cmake \
+    # clang \ 
     gcc-c++ \
     git \
     glibc-langpack-en \
@@ -84,7 +85,7 @@ RUN dnf install \
     vim \
     wget \
     xorg-x11-server-Xvfb \
-    --refresh -y
+    --refresh -y  --exclude=clang,llvm-libs,mesa-dri-drivers
 
 # Try to update to any ROS packages currently in testing
 RUN dnf update \
