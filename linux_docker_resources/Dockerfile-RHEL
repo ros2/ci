@@ -31,7 +31,8 @@ RUN dnf install -y https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packag
                    https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-devel-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
                    https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
                    https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-resource-filesystem-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
-                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-tools-extra-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm
+                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-tools-extra-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
+                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/clang-libs-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.i686.rpm
 
 
 
@@ -199,6 +200,8 @@ RUN dnf install \
     yaml-cpp-devel \
     yamllint \
     --refresh -y
+
+RUN clang --version
 
 RUN $(if test ${EL_RELEASE/.*/} != 8; then dnf install -y  python3-pyside2-devel; fi) 
 
