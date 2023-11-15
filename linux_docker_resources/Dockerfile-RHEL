@@ -20,7 +20,10 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Pac
 
 # add missing clang deps
 RUN dnf install -y https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/llvm-libs-15.0.7-1.module_el8.8.0%2B3466%2Bdfcbc058.x86_64.rpm \
-                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/mesa-dri-drivers-22.3.0-2.el8.x86_64.rpm 
+                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/mesa-dri-drivers-22.3.0-2.el8.x86_64.rpm \
+                   https://aws.repo.almalinux.org/8.8/AppStream/x86_64/os/Packages/mesa-filesystem-22.3.0-2.el8.x86_64.rpm 
+
+
 
 
 
