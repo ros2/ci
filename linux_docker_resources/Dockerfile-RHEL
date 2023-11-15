@@ -112,8 +112,8 @@ RUN dnf install \
     bison \
     boost-devel \
     bullet-devel \
-    clang \
-    clang-tools-extra \
+    # clang \
+    # clang-tools-extra \
     cmake3 \
     console-bridge-devel \
     cppcheck \
