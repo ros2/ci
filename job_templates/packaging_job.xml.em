@@ -204,7 +204,7 @@ echo "# BEGIN SECTION: Build Dockerfile"
 @[    if os_name == 'linux-aarch64']@
 docker build --pull ${DOCKER_BUILD_ARGS} --build-arg PLATFORM=aarch64 -t ros2_packaging_aarch64 linux_docker_resources
 @[    elif os_name == 'linux-rhel']@
-# FIX ME !!
+
 # Due to issues with pyside2, EPEL and AlmaLinux 9.3 it's impossible to build docker images; to get ci working we reverted to a previous built stale image.
 # This ought to be temporary until pyside2 can be rebuilt to work with AlmaLinux 9.3. See https://github.com/ros2/ci/issues/727. 
 # An if-else scenario is added to be able to quickly test if it has been resolved when the rebuilt happens.
