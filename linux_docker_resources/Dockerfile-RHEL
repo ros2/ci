@@ -175,9 +175,6 @@ RUN dnf install \
     yamllint \
     --refresh -y
 
-# Monkey patch RHEL 9's pyqt5 so that it works with sip v4
-RUN if test ${EL_RELEASE/.*/} = 9; then sed -i 's/, *py_ssize_t_clean=True//' /usr/lib*/python3.9/site-packages/PyQt5/bindings/QtCore/QtCoremod.sip; fi
-
 # Install dependencies of Connext and its installer
 RUN dnf install \
     libnsl2-devel \
