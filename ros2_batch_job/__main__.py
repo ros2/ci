@@ -554,6 +554,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
         with open('constraints.txt', 'w') as outfp:
+            outfp.write('empy < 4\n')
             outfp.write('flake8 < 5.0.0\n')
             outfp.write('setuptools==59.6.0\n')
 
