@@ -153,7 +153,6 @@ RUN dnf install \
     python3-pyflakes \
     $(if test ${EL_RELEASE/.*/} != 9; then echo python3-pygraphviz; fi) \
     python3-pykdl \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-pyside2-devel; fi) \
     python3-pytest \
     python3-pytest-cov \
     python3-pytest-mock \
@@ -161,7 +160,7 @@ RUN dnf install \
     python3-qt5-devel \
     python3-rosdistro \
     python3-setuptools \
-    $(if test ${EL_RELEASE/.*/} != 9; then echo python3-sip-devel; fi) \
+    python3-sip-devel \
     qt5-qtbase \
     qt5-qtbase-devel \
     qt5-qtbase-gui \
