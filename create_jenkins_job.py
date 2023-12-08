@@ -121,7 +121,7 @@ def main(argv=None):
         'dont_notify_every_unstable_build': 'false',
         'build_timeout_mins': 0,
         'ubuntu_distro': 'jammy',
-        'el_release': '9.2-pinned',
+        'el_release': '9',
         'ros_distro': 'rolling',
     }
 
