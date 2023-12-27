@@ -145,7 +145,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev l
 RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev python3-pydot python3-pygraphviz
 
 # Install dependencies for robot_model and robot_state_publisher
-RUN apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev libeigen3-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libeigen3-dev
+RUN if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev; fi
 
 # Install Python3 development files.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
