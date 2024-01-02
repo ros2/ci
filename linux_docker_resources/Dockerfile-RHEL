@@ -83,7 +83,7 @@ RUN dnf install \
     CUnit-devel \
     acl \
     $(if test ${EL_RELEASE/.*/} != 8; then echo asio-devel; fi) \
-    $(if test ${EL_RELEASE/.*/} != 9; then echo assimp-devel; fi) \
+    assimp-devel \
     bison \
     boost-devel \
     bullet-devel \
