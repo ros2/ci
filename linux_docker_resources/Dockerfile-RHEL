@@ -73,7 +73,6 @@ RUN if test ${EL_RELEASE/.*/} = 9; then \
       graphviz-devel \
       -y && \
     python3 -m pip install \
-      matplotlib \
       pygraphviz; \
   fi
 
@@ -139,7 +138,7 @@ RUN dnf install \
     python3-lark-parser \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-lttng; fi) \
     python3-lxml \
-    $(if test ${EL_RELEASE/.*/} != 9; then echo python3-matplotlib; fi) \
+    python3-matplotlib \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-mock; fi) \
     python3-netifaces \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-nose; fi) \
