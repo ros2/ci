@@ -167,7 +167,7 @@ RUN dnf install \
     spdlog-devel \
     sqlite-devel \
     tango-icon-theme \
-    tinyxml-devel \
+    $(if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then echo tinyxml-devel; fi) \
     tinyxml2-devel \
     uncrustify \
     yaml-cpp-devel \
