@@ -90,8 +90,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
   liblttng-ust-dev \
   lttng-tools \
-  python3-babeltrace \
+  python3-babeltrace; fi
+# Iron uses python3-lttng, but then starting after Iron we switch to liblttng-ctl-dev.
+RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} = iron \); then apt-get update && apt-get install --no-install-recommends -y \
   python3-lttng; fi
+RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} = rolling \); then apt-get update && apt-get install --no-install-recommends -y \
+  liblttng-ctl-dev; fi
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
