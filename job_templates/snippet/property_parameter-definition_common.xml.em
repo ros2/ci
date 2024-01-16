@@ -47,7 +47,7 @@ To use the latest released version, use an empty string.</description>
             <a class="string-array">
               <string>@ubuntu_distro</string>
 @{
-choices = ['jammy']
+choices = ['jammy', 'noble']
 choices.remove(ubuntu_distro)
 }@
 @[for choice in choices]@
