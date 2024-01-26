@@ -53,7 +53,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libbullet-dev \
   libignition-cmake2-dev \
   libignition-math6-dev \
-  liblog4cxx-dev \
   liborocos-kdl-dev \
   libspdlog-dev \
   libsqlite3-dev \
