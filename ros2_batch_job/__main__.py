@@ -557,6 +557,7 @@ def run(args, build_function, blacklisted_package_names=None):
             outfp.write('empy < 4\n')
             outfp.write('flake8 < 5.0.0\n')
             outfp.write('setuptools==59.6.0\n')
+            outfp.write('pytest==6.2.5\n')
 
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
         if args.do_venv or sys.platform == 'win32':
