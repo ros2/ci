@@ -47,66 +47,6 @@ from .util import UnbufferedIO
 sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
-# One of the maintainers of pyparsing suggests pinning to 2.4.7 for now;
-# see https://github.com/pyparsing/pyparsing/issues/323
-pip_dependencies = [
-    'EmPy',
-    'coverage',
-    'catkin_pkg',
-    'flake8',
-    'flake8-blind-except==0.1.1',
-    'flake8-builtins',
-    'flake8-class-newline',
-    'flake8-comprehensions',
-    'flake8-deprecated',
-    'flake8-docstrings',
-    'flake8-import-order',
-    'flake8-quotes',
-    'importlib-metadata',
-    'mock',
-    'nose',
-    'pep8',
-    'pydocstyle',
-    'pyflakes',
-    'pyparsing==2.4.7',
-    'pytest',
-    'pytest-cov',
-    'pytest-mock',
-    'pytest-repeat',
-    'pytest-rerunfailures',
-    'pytest-runner',
-    'pyyaml',
-    'vcstool',
-    'yamllint',
-]
-# https://github.com/pyca/cryptography/issues/5433
-pip_cryptography_version = '==3.0'
-
-colcon_packages = [
-    'colcon-core',
-    'colcon-defaults',
-    'colcon-library-path',
-    'colcon-metadata',
-    'colcon-mixin',
-    'colcon-output',
-    'colcon-package-information',
-    'colcon-package-selection',
-    'colcon-parallel-executor',
-    'colcon-pkg-config',
-    'colcon-powershell',
-    'colcon-python-setup-py',
-    'colcon-recursive-crawl',
-    'colcon-test-result',
-    'colcon-cmake',
-    'colcon-ros',
-    'colcon-ros-domain-id-coordinator',
-]
-if sys.platform != 'win32':
-    colcon_packages += [
-        'colcon-bash',
-        'colcon-zsh',
-    ]
-
 gcov_flags = '--coverage'
 
 colcon_space_defaults = {
@@ -440,91 +380,61 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Now inside of the workspace...
     with change_directory(args.workspace):
-        def need_package_from_pipy(pkg_name):
-            try:
-                importlib.import_module(pkg_name)
-            except ModuleNotFoundError:
-                return True
-
-            return False
-
         print('# BEGIN SUBSECTION: install Python packages')
         # Print setuptools version
         job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
                 shell=True)
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
-        # Install pip dependencies
-        pip_packages = list(pip_dependencies)
 
-        # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("mypy"):
-            pip_packages += ["mypy==0.931"]
-
-        # We prefer to get pytest-timeout from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("pytest_timeout"):
-            pip_packages += ["pytest-timeout==2.1.0"]
-
-        # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("lark"):
-            pip_packages += ["lark==1.1.1"]
-
-        if sys.platform == 'win32':
-            # Install fork of pyreadline containing fix for deprecation warnings
-            # TODO(jacobperron): Until upstream issue is resolved https://github.com/pyreadline/pyreadline/issues/65
-            pip_packages += ['git+https://github.com/osrf/pyreadline']
-
-            # Setuptools > 61 somehow have broken Windows Debug.  Pin it to 59.6.0 here which
-            # matches Ubuntu Jammy, and wait until upstream setuptools settles down.
-            pip_packages += ["setuptools==59.6.0"]
-
-            if args.cmake_build_type == 'Debug':
-                pip_packages += [
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
-                ]
-                if args.ros_distro in ('humble', 'iron'):
-                    pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
-            else:
-                pip_packages += [
-                    f'cryptography{pip_cryptography_version}',
-                    'lxml',
-                    'numpy',
-                ]
-                if args.ros_distro in ('humble', 'iron'):
-                    pip_packages.append('netifaces')
-        if not args.colcon_branch:
-            pip_packages += colcon_packages
-        if sys.platform == 'win32':
-            job.run(
-                ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                colcon_packages, shell=True)
+        if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
+            pip_packages = [
+                'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
+                'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
+                'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
+                'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
+                'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
+            ]
+            if args.ros_distro in ('humble', 'iron'):
+                pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
             # to ensure that the build type specific package is installed
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
-        with open('constraints.txt', 'w') as outfp:
-            outfp.write('empy < 4\n')
-            outfp.write('flake8 < 5.0.0\n')
-            outfp.write('setuptools==59.6.0\n')
-            outfp.write('pytest==6.2.5\n')
+                [f'cryptography', 'lxml', 'numpy'], shell=True)
 
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
-        if sys.platform == 'win32':
-            # Force reinstall so all dependencies are in virtual environment
-            # On Windows since we switch between the debug and non-debug
-            # interpreter all packages need to be reinstalled too
-            pip_cmd.append('--force-reinstall')
-        job.run(
-            pip_cmd + pip_packages,
-            shell=True)
+            pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-U', '--force-reinstall']
+            job.run(pip_cmd + pip_packages, shell=True)
 
-        vcs_cmd = ['vcs']
+        vcs_cmd = [which('vcs')]
 
         if args.colcon_branch:
+            colcon_packages = [
+                'colcon-argcomplete',
+                'colcon-cd',
+                'colcon-cmake',
+                'colcon-core',
+                'colcon-defaults',  # Not in colcon-common-extensions
+                'colcon-devtools',
+                'colcon-library-path',
+                'colcon-metadata',
+                'colcon-mixin',  # Not in colcon-common-extensions
+                'colcon-output',
+                'colcon-package-information',
+                'colcon-package-selection',
+                'colcon-parallel-executor',
+                'colcon-pkg-config',  # Not in colcon-common-extensions
+                'colcon-powershell',
+                'colcon-python-setup-py',
+                'colcon-recursive-crawl',
+                'colcon-ros',
+                'colcon-test-result',
+            ]
+            if sys.platform != 'win32':
+                colcon_packages += [
+                    'colcon-bash',
+                    'colcon-zsh',
+                ]
+
             # create .repos file for colcon repositories
             os.makedirs('colcon', exist_ok=True)
             with open('colcon/colcon.repos', 'w') as h:
