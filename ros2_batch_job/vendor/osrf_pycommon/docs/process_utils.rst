@@ -12,14 +12,14 @@ These are the main sections of this module:
 Asynchronous Process Utilities
 ------------------------------
 
-There is a function and class which can be used together with your custom `Tollius <http://trollius.readthedocs.org/>`_ or `asyncio <https://docs.python.org/3/library/asyncio.html>`_ run loop.
+There is a function and class which can be used together with your custom `asyncio <https://docs.python.org/3/library/asyncio.html>`_ run loop.
 
 The :py:func:`osrf_pycommon.process_utils.async_execute_process` function is a `coroutine <https://docs.python.org/3/library/asyncio-task.html#coroutines>`_ which allows you to run a process and get the output back bit by bit in real-time, either with stdout and stderr separated or combined.
 This function also allows you to emulate the terminal using a pty simply by toggling a flag in the parameters.
 
 Along side this coroutine is a `Protocol <https://docs.python.org/3/library/asyncio-protocol.html#protocols>`_ class, :py:class:`osrf_pycommon.process_utils.AsyncSubprocessProtocol`, from which you can inherit in order to customize how the yielded output is handled.
 
-Because this coroutine is built on the ``trollius``/``asyncio`` framework's subprocess functions, it is portable and should behave the same on all major OS's. (including on Windows where an IOCP implementation is used)
+Because this coroutine is built on the ``asyncio`` framework's subprocess functions, it is portable and should behave the same on all major OS's. (including on Windows where an IOCP implementation is used)
 
 .. autofunction:: osrf_pycommon.process_utils.async_execute_process
 
@@ -33,9 +33,11 @@ In addtion to these functions, there is a utility function for getting the corre
 Treatment of File Descriptors
 -----------------------------
 
-Unlike ``subprocess.Popen``, all of the ``process_utils`` functions behave the same way on Python versions 2.7 through 3.4, and they do not close `inheritable <https://docs.python.org/3.4/library/os.html#fd-inheritance>`. file descriptors before starting subprocesses. This is equivalent to passing ``close_fds=False`` to ``subprocess.Popen`` on all Python versions.
+Like Python 3.4's ``subprocess.Popen`` (and newer versions), all of the ``process_utils`` functions do not close `inheritable <https://docs.python.org/3.4/library/os.html#fd-inheritance>` file descriptors before starting subprocesses.
+This is equivalent to passing ``close_fds=False`` to ``subprocess.Popen`` on all Python versions.
 
-In Python 3.2, the ``subprocess.Popen`` default for the ``close_fds`` option changed from ``False`` to ``True`` so that file descriptors opened by the parent process were closed before spawning the child process. In Python 3.4, `PEP 0446 <https://www.python.org/dev/peps/pep-0446/>`_ additionally made it so even when ``close_fds=False`` file descriptors which are `non-inheritable <https://docs.python.org/3.4/library/os.html#fd-inheritance>`_ are still closed before spawning the subprocess.
+For historical context, in Python 3.2, the ``subprocess.Popen`` default for the ``close_fds`` option changed from ``False`` to ``True`` so that file descriptors opened by the parent process were closed before spawning the child process.
+In Python 3.4, `PEP 0446 <https://www.python.org/dev/peps/pep-0446/>`_ additionally made it so even when ``close_fds=False`` file descriptors which are `non-inheritable <https://docs.python.org/3.4/library/os.html#fd-inheritance>`_ are still closed before spawning the subprocess.
 
 If you want to be able to pass file descriptors to subprocesses in Python 3.4 or higher, you will need to make sure they are `inheritable <https://docs.python.org/3.4/library/os.html#fd-inheritance>`.
 
@@ -47,7 +49,7 @@ For synchronous execution and output capture of subprocess, there are two functi
 - :py:func:`osrf_pycommon.process_utils.execute_process`
 - :py:func:`osrf_pycommon.process_utils.execute_process_split`
 
-These functions are not yet using the ``trollius``/``asyncio`` framework as a back-end and therefore on Windows will not stream the data from the subprocess as it does on Unix machines.
+These functions are not yet using the ``asyncio`` framework as a back-end and therefore on Windows will not stream the data from the subprocess as it does on Unix machines.
 Instead data will not be yielded until the subprocess is finished and all output is buffered (the normal warnings about long running programs with lots of output apply).
 
 The streaming of output does not work on Windows because on Windows the :py:func:`select.select` method only works on sockets and not file-like objects which are used with subprocess pipes.

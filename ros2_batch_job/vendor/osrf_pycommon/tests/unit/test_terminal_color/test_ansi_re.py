@@ -16,12 +16,12 @@ class TestTerminalColorAnsiRe(unittest.TestCase):
         expected = ["", "red ", "bold red ", "normal ", "red bg"]
         self.assertEqual(expected, split_ansi(self.test_str, False))
 
-    def test_remove_ansi_escape_senquences(self):
-        remove_ansi = ansi_re.remove_ansi_escape_senquences
+    def test_remove_ansi_escape_sequences(self):
+        remove_ansi = ansi_re.remove_ansi_escape_sequences
         expected = "red bold red normal red bg"
         self.assertEqual(expected, remove_ansi(self.test_str))
 
-    def test_remove_ansi_escape_senquences_false_positives(self):
-        remove_ansi = ansi_re.remove_ansi_escape_senquences
+    def test_remove_ansi_escape_sequences_false_positives(self):
+        remove_ansi = ansi_re.remove_ansi_escape_sequences
         false_positive = "Should not match: \1xb[1234m \033[m \1xb[3Om"
         self.assertEqual(false_positive, remove_ansi(false_positive))

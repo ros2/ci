@@ -3,14 +3,8 @@ import os
 import sys
 import unittest
 
-if sys.version_info >= (3, 4):
-    from .impl_aep_asyncio import run
-    from .impl_aep_asyncio import loop
-    print("Using asyncio")
-else:
-    from .impl_aep_trollius import run
-    from .impl_aep_trollius import loop
-    print("Using Trollius")
+from .impl_aep_asyncio import run
+from .impl_aep_asyncio import loop
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 

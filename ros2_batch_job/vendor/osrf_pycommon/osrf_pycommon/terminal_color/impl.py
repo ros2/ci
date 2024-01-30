@@ -293,7 +293,7 @@ def sanitize(msg):
     as a colorization annotation and it will fail to substitute with a
     :py:exc:`KeyError`: ``org``.
 
-    In order to prevent this, you can first "sanatize" the string, add color
+    In order to prevent this, you can first "sanitize" the string, add color
     annotations, and then pass the whole string to :py:func:`format_color`.
 
     If you give this function the string ``'Email: {user}@{org}'``, then it

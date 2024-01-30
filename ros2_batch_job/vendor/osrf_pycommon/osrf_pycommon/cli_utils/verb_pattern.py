@@ -14,9 +14,13 @@
 
 """API for implementing commands and verbs which used the verb pattern."""
 
+import sys
 import inspect
 
-import pkg_resources
+try:
+    import importlib.metadata as importlib_metadata
+except ModuleNotFoundError:
+    import importlib_metadata
 
 
 def call_prepare_arguments(func, parser, sysargs=None):
@@ -27,7 +31,7 @@ def call_prepare_arguments(func, parser, sysargs=None):
     the current arguments being processed.
 
     :param func: Callable ``prepare_arguments`` function.
-    :type func: Callabe
+    :type func: Callable
     :param parser: parser which is always passed to the function
     :type parser: :py:class:`argparse.ArgumentParser`
     :param sysargs: arguments to optionally pass to the function, if needed
@@ -41,18 +45,36 @@ def call_prepare_arguments(func, parser, sysargs=None):
     func_args = [parser]
     # If the provided function takes two arguments and args were given
     # also give the args to the function
-    arguments, _, _, defaults = inspect.getargspec(func)
+
+    # Remove the following if condition and keep else condition once Xenial is
+    # dropped
+    if sys.version_info[0] < 3:
+        arguments, _, _, defaults = inspect.getargspec(func)
+
+    else:
+        arguments, _, _, defaults, _, _, _ = inspect.getfullargspec(func)
+
     if arguments[0] == 'self':
         del arguments[0]
     if defaults:
         arguments = arguments[:-len(defaults)]
     if len(arguments) not in [1, 2]:
+        # Remove the following if condition once Xenial is dropped
+        if sys.version_info[0] < 3:
+            raise ValueError("Given function '{0}' must have one or two "
+                             "parameters (excluding self), but got '{1}' "
+                             "parameters: '{2}'"
+                             .format(func.__name__,
+                                     len(arguments),
+                                     ', '.join(inspect.getargspec(func)[0])))
+
         raise ValueError("Given function '{0}' must have one or two "
                          "parameters (excluding self), but got '{1}' "
                          "parameters: '{2}'"
                          .format(func.__name__,
                                  len(arguments),
-                                 ', '.join(inspect.getargspec(func)[0])))
+                                 ', '.join(inspect.getfullargspec(func)[0])))
+
     if len(arguments) == 2:
         func_args.append(sysargs or [])
     return func(*func_args) or parser
@@ -61,7 +83,7 @@ def call_prepare_arguments(func, parser, sysargs=None):
 def create_subparsers(parser, cmd_name, verbs, group, sysargs, title=None):
     """Creates argparse subparsers for each verb which can be discovered.
 
-    Using the ``verbs`` parameter, the availble verbs are iterated through.
+    Using the ``verbs`` parameter, the available verbs are iterated through.
     For each verb a subparser is created for it using the ``parser`` parameter.
     The ``cmd_name`` is used to fill the title and description of the
     ``add_subparsers`` function call.
@@ -117,7 +139,7 @@ def create_subparsers(parser, cmd_name, verbs, group, sysargs, title=None):
 
 
 def default_argument_preprocessor(args):
-    """Return unmodifed args and an empty dict for extras"""
+    """Return unmodified args and an empty dict for extras"""
     extras = {}
     return args, extras
 
@@ -130,7 +152,12 @@ def list_verbs(group):
     :rtype: list of str
     """
     verbs = []
-    for entry_point in pkg_resources.iter_entry_points(group=group):
+    entry_points = importlib_metadata.entry_points()
+    if hasattr(entry_points, 'select'):
+        groups = entry_points.select(group=group)
+    else:
+        groups = entry_points.get(group, [])
+    for entry_point in groups:
         verbs.append(entry_point.name)
     return verbs
 
@@ -143,7 +170,12 @@ def load_verb_description(verb_name, group):
     :returns: verb description
     :rtype: dict
     """
-    for entry_point in pkg_resources.iter_entry_points(group=group):
+    entry_points = importlib_metadata.entry_points()
+    if hasattr(entry_points, 'select'):
+        groups = entry_points.select(group=group)
+    else:
+        groups = entry_points.get(group, [])
+    for entry_point in groups:
         if entry_point.name == verb_name:
             return entry_point.load()
 
@@ -152,7 +184,7 @@ def split_arguments_by_verb(arguments):
     """Split arguments by verb.
 
     Given a list of arguments (list of strings), the verb, the pre verb
-    arguments, and the post verb arugments are returned.
+    arguments, and the post verb arguments are returned.
 
     For example:
 
