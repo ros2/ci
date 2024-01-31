@@ -64,7 +64,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libzstd-dev \
   pybind11-dev \
   pydocstyle \
-  python3-pyflakes \
+  python3-argcomplete \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
@@ -77,6 +77,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-numpy \
   python3-pep8 \
   python3-psutil \
+  python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
   python3-pytest-mock \
