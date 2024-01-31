@@ -35,11 +35,11 @@ When running `git subtree pull` git looks for a commit history in the form of:
     git-subtree-split: <commit-hash>
 ```
 
-This can fail for many reasons and if it does it wont udpate the git tree.
-One easy alternative is to remove an re-add the subtree but this is not great
-and laeaves the git subtree history a bit fuzzy. An alternative is to manually
-create the squash merge and add the corresponding commit information so future 
-runs of `git subtree pull` can find it.
+This can fail for many reasons and if it does it won't update the git tree.
+One easy alternative is to remove and re-add the subtree but this is not great
+and leaves the git subtree history a bit fuzzy.
+An alternative is to manually create the squash merge and add the corresponding
+commit information so future runs of `git subtree pull` can find it.
 
 1. From the root of the git repository run:
 
