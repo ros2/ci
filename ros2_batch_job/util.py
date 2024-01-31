@@ -242,7 +242,7 @@ def _run(cmd, exit_on_error=True, **kwargs):
         else:
             return MyProtocol(cmd, exit_on_error, *args, **kwargs)
 
-    def run_coroutine(future):
+    async def run_coroutine(future):
         kwargs['emulate_tty'] = True
         transport, protocol = await async_execute_process(create_protocol, cmd, **kwargs)
         returncode = await protocol.complete
