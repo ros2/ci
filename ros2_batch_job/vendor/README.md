@@ -74,7 +74,7 @@ $ git commit -s -m 'Update core subtree to <latest-subtree-commit-short-hash>.' 
 ```
 
 You can make sure future runs of `git subtree pull` will be able to find the commit by
-running an the command yourself:
+running the command yourself:
 
 ```
 git subtree pull -P "ros2_batch_job/vendor/osrf_pycommon" --squash osrf_pycommon_upstream master
