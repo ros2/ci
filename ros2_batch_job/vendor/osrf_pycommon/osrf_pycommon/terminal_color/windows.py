@@ -224,7 +224,7 @@ else:
 
         def __str__(self):
             return (
-                '({0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0})'
+                '({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10})'
                 .format(
                     self.dwSize.Y, self.dwSize.X,
                     self.dwCursorPosition.Y, self.dwCursorPosition.X,

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Provides regular expresion functions for matching ansi escape sequences."""
+"""Provides regular expression functions for matching ansi escape sequences."""
 
 import re
 
@@ -38,9 +38,13 @@ def split_by_ansi_escape_sequence(string, include_delimiters=False):
     return _ansi_re.split(string)
 
 
-def remove_ansi_escape_senquences(string):
+def remove_ansi_escape_sequences(string):
     """
     Removes any ansi escape sequences found in the given string and returns it.
     """
     global _ansi_re
     return _ansi_re.sub('', string)
+
+
+# Backwards compatibility
+remove_ansi_escape_senquences = remove_ansi_escape_sequences

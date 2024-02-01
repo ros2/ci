@@ -141,7 +141,7 @@ def extract_argument_group(args, delimiting_option):
             extracted_args.extend(tail)
             break
         else:
-            # Terminator foud, put args up, but not including terminator
+            # Terminator found, put args up, but not including terminator
             # in extracted_args
             extracted_args.extend(tail[:next_terminator])
             # And put arguments after the terminator back in trimmed_args

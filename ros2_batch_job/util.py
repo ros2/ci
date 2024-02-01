@@ -242,11 +242,10 @@ def _run(cmd, exit_on_error=True, **kwargs):
         else:
             return MyProtocol(cmd, exit_on_error, *args, **kwargs)
 
-    @asyncio.coroutine
-    def run_coroutine(future):
+    async def run_coroutine(future):
         kwargs['emulate_tty'] = True
-        transport, protocol = yield from async_execute_process(create_protocol, cmd, **kwargs)
-        returncode = yield from protocol.complete
+        transport, protocol = await async_execute_process(create_protocol, cmd, **kwargs)
+        returncode = await protocol.complete
         future.set_result(returncode)
 
     future = asyncio.Future()

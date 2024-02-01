@@ -1,5 +1,5 @@
-import mock
 import unittest
+from unittest import mock
 
 from osrf_pycommon.terminal_utils import is_tty
 

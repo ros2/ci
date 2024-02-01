@@ -37,7 +37,7 @@ RUN echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /et
 RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list
+RUN if test \( ${UBUNTU_DISTRO} != noble \); then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
@@ -51,8 +51,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
-  libignition-cmake2-dev \
-  libignition-math6-dev \
+  $(if test ${UBUNTU_DISTRO} != noble; then echo libignition-cmake2-dev; fi) \
+  $(if test ${UBUNTU_DISTRO} != noble; then echo libignition-math6-dev; fi) \
   liborocos-kdl-dev \
   libspdlog-dev \
   libsqlite3-dev \
@@ -87,14 +87,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   yamllint
 
 # Install LTTng-related packages starting from Iron only.
-RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
+RUN if test \( ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
   liblttng-ust-dev \
   lttng-tools \
   python3-babeltrace; fi
 # Iron uses python3-lttng, but then starting after Iron we switch to liblttng-ctl-dev.
-RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} = iron \); then apt-get update && apt-get install --no-install-recommends -y \
+RUN if test \( ${ROS_DISTRO} = iron \); then apt-get update && apt-get install --no-install-recommends -y \
   python3-lttng; fi
-RUN if test \( ${UBUNTU_DISTRO} = jammy -a ${ROS_DISTRO} = rolling \); then apt-get update && apt-get install --no-install-recommends -y \
+RUN if test \( ${ROS_DISTRO} = rolling \); then apt-get update && apt-get install --no-install-recommends -y \
   liblttng-ctl-dev; fi
 
 # Install clang if build arg is true
@@ -102,7 +102,8 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y lcov
-RUN pip3 install -U lcov_cobertura_fix
+
+RUN pip3 install -U lcov_cobertura_fix $(if test ${UBUNTU_DISTRO} = noble; then echo --break-system-packages; fi)
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true -a ${UBUNTU_DISTRO} = jammy \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; fi

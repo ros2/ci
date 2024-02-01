@@ -30,7 +30,7 @@ def _process_incoming_lines(incoming, left_over):
     # This function takes the new data, the left over data from last time
     # and returns a list of complete lines (separated by sep) as well as
     # any sep trailing data for the next iteration
-    # This function takes and returns bytes only (str in Python2)
+    # This function takes and returns bytes only
     combined = (left_over + incoming)
     lines = combined.splitlines(True)
     if not lines:

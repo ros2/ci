@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from osrf_pycommon.cli_utils import verb_pattern
@@ -66,8 +67,16 @@ class TestCliUtilsVerbPattern(unittest.TestCase):
                 return parser
 
         f = Foo()
-        with self.assertRaisesRegexp(ValueError, 'one or two parameters'):
-            r = cpa(f.fake_prepare_arguments, None)
+
+        # Remove the following if condition and keep else condition once
+        # Xenial is dropped
+        if sys.version_info[0] < 3:
+            with self.assertRaisesRegexp(ValueError, 'one or two parameters'):
+                r = cpa(f.fake_prepare_arguments, None)
+
+        else:
+            with self.assertRaisesRegex(ValueError, 'one or two parameters'):
+                r = cpa(f.fake_prepare_arguments, None)
 
         # Try with less than needed
         called = False
@@ -81,8 +90,16 @@ class TestCliUtilsVerbPattern(unittest.TestCase):
                 return 'Should not get here'
 
         f = Foo()
-        with self.assertRaisesRegexp(ValueError, 'one or two parameters'):
-            r = cpa(f.fake_prepare_arguments, None)
+
+        # Remove the following if condition and keep else condition once
+        # Xenial is dropped
+        if sys.version_info[0] < 3:
+            with self.assertRaisesRegexp(ValueError, 'one or two parameters'):
+                r = cpa(f.fake_prepare_arguments, None)
+
+        else:
+            with self.assertRaisesRegex(ValueError, 'one or two parameters'):
+                r = cpa(f.fake_prepare_arguments, None)
 
         # Try with additional optional argument
         called = False

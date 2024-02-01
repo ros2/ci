@@ -28,8 +28,7 @@ def get_loop():
     return get_loop_impl(asyncio)
 
 
-@asyncio.coroutine
-def _async_execute_process_nopty(
+async def _async_execute_process_nopty(
     protocol_class, cmd, cwd, env, shell,
     stderr_to_stdout=True
 ):
@@ -39,11 +38,11 @@ def _async_execute_process_nopty(
         stderr = asyncio.subprocess.STDOUT
     # Start the subprocess
     if shell is True:
-        transport, protocol = yield from loop.subprocess_shell(
+        transport, protocol = await loop.subprocess_shell(
             protocol_class, " ".join(cmd), cwd=cwd, env=env,
             stderr=stderr, close_fds=False)
     else:
-        transport, protocol = yield from loop.subprocess_exec(
+        transport, protocol = await loop.subprocess_exec(
             protocol_class, *cmd, cwd=cwd, env=env,
             stderr=stderr, close_fds=False)
     return transport, protocol
@@ -51,8 +50,7 @@ def _async_execute_process_nopty(
 
 if has_pty:
     # If pty is availabe, use them to emulate the tty
-    @asyncio.coroutine
-    def _async_execute_process_pty(
+    async def _async_execute_process_pty(
         protocol_class, cmd, cwd, env, shell,
         stderr_to_stdout=True
     ):
@@ -65,15 +63,19 @@ if has_pty:
             stderr_master, stderr_slave = pty.openpty()
 
         def protocol_factory():
-            return protocol_class(None, stdout_master, stderr_master)
+            return protocol_class(
+                stdin=None,
+                stdout=stdout_master,
+                stderr=stderr_master
+            )
 
         # Start the subprocess
         if shell is True:
-            transport, protocol = yield from loop.subprocess_shell(
+            transport, protocol = await loop.subprocess_shell(
                 protocol_factory, " ".join(cmd), cwd=cwd, env=env,
                 stdout=stdout_slave, stderr=stderr_slave, close_fds=False)
         else:
-            transport, protocol = yield from loop.subprocess_exec(
+            transport, protocol = await loop.subprocess_exec(
                 protocol_factory, *cmd, cwd=cwd, env=env,
                 stdout=stdout_slave, stderr=stderr_slave, close_fds=False)
 
@@ -114,10 +116,10 @@ if has_pty:
         # Also store the transport, protocol tuple for each call to
         # connect_read_pipe, to prevent the destruction of the protocol
         # class instance, otherwise no data is received.
-        protocol.stdout_tuple = yield from loop.connect_read_pipe(
+        protocol.stdout_tuple = await loop.connect_read_pipe(
             PtyStdoutProtocol, os.fdopen(stdout_master, 'rb', 0))
         if not stderr_to_stdout:
-            protocol.stderr_tuple = yield from loop.connect_read_pipe(
+            protocol.stderr_tuple = await loop.connect_read_pipe(
                 PtyStderrProtocol, os.fdopen(stderr_master, 'rb', 0))
         # Return the protocol and transport
         return transport, protocol
@@ -125,17 +127,16 @@ else:
     _async_execute_process_pty = _async_execute_process_nopty
 
 
-@asyncio.coroutine
-def async_execute_process(
+async def async_execute_process(
     protocol_class, cmd=None, cwd=None, env=None, shell=False,
     emulate_tty=False, stderr_to_stdout=True
 ):
     if emulate_tty:
-        transport, protocol = yield from _async_execute_process_pty(
+        transport, protocol = await _async_execute_process_pty(
             protocol_class, cmd, cwd, env, shell,
             stderr_to_stdout)
     else:
-        transport, protocol = yield from _async_execute_process_nopty(
+        transport, protocol = await _async_execute_process_nopty(
             protocol_class, cmd, cwd, env, shell,
             stderr_to_stdout)
     return transport, protocol

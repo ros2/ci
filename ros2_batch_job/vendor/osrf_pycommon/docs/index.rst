@@ -5,8 +5,8 @@
 Things like ansi terminal coloring, capturing colored output from programs using subprocess, or even a simple logging system which provides some nice functionality over the built-in Python logging system.
 
 The functionality provided here should be generic enough to be reused in arbitrary scenarios and should avoid bringing in dependencies which are not part of the standard Python library.
-Where possible Windows and Linux/OS X should be supported, and where it cannot it should be gracefully degrading.
-Code should be pure Python as well as Python 2 and Python 3 bilingual.
+Where possible Windows, Linux, and macOS should be supported, and where it cannot it should be gracefully degrading.
+Code should be pure Python 3.
 
 Contents:
 
@@ -64,13 +64,13 @@ That will "uninstall" the hooks into the ``PYTHONPATH`` which point to your sour
 Testing
 -------
 
-In order to run the tests you will need to install `nosetests <https://nose.readthedocs.org/>`_, `flake8 <https://flake8.readthedocs.org/>`_, and `Mock <http://www.voidspace.org.uk/python/mock/>`_.
+In order to run the tests you will need to install `flake8 <https://flake8.readthedocs.org/>`_.
 
-Once you have installed those, then run ``nosetest`` in the root of the ``osrf_pycommon`` source directory:
+Once you have installed those, then run ``unittest``:
 
 .. code-block:: bash
 
-    $ nosetests
+    $ python3 -m unittest discover -v tests
 
 Building the Documentation
 --------------------------

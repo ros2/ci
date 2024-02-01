@@ -23,11 +23,6 @@ except ImportError:
     # so fallback to non pty implementation
     _execute_process_pty = None
 
-try:
-    _basestring = basestring  # Python 2
-except NameError:
-    _basestring = str  # Python 3
-
 
 def execute_process(cmd, cwd=None, env=None, shell=False, emulate_tty=False):
     """Executes a command with arguments and returns output line by line.
@@ -122,7 +117,7 @@ def execute_process(cmd, cwd=None, env=None, shell=False, emulate_tty=False):
     If you want to ensure there is no color in the output from an executed
     process, then use this function:
 
-    :py:func:`osrf_pycommon.terminal_color.remove_ansi_escape_senquences`
+    :py:func:`osrf_pycommon.terminal_color.remove_ansi_escape_sequences`
 
     Exceptions can be raised by functions called by the implementation,
     for example, :py:class:`subprocess.Popen` can raise an :py:exc:`OSError`
@@ -226,8 +221,8 @@ def _which_backport(cmd, mode=os.F_OK | os.X_OK, path=None):
     # Additionally check that `file` is not a directory, as on Windows
     # directories pass the os.access check.
     def _access_check(fn, mode):
-        return (os.path.exists(fn) and os.access(fn, mode) and
-                not os.path.isdir(fn))
+        return (os.path.exists(fn) and os.access(fn, mode) and not
+                os.path.isdir(fn))
 
     # If we're given a path with a directory part, look it up directly rather
     # than referring to PATH directories. This includes checking relative
