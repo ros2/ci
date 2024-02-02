@@ -131,7 +131,7 @@ RUN dnf install \
     python3-lxml \
     python3-matplotlib \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-mock; fi) \
-    python3-netifaces \
+    $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron; then echo python3-netifaces; fi) \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-nose; fi) \
     python3-numpy \
     python3-packaging \

@@ -532,18 +532,20 @@ def run(args, build_function, blacklisted_package_names=None):
                     'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
                     'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/typed-ast-archives/typed_ast-1.4.1-cp38-cp38d-win_amd64.whl',  # required by mypy
                 ]
+                if args.ros_distro in ('humble', 'iron'):
+                    pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
             else:
                 pip_packages += [
                     f'cryptography{pip_cryptography_version}',
                     'lxml',
-                    'netifaces',
                     'numpy',
                 ]
+                if args.ros_distro in ('humble', 'iron'):
+                    pip_packages.append('netifaces')
         if not args.colcon_branch:
             pip_packages += colcon_packages
         if sys.platform == 'win32':
