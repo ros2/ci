@@ -23,11 +23,11 @@ import zipfile
 from .util import info
 
 
-def build_and_test_and_package(args, job):
+def build_and_test_and_package(args, job, colcon_script):
     print('# BEGIN SUBSECTION: build underlay packages')
 
     cmd = [
-        args.colcon_script, 'build',
+        colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,

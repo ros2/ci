@@ -129,7 +129,7 @@ test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}\
 rm -rf ws workspace
 
 echo "# BEGIN SECTION: Determine arguments"
-export CI_ARGS="--packaging --do-venv --force-ansi-color"
+export CI_ARGS="--packaging --force-ansi-color"
 if [ -n "${CI_BRANCH_TO_TEST+x}" ]; then
   export CI_ARGS="$CI_ARGS --test-branch $CI_BRANCH_TO_TEST"
 fi

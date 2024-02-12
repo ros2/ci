@@ -39,7 +39,6 @@ from .packaging import build_and_test_and_package
 from .util import change_directory
 from .util import remove_folder
 from .util import force_color
-from .util import generated_venv_vars
 from .util import info
 from .util import log
 from .util import UnbufferedIO
@@ -189,9 +188,6 @@ def get_args(sysargv=None):
         choices=['sourcespace', 'buildspace', 'installspace', 'workspace'],
         help="which folder structures in which white space should be added")
     parser.add_argument(
-        '--do-venv', default=False, action='store_true',
-        help="create and use a virtual env in the build process")
-    parser.add_argument(
         '--os', default=None, choices=['linux', 'windows'])
     parser.add_argument(
         '--ignore-rmw', nargs='*', default=[], action='extend',
@@ -301,12 +297,12 @@ def process_coverage(args, job):
     return 0
 
 
-def build_and_test(args, job):
+def build_and_test(args, job, colcon_script):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
 
     print('# BEGIN SUBSECTION: build')
     cmd = [
-        args.colcon_script, 'build',
+        colcon_script, 'build',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
@@ -348,7 +344,7 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: test')
 
     test_cmd = [
-        args.colcon_script, 'test',
+        colcon_script, 'test',
         '--base-paths', '"%s"' % args.sourcespace,
         '--build-base', '"%s"' % args.buildspace,
         '--install-base', '"%s"' % args.installspace,
@@ -368,7 +364,7 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: test-result --all')
     # Collect the test results
     ret_test_results = job.run(
-        [args.colcon_script, 'test-result', '--test-result-base', '"%s"' % args.buildspace, '--all'],
+        [colcon_script, 'test-result', '--test-result-base', '"%s"' % args.buildspace, '--all'],
         exit_on_error=False, shell=True
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))
@@ -377,7 +373,7 @@ def build_and_test(args, job):
     print('# BEGIN SUBSECTION: test-result')
     # Collect the test results
     ret_test_results = job.run(
-        [args.colcon_script, 'test-result', '--test-result-base', '"%s"' % args.buildspace],
+        [colcon_script, 'test-result', '--test-result-base', '"%s"' % args.buildspace],
         exit_on_error=False, shell=True
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))
@@ -414,9 +410,6 @@ def run(args, build_function, blacklisted_package_names=None):
         from .windows_batch import WindowsBatchJob
         job = WindowsBatchJob(args)
 
-    if args.do_venv and args.os == 'windows':
-        sys.exit("--do-venv is not supported on windows")
-
     # Set the TERM env variable to coerce the output of Make to be colored.
     os.environ['TERM'] = os.environ.get('TERM', 'xterm-256color')
     if args.os == 'windows':
@@ -444,29 +437,6 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Check the env
     job.show_env()
-
-    colcon_script = None
-    # Enter a venv if asked to, the venv must be in a path without spaces
-    if args.do_venv:
-        print('# BEGIN SUBSECTION: enter virtualenv')
-
-        if args.os != 'linux':
-            # Do not try this on Linux as elevated privileges are needed.
-            # The Linux host or Docker image will need to ensure the right
-            # version of virtualenv is available.
-            job.run([sys.executable, '-m', 'pip', 'install', '-U', 'virtualenv==16.7.9'])
-
-        venv_subfolder = 'venv'
-        remove_folder(venv_subfolder)
-        venv_cmd = [sys.executable, '-m', 'venv', '--system-site-packages', venv_subfolder]
-
-        job.run(venv_cmd)
-        venv_path = os.path.abspath(os.path.join(os.getcwd(), venv_subfolder))
-        venv, venv_python = generated_venv_vars(venv_path)
-        job.push_run(venv)  # job.run is now venv
-        job.push_python(venv_python)  # job.python is now venv_python
-        job.show_env()
-        print('# END SUBSECTION')
 
     # Now inside of the workspace...
     with change_directory(args.workspace):
@@ -543,7 +513,7 @@ def run(args, build_function, blacklisted_package_names=None):
             outfp.write('pytest==6.2.5\n')
 
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
-        if args.do_venv or sys.platform == 'win32':
+        if sys.platform == 'win32':
             # Force reinstall so all dependencies are in virtual environment
             # On Windows since we switch between the debug and non-debug
             # interpreter all packages need to be reinstalled too
@@ -552,14 +522,7 @@ def run(args, build_function, blacklisted_package_names=None):
             pip_cmd + pip_packages,
             shell=True)
 
-        # OS X can't invoke a file which has a space in the shebang line
-        # therefore invoking vcs explicitly through Python
-        if args.do_venv:
-            vcs_cmd = [
-                '"%s"' % job.python,
-                '"%s"' % os.path.join(venv_path, 'bin', 'vcs')]
-        else:
-            vcs_cmd = ['vcs']
+        vcs_cmd = ['vcs']
 
         if args.colcon_branch:
             # create .repos file for colcon repositories
@@ -591,11 +554,8 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['colcon/%s' % name for name in colcon_packages],
                 shell=True)
 
-        if args.do_venv and sys.platform != 'win32':
-            colcon_script = os.path.join(venv_path, 'bin', 'colcon')
-        else:
-            colcon_script = which('colcon')
-        args.colcon_script = colcon_script
+        colcon_script = which('colcon')
+
         # Show what pip has
         job.run(['"%s"' % job.python, '-m', 'pip', 'freeze', '--all'], shell=True)
         print('# END SUBSECTION')
@@ -603,9 +563,9 @@ def run(args, build_function, blacklisted_package_names=None):
         # Fetch colcon mixins
         if args.colcon_mixin_url:
             true_cmd = 'VER>NUL' if sys.platform == 'win32' else 'true'
-            job.run([args.colcon_script, 'mixin', 'remove', 'default', '||', true_cmd], shell=True)
-            job.run([args.colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
-            job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
+            job.run([colcon_script, 'mixin', 'remove', 'default', '||', true_cmd], shell=True)
+            job.run([colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
+            job.run([colcon_script, 'mixin', 'update', 'default'], shell=True)
 
         print('# BEGIN SUBSECTION: import repositories')
         repos_file_urls = [args.repo_file_url]
@@ -724,7 +684,7 @@ def run(args, build_function, blacklisted_package_names=None):
                         pass
             print('# END SUBSECTION')
 
-        rc = build_function(args, job)
+        rc = build_function(args, job, colcon_script)
 
     job.post()
     return rc
