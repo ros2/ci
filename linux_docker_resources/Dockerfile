@@ -65,9 +65,22 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   pybind11-dev \
   pydocstyle \
   python3-argcomplete \
+  python3-colcon-argcomplete \
+  python3-colcon-common-extensions \
+  python3-colcon-defaults \
+  python3-colcon-mixin \
+  python3-colcon-pkg-config \
   python3-coverage \
   python3-cryptography \
   python3-flake8 \
+  python3-flake8-blind-except \
+  python3-flake8-builtins \
+  python3-flake8-class-newline \
+  python3-flake8-comprehensions \
+  python3-flake8-deprecated \
+  python3-flake8-docstrings \
+  python3-flake8-import-order \
+  python3-flake8-quotes \
   python3-jsonschema \
   python3-lxml \
   python3-mock \
@@ -80,7 +93,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
+  python3-pytest-cov \
   python3-pytest-mock \
+  python3-pytest-repeat \
+  python3-pytest-rerunfailures \
+  python3-pytest-runner \
   python3-pytest-timeout \
   python3-yaml \
   uncrustify \
