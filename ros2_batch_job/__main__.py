@@ -221,9 +221,6 @@ def get_args(sysargv=None):
         '--test-args', default=None,
         help="arguments passed to the 'test' verb")
     parser.add_argument(
-        '--src-mounted', default=False, action='store_true',
-        help="src directory is already mounted into the workspace")
-    parser.add_argument(
         '--compile-with-clang', default=False, action='store_true',
         help="compile with clang instead of gcc")
     parser.add_argument(
@@ -434,14 +431,7 @@ def run(args, build_function, blacklisted_package_names=None):
     os.environ['GIT_COMMITTER_NAME'] = 'nobody'
 
     info("Using workspace: @!{0}", fargs=(args.workspace,))
-    # git doesn't work reliably inside qemu, so we're assuming that somebody
-    # already checked out the code on the host and mounted it in at the right
-    # place in <workspace>/src, which we don't want to remove here.
-    if args.src_mounted:
-        remove_folder(os.path.join(args.workspace, 'build'))
-        remove_folder(os.path.join(args.workspace, 'install'))
-    else:
-        remove_folder(args.workspace)
+    remove_folder(args.workspace)
     if not os.path.isdir(args.workspace):
         os.makedirs(args.workspace)
 
@@ -617,66 +607,62 @@ def run(args, build_function, blacklisted_package_names=None):
             job.run([args.colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
             job.run([args.colcon_script, 'mixin', 'update', 'default'], shell=True)
 
-        # Skip git operations on arm because git doesn't work in qemu. Assume
-        # that somebody has already pulled the code on the host and mounted it
-        # in.
-        if not args.src_mounted:
-            print('# BEGIN SUBSECTION: import repositories')
-            repos_file_urls = [args.repo_file_url]
-            if args.supplemental_repo_file_url is not None:
-                repos_file_urls.append(args.supplemental_repo_file_url)
-            repos_filenames = []
-            for index, repos_file_url in enumerate(repos_file_urls):
-                repos_filename = '{0:02d}-{1}'.format(index, os.path.basename(repos_file_url))
-                _fetch_repos_file(repos_file_url, repos_filename, job)
-                repos_filenames.append(repos_filename)
-            # Use the repository listing and vcstool to fetch repositories
-            if not os.path.exists(args.sourcespace):
-                os.makedirs(args.sourcespace)
-            for filename in repos_filenames:
-                job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force', '--retry', '5',
-                                   '--input', filename], shell=True)
+        print('# BEGIN SUBSECTION: import repositories')
+        repos_file_urls = [args.repo_file_url]
+        if args.supplemental_repo_file_url is not None:
+            repos_file_urls.append(args.supplemental_repo_file_url)
+        repos_filenames = []
+        for index, repos_file_url in enumerate(repos_file_urls):
+            repos_filename = '{0:02d}-{1}'.format(index, os.path.basename(repos_file_url))
+            _fetch_repos_file(repos_file_url, repos_filename, job)
+            repos_filenames.append(repos_filename)
+        # Use the repository listing and vcstool to fetch repositories
+        if not os.path.exists(args.sourcespace):
+            os.makedirs(args.sourcespace)
+        for filename in repos_filenames:
+            job.run(vcs_cmd + ['import', '"%s"' % args.sourcespace, '--force', '--retry', '5',
+                               '--input', filename], shell=True)
+        print('# END SUBSECTION')
+
+        if args.test_branch is not None:
+            print('# BEGIN SUBSECTION: checkout custom branch')
+            # Store current branch as well-known branch name for later rebasing
+            info('Attempting to create a well known branch name for all the default branches')
+            job.run(vcs_cmd + ['custom', '.', '--git', '--args', 'checkout', '-b', '__ci_default'])
+
+            # Attempt to switch all the repositories to a given branch
+            info("Attempting to switch all repositories to the '{0}' branch"
+                 .format(args.test_branch))
+            # use -b and --track to checkout correctly when file/folder with the same name exists
+            vcs_custom_cmd = vcs_cmd + [
+                'custom', '.', '--args', 'checkout',
+                '-b', args.test_branch, '--track', 'origin/' + args.test_branch]
+            ret = job.run(vcs_custom_cmd, exit_on_error=False)
+            info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
+            print()
+
+            # Attempt to merge the __ci_default branch into the branch.
+            # This is to ensure that the changes on the branch still work
+            # when applied to the latest version of the default branch.
+            info("Attempting to merge all repositories to the '__ci_default' branch")
+            vcs_custom_cmd = vcs_cmd + ['custom', '.', '--git', '--args', 'merge', '__ci_default']
+            ret = job.run(vcs_custom_cmd)
+            info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
+            print()
             print('# END SUBSECTION')
 
-            if args.test_branch is not None:
-                print('# BEGIN SUBSECTION: checkout custom branch')
-                # Store current branch as well-known branch name for later rebasing
-                info('Attempting to create a well known branch name for all the default branches')
-                job.run(vcs_cmd + ['custom', '.', '--git', '--args', 'checkout', '-b', '__ci_default'])
+        print('# BEGIN SUBSECTION: repository hashes')
+        # Show the latest commit log on each repository (includes the commit hash).
+        job.run(vcs_cmd + ['log', '-l1', '"%s"' % args.sourcespace], shell=True)
+        print('# END SUBSECTION')
 
-                # Attempt to switch all the repositories to a given branch
-                info("Attempting to switch all repositories to the '{0}' branch"
-                     .format(args.test_branch))
-                # use -b and --track to checkout correctly when file/folder with the same name exists
-                vcs_custom_cmd = vcs_cmd + [
-                    'custom', '.', '--args', 'checkout',
-                    '-b', args.test_branch, '--track', 'origin/' + args.test_branch]
-                ret = job.run(vcs_custom_cmd, exit_on_error=False)
-                info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
-                print()
-
-                # Attempt to merge the __ci_default branch into the branch.
-                # This is to ensure that the changes on the branch still work
-                # when applied to the latest version of the default branch.
-                info("Attempting to merge all repositories to the '__ci_default' branch")
-                vcs_custom_cmd = vcs_cmd + ['custom', '.', '--git', '--args', 'merge', '__ci_default']
-                ret = job.run(vcs_custom_cmd)
-                info("'{0}' returned exit code '{1}'", fargs=(" ".join(vcs_custom_cmd), ret))
-                print()
-                print('# END SUBSECTION')
-
-            print('# BEGIN SUBSECTION: repository hashes')
-            # Show the latest commit log on each repository (includes the commit hash).
-            job.run(vcs_cmd + ['log', '-l1', '"%s"' % args.sourcespace], shell=True)
-            print('# END SUBSECTION')
-
-            print('# BEGIN SUBSECTION: vcs export --exact')
-            # Show the output of 'vcs export --exact`
-            job.run(
-                vcs_cmd + ['export', '--exact', '"%s"' % args.sourcespace], shell=True,
-                # if a repo has been rebased against the default branch vcs can't detect the remote
-                exit_on_error=False)
-            print('# END SUBSECTION')
+        print('# BEGIN SUBSECTION: vcs export --exact')
+        # Show the output of 'vcs export --exact`
+        job.run(
+            vcs_cmd + ['export', '--exact', '"%s"' % args.sourcespace], shell=True,
+            # if a repo has been rebased against the default branch vcs can't detect the remote
+            exit_on_error=False)
+        print('# END SUBSECTION')
 
         # blacklist rmw packages as well as their dependencies where possible
         if 'rmw_connextdds' in args.ignore_rmw:
