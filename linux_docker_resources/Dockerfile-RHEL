@@ -144,6 +144,7 @@ RUN dnf install \
     python3-pygraphviz \
     python3-pykdl \
     python3-pytest \
+    python3-pytest-benchmark \
     python3-pytest-cov \
     python3-pytest-mock \
     python3-pytest-timeout \

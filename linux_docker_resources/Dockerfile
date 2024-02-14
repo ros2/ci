@@ -80,6 +80,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
+  python3-pytest-benchmark \
   python3-pytest-mock \
   python3-pytest-timeout \
   python3-yaml \
