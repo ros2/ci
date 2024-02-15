@@ -230,9 +230,6 @@ def get_args(sysargv=None):
         '--workspace-path', default=None,
         help="base path of the workspace")
     parser.add_argument(
-        '--python-interpreter', default=None,
-        help='pass different Python interpreter')
-    parser.add_argument(
         '--visual-studio-version', default=None, required=(os.name == 'nt'),
         help='select the Visual Studio version')
     parser.add_argument(

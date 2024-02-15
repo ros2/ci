@@ -299,9 +299,6 @@ if "!CI_COLCON_MIXIN_URL!" NEQ "" (
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
 )
-if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
-  set "CI_ARGS=!CI_ARGS! --python-interpreter python_d"
-)
 if "!CI_COMPILE_WITH_CLANG!" == "true" (
   set "CI_ARGS=!CI_ARGS! --compile-with-clang"
 )
