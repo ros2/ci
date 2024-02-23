@@ -65,7 +65,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   pybind11-dev \
   pydocstyle \
   python3-argcomplete \
-  python3-colcon-argcomplete \
   python3-colcon-bash \
   python3-colcon-cmake \
   python3-colcon-core \

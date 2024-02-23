@@ -21,7 +21,6 @@ RUN dnf install \
     mesa-dri-drivers \
     net-tools \
     patch \
-    python3-colcon-argcomplete \
     python3-colcon-bash \
     python3-colcon-cmake \
     python3-colcon-core \
