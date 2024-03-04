@@ -146,7 +146,6 @@ def main(argv=None):
             'label_expression': 'linux',
             'shell_type': 'Shell',
             'build_args_default': re.sub(r'(--cmake-args)', r'\1 -DPython3_EXECUTABLE=/usr/bin/python3', data['build_args_default']),
-            'test_args_default': re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(cppcheck|\2)"', data['test_args_default']),
         },
     }
 
