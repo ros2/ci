@@ -1,0 +1,18 @@
+---
+names:
+  tracetools:
+    test-dependencies: [tracetools_read]
+  tracetools_trace:
+    test-dependencies: [tracetools]
+  ros2trace:
+    test-dependencies: [tracetools_trace]
+  tracetools_launch:
+    test-dependencies: [ros2trace]
+  tracetools_test:
+    test-dependencies: [tracetools_launch]
+  test_tracetools:
+    test-dependencies: [tracetools_test]
+  test_ros2trace:
+    test-dependencies: [test_tracetools]
+  test_tracetools_launch:
+    test-dependencies: [test_ros2trace]

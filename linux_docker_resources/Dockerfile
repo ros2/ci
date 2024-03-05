@@ -218,6 +218,9 @@ RUN sudo -H -u rosbuild -- git config --global user.email "jenkins@ci.ros2.org"
 RUN sudo -H -u rosbuild -- git config --global user.name "Jenkins ROS 2"
 RUN echo 'rosbuild ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+ADD serialize-trace.meta /home/rosbuild/.colcon/metadata-disabled/serialize-trace.meta
+RUN chown rosbuild: /home/rosbuild/.colcon -R
+
 # Add an entry point which changes rosbuild's UID from 1234 to the UID of the invoking user.
 # This means that the generated files will have the same ownership as the host OS user.
 COPY entry_point.sh /entry_point.sh
