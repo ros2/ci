@@ -65,37 +65,6 @@ def force_color():
     format_color = forced_format_color
 
 
-def generated_venv_vars(venv_path):
-    venv_python = os.path.join(venv_path, 'bin', 'python')
-    # Note(wjwwood): I have intentionally stripped a few choice env variables
-    # from the environment passed to venv subprocesses, because they cause pip
-    # to install things into the wrong prefix by default. Some related links:
-    #   https://bitbucket.org/hpk42/tox/issue/148/__pyvenv_launcher__-causing-issues-on-os-x
-    #   http://bugs.python.org/issue22490
-    #   https://github.com/pypa/pip/issues/2031
-    # This issue only occurs (based on my testing) iff when __PYVENV_LAUNCHER__ is set
-    # and pip is run from the venv through a subprocess and shell=True for the subprocess.
-    venv_env = {}
-    for x in os.environ:
-        if x not in ['__PYVENV_LAUNCHER__']:
-            venv_env[x] = os.environ[x]
-
-    def venv(cmd, **kwargs):
-        # Ensure shell is on since we're using &&
-        kwargs['shell'] = True
-        # Override the env if not already set
-        if 'env' not in kwargs:
-            kwargs['env'] = venv_env
-        # Prefix all commands with a sourcing of the 'activate' script from pip
-        this_venv_path = os.path.relpath(venv_path, os.getcwd())
-        activate = os.path.join(this_venv_path, 'bin', 'activate')
-        prefix = ['.', activate, '&&']
-        log('(venv)')
-        return run_with_prefix(prefix, cmd, **kwargs)
-
-    return venv, venv_python
-
-
 def remove_folder(path):
     if os.path.exists(path):
         if IS_JENKINS:

@@ -41,7 +41,7 @@ RUN if test \( ${UBUNTU_DISTRO} != noble \); then echo "deb http://packages.osrf
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # Install some development tools.
-RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool python3-venv
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool
 RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
 
 # Install build and test dependencies of ROS 2 packages.
