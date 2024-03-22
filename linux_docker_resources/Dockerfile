@@ -122,6 +122,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   uncrustify \
   yamllint
 
+# Configure proposed source
+RUN if test \( ${UBUNTU_DISTRO} = noble \); then\
+    echo "deb http://archive.ubuntu.com/ubuntu/ "$(lsb_release -cs)"-proposed restricted main multiverse universe" >> /etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list \
+;fi
+
+# Conditionally install necessary packages from proposed
+RUN if test \( ${UBUNTU_DISTRO} = noble \); then apt-get update && apt-get install --no-install-recommends -y python3-flake8/$(lsb_release -cs)-proposed; fi
+
 # Install LTTng-related packages starting from Iron only.
 RUN if test \( ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
   liblttng-ust-dev \
