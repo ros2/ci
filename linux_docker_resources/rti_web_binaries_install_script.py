@@ -26,8 +26,8 @@ def install_connext(installer_path, install_directory):
         while(keep_agreeing):
             result_index = child.expect([
                 'Installation Directory.*?:',
-                'Press \[Enter\] to continue:',
-                'Do you accept this license\? \[y/n\]: '])
+                r'Press \[Enter\] to continue:',
+                r'Do you accept this license\? \[y/n\]: '])
             if result_index == 0:
                 keep_agreeing = False
             else:
