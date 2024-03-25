@@ -94,6 +94,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-flake8-docstrings \
   python3-flake8-import-order \
   python3-flake8-quotes \
+  python3-importlib-metadata \
   python3-jsonschema \
   python3-lxml \
   python3-mock \
