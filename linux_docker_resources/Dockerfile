@@ -9,6 +9,11 @@ ARG COMPILE_WITH_CLANG=false
 # See: http://askubuntu.com/questions/506158/unable-to-initialize-frontend-dialog-when-using-ssh
 ENV DEBIAN_FRONTEND noninteractive
 
+# In pip 23.0.1 and newer, trying to use pip in a non-venv doesn't work.  We can workaround this
+# by using the PIP_BREAK_SYSTEM_PACKAGES environment variable, and we can unconditionally set it
+# since older pip will just ignore it.
+ENV PIP_BREAK_SYSTEM_PACKAGES 1
+
 # Fresh installation will always pull in contents from updates repositories regardless of the phased update percentage.
 # To maintain working installations, always include updates regardless of rollout phase and set a machine ID so that
 # changes in rollout behavior will at least be consistent across image buildtime and runtime.
@@ -133,7 +138,7 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y lcov
 
-RUN pip3 install -U lcov_cobertura_fix $(if test ${UBUNTU_DISTRO} = noble; then echo --break-system-packages; fi)
+RUN pip3 install -U lcov_cobertura_fix
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true -a ${UBUNTU_DISTRO} = jammy \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; fi
