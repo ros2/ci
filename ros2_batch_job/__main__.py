@@ -465,8 +465,10 @@ def run(args, build_function, blacklisted_package_names=None):
         for pkgname, importname, version in pip_dependencies:
             if need_package_from_pipy(importname):
                 pip_packages.append(pkgname)
-                if version:
-                    constraints.append(f'{pkgname}{version}')
+            # Even if we don't need to install the package, we still add the constraints
+            # (if they exist) so that other package installations will respect these.
+            if version:
+                constraints.append(f'{pkgname}{version}')
 
         if sys.platform == 'win32':
             # Install fork of pyreadline containing fix for deprecation warnings
@@ -502,6 +504,8 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['cryptography', 'lxml', 'numpy'], shell=True)
 
+        print('Using constraints:')
+        print('\n'.join(constraints))
         with open('constraints.txt', 'w') as outfp:
             outfp.write('\n'.join(constraints))
 
