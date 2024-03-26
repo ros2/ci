@@ -53,7 +53,7 @@ PipPackage = collections.namedtuple('PipPackage', ['pkgname' ,'importname', 'ver
 pip_dependencies = [
     PipPackage('EmPy', 'em', '<4'),
     PipPackage('catkin_pkg', 'catkin_pkg', ''),
-    PipPackage('cryptography', 'cryptography', '==3.0'),
+    PipPackage('cryptography', 'cryptography', '<=3.0'),
     PipPackage('coverage', 'coverage', ''),
     PipPackage('flake8', 'flake8', '<5.0.0'),
     PipPackage('flake8-blind-except', 'flake8_blind_except', '==0.1.1'),
