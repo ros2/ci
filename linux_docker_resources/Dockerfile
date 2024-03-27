@@ -86,6 +86,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-colcon-python-setup-py \
   python3-colcon-recursive-crawl \
   python3-colcon-ros \
+  python3-colcon-ros-domain-id-coordinator \
   python3-colcon-test-result \
   python3-colcon-zsh \
   python3-coverage \
@@ -121,6 +122,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-yaml \
   uncrustify \
   yamllint
+
+# Configure proposed source, and install python3-flake8 from it
+RUN if test \( ${UBUNTU_DISTRO} = noble \); then\
+    echo "deb http://archive.ubuntu.com/ubuntu/ "$(lsb_release -cs)"-proposed restricted main multiverse universe" >> /etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list && \
+    apt-get update && apt-get install --no-install-recommends -y python3-flake8/$(lsb_release -cs)-proposed && \
+    rm -f /etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list && \
+    apt-get update \
+;fi
 
 # Install LTTng-related packages starting from Iron only.
 RUN if test \( ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
