@@ -511,7 +511,7 @@ def run(args, build_function, blacklisted_package_names=None):
         print('Using constraints:')
         print('\n'.join(constraints))
         with open('constraints.txt', 'w') as outfp:
-            outfp.write('\n'.join(constraints))
+            outfp.write('\n'.join(constraints) + '\n')
 
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
         if sys.platform == 'win32':
