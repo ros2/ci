@@ -68,6 +68,8 @@ pip_dependencies = [
     PipPackage('lark', 'lark', '==1.1.1'),
     PipPackage('mypy', 'mypy', '==0.931'),
     PipPackage('nose', 'nose', ''),
+    PipPackage('pathspec', 'pathspec', ''),
+    PipPackage('pep8', 'pep8', ''),
     PipPackage('pydocstyle', 'pydocstyle', ''),
     PipPackage('pyflakes', 'pyflakes', ''),
     PipPackage('pyparsing', 'pyparsing', '==2.4.7'),
@@ -76,10 +78,12 @@ pip_dependencies = [
     PipPackage('pytest-mock', 'pytest_mock', ''),
     PipPackage('pytest-repeat', 'pytest_repeat', ''),
     PipPackage('pytest-rerunfailures', 'pytest_rerunfailures', ''),
+    PipPackage('pytest-runner', 'ptr', ''),
     PipPackage('pytest-timeout', 'pytest_timeout', '==2.1.0'),
     PipPackage('pyyaml', 'yaml', ''),
     PipPackage('setuptools', 'setuptools', '==59.6.0'),
     PipPackage('vcstool', 'vcstool', ''),
+    PipPackage('yamllint', 'yamllint', ''),
 ]
 
 colcon_packages = [
