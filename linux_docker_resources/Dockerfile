@@ -126,8 +126,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN if test \( ${UBUNTU_DISTRO} = noble \); then\
     printf "deb http://archive.ubuntu.com/ubuntu/ "$(lsb_release -cs)"-proposed restricted main multiverse universe" >> /etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list && \
     printf "Package: *\nPin: release a="$(lsb_release -cs)"-proposed\nPin-Priority: -10" >> /etc/apt/preferences.d/proposed-updates && \
-    cat /etc/apt/preferences.d/proposed-updates && \
-    apt-get update && sudo apt-cache policy  && \
+    apt-get update &&  \
     apt-get install --no-install-recommends -y python3-flake8/$(lsb_release -cs)-proposed \
 ;fi
 
