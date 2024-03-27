@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+import collections
 import importlib
 import os
 import platform
@@ -47,40 +48,43 @@ from .util import UnbufferedIO
 sys.stdout = UnbufferedIO(sys.stdout)
 sys.stderr = UnbufferedIO(sys.stderr)
 
-# One of the maintainers of pyparsing suggests pinning to 2.4.7 for now;
-# see https://github.com/pyparsing/pyparsing/issues/323
+PipPackage = collections.namedtuple('PipPackage', ['pkgname' ,'importname', 'version'])
+
 pip_dependencies = [
-    'EmPy',
-    'coverage',
-    'catkin_pkg',
-    'flake8',
-    'flake8-blind-except==0.1.1',
-    'flake8-builtins',
-    'flake8-class-newline',
-    'flake8-comprehensions',
-    'flake8-deprecated',
-    'flake8-docstrings',
-    'flake8-import-order',
-    'flake8-quotes',
-    'importlib-metadata',
-    'mock',
-    'nose',
-    'pep8',
-    'pydocstyle',
-    'pyflakes',
-    'pyparsing==2.4.7',
-    'pytest',
-    'pytest-cov',
-    'pytest-mock',
-    'pytest-repeat',
-    'pytest-rerunfailures',
-    'pytest-runner',
-    'pyyaml',
-    'vcstool',
-    'yamllint',
+    PipPackage('EmPy', 'em', '<4'),
+    PipPackage('catkin_pkg', 'catkin_pkg', ''),
+    PipPackage('cryptography', 'cryptography', '<=3.0'),
+    PipPackage('coverage', 'coverage', ''),
+    PipPackage('flake8', 'flake8', '<5.0.0'),
+    PipPackage('flake8-blind-except', 'flake8_blind_except', '==0.1.1'),
+    PipPackage('flake8-builtins', 'flake8_builtins', ''),
+    PipPackage('flake8-class-newline', 'flake8_class_newline', ''),
+    PipPackage('flake8-comprehensions', 'flake8_comprehensions', ''),
+    PipPackage('flake8-deprecated', 'flake8_deprecated', ''),
+    PipPackage('flake8-docstrings', 'flake8_docstrings', ''),
+    PipPackage('flake8-import-order', 'flake8_import_order', ''),
+    PipPackage('flake8-quotes', 'flake8_quotes', ''),
+    PipPackage('importlib-metadata', 'importlib_metadata', ''),
+    PipPackage('lark', 'lark', '==1.1.1'),
+    PipPackage('mypy', 'mypy', '==0.931'),
+    PipPackage('nose', 'nose', ''),
+    PipPackage('pathspec', 'pathspec', ''),
+    PipPackage('pep8', 'pep8', ''),
+    PipPackage('pydocstyle', 'pydocstyle', ''),
+    PipPackage('pyflakes', 'pyflakes', ''),
+    PipPackage('pyparsing', 'pyparsing', '==2.4.7'),
+    PipPackage('pytest', 'pytest', '==6.2.5'),
+    PipPackage('pytest-cov', 'pytest_cov', ''),
+    PipPackage('pytest-mock', 'pytest_mock', ''),
+    PipPackage('pytest-repeat', 'pytest_repeat', ''),
+    PipPackage('pytest-rerunfailures', 'pytest_rerunfailures', ''),
+    PipPackage('pytest-runner', 'ptr', ''),
+    PipPackage('pytest-timeout', 'pytest_timeout', '==2.1.0'),
+    PipPackage('pyyaml', 'yaml', ''),
+    PipPackage('setuptools', 'setuptools', '==59.6.0'),
+    PipPackage('vcstool', 'vcstool', ''),
+    PipPackage('yamllint', 'yamllint', ''),
 ]
-# https://github.com/pyca/cryptography/issues/5433
-pip_cryptography_version = '==3.0'
 
 colcon_packages = [
     'colcon-core',
@@ -452,22 +456,23 @@ def run(args, build_function, blacklisted_package_names=None):
         # Print setuptools version
         job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
                 shell=True)
+
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
+
         # Install pip dependencies
-        pip_packages = list(pip_dependencies)
+        pip_packages = []
+        constraints = []
 
-        # We prefer to get mypy from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("mypy"):
-            pip_packages += ["mypy==0.931"]
-
-        # We prefer to get pytest-timeout from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("pytest_timeout"):
-            pip_packages += ["pytest-timeout==2.1.0"]
-
-        # We prefer to get lark from the distribution if it exists.  If not we install it via pip.
-        if need_package_from_pipy("lark"):
-            pip_packages += ["lark==1.1.1"]
+        # We prefer to get packages from the distribution if they are already installed.
+        # If not, we add to the list to install from pip.
+        for pkgname, importname, version in pip_dependencies:
+            if need_package_from_pipy(importname):
+                pip_packages.append(pkgname)
+            # Even if we don't need to install the package, we still add the constraints
+            # (if they exist) so that other package installations will respect these.
+            if version:
+                constraints.append(f'{pkgname}{version}')
 
         if sys.platform == 'win32':
             # Install fork of pyreadline containing fix for deprecation warnings
@@ -489,11 +494,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 if args.ros_distro in ('humble', 'iron'):
                     pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
             else:
-                pip_packages += [
-                    f'cryptography{pip_cryptography_version}',
-                    'lxml',
-                    'numpy',
-                ]
+                pip_packages += ['cryptography', 'lxml', 'numpy']
                 if args.ros_distro in ('humble', 'iron'):
                     pip_packages.append('netifaces')
         if not args.colcon_branch:
@@ -505,12 +506,12 @@ def run(args, build_function, blacklisted_package_names=None):
             # to ensure that the build type specific package is installed
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                [f'cryptography{pip_cryptography_version}', 'lxml', 'numpy'], shell=True)
+                ['cryptography', 'lxml', 'numpy'], shell=True)
+
+        print('Using constraints:')
+        print('\n'.join(constraints))
         with open('constraints.txt', 'w') as outfp:
-            outfp.write('empy < 4\n')
-            outfp.write('flake8 < 5.0.0\n')
-            outfp.write('setuptools==59.6.0\n')
-            outfp.write('pytest==6.2.5\n')
+            outfp.write('\n'.join(constraints) + '\n')
 
         pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
         if sys.platform == 'win32':
