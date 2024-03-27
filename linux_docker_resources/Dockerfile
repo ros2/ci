@@ -86,6 +86,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-colcon-python-setup-py \
   python3-colcon-recursive-crawl \
   python3-colcon-ros \
+  python3-colcon-ros-domain-id-coordinator \
   python3-colcon-test-result \
   python3-colcon-zsh \
   python3-coverage \
