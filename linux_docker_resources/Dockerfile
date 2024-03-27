@@ -125,7 +125,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 # Configure proposed source, and install python3-flake8 from it
 RUN if test \( ${UBUNTU_DISTRO} = noble \); then\
     echo "deb http://archive.ubuntu.com/ubuntu/ "$(lsb_release -cs)"-proposed restricted main multiverse universe" >> /etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list && \
-    echo -e "Package: *\nPin: release n="$(lsb_release -cs)"-proposed\nPin-Priority: -10" >> /etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list && \
+    echo -e "Package: *\nPin: release n="$(lsb_release -cs)"-proposed\nPin-Priority: -10" >> /etc/apt/preferences.d/proposed-updates && \
     apt-get update && sudo apt-cache policy \
     apt-get update && apt-get install --no-install-recommends -y python3-flake8/$(lsb_release -cs)-proposed && \
 ;fi
