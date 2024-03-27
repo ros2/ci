@@ -87,28 +87,28 @@ pip_dependencies = [
 ]
 
 colcon_packages = [
-    'colcon-core',
-    'colcon-defaults',
-    'colcon-library-path',
-    'colcon-metadata',
-    'colcon-mixin',
-    'colcon-output',
-    'colcon-package-information',
-    'colcon-package-selection',
-    'colcon-parallel-executor',
-    'colcon-pkg-config',
-    'colcon-powershell',
-    'colcon-python-setup-py',
-    'colcon-recursive-crawl',
-    'colcon-test-result',
-    'colcon-cmake',
-    'colcon-ros',
-    'colcon-ros-domain-id-coordinator',
+    PipPackage('colcon-core', 'colcon_core', ''),
+    PipPackage('colcon-defaults', 'colcon_defaults', ''),
+    PipPackage('colcon-library-path', 'colcon_library_path', ''),
+    PipPackage('colcon-metadata', 'colcon_metadata', ''),
+    PipPackage('colcon-mixin', 'colcon_mixin', ''),
+    PipPackage('colcon-output', 'colcon_output', ''),
+    PipPackage('colcon-package-information', 'colcon_package_information', ''),
+    PipPackage('colcon-package-selection', 'colcon_package_selection', ''),
+    PipPackage('colcon-parallel-executor', 'colcon_parallel_executor', ''),
+    PipPackage('colcon-pkg-config', 'colcon_pkg_config', ''),
+    PipPackage('colcon-powershell', 'colcon_powershell', ''),
+    PipPackage('colcon-python-setup-py', 'colcon_python_setup_py', ''),
+    PipPackage('colcon-recursive-crawl', 'colcon_recursive_crawl', ''),
+    PipPackage('colcon-test-result', 'colcon_test_result', ''),
+    PipPackage('colcon-cmake', 'colcon_cmake', ''),
+    PipPackage('colcon-ros', 'colcon_ros', ''),
+    PipPackage('colcon-ros-domain-id-coordinator', 'colcon_ros_domain_id_coordinator', ''),
 ]
 if sys.platform != 'win32':
     colcon_packages += [
-        'colcon-bash',
-        'colcon-zsh',
+        PipPackage('colcon-bash', 'colcon_bash', ''),
+        PipPackage('colcon-zsh', 'colcon_zsh', ''),
     ]
 
 gcov_flags = '--coverage'
@@ -464,6 +464,10 @@ def run(args, build_function, blacklisted_package_names=None):
         pip_packages = []
         constraints = []
 
+        potential_pip_packages = pip_dependencies
+        if not args.colcon_branch:
+            potential_pip_packages += colcon_packages
+
         # We prefer to get packages from the distribution if they are already installed.
         # If not, we add to the list to install from pip.
         for pkgname, importname, version in pip_dependencies:
@@ -497,31 +501,28 @@ def run(args, build_function, blacklisted_package_names=None):
                 pip_packages += ['cryptography', 'lxml', 'numpy']
                 if args.ros_distro in ('humble', 'iron'):
                     pip_packages.append('netifaces')
-        if not args.colcon_branch:
-            pip_packages += colcon_packages
         if sys.platform == 'win32':
-            job.run(
-                ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                colcon_packages, shell=True)
             # to ensure that the build type specific package is installed
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['cryptography', 'lxml', 'numpy'], shell=True)
 
-        print('Using constraints:')
-        print('\n'.join(constraints))
-        with open('constraints.txt', 'w') as outfp:
-            outfp.write('\n'.join(constraints) + '\n')
+        if pip_packages:
+            print('Using constraints:')
+            print('\n'.join(constraints))
+            with open('constraints.txt', 'w') as outfp:
+                outfp.write('\n'.join(constraints) + '\n')
 
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
-        if sys.platform == 'win32':
-            # Force reinstall so all dependencies are in virtual environment
-            # On Windows since we switch between the debug and non-debug
-            # interpreter all packages need to be reinstalled too
-            pip_cmd.append('--force-reinstall')
-        job.run(
-            pip_cmd + pip_packages,
-            shell=True)
+            pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
+            if sys.platform == 'win32':
+                # Force reinstall so all dependencies are in virtual environment
+                # On Windows since we switch between the debug and non-debug
+                # interpreter all packages need to be reinstalled too
+                pip_cmd.append('--force-reinstall')
+
+            job.run(
+                pip_cmd + pip_packages,
+                shell=True)
 
         vcs_cmd = ['vcs']
 
@@ -530,8 +531,8 @@ def run(args, build_function, blacklisted_package_names=None):
             os.makedirs('colcon', exist_ok=True)
             with open('colcon/colcon.repos', 'w') as h:
                 h.write('repositories:\n')
-                for name in colcon_packages:
-                    h.write('  %s:\n' % name)
+                for pkgname, importname, version in colcon_packages:
+                    h.write('  %s:\n' % pkgname)
                     h.write('    type: git\n')
                     h.write(
                         '    url: https://github.com/colcon/%s.git\n' % name)
@@ -552,7 +553,7 @@ def run(args, build_function, blacklisted_package_names=None):
             # install colcon packages from local working copies
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] +
-                ['colcon/%s' % name for name in colcon_packages],
+                ['colcon/%s' % pkgname for pkgname, importname, version in colcon_packages],
                 shell=True)
 
         colcon_script = which('colcon')
