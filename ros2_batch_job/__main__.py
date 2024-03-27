@@ -466,7 +466,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         potential_pip_packages = pip_dependencies
         if not args.colcon_branch:
-            pip_packages += colcon_packages
+            potential_pip_packages += colcon_packages
 
         # We prefer to get packages from the distribution if they are already installed.
         # If not, we add to the list to install from pip.
@@ -507,26 +507,27 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
                 ['cryptography', 'lxml', 'numpy'], shell=True)
 
-        print('Using constraints:')
-        print('\n'.join(constraints))
-        with open('constraints.txt', 'w') as outfp:
-            outfp.write('\n'.join(constraints) + '\n')
+        if pip_packages:
+            print('Using constraints:')
+            print('\n'.join(constraints))
+            with open('constraints.txt', 'w') as outfp:
+                outfp.write('\n'.join(constraints) + '\n')
 
-        pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
-        if sys.platform == 'win32':
-            # Force reinstall so all dependencies are in virtual environment
-            # On Windows since we switch between the debug and non-debug
-            # interpreter all packages need to be reinstalled too
-            pip_cmd.append('--force-reinstall')
-        else:
-            # We need to use --user so that certain packages (like flake8-blind-except)
-            # can successfully build on RHEL-8 (Humble).
-            if args.ros_distro == 'humble':
-                pip_cmd.append('--user')
+            pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
+            if sys.platform == 'win32':
+                # Force reinstall so all dependencies are in virtual environment
+                # On Windows since we switch between the debug and non-debug
+                # interpreter all packages need to be reinstalled too
+                pip_cmd.append('--force-reinstall')
+            else:
+                # We need to use --user so that certain packages (like flake8-blind-except)
+                # can successfully build on RHEL-8 (Humble).
+                if args.ros_distro == 'humble':
+                    pip_cmd.append('--user')
 
-        job.run(
-            pip_cmd + pip_packages,
-            shell=True)
+            job.run(
+                pip_cmd + pip_packages,
+                shell=True)
 
         vcs_cmd = ['vcs']
 
