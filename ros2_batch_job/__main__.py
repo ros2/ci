@@ -519,6 +519,11 @@ def run(args, build_function, blacklisted_package_names=None):
                 # On Windows since we switch between the debug and non-debug
                 # interpreter all packages need to be reinstalled too
                 pip_cmd.append('--force-reinstall')
+            else:
+                # We need to use --user so that certain packages (like flake8-blind-except)
+                # can successfully build on RHEL-8 (Humble).
+                if args.ros_distro == 'humble':
+                    pip_cmd.append('--user')
 
             job.run(
                 pip_cmd + pip_packages,
