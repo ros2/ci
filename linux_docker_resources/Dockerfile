@@ -219,6 +219,87 @@ RUN apt-get update && apt-get install -y \
     libacl1-dev \
     libncurses5-dev
 
+# Gazebo Harmonic dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    binutils-dev \
+    build-essential \
+    cmake \
+    curl \
+    freeglut3-dev \
+    libassimp-dev \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libbenchmark-dev \
+    libcurl4-openssl-dev \
+    libdart6.13-collision-bullet-dev \
+    libdart6.13-collision-ode-dev \
+    libdart6.13-dev \
+    libdart6.13-external-ikfast-dev \
+    libdart6.13-external-odelcpsolver-dev \
+    libdart6.13-utils-urdf-dev \
+    libeigen3-dev \
+    libfreeimage-dev \
+    libgdal-dev \
+    libgflags-dev \
+    libglew-dev \
+    libgts-dev \
+    libjsoncpp-dev \
+    libogre-1.9-dev \
+    libogre-next-2.3-dev \
+    libprotobuf-dev \
+    libprotoc-dev \
+    libpython3-dev \
+    libsdformat13-dev \
+    libsdformat14-dev \
+    libsqlite3-dev \
+    libswscale-dev \
+    libtinyxml2-dev \
+    liburdfdom-dev \
+    libwebsockets-dev \
+    libxi-dev \
+    libxml2-utils \
+    libxmu-dev \
+    libyaml-dev \
+    libzip-dev \
+    libzmq3-dev \
+    pkg-config \
+    protobuf-compiler \
+    python3-dev \
+    python3-distutils \
+    python3-protobuf \
+    python3-psutil \
+    python3-pybind11 \
+    python3-pytest \
+    python3-sdformat13 \
+    python3-sdformat14 \
+    python3-yaml \
+    qml-module-qt-labs-folderlistmodel \
+    qml-module-qt-labs-platform \
+    qml-module-qt-labs-settings \
+    qml-module-qtcharts \
+    qml-module-qtgraphicaleffects \
+    qml-module-qtlocation \
+    qml-module-qtpositioning \
+    qml-module-qtqml-models2 \
+    qml-module-qtquick-controls \
+    qml-module-qtquick-controls2 \
+    qml-module-qtquick-dialogs \
+    qml-module-qtquick-layouts \
+    qml-module-qtquick-templates2 \
+    qml-module-qtquick-window2 \
+    qml-module-qtquick2 \
+    qtbase5-dev \
+    qtdeclarative5-dev \
+    qtquickcontrols2-5-dev \
+    rubocop \
+    ruby \
+    ruby-dev \
+    swig \
+    uuid-dev \
+    xvfb
+
 # After all packages are installed, update ccache symlinks (see ros2/ci#326).
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
