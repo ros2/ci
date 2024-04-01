@@ -300,6 +300,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     uuid-dev \
     xvfb
 
+ENV MAKEFLAGS="-j 1"
 # After all packages are installed, update ccache symlinks (see ros2/ci#326).
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
