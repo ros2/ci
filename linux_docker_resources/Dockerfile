@@ -45,6 +45,9 @@ RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubu
 RUN if test \( ${UBUNTU_DISTRO} != noble \); then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
+# automatic invalidation once every day.
+RUN echo "@today_str"
+
 # Install some development tools.
 RUN apt-get update && apt-get install --no-install-recommends -y build-essential ccache cmake pkg-config python3-empy python3-pip python3-setuptools python3-vcstool
 RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
@@ -202,9 +205,6 @@ RUN if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then apt-get u
 
 # Install Python3 development files.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
-
-# automatic invalidation once every day.
-RUN echo "@today_str"
 
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \
