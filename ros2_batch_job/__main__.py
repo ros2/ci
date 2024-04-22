@@ -266,7 +266,7 @@ def get_args(sysargv=None):
             setattr(args, name, space_directory)
     return args
 
-def get_version():
+def get_lcov_version():
     try:
         result = subprocess.run(['lcov', '--version'],
                                 stdout=subprocess.PIPE,
@@ -282,7 +282,7 @@ def process_coverage(args, job):
     # Capture all gdca/gcno files (all them inside buildspace)
     coverage_file = os.path.join(args.buildspace, 'coverage.info')
 
-    version = get_version()
+    version = get_lcov_version()
     lcov_arguments = []
     if version.startswith('2'):
         lcov_arguments = ['--ignore-errors', 'mismatch']
