@@ -285,7 +285,10 @@ def process_coverage(args, job):
     version = get_lcov_version()
     lcov_arguments = []
     if version.startswith('2'):
-        lcov_arguments = ['--ignore-errors', 'mismatch']
+        lcov_arguments = ['--ignore-errors', 'mismatch',
+                          '--ignore-errors', 'negative',
+                          '--ignore-errors', 'unused',
+                          '--ignore-errors', 'empty']
 
     cmd = [
         'lcov',
