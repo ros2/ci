@@ -127,16 +127,17 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   uncrustify \
   yamllint
 
-# Install LTTng-related packages starting from Iron only.
-RUN if test \( ${ROS_DISTRO} != humble \); then apt-get update && apt-get install --no-install-recommends -y \
-  liblttng-ust-dev \
-  lttng-tools \
-  python3-babeltrace; fi
-# Iron uses python3-lttng, but then starting after Iron we switch to liblttng-ctl-dev.
-RUN if test \( ${ROS_DISTRO} = iron \); then apt-get update && apt-get install --no-install-recommends -y \
-  python3-lttng; fi
-RUN if test \( ${ROS_DISTRO} = rolling \); then apt-get update && apt-get install --no-install-recommends -y \
-  liblttng-ctl-dev; fi
+# Install LTTng-related packages for tracing.
+# For Humble, tracing is not enabled by default, so we do nothing.
+# For Iron, we install python3-lttng since we use it for python bindings.
+# For Rolling and Jazzy and later we build our own python bindings so we need additional development libraries.
+RUN if test \( ${ROS_DISTRO} = humble \); then \
+      true \
+    ; elif test \( ${ROS_DISTRO} = iron \); then \
+      apt-get update && apt-get install --no-install-recommends -y liblttng-ust-dev lttng-tools python3-babeltrace python3-lttng \
+    ; else \
+      apt-get update && apt-get install --no-install-recommends -y liblttng-ust-dev lttng-tools python3-babeltrace liblttng-ctl-dev \
+    ; fi
 
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
