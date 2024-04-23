@@ -285,10 +285,11 @@ def process_coverage(args, job):
     version = get_lcov_version()
     lcov_arguments = []
     if version.startswith('2'):
-        lcov_arguments = ['--ignore-errors', 'mismatch',
-                          '--ignore-errors', 'negative',
-                          '--ignore-errors', 'unused',
-                          '--ignore-errors', 'empty']
+        lcov_arguments = ['--ignore-errors', 'inconsistent,inconsistent',
+                          '--ignore-errors', 'mismatch,mismatch',
+                          '--ignore-errors', 'negative,negative',
+                          '--ignore-errors', 'unused,unused',
+                          '--ignore-errors', 'empty,empty']
 
     cmd = [
         'lcov',
@@ -307,7 +308,7 @@ def process_coverage(args, job):
         '*/test/*',
         '*/tests/*',
         '*gtest_vendor*',
-        '*gmock_vendor*']
+        '*gmock_vendor*'] + lcov_arguments
     print(cmd)
     subprocess.run(cmd, check=True)
     # Transform results to the cobertura format
