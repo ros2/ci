@@ -314,7 +314,7 @@ def process_coverage(args, job):
     # Transform results to the cobertura format
     outfile = os.path.join(args.buildspace, 'coverage.xml')
     print('Writing coverage.xml report at path {}'.format(outfile))
-    cmd = ['lcov_cobertura', coverage_file, '--output', outfile]
+    cmd = ['lcov_cobertura', coverage_file, '--output', outfile] + lcov_arguments
     subprocess.run(cmd, check=True)
 
     print('# END SUBSECTION')
