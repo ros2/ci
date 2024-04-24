@@ -145,7 +145,7 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y lcov
 
-RUN pip3 install -U lcov_cobertura_fix
+RUN pip3 install -U lcov_cobertura
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; fi
