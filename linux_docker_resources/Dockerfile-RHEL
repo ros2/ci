@@ -104,9 +104,6 @@ RUN dnf install \
     libxml2 \
     libyaml-devel \
     libzstd-devel \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-tools; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8 -a ${ROS_DISTRO} = rolling; then echo lttng-tools-devel; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-ust-devel; fi) \
     lz4-devel \
     mesa-libGL-devel \
     mesa-libGLU-devel \
@@ -118,7 +115,6 @@ RUN dnf install \
     $(if test ${EL_RELEASE/.*/} != 8; then echo pybind11-devel; fi) \
     python3-PyYAML \
     python3-argcomplete \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-babeltrace; fi) \
     python3-cairo \
     python3-catkin_pkg \
     python3-cryptography \
@@ -133,7 +129,6 @@ RUN dnf install \
     python3-importlib-metadata \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-importlib-resources; fi) \
     python3-lark-parser \
-    $(if test ${EL_RELEASE/.*/} != 8 -a ${ROS_DISTRO} != rolling; then echo python3-lttng; fi) \
     python3-lxml \
     python3-matplotlib \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-mock; fi) \
@@ -174,6 +169,15 @@ RUN dnf install \
     yaml-cpp-devel \
     yamllint \
     --refresh -y
+
+# Install dependencies for LTTng
+RUN if test \( ${ROS_DISTRO} = humble \); then \
+      true \
+    ; elif test \( ${ROS_DISTRO} = iron \); then \
+      dnf install lttng-ust-devel lttng-tools python3-babeltrace python3-lttng --refresh -y \
+    ; else \
+      dnf install lttng-ust-devel lttng-tools python3-babeltrace lttng-tools-devel --refresh -y \
+    ; fi
 
 # Install dependencies of Connext and its installer
 RUN dnf install \
