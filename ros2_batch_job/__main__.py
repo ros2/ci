@@ -535,7 +535,7 @@ def run(args, build_function, blacklisted_package_names=None):
                     h.write('  %s:\n' % pkgname)
                     h.write('    type: git\n')
                     h.write(
-                        '    url: https://github.com/colcon/%s.git\n' % name)
+                        '    url: https://github.com/colcon/%s.git\n' % pkgname)
             # clone default branches
             job.run(
                 vcs_cmd + [
