@@ -125,7 +125,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pytest-timeout \
   python3-yaml \
   uncrustify \
-  yamllint
+  yamllint \
+  wget
 
 # Install LTTng-related packages for tracing.
 # For Humble, tracing is not enabled by default, so we do nothing.
