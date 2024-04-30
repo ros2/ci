@@ -141,6 +141,7 @@ def main(argv=None):
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connextdds'},
+            'test_args_default': re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(mimick|\2)"', data['test_args_default']),
         },
         'linux-rhel': {
             'label_expression': 'linux',
