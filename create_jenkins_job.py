@@ -191,7 +191,7 @@ def main(argv=None):
         # configure manual triggered job
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
-            'test_args_default': data['test_args_default'] + ' --executor sequential',
+            'test_args_default': os_configs.get(os_name, {}).get('test_args_default', data['test_args_default']) + ' --executor sequential',
         })
         # configure test jobs for experimenting with job config changes
         # Keep parameters the same as the manual triggered job above.
