@@ -141,6 +141,7 @@ def main(argv=None):
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
             'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connextdds'},
+            'test_args_default': re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(mimick|\2)"', data['test_args_default']),
         },
         'linux-rhel': {
             'label_expression': 'linux',
@@ -190,7 +191,7 @@ def main(argv=None):
         # configure manual triggered job
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
-            'test_args_default': data['test_args_default'] + ' --executor sequential',
+            'test_args_default': os_configs.get(os_name, {}).get('test_args_default', data['test_args_default']) + ' --executor sequential',
         })
         # configure test jobs for experimenting with job config changes
         # Keep parameters the same as the manual triggered job above.
