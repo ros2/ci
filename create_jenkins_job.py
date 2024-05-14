@@ -191,7 +191,6 @@ def main(argv=None):
         # configure manual triggered job
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
-            'test_args_default': os_configs.get(os_name, {}).get('test_args_default', data['test_args_default']) + ' --executor sequential',
         })
         # configure test jobs for experimenting with job config changes
         # Keep parameters the same as the manual triggered job above.
@@ -295,7 +294,7 @@ def main(argv=None):
                 'cmake_build_type': 'None',
                 'compile_with_clang_default': 'true',
                 'build_args_default': clang_libcxx_build_args,
-                'test_args_default': clang_libcxx_test_args + ' --executor sequential',
+                'test_args_default': clang_libcxx_test_args,
             })
 
         # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
@@ -431,7 +430,7 @@ def main(argv=None):
                 'build_args_default': data['build_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
                                       '--packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
                 'test_args_default': data['test_args_default'] + ' --packages-skip qt_gui_cpp --packages-skip-by-dep qt_gui_cpp ' +
-                                     '--packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level) + ' --executor sequential',
+                                     '--packages-up-to ' + ' '.join(quality_level_pkgs + testing_pkgs_for_quality_level),
             })
             create_job(os_name, 'test_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
@@ -548,7 +547,6 @@ def main(argv=None):
             job_data['label_expression'] = 'built-in || master'
             job_data['os_specific_data'] = os_specific_data
             job_data['cmake_build_type'] = 'None'
-            job_data['test_args_default'] += ' --executor sequential'
             job_data.update(retention_data_by_job_type(launcher_job_name))
             job_config = expand_template('ci_launcher_job.xml.em', job_data)
             configure_job(jenkins, launcher_job_name, job_config, **jenkins_kwargs)
