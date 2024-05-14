@@ -213,6 +213,12 @@ RUN apt-get update && apt-get install -y \
     libacl1-dev \
     libncurses5-dev
 
+# Set default arguments for colcon
+RUN mkdir -p /etc/colcon && echo "---\n\
+test:\n\
+$(if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then echo '  executor: sequential\\n'; fi)\
+" > /etc/colcon/defaults.yaml
+
 # After all packages are installed, update ccache symlinks (see ros2/ci#326).
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
