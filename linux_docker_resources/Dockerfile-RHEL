@@ -197,12 +197,6 @@ ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 # Add the RTI license file.
 ADD rticonnextdds-license/rti_license.dat /tmp/rti_license.dat
 
-# Set default arguments for colcon
-RUN mkdir -p /etc/colcon && echo "---\n\
-test:\n\
-$(if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then echo '  executor: sequential\\n'; fi)\
-" > /etc/colcon/defaults.yaml
-
 # automatic invalidation once every day.
 RUN echo "@today_str"
 RUN dnf update --refresh -y
