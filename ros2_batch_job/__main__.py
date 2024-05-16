@@ -359,7 +359,11 @@ def build_and_test(args, job, colcon_script):
         test_cmd.append('--pytest-with-coverage')
     test_cmd.extend(args.test_args)
 
-    ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
+    test_env = dict(os.environ)
+    if args.ros_distro in ('humble', 'iron'):
+        test_env['COLCON_DEFAULT_EXECUTOR'] = 'sequential'
+
+    ret_test = job.run(test_cmd, exit_on_error=False, shell=True, env=test_env)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
     if ret_test:
