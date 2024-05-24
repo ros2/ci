@@ -266,16 +266,36 @@ def get_args(sysargv=None):
             setattr(args, name, space_directory)
     return args
 
+def get_lcov_version():
+    try:
+        result = subprocess.run(['lcov', '--version'],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                text=True, check=True)
+        version_output = result.stdout.strip().replace('lcov: LCOV version ', '')
+        return version_output
+    except subprocess.CalledProcessError as e:
+        return ""
 
 def process_coverage(args, job):
     print('# BEGIN SUBSECTION: coverage analysis')
     # Capture all gdca/gcno files (all them inside buildspace)
     coverage_file = os.path.join(args.buildspace, 'coverage.info')
+
+    version = get_lcov_version()
+    lcov_arguments = []
+    if version.startswith('2'):
+        lcov_arguments = ['--ignore-errors', 'inconsistent,inconsistent',
+                          '--ignore-errors', 'mismatch,mismatch',
+                          '--ignore-errors', 'negative,negative',
+                          '--ignore-errors', 'unused,unused',
+                          '--ignore-errors', 'empty,empty']
+
     cmd = [
         'lcov',
         '--capture',
         '--directory', args.buildspace,
-        '--output', str(coverage_file)]
+        '--output', str(coverage_file)] + lcov_arguments
     print(cmd)
     subprocess.run(cmd, check=True)
     # Filter out system coverage and test code
@@ -288,7 +308,7 @@ def process_coverage(args, job):
         '*/test/*',
         '*/tests/*',
         '*gtest_vendor*',
-        '*gmock_vendor*']
+        '*gmock_vendor*'] + lcov_arguments
     print(cmd)
     subprocess.run(cmd, check=True)
     # Transform results to the cobertura format

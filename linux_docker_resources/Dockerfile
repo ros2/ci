@@ -145,7 +145,10 @@ RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install
 # Install coverage build dependencies.
 RUN apt-get update && apt-get install --no-install-recommends -y lcov
 
-RUN pip3 install -U lcov_cobertura_fix
+# There is a bug in upstream lcov-to-cobertura-xml with newer versions of lcov.  There is an
+# open PR for it in https://github.com/eriwen/lcov-to-cobertura-xml/pull/55, but until that is
+# merged use the fork with the fix.
+RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
 # Install the Connext binary from the OSRF repositories.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; fi
