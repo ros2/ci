@@ -156,10 +156,6 @@ def main(argv=None):
         },
     }
 
-    launcher_exclude = {
-        'linux-rhel',
-    }
-
     jenkins_kwargs = {}
     jenkins_kwargs['context_lines'] = args.context_lines
     if not args.commit:
@@ -539,7 +535,7 @@ def main(argv=None):
         launcher_job_name = launch_prefix + 'ci_launcher'
         if not pattern_select_jobs_regexp or pattern_select_jobs_regexp.match(launcher_job_name):
             os_specific_data = collections.OrderedDict()
-            for os_name in sorted(os_configs.keys() - launcher_exclude):
+            for os_name in sorted(os_configs.keys()):
                 os_specific_data[os_name] = dict(data)
                 os_specific_data[os_name].update(os_configs[os_name])
                 os_specific_data[os_name]['job_name'] = launch_prefix + 'ci_' + os_name
