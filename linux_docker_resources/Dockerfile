@@ -123,6 +123,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pytest-rerunfailures \
   python3-pytest-runner \
   python3-pytest-timeout \
+  python3-typeshed \
   python3-yaml \
   uncrustify \
   yamllint
