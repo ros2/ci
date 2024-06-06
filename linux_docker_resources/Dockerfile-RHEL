@@ -158,6 +158,7 @@ RUN dnf install \
     python3-rosdistro \
     python3-setuptools \
     python3-sip-devel \
+    python3-types-pyyaml \
     qt5-qtbase \
     qt5-qtbase-devel \
     qt5-qtbase-gui \
