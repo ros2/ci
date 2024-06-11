@@ -158,7 +158,7 @@ RUN dnf install \
     python3-rosdistro \
     python3-setuptools \
     python3-sip-devel \
-    $(if test ${EL_RELEASE/.*/} = 8; then echo python3-types-pyyaml; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-types-pyyaml; fi) \
     qt5-qtbase \
     qt5-qtbase-devel \
     qt5-qtbase-gui \
