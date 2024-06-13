@@ -121,6 +121,7 @@ RUN dnf install \
     python3-cryptography \
     python3-devel \
     python3-empy \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-fastjsonschema; fi) \
     python3-flake8 \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-builtins; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-comprehensions; fi) \
