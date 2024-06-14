@@ -40,7 +40,7 @@ You will need to run the following from a developer command prompt with administ
 Set a variable with the appropriate CI_ARGS, to test up to rclcpp.
 
 ```
-set CI_ARGS=--force-ansi-color --workspace-path C:\J\workspace\ci_windows --ros-distro foxy --ignore-rmw rmw_fastrtps_dynamic_cpp  --colcon-mixin-url https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml --visual-studio-version 2019 --build-args --event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON --packages-up-to rclcpp --test-args --event-handlers console_direct+ --executor sequential --retest-until-pass 2 --ctest-args -LE xfail --pytest-args -m \"not xfail\" --packages-up-to rclcpp```
+set CI_ARGS=--force-ansi-color --workspace-path C:\J\workspace\ci_windows --ros-distro foxy --ignore-rmw rmw_fastrtps_dynamic_cpp  --colcon-mixin-url https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml --visual-studio-version 2022 --build-args --event-handlers console_cohesion+ console_package_list+ --cmake-args -DINSTALL_EXAMPLES=OFF -DSECURITY=ON --packages-up-to rclcpp --test-args --event-handlers console_direct+ --executor sequential --retest-until-pass 2 --ctest-args -LE xfail --pytest-args -m \"not xfail\" --packages-up-to rclcpp```
 ```
 
 Run the docker container with these arguments
