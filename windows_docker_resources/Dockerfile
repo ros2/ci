@@ -48,14 +48,15 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 # ROS_DISTRO argument should be set to install dependencies for the target ROS version.
 ARG ROS_DISTRO
 
-# Dinamically set VS_VERSION from CI options
-RUN powershell -Command "(Get-Content install_ros2_%ROS_DISTRO%.json) -replace '^(\s*\"vs_release\"\s*:\s*\")[^\"]*', '${1}${%CI_VISUAL_STUDIO_VERSION%}' | Set-Content install_ros2_%ROS_DISTRO%.json"
 
 COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
 COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
 COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
+
+# Dinamically set VS_VERSION from CI options
+RUN powershell -Command "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json) -replace '^(\s*\"vs_release\"\s*:\s*\")[^\"]*', '${1}${%CI_VISUAL_STUDIO_VERSION%}' | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
