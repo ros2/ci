@@ -49,7 +49,7 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 ARG ROS_DISTRO
 
 # Dinamically set VS_VERSION from CI options
-RUN powershell -Command {(Get-Content install_ros2_%ROS_DISTRO%.json) -replace '^(\s*"vs_release"\s*:\s*")[^"]*', '${1}${CI_VISUAL_STUDIO_VERSION}' | Set-Content install_ros2_%ROS_DISTRO%.json}
+RUN powershell -Command {(Get-Content install_ros2_%ROS_DISTRO%.json) -replace '^(\s*"vs_release"\s*:\s*")[^"]*', '${1}${%CI_VISUAL_STUDIO_VERSION%}' | Set-Content install_ros2_%ROS_DISTRO%.json}
 
 COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
@@ -69,5 +69,5 @@ RUN echo "@todays_date"
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 WORKDIR C:\ci
-CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\${CI_VISUAL_STUDIO_VERSION}\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
+CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\${%CI_VISUAL_STUDIO_VERSION%}\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
      "python", "run_ros2_batch.py", "%CI_ARGS%"]
