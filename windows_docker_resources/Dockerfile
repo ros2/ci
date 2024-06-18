@@ -58,6 +58,8 @@ COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 # Dinamically set VS_VERSION from CI options
 RUN powershell -Command "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json) -replace 'VS_VERSION', ${Env:VS_VERSION} | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
+# REMOVE ME: Debug 
+RUN type C:\TEMP\install_ros2_%ROS_DISTRO%.json
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chef-workstation\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
