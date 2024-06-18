@@ -56,7 +56,7 @@ RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
 COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 
 # Dinamically set VS_VERSION from CI options
-RUN powershell -Command "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json) -replace '^(\s*\"vs_release\"\s*:\s*\")[^\"]*', '${1}${%CI_VISUAL_STUDIO_VERSION%}' | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
+RUN powershell -Command "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json) -replace '^(\s*\"vs_release\"\s*:\s*\")[^\"]*', '${1}%VS_VERSION%' | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
@@ -70,5 +70,5 @@ RUN echo "@todays_date"
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 WORKDIR C:\ci
-CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\${%CI_VISUAL_STUDIO_VERSION%}\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
+CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\%VS_VERSION%\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
      "python", "run_ros2_batch.py", "%CI_ARGS%"]
