@@ -55,14 +55,9 @@ COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
 COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 
-# REMOVE ME: Debug
-RUN echo %VS_VERSION%
-
 # Dinamically set VS_VERSION from CI options
 RUN powershell "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json).replace('VS_VERSION', %VS_VERSION%) | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
-# REMOVE ME: Debug 
-RUN type C:\TEMP\install_ros2_%ROS_DISTRO%.json
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
 RUN C:\opscode\chef-workstation\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
