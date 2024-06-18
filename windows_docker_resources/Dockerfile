@@ -47,7 +47,7 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 
 # ROS_DISTRO argument should be set to install dependencies for the target ROS version.
 ARG ROS_DISTRO
-
+ARG VS_VERSION
 
 COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
@@ -59,7 +59,7 @@ COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 RUN echo %VS_VERSION%
 
 # Dinamically set VS_VERSION from CI options
-RUN powershell "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json).replace('VS_VERSION', $(%VS_VERSION%)) | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
+RUN powershell "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json).replace('VS_VERSION', %VS_VERSION%) | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
 # REMOVE ME: Debug 
 RUN type C:\TEMP\install_ros2_%ROS_DISTRO%.json
