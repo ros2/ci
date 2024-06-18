@@ -49,7 +49,7 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 ARG ROS_DISTRO
 
 # Dinamically set VS_VERSION from CI options
-RUN sed -i 's/"vs_release": .*"/"vs_release": '\"${CI_VISUAL_STUDIO_VERSION}\"'/g' install_ros2_%ROS_DISTRO%.json
+RUN (Get-Content install_ros2_%ROS_DISTRO%.json).replace('vs_release: .*', 'vs_release: ${CI_VISUAL_STUDIO_VERSION}') | Set-Content install_ros2_%ROS_DISTRO%.json
 
 COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
