@@ -56,7 +56,7 @@ RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
 COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
 
 # Dinamically set VS_VERSION from CI options
-RUN powershell -Command "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json) -replace 'VS_VERSION', ${Env:VS_VERSION} | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
+RUN powershell "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json).replace('VS_VERSION', ${Env:VS_VERSION}) | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
 # REMOVE ME: Debug 
 RUN type C:\TEMP\install_ros2_%ROS_DISTRO%.json
