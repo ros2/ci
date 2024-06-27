@@ -234,6 +234,7 @@ def main(argv=None):
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
                 'ignore_rmw_default': ignore_rmw_default_packaging,
                 'use_connext_debs_default': 'true',
+                'build_args_default': re.sub(r'(--cmake-args)', r'\1 -DPython3_EXECUTABLE=C:\\Python38\\python_d.exe', data['build_args_default']),
             })
 
         # configure nightly triggered job
@@ -245,6 +246,7 @@ def main(argv=None):
         }
         if os_name == 'windows':
             job_name = job_name[:15]
+            debug_config['build_args_default'] = re.sub(r'(--cmake-args)', r'\1 -DPython3_EXECUTABLE=C:\\Python38\\python_d.exe', data['build_args_default'])
         if os_name == 'linux':
             # Temporarily pin the debug jobs to larger instances.
             # https://github.com/ros2/ci/issues/702
