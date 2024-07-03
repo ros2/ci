@@ -70,5 +70,5 @@ RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEM
 
 WORKDIR C:\ci
 
-CMD ["cmd.exe /c", "%VS_PATH%", "x86_amd64", "&&", `
+CMD ["cmd.exe /c", %VS_PATH%, "x86_amd64", "&&", `
      "python","run_ros2_batch.py", "%CI_ARGS%"]
