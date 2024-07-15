@@ -47,15 +47,11 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 
 # ROS_DISTRO argument should be set to install dependencies for the target ROS version.
 ARG ROS_DISTRO
-ARG VS_VERSION
 COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
 COPY solo.rb C:\TEMP\
 COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
 COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
-
-# Dinamically set VS_VERSION from CI options
-RUN powershell "(Get-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json).replace('VS_VERSION', %VS_VERSION%) | Set-Content  C:\TEMP\install_ros2_%ROS_DISTRO%.json"
 
 # Download vendor cookbooks
 WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
@@ -67,7 +63,6 @@ RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEM
 # Invalidate daily to run updates
 RUN echo "@todays_date"
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
-
 WORKDIR C:\ci
 
 CMD ["C:\Windows\system32\cmd.exe /c", "c:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `

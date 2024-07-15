@@ -2,7 +2,7 @@
   "ros2_windows": {
     "download_sources": "false",
     "vs_version": "buildtools",
-    "vs_release": "VS_VERSION",
+    "vs_release": "@vs_version",
     "qt5": {
       "installation_method": "offline"
     },

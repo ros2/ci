@@ -242,14 +242,20 @@ rmdir /S /Q ws workspace "work space"
 echo "# BEGIN SECTION: Build DockerFile"
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
 set DOCKERFILE=windows_docker_resources\Dockerfile
+set SOLO=windows_docker_resources\install_ros2_%CI_ROS_DISTRO%.json
 
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 
+rem "Change dockerfile and solo.json with visual studio version"
+RUN powershell "(Get-Content  ${Env:SOLO}).replace('@@vs_version', %CI_VISUAL_STUDIO_VERSION%) | Set-Content ${Env:SOLO}"
+RUN powershell "(Get-Content  ${Env:DOCKERFILE}).replace('@@vs_version', %CI_VISUAL_STUDIO_VERSION%) | Set-Content ${Env:DOCKERFILE}"
+
+
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
 set /p RELEASE_VERSION=&lt; release_version.txt
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO% --build-arg VS_VERSION=%CI_VISUAL_STUDIO_VERSION%
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO% 
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
@@ -327,7 +333,7 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
 docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b !ERRORLEVEL!
-docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -e VS_VERSION=%CI_VISUAL_STUDIO_VERSION% -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
