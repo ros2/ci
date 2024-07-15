@@ -248,8 +248,8 @@ rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 
 rem "Change dockerfile and solo.json with visual studio version"
-RUN powershell "(Get-Content  ${Env:SOLO}).replace('@@vs_version', %CI_VISUAL_STUDIO_VERSION%) | Set-Content ${Env:SOLO}"
-RUN powershell "(Get-Content  ${Env:DOCKERFILE}).replace('@@vs_version', %CI_VISUAL_STUDIO_VERSION%) | Set-Content ${Env:DOCKERFILE}"
+powershell "(Get-Content  ${Env:SOLO}).replace('@@vs_version', %CI_VISUAL_STUDIO_VERSION%) | Set-Content ${Env:SOLO}"
+powershell "(Get-Content  ${Env:DOCKERFILE}).replace('@@vs_version', %CI_VISUAL_STUDIO_VERSION%) | Set-Content ${Env:DOCKERFILE}"
 
 
 rem "Finding the Release Version is much easier with powershell than cmd"
