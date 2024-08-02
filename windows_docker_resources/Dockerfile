@@ -66,6 +66,8 @@ RUN echo "@todays_date"
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 RUN echo "@vs_version"
+# DEBUG: Sanity check to see vcvarsall is present
+RUN echo "ls C:\\Program Files (x86)\\Microsoft Visual Studio\\@vs_version\\BuildTools\\VC\\Auxiliary\\Build"
 
 WORKDIR C:\ci
 CMD ["C:\\Program Files (x86)\\Microsoft Visual Studio\\@vs_version\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat", "x86_amd64", "&&", `
