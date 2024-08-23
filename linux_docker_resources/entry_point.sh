@@ -20,8 +20,10 @@ echo "Enabling multicast..."
 ifconfig eth0 multicast
 echo "done."
 
-# We only attempt to install Connext on amd64
-if [ "${ARCH}" != "aarch64" ]; then
+. /etc/os-release
+
+# We only attempt to install Connext on Ubuntu amd64
+if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
     IGNORE_CONNEXTDDS=""
     ignore_rwm_seen="false"
     for arg in ${CI_ARGS} ; do
