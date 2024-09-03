@@ -238,9 +238,14 @@ rmdir /S /Q ws workspace
 
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
 set DOCKERFILE=windows_docker_resources\Dockerfile
+set SOLOFILE=windows_docker_resources\install_ros2_%CI_ROS_DISTRO%.json
+set VISUAL_STUDIO_VERSION=%CI_VISUAL_STUDIO_VERSION%
 
 rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
+
+rem "Change the solo install JSON file to contain the Visual Studio version we want to use
+powershell -noexit "(Get-Content ${Env:SOLOFILE}).replace('@vs_version', ${Env:VISUAL_STUDIO_VERSION}) | Set-Content ${Env:SOLOFILE}"
 
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
