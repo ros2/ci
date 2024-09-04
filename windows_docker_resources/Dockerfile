@@ -66,4 +66,5 @@ RUN echo "@todays_date"
 RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
 
 WORKDIR C:\ci
+# Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 CMD "python run_ros2_batch.py %CI_ARGS%"
