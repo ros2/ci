@@ -123,8 +123,8 @@ choices.remove(cmake_build_type)
           <description>Select the Visual Studio version.</description>
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
-              <string>2022</string>
               <string>2019</string>
+              <string>2022</string>
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>

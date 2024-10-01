@@ -245,7 +245,7 @@ rem "Change dockerfile once per day to invalidate docker caches"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 
 rem "Change the chef-solo configuration file to set a specific Visual Studio version.
-powershell -noexit "(Get-Content ${Env:SOLO_FILE}).replace('@vs_version', ${Env:VISUAL_STUDIO_VERSION}) | Set-Content ${Env:SOLO_FILE}"
+powershell -noexit "(Get-Content ${Env:SOLO_FILE}).replace('@@vs_version', ${Env:VISUAL_STUDIO_VERSION}) | Set-Content ${Env:SOLO_FILE}"
 
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
