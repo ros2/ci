@@ -45,10 +45,8 @@ class WindowsBatchJob(BatchJob):
         with open('env.bat', 'w') as f:
             f.write("@echo off" + os.linesep)
             assert self.args.visual_studio_version is not None
-            f.write(
-                'call '
-                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\%s\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" ' %
-                self.args.visual_studio_version + 'x86_amd64' + os.linesep)
+            vs = self.args.visual_studio_version
+            f.write(f'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\{vs}\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat" x86_amd64' + os.linesep)
             f.write("%*" + os.linesep)
             f.write("if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%" + os.linesep)
 
