@@ -30,13 +30,13 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 
 # Initialize pixi workspace
 WORKDIR C:\pixi_ws
-RUN powershell -noexit "pixi init"
+RUN powershell -noexit "pixi --color never init"
 
 # Install dependencies
-RUN powershell -noexit "pixi add python"
+RUN powershell -noexit "pixi --color never add python==3.12.3"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi shell & cd C:\ci & python run_ros2_batch.py %CI_ARGS%"
+CMD "pixi run "cd C:\ci ; python run_ros2_batch.py %CI_ARGS%""
