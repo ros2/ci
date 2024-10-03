@@ -30,9 +30,9 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 
 # Initialize pixi worksapce
 WORKDIR C:\ci
-RUN powershell -noexit "pixi init ros2_pixi"
+RUN powershell -noexit "pixi init ."
 
-WORKDIR C:\ci\ros2_pixi
+# Install dependencies
 RUN powershell -noexit "pixi add python"
 
 # Invalidate daily to run updates
