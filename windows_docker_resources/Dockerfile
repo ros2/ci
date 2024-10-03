@@ -33,7 +33,11 @@ WORKDIR C:\pixi_ws
 RUN powershell -noexit "pixi --color never init"
 
 # Install dependencies
-RUN powershell -noexit "pixi --color never add python==3.12.3 pip==24.0"
+# TODO(clalancette): Missing:
+# flake8-class-newline==1.6.0
+# flake8-deprecated==2.2.1
+# importlib-metadata==4.12.0 (we are getting 8.5.0 instead)
+RUN powershell -noexit "pixi --color never add python==3.12.3 pip==24.0 git==2.43.0 empy==3.3.4 catkin_pkg==1.0.0 cryptography==41.0.7 coverage==7.4.4 flake8==7.0.0 flake8-blind-except==0.2.1 flake8-builtins==2.1.0 flake8-comprehensions==3.14.0 flake8-docstrings==1.6.0 flake8-import-order==0.18.2 flake8-quotes==3.4.0 importlib-metadata==8.5.0"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
