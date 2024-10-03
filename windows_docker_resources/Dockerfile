@@ -28,16 +28,12 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 # Install pixi
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
-# Initialize pixi worksapce
-WORKDIR C:\ci
-RUN powershell -noexit "pixi init ."
-
-# Install dependencies
-RUN powershell -noexit "pixi add python"
+# Initialize pixi workspace
+WORKDIR C:\pixi_ws
+RUN powershell -noexit "pixi init"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-#CMD "dir ; pixi run python run_ros2_batch.py %CI_ARGS%"
-CMD dir
+CMD "pixi run python run_ros2_batch.py %CI_ARGS%"
