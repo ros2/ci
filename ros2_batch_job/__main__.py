@@ -564,7 +564,7 @@ def run(args, build_function, blacklisted_package_names=None):
         colcon_script = which('colcon')
 
         # Show what pip has
-        job.run(['"%s"' % job.python, '-m', 'pip', 'freeze', '--all'], shell=True)
+        job.run(['"%s"' % job.python, '-m', 'pip', 'list'], shell=True)
         print('# END SUBSECTION')
 
         # Fetch colcon mixins
