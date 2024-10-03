@@ -33,7 +33,7 @@ WORKDIR C:\pixi_ws
 RUN powershell -noexit "pixi --color never init"
 
 # Install dependencies
-RUN powershell -noexit "pixi --color never add python==3.12.3"
+RUN powershell -noexit "pixi --color never add python==3.12.3 pip==24.0"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
