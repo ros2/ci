@@ -28,9 +28,12 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64V
 # Install pixi
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
-# Install dependencies
+# Initialize pixi worksapce
 WORKDIR C:\ci
-RUN powershell -noexit "pixi init ros2_ci; pixi add python"
+RUN powershell -noexit "pixi init ros2_pixi"
+
+WORKDIR C:\ci\ros2_pixi
+RUN powershell -noexit "pixi add python"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
