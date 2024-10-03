@@ -39,4 +39,4 @@ RUN powershell -noexit "pixi add python"
 RUN echo "@todays_date"
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi run python run_ros2_batch.py %CI_ARGS%"
+CMD "dir ; pixi run python run_ros2_batch.py %CI_ARGS%"
