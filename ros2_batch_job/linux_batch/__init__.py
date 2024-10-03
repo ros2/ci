@@ -53,7 +53,7 @@ class LinuxBatchJob(BatchJob):
         # Show the env
         self.run(['export'], shell=True)
         # Show what pip has
-        self.run(['"%s"' % self.python, '-m', 'pip', 'freeze', '--all'], shell=True)
+        self.run(['"%s"' % self.python, '-m', 'pip', 'list'], shell=True)
 
     def setup_env(self):
         current_run = self.run
