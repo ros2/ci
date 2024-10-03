@@ -18,7 +18,7 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Copy over necessary files into container
+# Copy over necessary Connext files into container
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
 COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
