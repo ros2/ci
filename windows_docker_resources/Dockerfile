@@ -18,53 +18,50 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Install cinc-solo, a compiled binary of chef-solo
-RUN powershell "iex  ((New-Object System.Net.WebClient).DownloadString('https://omnitruck.cinc.sh/install.ps1')); install -version 16.15.22"
-# Update certificate bundle to work Let's Encrypt root certificate expiration
-# https://www.openssl.org/blog/blog/2021/09/13/LetsEncryptRootCertExpire/
-# (in the parlance of the above post we're using workaround 1)
-# This workaround is being incorporated directly in future releases of Cinc 16 and 17.
-# Our application of the work around should be removed when updating to such a version.
-COPY cacert.pem c:\cinc-project\cinc\embedded\ssl\certs\cacert.pem
-COPY cacert.pem c:\cinc-project\cinc\embedded\lib\ruby\gems\2.7.0\gems\httpclient-2.8.3\lib\httpclient\cacert.pem
+# Download and install all versions of MSVC we support.
+# While this makes the images larger, it also means that we are certain to
+# reuse the Docker layer cache, which should speed everything up.
+# run_ros2_batch.py will source the appropriate one.
 
-# Install Chocolatey by powershell script
+# Install MSVC 2019
+RUN powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools_2019.exe
+RUN vs_buildtools_2019.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
 
-# Pinning chocolatey version to 1.4.0 previous one to major bump to 2.0.0 due to issues with chocolatey_package chef resource
-# See https://github.com/chef/chef/issues/13751 for more detail of the issue
-# This should be solved for chef version 18; see https://github.com/chef/chef/pull/13833
-RUN powershell -noexit "$env:chocolateyDownloadUrl = 'https://community.chocolatey.org/api/v2/package/chocolatey/1.4.0'; Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+# Install MSVC 2022
+RUN powershell -noexit irm https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools_2022.exe
+RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
 
-# choco installs. chef-workstation is being installed to get berks and download cookbook dependencies
-RUN choco install -y git chef-workstation
+# Install pixi
+RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
-# Copy over necessary files into container
+# Install dependencies via pixi
+ARG ROS_DISTRO=rolling
+WORKDIR C:\pixi_ws
+RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/heads/$ROS_DISTRO/pixi.toml -OutFile pixi.toml
+RUN pixi --color never --no-progress -q install
+RUN pixi --color never --no-progress -q list
+
+# Setup environment variables needed for Connext
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+ENV CONNEXTDDS_DIR C:\connext\rti_connext_dds-6.0.1
+ENV RTI_OPENSSL_BIN C:\connext\openssl-1.1.1k\x64Win64VS2017\bin
+ENV RTI_OPENSSL_LIB C:\connext\openssl-1.1.1k\x64Win64VS2017\lib
+
+# Copy over necessary Connext files into container
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
-COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
+COPY rticonnextdds-license\rti_license.dat $RTI_LICENSE_FILE
 
-# ROS_DISTRO argument should be set to install dependencies for the target ROS version.
-ARG ROS_DISTRO
+# Install Connext
+RUN pixi run 7z x -oC:\connext C:\TEMP\rticonnextdds-src\openssl-1.1.1k-target-x64Win64VS2017.zip
+RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-1.1.1k-6.0.1.25-host-x64Win64.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-6.0.1.25-host-x64Win64.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-6.0.1.25-target-x64Win64VS2017.rtipkg
 
-COPY install_ros2_${ROS_DISTRO}.json C:\TEMP\
-COPY solo.rb C:\TEMP\
-COPY ros2-cookbooks\ C:\TEMP\ros2-cookbooks
-RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP\environments
-COPY qtaccount\ros2ci.rb C:\TEMP\environments\ros2ci.rb
-
-# Download vendor cookbooks
-WORKDIR C:\TEMP\ros2-cookbooks\cookbooks\ros2_windows
-RUN C:\opscode\chef-workstation\bin\berks vendor C:\TEMP\ros2-cookbooks\cookbooks
-
-# Initial run
-RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
-
-# Invalidate daily to run updates
-RUN echo "@todays_date"
-RUN c:\cinc-project\cinc\bin\cinc-solo.bat -c C:\TEMP\solo.rb -Eros2ci -j C:\TEMP\install_ros2_%ROS_DISTRO%.json
-
-WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "python run_ros2_batch.py %CI_ARGS%"
+WORKDIR C:\ci
+CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml python run_ros2_batch.py %CI_ARGS%"

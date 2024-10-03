@@ -164,7 +164,6 @@ if [ "$CI_ISOLATED" = "true" ]; then
 fi
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg ROS_DISTRO=${CI_ROS_DISTRO}"
-  export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
 fi
 if [ -n "${CI_COLCON_MIXIN_URL+x}" ]; then
   export CI_ARGS="$CI_ARGS --colcon-mixin-url $CI_COLCON_MIXIN_URL"
@@ -238,14 +237,6 @@ rmdir /S /Q ws workspace
 
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
 set DOCKERFILE=windows_docker_resources\Dockerfile
-set SOLO_FILE=windows_docker_resources\install_ros2_%CI_ROS_DISTRO%.json
-set VISUAL_STUDIO_VERSION=%CI_VISUAL_STUDIO_VERSION%
-
-rem "Change dockerfile once per day to invalidate docker caches"
-powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
-
-rem "Change the chef-solo configuration file to set a specific Visual Studio version.
-powershell -noexit "(Get-Content ${Env:SOLO_FILE}).replace('@@vs_version', ${Env:VISUAL_STUDIO_VERSION}) | Set-Content ${Env:SOLO_FILE}"
 
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
@@ -262,9 +253,6 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
-)
-if "!CI_ROS_DISTRO!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
 if "!CI_USE_CONNEXTDDS!" == "false" (
   set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
