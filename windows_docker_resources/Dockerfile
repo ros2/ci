@@ -40,7 +40,7 @@ RUN powershell -noexit "pixi --color never init"
 COPY pixi.toml pixi.toml
 
 # Install dependencies via pixi
-# RUN powershell -noexit "pixi --color never install"
+RUN powershell -noexit "pixi --color never install"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
