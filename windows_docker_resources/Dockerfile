@@ -25,6 +25,10 @@ COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
 
+# Download and install MSVC
+RUN powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools.exe
+RUN vs_buildtools.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
+
 # Install pixi
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
@@ -32,7 +36,7 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 WORKDIR C:\pixi_ws
 RUN powershell -noexit "pixi --color never init"
 
-# Install dependencies
+# Install dependencies via pixi
 # TODO(clalancette): Missing:
 # flake8-class-newline==1.6.0
 # flake8-deprecated==2.2.1
@@ -41,10 +45,6 @@ RUN powershell -noexit "pixi --color never init"
 # pytest-runner==2.11.1 (we are getting 6.0.0 instead)
 # colcon-ros-domain-id-coordinator
 RUN powershell -noexit "pixi --color never add python==3.12.3 pip==24.0 git==2.43.0 empy==3.3.4 catkin_pkg==1.0.0 cryptography==41.0.7 coverage==7.4.4 flake8==7.0.0 flake8-blind-except==0.2.1 flake8-builtins==2.1.0 flake8-comprehensions==3.14.0 flake8-docstrings==1.6.0 flake8-import-order==0.18.2 flake8-quotes==3.4.0 importlib-metadata==8.5.0 lark==1.1.9 mypy==1.9.0 pytest==7.4.4 pytest-cov==4.1.0 pytest-mock==3.12.0 pytest-repeat==0.9.2 pytest-rerunfailures==12.0 pytest-runner==6.0.0 pytest-timeout==2.2.0 pyyaml==6.0.1 vcstool==0.3.0 yamllint==1.33.0 colcon-core colcon-defaults colcon-library-path colcon-metadata colcon-mixin colcon-output colcon-package-information colcon-package-selection colcon-parallel-executor colcon-pkg-config colcon-powershell colcon-python-setup-py colcon-recursive-crawl colcon-test-result colcon-cmake colcon-ros lxml==5.2.1 numpy==1.26.4 setuptools==68.1.2 cmake==3.28.3"
-
-# Download and install MSVC
-RUN powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools.exe
-RUN vs_buildtools.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
