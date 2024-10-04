@@ -67,8 +67,6 @@ pip_dependencies = [
     PipPackage('importlib-metadata', 'importlib_metadata', ''),
     PipPackage('lark', 'lark', '==1.1.1'),
     PipPackage('mypy', 'mypy', '==0.931'),
-    PipPackage('nose', 'nose', ''),
-    PipPackage('osrf-pycommon', 'osrf_pycommon', ''),
     PipPackage('pathspec', 'pathspec', ''),
     PipPackage('pydocstyle', 'pydocstyle', ''),
     PipPackage('pyflakes', 'pyflakes', ''),
