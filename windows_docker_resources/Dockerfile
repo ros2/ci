@@ -24,6 +24,7 @@ COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
+# TODO(clalancette): Actually install Connext
 
 # Download and install MSVC
 RUN powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools.exe
@@ -45,7 +46,7 @@ RUN powershell -noexit "pixi --color never init"
 # pytest-runner==2.11.1 (we are getting 6.0.0 instead)
 # colcon-ros-domain-id-coordinator
 # uncrustify==0.78.1
-RUN powershell -noexit "pixi --color never add python==3.12.3 pip==24.0 git==2.43.0 empy==3.3.4 catkin_pkg==1.0.0 cryptography==41.0.7 coverage==7.4.4 flake8==7.0.0 flake8-blind-except==0.2.1 flake8-builtins==2.1.0 flake8-comprehensions==3.14.0 flake8-docstrings==1.6.0 flake8-import-order==0.18.2 flake8-quotes==3.4.0 importlib-metadata==8.5.0 lark==1.1.9 mypy==1.9.0 pytest==7.4.4 pytest-cov==4.1.0 pytest-mock==3.12.0 pytest-repeat==0.9.2 pytest-rerunfailures==12.0 pytest-runner==6.0.0 pytest-timeout==2.2.0 pyyaml==6.0.1 vcstool==0.3.0 yamllint==1.33.0 colcon-core colcon-defaults colcon-library-path colcon-metadata colcon-mixin colcon-output colcon-package-information colcon-package-selection colcon-parallel-executor colcon-pkg-config colcon-powershell colcon-python-setup-py colcon-recursive-crawl colcon-test-result colcon-cmake colcon-ros lxml==5.2.1 numpy==1.26.4 setuptools==68.1.2 cmake==3.28.3 pybind11==2.11.1 tinyxml2==10.0.0 asio==1.28.1"
+RUN powershell -noexit "pixi --color never add python==3.12.3 pip==24.0 git==2.43.0 empy==3.3.4 catkin_pkg==1.0.0 cryptography==41.0.7 coverage==7.4.4 flake8==7.0.0 flake8-blind-except==0.2.1 flake8-builtins==2.1.0 flake8-comprehensions==3.14.0 flake8-docstrings==1.6.0 flake8-import-order==0.18.2 flake8-quotes==3.4.0 importlib-metadata==8.5.0 lark==1.1.9 mypy==1.9.0 pytest==7.4.4 pytest-cov==4.1.0 pytest-mock==3.12.0 pytest-repeat==0.9.2 pytest-rerunfailures==12.0 pytest-runner==6.0.0 pytest-timeout==2.2.0 pyyaml==6.0.1 vcstool==0.3.0 yamllint==1.33.0 colcon-core colcon-defaults colcon-library-path colcon-metadata colcon-mixin colcon-output colcon-package-information colcon-package-selection colcon-parallel-executor colcon-pkg-config colcon-powershell colcon-python-setup-py colcon-recursive-crawl colcon-test-result colcon-cmake colcon-ros lxml==5.2.1 numpy==1.26.4 setuptools==68.1.2 cmake==3.28.3 pybind11==2.11.1 tinyxml2==10.0.0 asio==1.28.1 yaml-cpp==0.8.0 cunit==2.1.3 spdlog==1.12.0 yaml==0.2.5 lz4-c==1.9.4 python-orocos-kdl==1.5.1 orocos-kdl==1.5.1"
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
