@@ -9,6 +9,7 @@ platforms = ["win-64"]
 [tasks]
 
 [dependencies]
+7zip = ">=23.1,<24"
 asio = "==1.28.1"
 assimp = "==5.3.1"
 benchmark = "==1.8.3"
