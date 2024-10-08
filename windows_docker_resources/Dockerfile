@@ -48,4 +48,5 @@ RUN powershell -noexit "pixi list"
 RUN echo "@todays_date"
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi run "cd C:\ci ; python run_ros2_batch.py %CI_ARGS%""
+WORKDIR C:\ci
+CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml python run_ros2_batch.py %CI_ARGS%"
