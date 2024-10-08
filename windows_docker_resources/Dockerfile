@@ -27,14 +27,14 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 
 # Initialize pixi workspace
 WORKDIR C:\pixi_ws
-RUN powershell -noexit "pixi --color never init"
+RUN pixi --color never init
 
 # Install dependencies via pixi
 COPY pixi.toml pixi.toml
-RUN powershell -noexit "pixi --color never --no-progress -q install"
+RUN pixi --color never --no-progress -q install
 
 # List out the installed pixi packages
-RUN powershell -noexit "pixi list"
+RUN pixi list
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
