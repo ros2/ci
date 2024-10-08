@@ -31,15 +31,10 @@ RUN vs_buildtools.exe --quiet --wait --norestart --add Microsoft.Component.MSBui
 # Install pixi
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
-# Initialize pixi workspace
-WORKDIR C:\pixi_ws
-RUN pixi --color never --no-progress -q init
-
 # Install dependencies via pixi
+WORKDIR C:\pixi_ws
 COPY pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
-
-# List out the installed pixi packages
 RUN pixi --color never --no-progress -q list
 
 # Invalidate daily to run updates
