@@ -246,6 +246,7 @@ def get_args(sysargv=None):
         help='install directory path')
 
     argv = sysargv[1:] if sysargv is not None else sys.argv[1:]
+    print(f'CHRIS: argv: |{argv}|')
     argv, build_args = extract_argument_group(argv, '--build-args')
     if '--test-args' in argv:
         argv, test_args = extract_argument_group(argv, '--test-args')
@@ -254,6 +255,8 @@ def get_args(sysargv=None):
     args = parser.parse_args(argv)
     args.build_args = build_args
     args.test_args = test_args
+
+    print(f'CHRIS: test_args after parse: |{args.test_args}|')
 
     for name in ('sourcespace', 'buildspace', 'installspace'):
         space_directory = getattr(args, name)
@@ -377,8 +380,10 @@ def build_and_test(args, job, colcon_script):
         test_cmd.append('--merge-install')
     if args.coverage:
         test_cmd.append('--pytest-with-coverage')
+    print(f'CHRIS: test_args right before test_cmd: |{args.test_args}|')
     test_cmd.extend(args.test_args)
 
+    print(f'CHRIS: test_cmd: |{test_cmd}|')
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
     info("colcon test returned: '{0}'".format(ret_test))
     print('# END SUBSECTION')
