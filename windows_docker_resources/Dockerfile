@@ -48,6 +48,7 @@ ENV RTI_OPENSSL_BIN C:\connext\openssl-1.1.1k\x64Win64VS2017\bin
 ENV RTI_OPENSSL_LIB C:\connext\openssl-1.1.1k\x64Win64VS2017\lib
 COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
 RUN "pixi run 7z x -oC:\connext C:\TEMP\rticonnextdds-src\openssl-1.1.1k-target-x64Win64VS2017.zip"
+RUN powershell -noexit "C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix "C:\Program Files""
 
 # Debugging
 RUN set
