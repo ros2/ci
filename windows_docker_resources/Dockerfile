@@ -31,7 +31,7 @@ RUN powershell -noexit "pixi --color never init"
 
 # Install dependencies via pixi
 COPY pixi.toml pixi.toml
-RUN powershell -noexit "pixi --color never install"
+RUN powershell -noexit "pixi --color never --no-progress -q install"
 
 # List out the installed pixi packages
 RUN powershell -noexit "pixi list"
