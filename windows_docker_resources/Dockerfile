@@ -54,8 +54,7 @@ COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
 RUN "pixi run 7z x -oC:\connext C:\TEMP\rticonnextdds-src\openssl-1.1.1k-target-x64Win64VS2017.zip"
 RUN dir C:\connext
 COPY connext.ps1 C:\TEMP\rticonnextdds-src\connext.ps1
-#RUN powershell -noexit -Command "C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext" -ExecutionPolicy Bypass
-RUN powershell -noexit -File C:\TEMP\rticonnextdds-src\connext.ps1 -ExecutionPolicy Bypass
+RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext
 RUN dir C:\connext
 RUN "C:\connext\rti_connext_dds-6.0.1\bin\rtipkginstall.bat C:\TEMP\rticonnextdds-src\openssl-1.1.1k-host-x64Win64.rtipkg"
 
