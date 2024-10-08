@@ -6,6 +6,8 @@
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=2009
 
+ARG MSVC_VERSION=2019
+
 # In order to ensure the image is correctly compatible with the host system a
 # more precise version than the release id is required. To find this value run
 # the following in powershell.
@@ -19,7 +21,11 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
 # Download and install MSVC
-RUN powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools.exe
+RUN if "%MSVC_VERSION%" == "2022" ( `
+  powershell -noexit irm https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools.exe `
+) else ( `
+  powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools.exe `
+)
 RUN vs_buildtools.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
 
 # Install pixi
