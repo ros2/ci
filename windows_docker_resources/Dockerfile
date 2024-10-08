@@ -56,6 +56,9 @@ RUN dir C:\connext
 RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext
 RUN dir C:\connext
 RUN C:\connext\rti_connext_dds-6.0.1\bin\rtipkginstall.bat C:\TEMP\rticonnextdds-src\openssl-1.1.1k-6.0.1.25-host-x64Win64.rtipkg
+RUN C:\connext\rti_connext_dds-6.0.1\bin\rtipkginstall.bat C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
+RUN C:\connext\rti_connext_dds-6.0.1\bin\rtipkginstall.bat C:\TEMP\rticonnextdds-src\rti_security_plugins-6.0.1.25-host-x64Win64.rtipkg
+RUN C:\connext\rti_connext_dds-6.0.1\bin\rtipkginstall.bat C:\TEMP\rticonnextdds-src\rti_security_plugins-6.0.1.25-target-x64Win64VS2017.rtipkg
 
 # Debugging
 RUN set
