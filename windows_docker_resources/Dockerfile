@@ -24,6 +24,13 @@ COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe
 RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
+
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+ENV CONNEXTDDS_DIR "C:\Program Files\rti_connext_dds-6.0.1"
+ENV RTI_OPENSSL_BIN C:\connext\openssl-1.1.1k\x64Win64VS2017\bin
+ENV RTI_OPENSSL_LIB C:\connext\openssl-1.1.1k\x64Win64VS2017\lib
+# Debugging
+RUN set
 # TODO(clalancette): Actually install Connext
 
 # Download and install MSVC
