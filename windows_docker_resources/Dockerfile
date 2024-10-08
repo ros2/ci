@@ -50,8 +50,8 @@ COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
 RUN "pixi run 7z x -oC:\connext C:\TEMP\rticonnextdds-src\openssl-1.1.1k-target-x64Win64VS2017.zip"
 RUN powershell -noexit "C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix "C:\Program Files""
 RUN dir C:\TEMP\rticonnextdds-src
-RUN dir C:\Program Files
-RUN dir C:\Program Files\rti_connext_dds-6.0.1
+RUN dir "C:\Program Files"
+RUN dir "C:\Program Files\rti_connext_dds-6.0.1"
 RUN ""C:\Program Files\rti_connext_dds-6.0.1\bin\rtipkginstall.bat" C:\TEMP\rticonnextdds-src\openssl-1.1.1k-host-x64Win64.rtipkg"
 
 # Debugging
