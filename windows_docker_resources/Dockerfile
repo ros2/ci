@@ -18,21 +18,6 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Copy over necessary Connext files into container
-RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
-COPY rticonnextdds-license\ C:\TEMP\rticonnextdds-license
-COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
-RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe
-RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
-
-ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-ENV CONNEXTDDS_DIR "C:\Program Files\rti_connext_dds-6.0.1"
-ENV RTI_OPENSSL_BIN C:\connext\openssl-1.1.1k\x64Win64VS2017\bin
-ENV RTI_OPENSSL_LIB C:\connext\openssl-1.1.1k\x64Win64VS2017\lib
-# Debugging
-RUN set
-# TODO(clalancette): Actually install Connext
-
 # Download and install MSVC
 RUN powershell -noexit irm https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile vs_buildtools.exe
 RUN vs_buildtools.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
@@ -50,6 +35,24 @@ RUN powershell -noexit "pixi --color never install"
 
 # List out the installed pixi packages
 RUN powershell -noexit "pixi list"
+
+# Copy over necessary Connext files into container
+RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
+COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
+RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-host-x64Win64.exe
+RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-6.0.1-pro-target-x64Win64VS2017.rtipkg
+
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+ENV CONNEXTDDS_DIR "C:\Program Files\rti_connext_dds-6.0.1"
+ENV RTI_OPENSSL_BIN C:\connext\openssl-1.1.1k\x64Win64VS2017\bin
+ENV RTI_OPENSSL_LIB C:\connext\openssl-1.1.1k\x64Win64VS2017\lib
+COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
+RUN "pixi run 7z -o C:\connext C:\TEMP\rticonnextdds-src\openssl-1.1.1k-target-x64Win64VS2017.zip"
+
+# Debugging
+RUN set
+RUN dir C:\connext
+# TODO(clalancette): Actually install Connext
 
 # Invalidate daily to run updates
 RUN echo "@todays_date"
