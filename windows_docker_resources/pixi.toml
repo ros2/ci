@@ -10,6 +10,7 @@ platforms = ["win-64"]
 
 [dependencies]
 7zip = ">=23.1,<24"
+argcomplete = "==3.1.4"
 asio = "==1.28.1"
 assimp = "==5.3.1"
 benchmark = "==1.8.3"
@@ -62,6 +63,7 @@ psutil = "==5.9.8"
 pybind11 = "==2.11.1"
 pycodestyle = "==2.11.1"
 pydocstyle = "==6.3.0"
+pydot = "==1.4.2"
 pyqt = "==5.15.9"  # TODO: Conda doesn't have 5.15.10
 pytest = "==7.4.4"
 pytest-cov = "==4.1.0"
@@ -88,5 +90,6 @@ zstd = "==1.5.5"
 [pypi-dependencies]
 # TODO: all of these should be upgraded to "dependencies" eventually
 colcon-ros-domain-id-coordinator = "==0.2.0"
+fastjsonschema = "==2.19.0"
 flake8-class-newline = "==1.6.0"
 flake8-deprecated = "==2.2.1"
