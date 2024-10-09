@@ -62,6 +62,7 @@ psutil = "==5.9.8"
 pybind11 = "==2.11.1"
 pycodestyle = "==2.11.1"
 pydocstyle = "==6.3.0"
+pyqt = "==5.15.9"  # TODO: Conda doesn't have 5.15.10
 pytest = "==7.4.4"
 pytest-cov = "==4.1.0"
 pytest-mock = "==3.12.0"
