@@ -123,8 +123,11 @@ RUN dnf install \
     python3-empy \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-fastjsonschema; fi) \
     python3-flake8 \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-blind-except; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-builtins; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-class-newline; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-comprehensions; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-deprecated; fi) \
     python3-flake8-docstrings \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-import-order; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-quotes; fi) \
