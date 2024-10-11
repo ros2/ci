@@ -18,14 +18,6 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Download and install Python
-# We do this ourselves, rather than through pixi, since the pixi/conda-forge
-# versions do not support the debug interpreter, which we need for
-# Windows Debug builds.
-# TODO(clalancette): Make sure to also get the Python version that is on Jammy, and remove PrependPath, and conditionally use the correct one based on the distribution
-RUN powershell -noexit irm https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe -OutFile python-3.12.3-amd64.exe
-RUN python-3.12.3-amd64.exe /quiet TargetDir=C:\Python3.12 PrependPath=1 Include_debug=1 Include_symbols=1
-
 # Download and install all versions of MSVC we support.
 # While this makes the images larger, it also means that we are certain to
 # reuse the Docker layer cache, which should speed everything up.
