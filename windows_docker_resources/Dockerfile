@@ -40,6 +40,15 @@ COPY pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
+# Download and install Python
+# We do this ourselves, rather than through pixi, since the pixi/conda-forge
+# versions do not support the debug interpreter, which we need for
+# Windows Debug builds.
+# TODO(clalancette): Make sure to also get the Python version that is on Jammy, and remove PrependPath, and conditionally use the correct one based on the distribution
+# TODO(clalancette): Move the TargetDir inside of the .pixi directory somewhere, so the whole thing is self-contained
+RUN powershell -noexit irm https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe -OutFile python-3.12.3-amd64.exe
+RUN python-3.12.3-amd64.exe /quiet TargetDir=C:\Python3.12 PrependPath=1 Include_debug=1 Include_symbols=1
+
 # Setup environment variables needed for Connext
 ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
 ENV CONNEXTDDS_DIR C:\connext\rti_connext_dds-6.0.1
