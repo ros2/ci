@@ -38,7 +38,7 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 
 # Install dependencies via pixi
 WORKDIR C:\pixi_ws
-COPY $ROS_DISTRO-pixi.toml pixi.toml
+COPY %ROS_DISTRO%-pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
