@@ -6,8 +6,6 @@
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=2009
 
-ARG ROS_DISTRO=rolling
-
 # In order to ensure the image is correctly compatible with the host system a
 # more precise version than the release id is required. To find this value run
 # the following in powershell.
@@ -37,9 +35,9 @@ RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
 # Install dependencies via pixi
-ENV ROS_DISTRO_ENV %ROS_DISTRO%
+ARG ROS_DISTRO=rolling
 WORKDIR C:\pixi_ws
-COPY $ROS_DISTRO_ENV-pixi.toml pixi.toml
+COPY $ROS_DISTRO-pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
