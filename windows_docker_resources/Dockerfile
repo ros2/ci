@@ -6,6 +6,8 @@
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=2009
 
+ARG ROS_DISTRO=rolling
+
 # In order to ensure the image is correctly compatible with the host system a
 # more precise version than the release id is required. To find this value run
 # the following in powershell.
@@ -36,7 +38,7 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 
 # Install dependencies via pixi
 WORKDIR C:\pixi_ws
-COPY pixi.toml pixi.toml
+COPY $ROS_DISTRO-pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
