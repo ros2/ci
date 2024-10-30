@@ -78,6 +78,7 @@ qt = "==5.12.9"  # TODO: conda doesn't have qt 5.15.3
 setuptools = "==59.6.0"
 spdlog = "==1.9.2"
 sqlite = "==3.37.1"  # TODO: conda doesn't have sqlite 3.37.2
+tinyxml = "==2.6.2"
 tinyxml2 = "==9.0.0"
 # TODO: Conda is missing uncrustify==0.72.0
 vcstool = "==0.3.0"
