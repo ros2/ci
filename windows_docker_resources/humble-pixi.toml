@@ -50,13 +50,13 @@ importlib-metadata = "==4.8.1"  # TODO: conda doesn't have importlib-metadata 4.
 lark = "==1.1.1"
 libcurl = "==7.81.0"
 lxml = "==4.8.0"
-lz4-c = "==1.9.3"  # TODO: This doesn't seem to be getting detected
+lz4-c = "==1.9.3"
 mypy = "==0.942"
 netifaces = "==0.11.0"
 numpy = "==1.21.5"
 opencv = "==4.5.5"  # TODO: conda doesn't have opencv 4.5.4
 openssl = "==1.1.1w"  # TODO: conda doesn't have openssl 3.0.2
-orocos-kdl = "==1.5.1"  # TODO: orocos-kdl CMake target fails to setup include directories properly
+orocos-kdl = "==1.5.1"
 pip = "==22.0.2"
 psutil = "==5.9.0"
 pybind11 = "==2.9.1"
