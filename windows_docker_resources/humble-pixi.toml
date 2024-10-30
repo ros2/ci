@@ -78,7 +78,7 @@ setuptools = "==59.6.0"
 spdlog = "==1.9.2"
 sqlite = "==3.37.1"  # TODO: conda doesn't have sqlite 3.37.2
 tinyxml2 = "==9.0.0"
-# TODO: Conda is missing uncrustify==0.78.1
+# TODO: Conda is missing uncrustify==0.72.0
 vcstool = "==0.3.0"
 yaml-cpp = "==0.7.0"
 yamllint = "==1.26.3"
