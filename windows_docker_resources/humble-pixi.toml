@@ -40,6 +40,7 @@ curl = "==7.81.0"
 eigen = "==3.4.0"
 empy = "==3.3.4"
 flake8 = "==4.0.1"
+flake8-blind-except = "==0.2.1"  # TODO: conda doesn't have flake8-blind-except 0.2.0
 flake8-builtins = "==1.5.3"
 flake8-comprehensions = "==3.8.0"
 flake8-docstrings = "==1.6.0"
@@ -89,6 +90,5 @@ zstd = "==1.5.0"  # TODO: conda doesn't have zstd 1.4.8
 # TODO: all of these should be upgraded to "dependencies" eventually
 argcomplete = "==1.8.1"
 colcon-ros-domain-id-coordinator = "==0.2.0"
-#flake8-blind-except = "==0.2.0"
 flake8-class-newline = "==1.6.0"
 flake8-deprecated = "==1.3"
