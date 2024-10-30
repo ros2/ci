@@ -89,6 +89,6 @@ zstd = "==1.5.0"  # TODO: conda doesn't have zstd 1.4.8
 # TODO: all of these should be upgraded to "dependencies" eventually
 argcomplete = "==1.8.1"
 colcon-ros-domain-id-coordinator = "==0.2.0"
-flake8-blind-except = "==0.2.0"
+#flake8-blind-except = "==0.2.0"
 flake8-class-newline = "==1.6.0"
 flake8-deprecated = "==1.3"
