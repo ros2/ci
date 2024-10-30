@@ -6,8 +6,6 @@ authors = ["Chris Lalancette <clalancette@gmail.com>"]
 channels = ["conda-forge"]
 platforms = ["win-64"]
 
-[tasks]
-
 [dependencies]
 7zip = ">=23.1,<24"
 asio = "==1.22.1"  # TODO: conda doesn't have asio 1.18.1
@@ -32,6 +30,7 @@ colcon-python-setup-py = ">=0.2.7,<0.3"
 colcon-recursive-crawl = ">=0.2.3,<0.3"
 colcon-ros = ">=0.5.0,<0.6"
 colcon-test-result = ">=0.3.8,<0.4"
+console_bridge = "==1.0.1"
 coverage = "==6.2"
 cppcheck = "==2.10.1"  # TODO: This version doesn't actually work, so we should just remove ament_cppcheck
 cryptography = "==3.4.8"
@@ -53,6 +52,7 @@ libcurl = "==7.81.0"
 lxml = "==4.8.0"
 lz4-c = "==1.9.3"  # TODO: This doesn't seem to be getting detected
 mypy = "==0.942"
+netifaces = "==0.11.0"
 numpy = "==1.21.5"
 opencv = "==4.5.5"  # TODO: conda doesn't have opencv 4.5.4
 openssl = "==1.1.1w"  # TODO: conda doesn't have openssl 3.0.2
