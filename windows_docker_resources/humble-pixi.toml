@@ -6,6 +6,9 @@ authors = ["Chris Lalancette <clalancette@gmail.com>"]
 channels = ["conda-forge"]
 platforms = ["win-64"]
 
+[activation]
+scripts = ["py310pythonpath.bat"]
+
 [dependencies]
 7zip = ">=23.1,<24"
 asio = "==1.22.1"  # TODO: conda doesn't have asio 1.18.1
