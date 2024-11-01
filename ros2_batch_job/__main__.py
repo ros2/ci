@@ -50,40 +50,6 @@ sys.stderr = UnbufferedIO(sys.stderr)
 
 PipPackage = collections.namedtuple('PipPackage', ['pkgname' ,'importname', 'version'])
 
-pip_dependencies = [
-    PipPackage('EmPy', 'em', '<4'),
-    PipPackage('catkin_pkg', 'catkin_pkg', ''),
-    PipPackage('cryptography', 'cryptography', '<=3.0'),
-    PipPackage('coverage', 'coverage', ''),
-    PipPackage('flake8', 'flake8', '<5.0.0'),
-    PipPackage('flake8-blind-except', 'flake8_blind_except', '==0.1.1'),
-    PipPackage('flake8-builtins', 'flake8_builtins', ''),
-    PipPackage('flake8-class-newline', 'flake8_class_newline', ''),
-    PipPackage('flake8-comprehensions', 'flake8_comprehensions', ''),
-    PipPackage('flake8-deprecated', 'flake8_deprecated', ''),
-    PipPackage('flake8-docstrings', 'flake8_docstrings', ''),
-    PipPackage('flake8-import-order', 'flake8_import_order', ''),
-    PipPackage('flake8-quotes', 'flake8_quotes', ''),
-    PipPackage('importlib-metadata', 'importlib_metadata', ''),
-    PipPackage('lark', 'lark', '==1.1.1'),
-    PipPackage('mypy', 'mypy', '==0.931'),
-    PipPackage('pathspec', 'pathspec', ''),
-    PipPackage('pydocstyle', 'pydocstyle', ''),
-    PipPackage('pyflakes', 'pyflakes', ''),
-    PipPackage('pyparsing', 'pyparsing', '==2.4.7'),
-    PipPackage('pytest', 'pytest', '==6.2.5'),
-    PipPackage('pytest-cov', 'pytest_cov', ''),
-    PipPackage('pytest-mock', 'pytest_mock', ''),
-    PipPackage('pytest-repeat', 'pytest_repeat', ''),
-    PipPackage('pytest-rerunfailures', 'pytest_rerunfailures', ''),
-    PipPackage('pytest-runner', 'ptr', ''),
-    PipPackage('pytest-timeout', 'pytest_timeout', '==2.1.0'),
-    PipPackage('pyyaml', 'yaml', ''),
-    PipPackage('setuptools', 'setuptools', '==68.1.2'),
-    PipPackage('vcstool', 'vcstool', ''),
-    PipPackage('yamllint', 'yamllint', ''),
-]
-
 colcon_packages = [
     PipPackage('colcon-core', 'colcon_core', ''),
     PipPackage('colcon-defaults', 'colcon_defaults', ''),
@@ -203,9 +169,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--force-ansi-color', default=False, action='store_true',
         help="forces this program to output ansi color")
-    parser.add_argument(
-        '--ros-distro', required=True,
-        help="The ROS distribution being built")
     parser.add_argument(
         '--colcon-mixin-url', default=None,
         help='A mixin index url to be included by colcon')
@@ -462,75 +425,10 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Now inside of the workspace...
     with change_directory(args.workspace):
-        def need_package_from_pipy(pkg_name):
-            try:
-                importlib.import_module(pkg_name)
-            except ModuleNotFoundError:
-                return True
-
-            return False
-
-        print('# BEGIN SUBSECTION: install Python packages')
-        # Print setuptools version
-        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
-                shell=True)
-
-        # Print the pip version
-        job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
-
-        # Install pip dependencies
-        pip_packages = []
-        constraints = []
-
-        potential_pip_packages = pip_dependencies
-        if not args.colcon_branch:
-            potential_pip_packages += colcon_packages
-
-        # We prefer to get packages from the distribution if they are already installed.
-        # If not, we add to the list to install from pip.
-        for pkgname, importname, version in pip_dependencies:
-            if need_package_from_pipy(importname):
-                pip_packages.append(pkgname)
-            # Even if we don't need to install the package, we still add the constraints
-            # (if they exist) so that other package installations will respect these.
-            if version:
-                constraints.append(f'{pkgname}{version}')
-
-        if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
-            pip_packages += [
-                'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
-                'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
-                'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
-                'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
-            ]
-            if args.ros_distro in ('humble', 'iron'):
-                pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
-            # to ensure that the build type specific package is installed
-            job.run(
-                ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                ['cryptography', 'lxml', 'numpy'], shell=True)
-
-        if pip_packages:
-            print('Using constraints:')
-            print('\n'.join(constraints))
-            with open('constraints.txt', 'w') as outfp:
-                outfp.write('\n'.join(constraints) + '\n')
-
-            pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
-            if sys.platform == 'win32':
-                # Force reinstall so all dependencies are in virtual environment
-                # On Windows since we switch between the debug and non-debug
-                # interpreter all packages need to be reinstalled too
-                pip_cmd.append('--force-reinstall')
-
-            job.run(
-                pip_cmd + pip_packages,
-                shell=True)
-
         vcs_cmd = ['vcs']
 
         if args.colcon_branch:
+            print('# BEGIN SUBSECTION: install custom colcon')
             # create .repos file for colcon repositories
             os.makedirs('colcon', exist_ok=True)
             with open('colcon/colcon.repos', 'w') as h:
@@ -559,19 +457,30 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] +
                 ['colcon/%s' % pkgname for pkgname, importname, version in colcon_packages],
                 shell=True)
+            print('# END SUBSECTION')
 
         colcon_script = which('colcon')
 
-        # Show what pip has
-        job.run(['"%s"' % job.python, '-m', 'pip', 'list'], shell=True)
-        print('# END SUBSECTION')
-
         # Fetch colcon mixins
         if args.colcon_mixin_url:
+            print('# BEGIN SUBSECTION: Fetch colcon mixins')
             true_cmd = 'VER>NUL' if sys.platform == 'win32' else 'true'
             job.run([colcon_script, 'mixin', 'remove', 'default', '||', true_cmd], shell=True)
             job.run([colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
             job.run([colcon_script, 'mixin', 'update', 'default'], shell=True)
+            print('# END SUBSECTION')
+
+        print('# BEGIN SUBSECTION: Print python versions')
+        # Print setuptools version
+        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
+                shell=True)
+
+        # Print the pip version
+        job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
+
+        # Show what pip has
+        job.run(['"%s"' % job.python, '-m', 'pip', 'list'], shell=True)
+        print('# END SUBSECTION')
 
         print('# BEGIN SUBSECTION: import repositories')
         repos_file_urls = [args.repo_file_url]
