@@ -52,7 +52,7 @@ git = "==2.34.1"
 importlib-metadata = "==4.8.1"  # TODO: conda doesn't have importlib-metadata 4.6.4
 lark = "==1.1.1"
 libcurl = "==7.81.0"
-lxml = "==4.8.0"
+lxml = "==4.9.2"  # TODO: lxml 4.8.0, 4.9.0, and 4.9.1 crash during import with conda
 lz4-c = "==1.9.3"
 mypy = "==0.942"
 netifaces = "==0.11.0"
