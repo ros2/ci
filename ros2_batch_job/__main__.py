@@ -69,7 +69,6 @@ pip_dependencies = [
     PipPackage('mypy', 'mypy', '==0.931'),
     PipPackage('nose', 'nose', ''),
     PipPackage('pathspec', 'pathspec', ''),
-    PipPackage('pep8', 'pep8', ''),
     PipPackage('pydocstyle', 'pydocstyle', ''),
     PipPackage('pyflakes', 'pyflakes', ''),
     PipPackage('pyparsing', 'pyparsing', '==2.4.7'),

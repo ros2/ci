@@ -113,7 +113,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron; then echo python3-netifaces; fi) \
   python3-nose \
   python3-numpy \
-  python3-pep8 \
   python3-psutil \
   python3-pyflakes \
   python3-pykdl \
