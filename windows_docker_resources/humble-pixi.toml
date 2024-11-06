@@ -49,6 +49,7 @@ flake8-docstrings = "==1.6.0"
 flake8-import-order = "==0.18.1"
 flake8-quotes = "==3.3.1"
 git = "==2.34.1"
+graphviz = "==2.46.1"  # TODO: conda doesn't have graphviz 2.42.2
 importlib-metadata = "==4.8.1"  # TODO: conda doesn't have importlib-metadata 4.6.4
 lark = "==1.1.1"
 libcurl = "==7.81.0"
@@ -66,6 +67,7 @@ pybind11 = "==2.9.1"
 pycodestyle = "==2.8.0"
 pydocstyle = "==6.1.1"
 pydot = "==1.4.2"
+pygraphviz = "==1.7"
 pyqt = "==5.12.3"  # TODO: conda doesn't have pyqt 5.15.6
 pytest = "==6.2.5"
 pytest-cov = "==3.0.0"
