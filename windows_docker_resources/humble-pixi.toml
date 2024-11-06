@@ -63,7 +63,7 @@ openssl = "==1.1.1w"  # TODO: conda doesn't have openssl 3.0.2
 orocos-kdl = "==1.5.1"
 pip = "==22.0.2"
 psutil = "==5.9.0"
-pybind11 = "==2.9.1"
+pybind11 = "==2.10.0"  # TODO: pybind11 2.9.1 crashes on tests
 pycodestyle = "==2.8.0"
 pydocstyle = "==6.1.1"
 pydot = "==1.4.2"
