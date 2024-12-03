@@ -50,7 +50,7 @@ flake8-docstrings = "==1.6.0"
 flake8-import-order = "==0.18.2"
 flake8-quotes = "==3.4.0"
 git = "==2.43.0"
-graphviz = "==2.46.1"  # TODO: conda doesn't have graphviz 2.42.2
+graphviz = "==9.0.0"  # TODO: pygraphviz 1.11 needs at least graphviz 9.0.0
 importlib-metadata = "==8.5.0"  # TODO: Conda doesn't have 4.12.0
 lark = "==1.1.9"
 libcurl = "==8.5.0"
@@ -67,7 +67,7 @@ pybind11 = "==2.11.1"
 pycodestyle = "==2.11.1"
 pydocstyle = "==6.3.0"
 pydot = "==1.4.2"
-pygraphviz = "==1.7"
+pygraphviz = "==1.11"  # TODO: conda doesn't have pygraphviz 1.7 built for Python 3.12
 pyqt = "==5.15.9"  # TODO: Conda doesn't have 5.15.10
 pytest = "==7.4.4"
 pytest-cov = "==4.1.0"
