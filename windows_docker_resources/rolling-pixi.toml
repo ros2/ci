@@ -68,6 +68,7 @@ pycodestyle = "==2.11.1"
 pydocstyle = "==6.3.0"
 pydot = "==1.4.2"
 pygraphviz = "==1.11"  # TODO: conda doesn't have pygraphviz 1.7 built for Python 3.12
+pyparsing = "==3.1.1"
 pyqt = "==5.15.9"  # TODO: Conda doesn't have 5.15.10
 pytest = "==7.4.4"
 pytest-cov = "==4.1.0"

@@ -70,6 +70,7 @@ pycodestyle = "==2.8.0"
 pydocstyle = "==6.1.1"
 pydot = "==1.4.2"
 pygraphviz = "==1.7"
+pyparsing = "==2.4.7"
 pyqt = "==5.12.3"  # TODO: conda doesn't have pyqt 5.15.6
 pytest = "==6.2.5"
 pytest-cov = "==3.0.0"
