@@ -6,8 +6,8 @@ authors = ["Chris Lalancette <clalancette@gmail.com>"]
 channels = ["conda-forge"]
 platforms = ["win-64"]
 
-[activation]
-scripts = ["py310pythonpath.bat"]
+[target.win-64.activation]
+env = {PYTHONPATH="%cd%\\.pixi\\envs\\default\\Lib", QT_QPA_PLATFORM_PATH="%cd%\\.pixi\\envs\\default\\Library\\plugins\\platforms"}
 
 [dependencies]
 7zip = ">=23.1,<24"
