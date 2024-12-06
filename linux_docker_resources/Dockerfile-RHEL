@@ -142,6 +142,7 @@ RUN dnf install \
     $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron; then echo python3-netifaces; fi) \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-nose; fi) \
     python3-numpy \
+    python3-osrf-pycommon \
     python3-packaging \
     python3-pillow \
     python3-psutil \
