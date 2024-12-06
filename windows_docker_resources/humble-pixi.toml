@@ -11,6 +11,7 @@ env = {PYTHONPATH="%cd%\\.pixi\\envs\\default\\Lib", QT_QPA_PLATFORM_PLUGIN_PATH
 
 [dependencies]
 7zip = ">=23.1,<24"
+argcomplete = "==1.9.4"  # TODO: conda doesn't have argcomplete 1.8.1
 asio = "==1.22.1"  # TODO: conda doesn't have asio 1.18.1
 assimp = "==5.2.3"  # TODO: conda doesn't have assimp 5.2.2
 benchmark = "==1.6.1"
@@ -47,6 +48,7 @@ flake8-blind-except = "==0.2.1"  # TODO: conda doesn't have flake8-blind-except 
 flake8-builtins = "==1.5.3"
 flake8-class-newline = "==1.6.0"
 flake8-comprehensions = "==3.8.0"
+flake8-deprecated = "==2.2.1"  # TODO: conda doesn't have flake8-deprecated 1.3
 flake8-docstrings = "==1.6.0"
 flake8-import-order = "==0.18.1"
 flake8-quotes = "==3.3.1"
@@ -95,8 +97,3 @@ yaml-cpp = "==0.7.0"
 yamllint = "==1.26.3"
 yaml = "==0.2.5"  # TODO: conda doesn't have yaml 0.2.2
 zstd = "==1.5.0"  # TODO: conda doesn't have zstd 1.4.8
-
-[pypi-dependencies]
-# TODO: all of these should be upgraded to "dependencies" eventually
-argcomplete = "==1.8.1"
-flake8-deprecated = "==1.3"
