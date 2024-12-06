@@ -41,6 +41,8 @@ cppcheck = "==2.10.1"  # TODO: This version doesn't actually work, so we should 
 cryptography = "==3.4.8"
 cunit = "==2.1.3"  # TODO: conda doesn't have cunit 2.1
 curl = "==7.81.0"
+distlib = "==0.3.4"
+docutils = "==0.17.1"
 eigen = "==3.4.0"
 empy = "==3.3.4"
 flake8 = "==4.0.1"
@@ -55,22 +57,31 @@ flake8-quotes = "==3.3.1"
 git = "==2.34.1"
 graphviz = "==2.46.1"  # TODO: conda doesn't have graphviz 2.42.2
 importlib-metadata = "==4.8.1"  # TODO: conda doesn't have importlib-metadata 4.6.4
+iniconfig = "==1.1.1"
 lark = "==1.1.1"
 libcurl = "==7.81.0"
 lxml = "==4.9.2"  # TODO: lxml 4.8.0, 4.9.0, and 4.9.1 crash during import with conda
 lz4-c = "==1.9.3"
+mccabe = "==0.6.1"
 mypy = "==0.942"
+mypy_extensions = "==0.4.3"
 netifaces = "==0.11.0"
 numpy = "==1.21.5"
 opencv = "==4.5.5"  # TODO: conda doesn't have opencv 4.5.4
 openssl = "==1.1.1w"  # TODO: conda doesn't have openssl 3.0.2
 orocos-kdl = "==1.5.1"
+packaging = "==21.3"
+pathspec = "==0.9.0"
 pip = "==22.0.2"
+pluggy = "==1.0.0"  # TODO: conda doesn't have pluggy 0.13.0 built for Python 3.10
 psutil = "==5.9.0"
+py = "==1.10.0"
 pybind11 = "==2.10.0"  # TODO: pybind11 2.9.1 crashes on tests
 pycodestyle = "==2.8.0"
 pydocstyle = "==6.1.1"
 pydot = "==1.4.2"
+pyflakes = "==2.4.0"
+pygments = "==2.11.2"
 pygraphviz = "==1.7"
 pyparsing = "==2.4.7"
 pyqt = "==5.12.3"  # TODO: conda doesn't have pyqt 5.15.6
@@ -83,16 +94,23 @@ pytest-rerunfailures = "==10.2"
 pytest-runner = "==3.0"  # TODO: conda doesn't have pytest-runner 2.11.1
 pytest-timeout = "==2.1.0"
 python = "==3.10.6"
+python-dateutil = "==2.8.1"
 python-orocos-kdl = "==1.5.1"
 pyyaml = "==5.4.1"
 qt = "==5.12.9"  # TODO: conda doesn't have qt 5.15.3
 setuptools = "==59.6.0"
+six = "==1.16.0"
+snowballstemmer = "==2.2.0"
 spdlog = "==1.9.2"
 sqlite = "==3.37.1"  # TODO: conda doesn't have sqlite 3.37.2
 tinyxml = "==2.6.2"
 tinyxml2 = "==9.0.0"
+toml = "==0.10.2"
+tomli = "==1.2.2"
+typing_extensions = "==3.10.0.2"
 uncrustify = "==0.72.0"
 vcstool = "==0.3.0"
+wheel = "==0.37.1"
 yaml-cpp = "==0.7.0"
 yamllint = "==1.26.3"
 yaml = "==0.2.5"  # TODO: conda doesn't have yaml 0.2.2
