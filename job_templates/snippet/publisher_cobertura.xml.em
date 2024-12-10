@@ -1,4 +1,4 @@
-<io.jenkins.plugins.coverage.metrics.steps.CoverageRecorder plugin="coverage@1.16.1">
+<io.jenkins.plugins.coverage.metrics.steps.CoverageRecorder plugin="coverage@@1.16.1">
 <tools class="java.util.ImmutableCollections$List12" resolves-to="java.util.CollSer" serialization="custom">
 <java.util.CollSer>
 <default>
@@ -6,12 +6,12 @@
 </default>
 <int>2</int>
 <io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<jenkins plugin="plugin-util-api@5.1.0"/>
+<jenkins plugin="plugin-util-api@@5.1.0"/>
 <pattern>ws/build*/**/*coverage.xml</pattern>
 <parser>COBERTURA</parser>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
 <io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<jenkins plugin="plugin-util-api@5.1.0"/>
+<jenkins plugin="plugin-util-api@@5.1.0"/>
 <pattern/>
 <parser>COBERTURA</parser>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
