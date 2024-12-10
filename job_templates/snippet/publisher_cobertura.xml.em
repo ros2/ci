@@ -57,4 +57,3 @@
 <sourceDirectories/>
 <sourceCodeRetention>LAST_BUILD</sourceCodeRetention>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageRecorder>
-</publishers>
