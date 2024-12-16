@@ -47,7 +47,7 @@
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <url>@(ci_scripts_repository)</url>
-        <credentialsId>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</credentialsId>
+        <credentialsId>github-access-key</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -376,7 +376,7 @@ echo "# END SECTION"
 @[if os_name not in ['windows']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
-        <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>
+        <string>github-access-key</string>
       </credentialIds>
       <ignoreMissing>false</ignoreMissing>
     </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
