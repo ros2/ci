@@ -98,14 +98,6 @@ def main(sysargv=None):
                 'tlsf_cpp',
             ]
 
-    # There are no Windows debug packages available for PyQt5 and PySide2, so
-    # python_qt_bindings can't be imported to run or test rqt_graph or
-    # rqt_py_common.
-    if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
-        blacklisted_package_names.append('rqt_graph')
-        blacklisted_package_names.append('rqt_py_common')
-        blacklisted_package_names.append('rqt_reconfigure')
-
     # TODO(wjwwood): remove this when a better solution is found, as
     #   this is just a work around for https://github.com/ros2/build_cop/issues/161
     # If on Windows, kill any still running `colcon` processes to avoid
