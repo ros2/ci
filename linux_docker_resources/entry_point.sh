@@ -82,4 +82,4 @@ sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$ROS_GID:/" /etc/group
 chown -R ${ROS_UID}:${ROS_GID} "${ORIG_HOME}"
 echo "done."
 
-exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" env UID=$ROS_UID GID=$ROS_GID /bin/sh -c "$*"
+exec env UID=$ROS_UID GID=$ROS_GID sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
