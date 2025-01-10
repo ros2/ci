@@ -1,16 +1,16 @@
-#!/bin/sh
+#!/bin/sh -ex
 
 # This file fixes the permissions of the home directory so that it matches the host user's ID.
 # It also enables multicast and changes directories before executing the input from docker run.
 
 # Adapted from: http://chapeau.freevariable.com/2014/08/docker-uid.html
 
-export ORIGPASSWD=$(cat /etc/passwd | grep claraberendsen)
+export ORIGPASSWD=$(cat /etc/passwd | grep rosbuild)
 export ORIG_UID=$(echo $ORIGPASSWD | cut -f3 -d:)
 export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
 
-export UID=${UID:=$ORIG_UID}
-export GID=${GID:=$ORIG_GID}
+export ROS_UID=${ROS_UID:=$ORIG_UID}
+export ROS_GID=${ROS_GID:=$ORIG_GID}
 
 ARCH=`uname -i`
 
@@ -49,7 +49,7 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
             echo "Installing Connext binaries off RTI website..."
             if test -x /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run; then
                 python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
-                    /home/claraberendsen/rti_connext_dds-6.0.1 --rtipkg_paths \
+                    /home/rosbuild/rti_connext_dds-6.0.1 --rtipkg_paths \
                     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
                     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg \
                     /tmp/rticonnextdds-src/openssl-1.1.1k-6.0.1.25-host-x64Linux.rtipkg \
@@ -59,14 +59,14 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
                     echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
                     exit 1
                 fi
-                export CONNEXTDDS_DIR=/home/claraberendsen/rti_connext_dds-6.0.1
+                export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-6.0.1
                 export RTI_OPENSSL_LIBS=$CONNEXTDDS_DIR/resource/app/lib/x64Linux2.6gcc4.4.5
             else
                 echo "No connext installation files found found." >&2
                 exit 1
             fi
-            mv /tmp/rti_license.dat /home/claraberendsen/rti_license.dat
-            export RTI_LICENSE_FILE=/home/claraberendsen/rti_license.dat
+            mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
+            export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
             ;;
         esac
         echo "done."
@@ -76,10 +76,10 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
 fi
 
 echo "Fixing permissions..."
-sed -i -e "s/:$ORIG_UID:$ORIG_GID:/:$UID:$GID:/" /etc/passwd
-sed -i -e "s/claraberendsen:x:$ORIG_GID:/claraberendsen:x:$GID:/" /etc/group
+sed -i -e "s/:$ORIG_UID:$ORIG_GID:/:$ROS_UID:$ROS_GID:/" /etc/passwd
+sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$ROS_GID:/" /etc/group
 
-chown -R ${UID}:${GID} "${ORIG_HOME}"
+chown -R ${ROS_UID}:${ROS_GID} "${ORIG_HOME}"
 echo "done."
 
-exec sudo -H -u claraberendsen -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
+exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" env UID=$ROS_UID GID=$ROS_GID /bin/sh -c "$*"
