@@ -9,8 +9,8 @@ export ORIGPASSWD=$(cat /etc/passwd | grep rosbuild)
 export ORIG_UID=$(echo $ORIGPASSWD | cut -f3 -d:)
 export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
 
-export ROS_UID=${ROS_UID:=$ORIG_UID}
-export ROS_GID=${ROS_GID:=$ORIG_GID}
+export ROS_UID=${UID:=$ORIG_UID}
+export ROS_GID=${GID:=$ORIG_GID}
 
 ARCH=`uname -i`
 
