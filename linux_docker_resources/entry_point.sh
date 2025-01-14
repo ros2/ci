@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh
 
 # This file fixes the permissions of the home directory so that it matches the host user's ID.
 # It also enables multicast and changes directories before executing the input from docker run.
@@ -9,8 +9,8 @@ export ORIGPASSWD=$(cat /etc/passwd | grep rosbuild)
 export ORIG_UID=$(echo $ORIGPASSWD | cut -f3 -d:)
 export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
 
-export ROS_UID=${UID:=$ORIG_UID}
-export ROS_GID=${GID:=$ORIG_GID}
+export UID=${UID:=$ORIG_UID}
+export GID=${GID:=$ORIG_GID}
 
 ARCH=`uname -i`
 
@@ -76,10 +76,10 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
 fi
 
 echo "Fixing permissions..."
-sed -i -e "s/:$ORIG_UID:$ORIG_GID:/:$ROS_UID:$ROS_GID:/" /etc/passwd
-sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$ROS_GID:/" /etc/group
+sed -i -e "s/:$ORIG_UID:$ORIG_GID:/:$UID:$GID:/" /etc/passwd
+sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$GID:/" /etc/group
 
-chown -R ${ROS_UID}:${ROS_GID} "${ORIG_HOME}"
+chown -R ${UID}:${GID} "${ORIG_HOME}"
 echo "done."
 
-exec env UID=$ROS_UID GID=$ROS_GID sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
+exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
