@@ -82,6 +82,7 @@ pip_dependencies = [
     PipPackage('pytest-timeout', 'pytest_timeout', '==2.1.0'),
     PipPackage('pyyaml', 'yaml', ''),
     PipPackage('setuptools', 'setuptools', '==59.6.0'),
+    PipPackage('types-pyyaml', 'types_pyyaml', ''),
     PipPackage('vcstool', 'vcstool', ''),
     PipPackage('yamllint', 'yamllint', ''),
 ]
