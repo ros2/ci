@@ -325,7 +325,6 @@ def main(argv=None):
             'console_bridge_vendor',
             'diagnostic_msgs',
             'fastcdr',
-            'fastrtps',
             'foonathan_memory_vendor',
             'geometry_msgs',
             'libstatistics_collector',
