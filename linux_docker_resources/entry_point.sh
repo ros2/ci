@@ -5,6 +5,8 @@
 
 # Adapted from: http://chapeau.freevariable.com/2014/08/docker-uid.html
 
+set -ex
+
 export ORIGPASSWD=$(cat /etc/passwd | grep rosbuild)
 export ORIG_UID=$(echo $ORIGPASSWD | cut -f3 -d:)
 export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)

@@ -57,7 +57,7 @@
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <url>@(ci_scripts_repository)</url>
-        <credentialsId>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</credentialsId>
+        <credentialsId>github-access-key</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -225,7 +225,7 @@ export CONTAINER_NAME=ros2_packaging_rhel
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --cap-add NET_ADMIN -e BUILD_URL="$BUILD_URL" -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run packaging script"
@@ -358,7 +358,7 @@ echo "# END SECTION"
 @[if os_name not in ['windows']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
-        <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>
+        <string>github-access-key</string>
       </credentialIds>
       <ignoreMissing>false</ignoreMissing>
     </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
