@@ -294,9 +294,6 @@ if "!CI_COLCON_MIXIN_URL!" NEQ "" (
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
 )
-if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
-  set "CI_ARGS=!CI_ARGS! --python-interpreter python_d"
-)
 set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
 if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"

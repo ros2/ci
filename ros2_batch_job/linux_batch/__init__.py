@@ -24,7 +24,7 @@ class LinuxBatchJob(BatchJob):
         self.args = args
         self.use_ccache = False
         # The BatchJob constructor will set self.run and self.python
-        BatchJob.__init__(self, python_interpreter=args.python_interpreter)
+        BatchJob.__init__(self)
 
     def pre(self):
         # Linux jobs are run on machines in the cloud

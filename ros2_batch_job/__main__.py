@@ -134,14 +134,6 @@ def main(sysargv=None):
                 'tlsf_cpp',
             ]
 
-    # There are no Windows debug packages available for PyQt5 and PySide2, so
-    # python_qt_bindings can't be imported to run or test rqt_graph or
-    # rqt_py_common.
-    if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
-        blacklisted_package_names.append('rqt_graph')
-        blacklisted_package_names.append('rqt_py_common')
-        blacklisted_package_names.append('rqt_reconfigure')
-
     # TODO(wjwwood): remove this when a better solution is found, as
     #   this is just a work around for https://github.com/ros2/build_cop/issues/161
     # If on Windows, kill any still running `colcon` processes to avoid
@@ -229,9 +221,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--workspace-path', default=None,
         help="base path of the workspace")
-    parser.add_argument(
-        '--python-interpreter', default=None,
-        help='pass different Python interpreter')
     parser.add_argument(
         '--visual-studio-version', default=None, required=(os.name == 'nt'),
         help='select the Visual Studio version')
@@ -507,21 +496,10 @@ def run(args, build_function, blacklisted_package_names=None):
             # matches Ubuntu Jammy, and wait until upstream setuptools settles down.
             pip_packages += ["setuptools==59.6.0"]
 
-            if args.cmake_build_type == 'Debug':
-                pip_packages += [
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
-                ]
-                if args.ros_distro in ('humble', 'iron'):
-                    pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
-            else:
-                pip_packages += ['cryptography', 'lxml', 'numpy']
-                if args.ros_distro in ('humble', 'iron'):
-                    pip_packages.append('netifaces')
-        if sys.platform == 'win32':
+            pip_packages += ['cryptography', 'lxml', 'numpy']
+            if args.ros_distro in ('humble', 'iron'):
+                pip_packages.append('netifaces')
+
             # to ensure that the build type specific package is installed
             job.run(
                 ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
