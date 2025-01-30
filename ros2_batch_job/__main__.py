@@ -515,11 +515,11 @@ def run(args, build_function, blacklisted_package_names=None):
                     'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
                     'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
                 ]
-                if args.ros_distro in ('humble', 'iron'):
+                if args.ros_distro == 'humble':
                     pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
             else:
                 pip_packages += ['cryptography', 'lxml', 'numpy']
-                if args.ros_distro in ('humble', 'iron'):
+                if args.ros_distro == 'humble':
                     pip_packages.append('netifaces')
         if sys.platform == 'win32':
             # to ensure that the build type specific package is installed
