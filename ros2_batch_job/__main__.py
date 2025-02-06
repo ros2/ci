@@ -461,8 +461,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
         print('# BEGIN SUBSECTION: Print python versions')
         # Print setuptools version
-        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
-                shell=True)
+        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'])
 
         # Print the pip version
         job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
