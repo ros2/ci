@@ -497,7 +497,7 @@ def run(args, build_function, blacklisted_package_names=None):
             pip_packages += ["setuptools==59.6.0"]
 
             pip_packages += ['cryptography', 'lxml', 'numpy']
-            if args.ros_distro in ('humble', 'iron'):
+            if args.ros_distro == 'humble':
                 pip_packages.append('netifaces')
 
             # to ensure that the build type specific package is installed
