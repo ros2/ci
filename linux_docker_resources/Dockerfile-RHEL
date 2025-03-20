@@ -73,6 +73,7 @@ RUN dnf install \
     bison \
     boost-devel \
     bullet-devel \
+    cargo \
     clang \
     clang-tools-extra \
     cmake3 \

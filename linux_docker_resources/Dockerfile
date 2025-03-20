@@ -54,6 +54,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-lark py
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
+  cargo \
   clang-format \
   cppcheck \
   git \
