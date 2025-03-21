@@ -34,6 +34,9 @@ RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.
 # Install pixi
 RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://pixi.sh/install.ps1'))"
 
+# Automatic invalidation once every day.
+RUN echo "@today_str"
+
 # Install dependencies via pixi
 ARG ROS_DISTRO=rolling
 WORKDIR C:\pixi_ws
