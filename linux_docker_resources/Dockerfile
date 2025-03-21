@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-lark py
 
 # Install build and test dependencies of ROS 2 packages.
 RUN apt-get update && apt-get install --no-install-recommends -y \
-  $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != iron -a ${ROS_DISTRO} != jazzy; then echo cargo; fi) \
+  $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo cargo; fi) \
   clang-format \
   cppcheck \
   git \
