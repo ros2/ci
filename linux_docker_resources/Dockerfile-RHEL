@@ -73,6 +73,7 @@ RUN dnf install \
     bison \
     boost-devel \
     bullet-devel \
+    $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo cargo; fi) \
     clang \
     clang-tools-extra \
     cmake3 \
