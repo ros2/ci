@@ -37,9 +37,7 @@ RUN powershell -noexit "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((
 # Install dependencies via pixi
 ARG ROS_DISTRO=rolling
 WORKDIR C:\pixi_ws
-ADD https://github.com/ros2/ros2.git#rolling C:\TEMP\ros2
-RUN powershell "(Get-Content C:\TEMP\ros2)"
-RUN copy C:\TEMP\ros2\pixi.toml pixi.toml
+ADD https://raw.githubusercontent.com/ros2/ros2/${ROS_DISTRO}/pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
