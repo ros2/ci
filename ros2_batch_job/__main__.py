@@ -50,44 +50,6 @@ sys.stderr = UnbufferedIO(sys.stderr)
 
 PipPackage = collections.namedtuple('PipPackage', ['pkgname' ,'importname', 'version'])
 
-
-pip_dependencies = [
-    PipPackage('EmPy', 'em', '<4'),
-    PipPackage('catkin_pkg', 'catkin_pkg', ''),
-    PipPackage('cryptography', 'cryptography', '<=3.0'),
-    PipPackage('coverage', 'coverage', ''),
-    PipPackage('flake8', 'flake8', '<5.0.0'),
-    PipPackage('flake8-blind-except', 'flake8_blind_except', '==0.1.1'),
-    PipPackage('flake8-builtins', 'flake8_builtins', ''),
-    PipPackage('flake8-class-newline', 'flake8_class_newline', ''),
-    PipPackage('flake8-comprehensions', 'flake8_comprehensions', ''),
-    PipPackage('flake8-deprecated', 'flake8_deprecated', ''),
-    PipPackage('flake8-docstrings', 'flake8_docstrings', ''),
-    PipPackage('flake8-import-order', 'flake8_import_order', ''),
-    PipPackage('flake8-quotes', 'flake8_quotes', ''),
-    PipPackage('importlib-metadata', 'importlib_metadata', ''),
-    PipPackage('lark', 'lark', '==1.1.1'),
-    PipPackage('mypy', 'mypy', '==0.931'),
-    PipPackage('nose', 'nose', ''),
-    PipPackage('pathspec', 'pathspec', ''),
-    PipPackage('pep8', 'pep8', ''),
-    PipPackage('pydocstyle', 'pydocstyle', ''),
-    PipPackage('pyflakes', 'pyflakes', ''),
-    PipPackage('pyparsing', 'pyparsing', '==2.4.7'),
-    PipPackage('pytest', 'pytest', '==6.2.5'),
-    PipPackage('pytest-cov', 'pytest_cov', ''),
-    PipPackage('pytest-mock', 'pytest_mock', ''),
-    PipPackage('pytest-repeat', 'pytest_repeat', ''),
-    PipPackage('pytest-rerunfailures', 'pytest_rerunfailures', ''),
-    PipPackage('pytest-runner', 'ptr', ''),
-    PipPackage('pytest-timeout', 'pytest_timeout', '==2.1.0'),
-    PipPackage('pyyaml', 'yaml', ''),
-    PipPackage('setuptools', 'setuptools', '==59.6.0'),
-    PipPackage('types-pyyaml', 'types_pyyaml', ''),
-    PipPackage('vcstool', 'vcstool', ''),
-    PipPackage('yamllint', 'yamllint', ''),
-]
-
 colcon_packages = [
     PipPackage('colcon-core', 'colcon_core', ''),
     PipPackage('colcon-defaults', 'colcon_defaults', ''),
