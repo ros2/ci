@@ -18,10 +18,10 @@ from .util import run
 
 
 class BatchJob:
-    def __init__(self, *, python_interpreter=None):
+    def __init__(self):
         self.run = run
         self.run_history = []
-        self.python = sys.executable if python_interpreter is None else python_interpreter
+        self.python = sys.executable
         self.python_history = []
 
     def pre(self):

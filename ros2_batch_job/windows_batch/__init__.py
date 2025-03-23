@@ -24,7 +24,7 @@ class WindowsBatchJob(BatchJob):
     def __init__(self, args):
         self.args = args
         # The BatchJob constructor will set self.run and self.python
-        BatchJob.__init__(self, python_interpreter=args.python_interpreter)
+        BatchJob.__init__(self)
 
     def pre(self):
         pass
@@ -36,7 +36,7 @@ class WindowsBatchJob(BatchJob):
         # Show the env
         self.run(['set'], shell=True)
         # Show what pip has
-        self.run([self.python, '-m', 'pip', 'freeze', '--all'])
+        self.run([self.python, '-m', 'pip', 'list'])
 
     def setup_env(self):
         # Generate the env file
@@ -45,10 +45,8 @@ class WindowsBatchJob(BatchJob):
         with open('env.bat', 'w') as f:
             f.write("@echo off" + os.linesep)
             assert self.args.visual_studio_version is not None
-            f.write(
-                'call '
-                '"C:\\Program Files (x86)\\Microsoft Visual Studio\\%s\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat" ' %
-                self.args.visual_studio_version + 'x86_amd64' + os.linesep)
+            vs = self.args.visual_studio_version
+            f.write(f'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\{vs}\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat" x86_amd64' + os.linesep)
             f.write("%*" + os.linesep)
             f.write("if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%" + os.linesep)
 

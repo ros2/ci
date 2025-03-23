@@ -5,6 +5,8 @@
 
 # Adapted from: http://chapeau.freevariable.com/2014/08/docker-uid.html
 
+set -ex
+
 export ORIGPASSWD=$(cat /etc/passwd | grep rosbuild)
 export ORIG_UID=$(echo $ORIGPASSWD | cut -f3 -d:)
 export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
@@ -20,8 +22,10 @@ echo "Enabling multicast..."
 ifconfig eth0 multicast
 echo "done."
 
-# We only attempt to install Connext on amd64
-if [ "${ARCH}" != "aarch64" ]; then
+. /etc/os-release
+
+# We only attempt to install Connext on Ubuntu amd64
+if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
     IGNORE_CONNEXTDDS=""
     ignore_rwm_seen="false"
     for arg in ${CI_ARGS} ; do

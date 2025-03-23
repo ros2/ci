@@ -47,7 +47,7 @@
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <url>@(ci_scripts_repository)</url>
-        <credentialsId>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</credentialsId>
+        <credentialsId>github-access-key</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -173,7 +173,6 @@ if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
 fi
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg ROS_DISTRO=${CI_ROS_DISTRO}"
-  export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
 fi
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
@@ -228,7 +227,7 @@ export CONTAINER_NAME=ros2_batch_ci_aarch64
 # This prevents cross-talk between builds running in parallel on different executors on a single host.
 # It may have already been created.
 docker network create -o com.docker.network.bridge.enable_icc=false isolated_network || true
-docker run --rm --net=isolated_network --privileged -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
+docker run --rm --net=isolated_network --cap-add NET_ADMIN -e UID=`id -u` -e GID=`id -g` -e CI_ARGS="$CI_ARGS" -e CCACHE_DIR=/home/rosbuild/.ccache -i --workdir=`pwd` -v `pwd`:`pwd` -v $HOME/.ccache:/home/rosbuild/.ccache $CONTAINER_NAME
 echo "# END SECTION"
 @[  else]@
 echo "# BEGIN SECTION: Run script"
@@ -242,9 +241,6 @@ rmdir /S /Q ws workspace "work space"
 echo "# BEGIN SECTION: Build DockerFile"
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
 set DOCKERFILE=windows_docker_resources\Dockerfile
-
-rem "Change dockerfile once per day to invalidate docker caches"
-powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
@@ -261,9 +257,6 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
-)
-if "!CI_ROS_DISTRO!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
 if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
@@ -298,9 +291,6 @@ if "!CI_COLCON_MIXIN_URL!" NEQ "" (
 )
 if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
   set "CI_ARGS=!CI_ARGS! --cmake-build-type !CI_CMAKE_BUILD_TYPE!"
-)
-if "!CI_CMAKE_BUILD_TYPE!" == "Debug" (
-  set "CI_ARGS=!CI_ARGS! --python-interpreter python_d"
 )
 if "!CI_COMPILE_WITH_CLANG!" == "true" (
   set "CI_ARGS=!CI_ARGS! --compile-with-clang"
@@ -371,7 +361,7 @@ echo "# END SECTION"
 @[if os_name not in ['windows']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
       <credentialIds>
-        <string>1c2004f6-2e00-425d-a421-2e1ba62ca7a7</string>
+        <string>github-access-key</string>
       </credentialIds>
       <ignoreMissing>false</ignoreMissing>
     </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>

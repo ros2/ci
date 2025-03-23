@@ -50,6 +50,7 @@ sys.stderr = UnbufferedIO(sys.stderr)
 
 PipPackage = collections.namedtuple('PipPackage', ['pkgname' ,'importname', 'version'])
 
+
 pip_dependencies = [
     PipPackage('EmPy', 'em', '<4'),
     PipPackage('catkin_pkg', 'catkin_pkg', ''),
@@ -135,14 +136,6 @@ def main(sysargv=None):
                 'tlsf_cpp',
             ]
 
-    # There are no Windows debug packages available for PyQt5 and PySide2, so
-    # python_qt_bindings can't be imported to run or test rqt_graph or
-    # rqt_py_common.
-    if sys.platform == 'win32' and args.cmake_build_type == 'Debug':
-        blacklisted_package_names.append('rqt_graph')
-        blacklisted_package_names.append('rqt_py_common')
-        blacklisted_package_names.append('rqt_reconfigure')
-
     # TODO(wjwwood): remove this when a better solution is found, as
     #   this is just a work around for https://github.com/ros2/build_cop/issues/161
     # If on Windows, kill any still running `colcon` processes to avoid
@@ -207,9 +200,6 @@ def get_args(sysargv=None):
         '--force-ansi-color', default=False, action='store_true',
         help="forces this program to output ansi color")
     parser.add_argument(
-        '--ros-distro', required=True,
-        help="The ROS distribution being built")
-    parser.add_argument(
         '--colcon-mixin-url', default=None,
         help='A mixin index url to be included by colcon')
     parser.add_argument(
@@ -230,9 +220,6 @@ def get_args(sysargv=None):
     parser.add_argument(
         '--workspace-path', default=None,
         help="base path of the workspace")
-    parser.add_argument(
-        '--python-interpreter', default=None,
-        help='pass different Python interpreter')
     parser.add_argument(
         '--visual-studio-version', default=None, required=(os.name == 'nt'),
         help='select the Visual Studio version')
@@ -465,89 +452,10 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Now inside of the workspace...
     with change_directory(args.workspace):
-        def need_package_from_pipy(pkg_name):
-            try:
-                importlib.import_module(pkg_name)
-            except ModuleNotFoundError:
-                return True
-
-            return False
-
-        print('# BEGIN SUBSECTION: install Python packages')
-        # Print setuptools version
-        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
-                shell=True)
-
-        # Print the pip version
-        job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
-
-        # Install pip dependencies
-        pip_packages = []
-        constraints = []
-
-        potential_pip_packages = pip_dependencies
-        if not args.colcon_branch:
-            potential_pip_packages += colcon_packages
-
-        # We prefer to get packages from the distribution if they are already installed.
-        # If not, we add to the list to install from pip.
-        for pkgname, importname, version in pip_dependencies:
-            if need_package_from_pipy(importname):
-                pip_packages.append(pkgname)
-            # Even if we don't need to install the package, we still add the constraints
-            # (if they exist) so that other package installations will respect these.
-            if version:
-                constraints.append(f'{pkgname}{version}')
-
-        if sys.platform == 'win32':
-            # Install fork of pyreadline containing fix for deprecation warnings
-            # TODO(jacobperron): Until upstream issue is resolved https://github.com/pyreadline/pyreadline/issues/65
-            pip_packages += ['git+https://github.com/osrf/pyreadline']
-
-            # Setuptools > 61 somehow have broken Windows Debug.  Pin it to 59.6.0 here which
-            # matches Ubuntu Jammy, and wait until upstream setuptools settles down.
-            pip_packages += ["setuptools==59.6.0"]
-
-            if args.cmake_build_type == 'Debug':
-                pip_packages += [
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cffi-1.14.0-cp38-cp38d-win_amd64.whl',  # required by cryptography
-                    'https://github.com/ros2/ros2/releases/download/cryptography-archives/cryptography-2.9.2-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/lxml-archives/lxml-4.5.1-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/numpy-archives/numpy-1.18.4-cp38-cp38d-win_amd64.whl',
-                    'https://github.com/ros2/ros2/releases/download/psutil-archives/psutil-5.9.5-cp38-cp38d-win_amd64.whl',
-                ]
-                if args.ros_distro in ('humble', 'iron'):
-                    pip_packages.append('https://github.com/ros2/ros2/releases/download/netifaces-archives/netifaces-0.10.9-cp38-cp38d-win_amd64.whl')
-            else:
-                pip_packages += ['cryptography', 'lxml', 'numpy']
-                if args.ros_distro in ('humble', 'iron'):
-                    pip_packages.append('netifaces')
-        if sys.platform == 'win32':
-            # to ensure that the build type specific package is installed
-            job.run(
-                ['"%s"' % job.python, '-m', 'pip', 'uninstall', '-y'] +
-                ['cryptography', 'lxml', 'numpy'], shell=True)
-
-        if pip_packages:
-            print('Using constraints:')
-            print('\n'.join(constraints))
-            with open('constraints.txt', 'w') as outfp:
-                outfp.write('\n'.join(constraints) + '\n')
-
-            pip_cmd = ['"%s"' % job.python, '-m', 'pip', 'install', '-c', 'constraints.txt', '-U']
-            if sys.platform == 'win32':
-                # Force reinstall so all dependencies are in virtual environment
-                # On Windows since we switch between the debug and non-debug
-                # interpreter all packages need to be reinstalled too
-                pip_cmd.append('--force-reinstall')
-
-            job.run(
-                pip_cmd + pip_packages,
-                shell=True)
-
         vcs_cmd = ['vcs']
 
         if args.colcon_branch:
+            print('# BEGIN SUBSECTION: install custom colcon')
             # create .repos file for colcon repositories
             os.makedirs('colcon', exist_ok=True)
             with open('colcon/colcon.repos', 'w') as h:
@@ -576,19 +484,30 @@ def run(args, build_function, blacklisted_package_names=None):
                 ['"%s"' % job.python, '-m', 'pip', 'install', '-U'] +
                 ['colcon/%s' % pkgname for pkgname, importname, version in colcon_packages],
                 shell=True)
+            print('# END SUBSECTION')
 
         colcon_script = which('colcon')
 
-        # Show what pip has
-        job.run(['"%s"' % job.python, '-m', 'pip', 'freeze', '--all'], shell=True)
-        print('# END SUBSECTION')
-
         # Fetch colcon mixins
         if args.colcon_mixin_url:
+            print('# BEGIN SUBSECTION: Fetch colcon mixins')
             true_cmd = 'VER>NUL' if sys.platform == 'win32' else 'true'
             job.run([colcon_script, 'mixin', 'remove', 'default', '||', true_cmd], shell=True)
             job.run([colcon_script, 'mixin', 'add', 'default', args.colcon_mixin_url], shell=True)
             job.run([colcon_script, 'mixin', 'update', 'default'], shell=True)
+            print('# END SUBSECTION')
+
+        print('# BEGIN SUBSECTION: Print python versions')
+        # Print setuptools version
+        job.run(['"%s"' % job.python, '-c', '"import setuptools; print(setuptools.__version__)"'],
+                shell=True)
+
+        # Print the pip version
+        job.run(['"%s"' % job.python, '-m', 'pip', '--version'], shell=True)
+
+        # Show what pip has
+        job.run(['"%s"' % job.python, '-m', 'pip', 'list'], shell=True)
+        print('# END SUBSECTION')
 
         print('# BEGIN SUBSECTION: import repositories')
         repos_file_urls = [args.repo_file_url]
@@ -682,6 +601,7 @@ def run(args, build_function, blacklisted_package_names=None):
             blacklisted_package_names += [
                 'fastrtps',
                 'fastrtps_cmake_module',
+                'rosidl_dynamic_typesupport_fastrtps',
             ]
         if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
             blacklisted_package_names += [
