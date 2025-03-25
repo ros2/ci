@@ -10,11 +10,6 @@
 <pattern>ws/build*/**/*coverage.xml</pattern>
 <parser>COBERTURA</parser>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<jenkins plugin="plugin-util-api@@5.1.0"/>
-<pattern/>
-<parser>COBERTURA</parser>
-</io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
 </java.util.CollSer>
 </tools>
 <qualityGates class="java.util.ImmutableCollections$ListN" resolves-to="java.util.CollSer" serialization="custom">
@@ -54,6 +49,16 @@
 <skipSymbolicLinks>false</skipSymbolicLinks>
 <scm/>
 <sourceCodeEncoding/>
-<sourceDirectories/>
+<sourceDirectories class="java.util.ImmutableCollections$Set12" resolves-to="java.util.CollSer" serialization="custom">	
+<java.util.CollSer>	
+<default>	
+<tag>2</tag>	
+</default>
+<int>1</int>
+<io.jenkins.plugins.prism.SourceCodeDirectory plugin="prism-api@@1.29.0-18">
+<path>ws</path>
+</io.jenkins.plugins.prism.SourceCodeDirectory>
+</java.util.CollSer>
+</sourceDirectories>
 <sourceCodeRetention>LAST_BUILD</sourceCodeRetention>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageRecorder>
