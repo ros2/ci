@@ -10,11 +10,6 @@
 <pattern>ws/build*/**/*coverage.xml</pattern>
 <parser>COBERTURA</parser>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<jenkins plugin="plugin-util-api@@5.1.0"/>
-<pattern/>
-<parser>COBERTURA</parser>
-</io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
 </java.util.CollSer>
 </tools>
 <qualityGates class="java.util.ImmutableCollections$ListN" resolves-to="java.util.CollSer" serialization="custom">
