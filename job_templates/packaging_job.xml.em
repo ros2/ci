@@ -336,12 +336,12 @@ echo "# END SECTION"
 @[end if]@
   </publishers>
   <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.10" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.28" />
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
 @[if os_name not in ['windows']]@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
       <credentialIds>
         <string>github-access-key</string>
       </credentialIds>
