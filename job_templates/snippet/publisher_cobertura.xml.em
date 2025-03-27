@@ -4,7 +4,7 @@
 <default>
 <tag>1</tag>
 </default>
-<int>2</int>
+<int>1</int>
 <io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
 <jenkins plugin="plugin-util-api@@5.1.0"/>
 <pattern>ws/build*/**/*coverage.xml</pattern>

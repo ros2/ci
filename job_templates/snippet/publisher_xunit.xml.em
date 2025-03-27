@@ -1,5 +1,5 @@
-    <xunit plugin="xunit@@2.3.8">
-      <tools>
+    <xunit plugin="xunit@@3.1.5">
+      <types>
 @[for prefix in ['ws/build', 'work space/build space']]@
         <CTestType>
           <pattern>@(prefix)/*/Testing/*/Test.xml</pattern>
@@ -30,7 +30,7 @@
           <stopProcessingIfError>true</stopProcessingIfError>
         </JUnitType>
 @[end for]@
-      </tools>
+      </types>
       <thresholds>
         <org.jenkinsci.plugins.xunit.threshold.FailedThreshold>
           <unstableThreshold>0</unstableThreshold>
