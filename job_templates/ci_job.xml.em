@@ -59,7 +59,7 @@
     <browser class="hudson.plugins.git.browser.GithubWeb">
       <url></url>
     </browser>
-    <submoduleCfg class="list"/>
+    <submoduleCfg class="empty-list"/>
     <extensions>
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
@@ -324,26 +324,7 @@ echo "# END SECTION"
 @[end if]</command>
     </hudson.tasks.@(shell_type)>
   </builders>
-  <publishers>
-@(SNIPPET(
-    'publisher_warnings_ng',
-    os_name=os_name,
-))@
-@(SNIPPET(
-    'publisher_cobertura',
-))@
-@(SNIPPET(
-    'publisher_xunit',
-))@
-@[if mailer_recipients]@
-    <hudson.tasks.Mailer plugin="mailer@@1.29">
-      <recipients>@(mailer_recipients)</recipients>
-      <dontNotifyEveryUnstableBuild>@(dont_notify_every_unstable_build)</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
-@[end if]@
-  </publishers>
-  <buildWrappers>
+ <buildWrappers>
 @[if build_timeout_mins]@
     <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.33">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
@@ -367,4 +348,23 @@ echo "# END SECTION"
     </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
 @[end if]@
   </buildWrappers>
+  <publishers>
+@(SNIPPET(
+    'publisher_warnings_ng',
+    os_name=os_name,
+))@
+@(SNIPPET(
+    'publisher_cobertura',
+))@
+@(SNIPPET(
+    'publisher_xunit',
+))@
+@[if mailer_recipients]@
+    <hudson.tasks.Mailer plugin="mailer@@1.29">
+      <recipients>@(mailer_recipients)</recipients>
+      <dontNotifyEveryUnstableBuild>@(dont_notify_every_unstable_build)</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+@[end if]@
+  </publishers>
 </project>

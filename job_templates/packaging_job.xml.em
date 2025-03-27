@@ -69,7 +69,7 @@
     <browser class="hudson.plugins.git.browser.GithubWeb">
       <url></url>
     </browser>
-    <submoduleCfg class="list"/>
+    <submoduleCfg class="empty-list"/>
     <extensions>
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
@@ -308,6 +308,20 @@ echo "# END SECTION"
 @[end if]</command>
     </hudson.tasks.@(shell_type)>
   </builders>
+ <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.28" />
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+@[if os_name not in ['windows']]@
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
+      <credentialIds>
+        <string>github-access-key</string>
+      </credentialIds>
+      <ignoreMissing>false</ignoreMissing>
+    </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
+@[end if]@
+  </buildWrappers>
   <publishers>
 @(SNIPPET(
     'publisher_warnings_ng',
@@ -335,18 +349,4 @@ echo "# END SECTION"
     </hudson.tasks.Mailer>
 @[end if]@
   </publishers>
-  <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.28" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
-      <colorMapName>xterm</colorMapName>
-    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name not in ['windows']]@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
-      <credentialIds>
-        <string>github-access-key</string>
-      </credentialIds>
-      <ignoreMissing>false</ignoreMissing>
-    </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
-@[end if]@
-  </buildWrappers>
 </project>
