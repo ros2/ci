@@ -11,11 +11,11 @@
     num_to_keep=build_discard['num_to_keep'],
 ))@
 @[end if]@
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.29.5">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.40.0">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.31">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@332.va_1ee476d8f6d1">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -59,7 +59,7 @@
     <browser class="hudson.plugins.git.browser.GithubWeb">
       <url></url>
     </browser>
-    <submoduleCfg class="list"/>
+    <submoduleCfg class="empty-list"/>
     <extensions>
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
@@ -85,9 +85,9 @@
 @[end if]</triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.70">
+        <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
           <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connextdds: ${build.buildVariableResolver.resolve('CI_USE_CONNEXTDDS')}, <br/>
@@ -343,9 +343,9 @@ echo "# END SECTION"
     </hudson.tasks.Mailer>
 @[end if]@
   </publishers>
-  <buildWrappers>
+<buildWrappers>
 @[if build_timeout_mins]@
-    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.19">
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.33">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
         <timeoutMinutes>@(build_timeout_mins)</timeoutMinutes>
       </strategy>
@@ -354,12 +354,12 @@ echo "# END SECTION"
       </operationList>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
 @[end if]@
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.10" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.28" />
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
 @[if os_name not in ['windows']]@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
       <credentialIds>
         <string>github-access-key</string>
       </credentialIds>
