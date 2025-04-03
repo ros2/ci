@@ -108,6 +108,7 @@ RUN dnf install \
     lz4-devel \
     mesa-libGL-devel \
     mesa-libGLU-devel \
+    $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo json-devel; fi) \
     opencv-devel \
     openssl \
     openssl-devel \
