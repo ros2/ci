@@ -55,12 +55,12 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64V
 COPY rticonnextdds-license\rti_license.dat $RTI_LICENSE_FILE
 
 # Install Connext
-RUN pixi run 7z x -oC:\connext C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-target-x64Win64VS2017.zip
 RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0.7-host-x64Win64.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-host-x64Win64.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-target-x64Win64VS2017.rtipkg
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0.7-host-x64Win64.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0.7-target-x64Win64VS2017.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-host-x64Win64.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 WORKDIR C:\ci
