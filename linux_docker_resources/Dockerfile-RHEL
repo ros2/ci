@@ -185,15 +185,25 @@ RUN dnf install \
     --refresh -y
 
 # Get and install the RTI web binaries.
-# Connext 7.3.0 for humble and beyond, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
-RUN for splitpkg in \
-      /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
-      /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; \
-    do \
-      cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
-    done; \
-    chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run;
+# Join the correct Connext version files based on the value of ROS_DISTRO.
+RUN if test ${ROS_DISTRO} = rolling; then \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+  done; \
+    elif test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+  done; \
+    fi
+# Make the RTI Connext installation script executable. For any version of Connext.
+RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
+
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
 
 # Add the RTI license file.
