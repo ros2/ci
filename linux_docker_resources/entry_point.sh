@@ -52,11 +52,11 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
             if test -x /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run; then
                 python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
                     /home/rosbuild/rti_connext_dds-7.3.0 --rtipkg_paths \
-                    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0.7-pro-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0.7-pro-target-x64Linux4gcc7.3.0.rtipkg \
-                    /tmp/rticonnextdds-src/openssl-3.0.12-7.3.0.7-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0.7-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0.7-target-x64Linux4gcc7.3.0.rtipkg
+                    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg \
+                    /tmp/rticonnextdds-src/openssl-3.0.12-7.3.0-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/openssl-3.0.12-7.3.0-target-x64Linux4gcc7.3.0.rtipkg \
+                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0-target-x64Linux4gcc7.3.0.rtipkg
                 if [ $? -ne 0 ]; then
                     echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
                     exit 1

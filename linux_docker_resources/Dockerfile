@@ -166,8 +166,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 RUN for splitpkg in \
   /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
-  /tmp/rticonnextdds-src/rti_connext_dds-7.3.0.7-pro-host-x64Linux.rtipkg \
-  /tmp/rticonnextdds-src/rti_connext_dds-7.3.0.7-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
+  /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done
 RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run
