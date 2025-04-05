@@ -189,7 +189,7 @@ COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 #    fi
 
 # Make the RTI Connext installation script executable. For any version of Connext.
-RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
+#RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
 
 # Add the connextdds installation script used in entry_point.sh
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
