@@ -185,8 +185,10 @@ RUN dnf install \
     python3-pexpect \
     --refresh -y
 
-# Get and install the RTI web binaries.
+# Get and install the RTI Connext web binaries.
+# RTI Connext web binaries installation is only supported on x86_64.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
+
 # Join the correct Connext version files based on the value of ROS_DISTRO.
 RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
   for splitpkg in \

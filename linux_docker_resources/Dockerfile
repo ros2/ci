@@ -169,7 +169,8 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 # Install dependencies for RTI web binaries install script.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
-# Get and install the RTI web binaries.
+# Get and install the RTI Connext web binaries.
+# RTI Connext web binaries installation is only supported on x86_64.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 
 # Join the correct Connext version files based on the value of ROS_DISTRO.
