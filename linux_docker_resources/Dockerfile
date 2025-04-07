@@ -153,13 +153,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 # merged use the fork with the fix.
 RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
-# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is rolling install 
-# rti-connext-dds-7.3.0-ros else if is humble or jazzy install rti-connext-dds-6.0.1
+# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
+# install rti-connext-dds-6.0.1 else install rti-connext-dds-7.3.0-ros.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then \
-  if test \( ${ROS_DISTRO} = rolling \); then \
-    apt-get update && RTI_LICENSE_AGREEMENT_ACCEPTED=accepted apt-get install -y rti-connext-dds-7.3.0-ros; \
-  elif test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
+  if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
+  else \
+    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
   fi; \
     fi
 
@@ -244,6 +244,9 @@ RUN apt-get update && apt-get install -y \
 RUN update-ccache-symlinks
 
 ENV DISPLAY=:99
+# Making the RTI Connext env variable to the entry_point.sh script so that it can be used to run
+# the RTI Connext installation script.
+ENV ROS_DISTRO=${ROS_DISTRO}
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
