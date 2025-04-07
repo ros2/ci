@@ -55,8 +55,8 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
                     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg \
                     /tmp/rticonnextdds-src/openssl-3.0.12-7.3.0-host-x64Linux.rtipkg \
                     /tmp/rticonnextdds-src/openssl-3.0.12-7.3.0-target-x64Linux4gcc7.3.0.rtipkg \
-                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0-target-x64Linux4gcc7.3.0.rtipkg
+                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0-host-openssl-3.0-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/rti_security_plugins-7.3.0-target-openssl-3.0-x64Linux4gcc7.3.0.rtipkg
                 if [ $? -ne 0 ]; then
                     echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
                     exit 1
