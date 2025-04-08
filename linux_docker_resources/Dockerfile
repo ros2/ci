@@ -153,8 +153,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 # merged use the fork with the fix.
 RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
-# Install the Connext binary from the OSRF repositories.
-RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; fi
+# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
+# install rti-connext-dds-6.0.1 else install rti-connext-dds-7.3.0-ros.
+RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then \
+  if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
+    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
+  else \
+    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
+  fi; \
+    fi
 
 # Install the RTI dependencies.
 RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
@@ -162,16 +169,28 @@ RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-insta
 # Install dependencies for RTI web binaries install script.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 
-# Get and install the RTI web binaries.
-# Connext 6.0.1 for jammy, the evaluation bundles don't contain security extensions so we need to distribute the pro binaries to ourselves.
+# Get and install the RTI Connext web binaries.
+# RTI Connext web binaries installation is only supported on x86_64.
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
-RUN for splitpkg in \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
-  /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
+
+# Join the correct Connext version files based on the value of ROS_DISTRO.
+RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
+    /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
-  done
-RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run
+  done; \
+    else \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+  done; \
+    fi
+
+# Make the RTI Connext installation script executable. For any version of Connext.
+RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
 
 # Add the connextdds installation script used in entry_point.sh
 ADD rti_web_binaries_install_script.py /tmp/rti_web_binaries_install_script.py
@@ -226,6 +245,9 @@ RUN apt-get update && apt-get install -y \
 RUN update-ccache-symlinks
 
 ENV DISPLAY=:99
+# Making the RTI Connext env variable to the entry_point.sh script so that it can be used to run
+# the RTI Connext installation script.
+ENV ROS_DISTRO=${ROS_DISTRO}
 
 # Create a user to own the build output.
 RUN useradd -u 1234 -m rosbuild
