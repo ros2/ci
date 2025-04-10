@@ -44,11 +44,14 @@ RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/head
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
-# Setup environment variables needed for Connext
+# Setup environment variables needed for Connext using build args
 ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-ENV CONNEXTDDS_DIR C:\connext\rti_connext_dds-7.3.0
-ENV RTI_OPENSSL_BIN C:\connext\openssl-3.0.12\x64Win64VS2017\bin
-ENV RTI_OPENSSL_LIB C:\connext\openssl-3.0.12\x64Win64VS2017\lib
+ARG CONNEXTDDS_DIR C:\connext\rti_connext_dds-7.3.0
+ENV CONNEXTDDS_DIR $CONNEXTDDS_DIR
+ARG RTI_OPENSSL_BIN C:\connext\openssl-3.0.12\x64Win64VS2017\bin
+ENV RTI_OPENSSL_BIN $RTI_OPENSSL_BIN
+ARG RTI_OPENSSL_LIB C:\connext\openssl-3.0.12\x64Win64VS2017\lib
+ENV RTI_OPENSSL_LIB $RTI_OPENSSL_LIB
 
 # Copy over necessary Connext files into container
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
