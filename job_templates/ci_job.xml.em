@@ -246,6 +246,13 @@ rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
 set /p RELEASE_VERSION=&lt; release_version.txt
 set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
+if "!ROS_DISTRO!" == "humble" (
+  set "BUILD_ARGS=!BUILD_ARGS! --build-arg CONNEXTDDS_DIR=C:\connext\rti_connext_dds-6.0.1 --build-arg RTI_OPENSSL_BIN=C:\connext\openssl-1.1.1k\x64Win64VS2017\bin --build-arg RTI_OPENSSL_LIB=C:\connext\openssl-1.1.1k\x64Win64VS2017\lib" 
+) else if "!ROS_DISTRO!" == "jazzy" (
+  set "BUILD_ARGS=!BUILD_ARGS! --build-arg CONNEXTDDS_DIR=C:\connext\rti_connext_dds-6.0.1 --build-arg RTI_OPENSSL_BIN=C:\connext\openssl-1.1.1k\x64Win64VS2017\bin --build-arg RTI_OPENSSL_LIB=C:\connext\openssl-1.1.1k\x64Win64VS2017\lib" 
+) else (
+  set "BUILD_ARGS=!BUILD_ARGS! --build-arg CONNEXTDDS_DIR=C:\connext\rti_connext_dds-7.3.0 --build-arg RTI_OPENSSL_BIN=C:\connext\openssl-3.0.12\x64Win64VS2017\bin --build-arg RTI_OPENSSL_LIB=C:\connext\openssl-3.0.12\x64Win64VS2017\lib" 
+)
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
