@@ -241,6 +241,8 @@ set DOCKERFILE=windows_docker_resources\Dockerfile
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
 set /p RELEASE_VERSION=&lt; release_version.txt
+rem "Put current date in Dockerfile to force cache invalidation once per day"
+powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@today_str', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
