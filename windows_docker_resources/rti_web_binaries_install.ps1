@@ -8,9 +8,15 @@
 } else {
 	$params = @("--mode", "unattended", "--unattendedmodeui", "minimalWithDialogs", "--prefix", "C:\connext")
 	& "C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-host-x64Win64.exe" $params
-	& $Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat -u "C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-host-x64Win64.rtipkg"
-	& $Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat -u "C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-target-x64Win64VS2017.rtipkg"
-	& $Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat -u "C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg"
-	& $Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat -u "C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-host-x64Win64.rtipkg"
-	& $Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat -u "C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg"
+	$ssl_host_params = @("-u", "C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-host-x64Win64.rtipkg")
+	$ssl_target_params = @("-u", "C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-target-x64Win64VS2017.rtipkg")
+	$connext_pro_params = @("-u",  "C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg")
+	$rti_security_host_params = @("-u",  "C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-host-x64Win64.rtipkg")
+	$rti_security_target_params = @("-u", "C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg")
+
+	& "$Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat" $ssl_host_params
+	& "$Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat" $ssl_target_params
+	& "$Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat" $connext_pro_params
+	& "$Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat" $rti_security_host_params
+	& "$Env:CONNEXTDDS_DIR\bin\rtipkginstall.bat" $rti_security_target_params
 }
