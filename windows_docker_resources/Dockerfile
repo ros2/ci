@@ -61,7 +61,7 @@ RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64V
 COPY rticonnextdds-license\rti_license.dat $RTI_LICENSE_FILE
 
 # Install Connext
-COPY rti_web_binaries_install.ps C:\TEMP\rti_web_binaries_install.ps1
+COPY rti_web_binaries_install.ps1 C:\TEMP\rti_web_binaries_install.ps1
 RUN powershell C:\TEMP\rti_web_binaries_install.ps1
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
