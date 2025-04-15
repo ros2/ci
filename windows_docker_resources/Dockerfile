@@ -44,6 +44,9 @@ RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/head
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
+# Ensure required colcon-ros-domain-id-coordinator version
+RUN pixi --color never --no-progress -q run "pip install 'colcon-ros-domain-id-coordinator >= 0.2.3'"
+
 # Setup environment variables needed for Connext
 ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
 ENV CONNEXTDDS_DIR C:\connext\rti_connext_dds-7.3.0
