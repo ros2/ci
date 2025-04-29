@@ -36,7 +36,7 @@ class WindowsBatchJob(BatchJob):
         # Show the env
         self.run(['set'], shell=True)
         # Show what pip has
-        self.run([self.python, '-m', 'pip', 'freeze', '--all'])
+        self.run([self.python, '-m', 'pip', 'list'])
 
     def setup_env(self):
         # Generate the env file

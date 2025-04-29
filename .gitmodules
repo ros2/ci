@@ -1,7 +1,7 @@
 [submodule "linux_docker_resources/rticonnextdds-src"]
 	path = linux_docker_resources/rticonnextdds-src
 	url = git@github.com:osrf/rticonnextdds-bins.git
-	branch = binaries/linux/amd64/6.0.1
+	branch = binaries/linux/amd64/omnibus
 [submodule "linux_docker_resources/rticonnextdds-license"]
 	path = linux_docker_resources/rticonnextdds-license
 	url = git@github.com:osrf/rticonnextdds-license.git
@@ -14,10 +14,3 @@
 	path = windows_docker_resources/rticonnextdds-license
 	url = git@github.com:osrf/rticonnextdds-license.git
 	branch = license
-[submodule "windows_docker_resources/qtaccount"]
-	path = windows_docker_resources/qtaccount
-	url = git@github.com:osrf/qtaccount
-[submodule "windows_docker_resources/ros2-cookbooks"]
-	path = windows_docker_resources/ros2-cookbooks
-	url = git@github.com:ros-infrastructure/ros2-cookbooks
-	branch = latest

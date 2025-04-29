@@ -11,11 +11,11 @@
     num_to_keep=build_discard['num_to_keep'],
 ))@
 @[end if]@
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.29.5">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.40.0">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.31">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@332.va_1ee476d8f6d1">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -59,7 +59,7 @@
     <browser class="hudson.plugins.git.browser.GithubWeb">
       <url></url>
     </browser>
-    <submoduleCfg class="list"/>
+    <submoduleCfg class="empty-list"/>
     <extensions>
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
@@ -85,9 +85,9 @@
 @[end if]</triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.70">
+        <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
           <script><![CDATA[build.setDescription("""\
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 use_connextdds: ${build.buildVariableResolver.resolve('CI_USE_CONNEXTDDS')}, <br/>
@@ -173,7 +173,6 @@ if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
 fi
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg ROS_DISTRO=${CI_ROS_DISTRO}"
-  export CI_ARGS="$CI_ARGS --ros-distro $CI_ROS_DISTRO"
 fi
 if [ -n "${CI_BUILD_ARGS+x}" ]; then
   export CI_ARGS="$CI_ARGS --build-args $CI_BUILD_ARGS"
@@ -242,18 +241,12 @@ rmdir /S /Q ws workspace "work space"
 echo "# BEGIN SECTION: Build DockerFile"
 set CONTAINER_NAME=ros2_windows_ci_%CI_ROS_DISTRO%
 set DOCKERFILE=windows_docker_resources\Dockerfile
-set SOLO_FILE=windows_docker_resources\install_ros2_%CI_ROS_DISTRO%.json
-set VISUAL_STUDIO_VERSION=%CI_VISUAL_STUDIO_VERSION%
-
-rem "Change dockerfile once per day to invalidate docker caches"
-powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@todays_date', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
-
-rem "Change the chef-solo configuration file to set a specific Visual Studio version.
-powershell -noexit "(Get-Content ${Env:SOLO_FILE}).replace('@@vs_version', ${Env:VISUAL_STUDIO_VERSION}) | Set-Content ${Env:SOLO_FILE}"
 
 rem "Finding the Release Version is much easier with powershell than cmd"
 powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\Installed\Server.OS.amd64' -Name Version).Version > release_version.txt
 set /p RELEASE_VERSION=&lt; release_version.txt
+rem "Put current date in Dockerfile to force cache invalidation once per day"
+powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@today_str', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
@@ -266,9 +259,6 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
-)
-if "!CI_ROS_DISTRO!" NEQ "" (
-  set "CI_ARGS=!CI_ARGS! --ros-distro !CI_ROS_DISTRO!"
 )
 if "!CI_USE_WHITESPACE_IN_PATHS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --white-space-in sourcespace buildspace installspace workspace"
@@ -355,9 +345,9 @@ echo "# END SECTION"
     </hudson.tasks.Mailer>
 @[end if]@
   </publishers>
-  <buildWrappers>
+<buildWrappers>
 @[if build_timeout_mins]@
-    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.19">
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.33">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
         <timeoutMinutes>@(build_timeout_mins)</timeoutMinutes>
       </strategy>
@@ -366,12 +356,12 @@ echo "# END SECTION"
       </operationList>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
 @[end if]@
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.10" />
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@0.6.2">
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@@1.28" />
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
 @[if os_name not in ['windows']]@
-    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@1.17">
+    <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
       <credentialIds>
         <string>github-access-key</string>
       </credentialIds>
