@@ -112,7 +112,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-lxml \
   python3-mock \
   python3-mypy \
-  $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron; then echo python3-netifaces; fi) \
+  $(if test ${ROS_DISTRO} = humble; then echo python3-netifaces; fi) \
   python3-nose \
   python3-numpy \
   python3-osrf-pycommon \
@@ -132,12 +132,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 # Install LTTng-related packages for tracing.
 # For Humble, tracing is not enabled by default, so we do nothing.
-# For Iron, we install python3-lttng since we use it for python bindings.
 # For Rolling and Jazzy and later we build our own python bindings so we need additional development libraries.
 RUN if test \( ${ROS_DISTRO} = humble \); then \
       true \
-    ; elif test \( ${ROS_DISTRO} = iron \); then \
-      apt-get update && apt-get install --no-install-recommends -y liblttng-ust-dev lttng-tools python3-babeltrace python3-lttng \
     ; else \
       apt-get update && apt-get install --no-install-recommends -y liblttng-ust-dev lttng-tools python3-babeltrace liblttng-ctl-dev \
     ; fi
@@ -218,7 +215,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev pytho
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libeigen3-dev
-RUN if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev; fi
+RUN if test \( ${ROS_DISTRO} = humble \); then apt-get update && apt-get install --no-install-recommends -y libtinyxml-dev; fi
 
 # Install Python3 development files.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
