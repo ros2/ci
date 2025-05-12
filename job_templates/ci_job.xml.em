@@ -42,7 +42,7 @@
     os_name=os_name,
 ))@
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@4.0.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@5.6.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -234,7 +234,7 @@ echo "# BEGIN SECTION: Run script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
 @[  end if]@
-@[elif os_name == 'windows']@
+@[elif os_name in ['windows', 'windows-2025']]@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace "work space"
 
@@ -360,7 +360,7 @@ echo "# END SECTION"
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name not in ['windows']]@
+@[if os_name not in ['windows', 'windows-2025']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
       <credentialIds>
         <string>github-access-key</string>

@@ -1,4 +1,4 @@
-<io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@7.3.0">
+<io.jenkins.plugins.analysis.core.steps.IssuesRecorder plugin="warnings-ng@@11.12.0">
   <analysisTools>
     <io.jenkins.plugins.analysis.warnings.Cmake>
       <id></id>
@@ -31,7 +31,7 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.ClangTidy>
-@[elif os_name in ['windows']]@
+@[elif os_name in ['windows', 'windows-2025']]@
     <io.jenkins.plugins.analysis.warnings.MsBuild>
       <id></id>
       <name></name>
