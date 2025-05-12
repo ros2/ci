@@ -137,6 +137,11 @@ def main(argv=None):
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
         },
+        'windows-2025': {
+            'label_expression': 'windows-2025-container',
+            'shell_type': 'BatchFile',
+            'use_isolated_default': 'false',
+        },
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
@@ -535,7 +540,11 @@ def main(argv=None):
         launcher_job_name = launch_prefix + 'ci_launcher'
         if not pattern_select_jobs_regexp or pattern_select_jobs_regexp.match(launcher_job_name):
             os_specific_data = collections.OrderedDict()
+            
             for os_name in sorted(os_configs.keys()):
+                if os_name in ["windows-2025"]: 
+                    # remove windows-2025 from ci_launcher
+                    break
                 os_specific_data[os_name] = dict(data)
                 os_specific_data[os_name].update(os_configs[os_name])
                 os_specific_data[os_name]['job_name'] = launch_prefix + 'ci_' + os_name
