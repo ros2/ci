@@ -66,7 +66,7 @@
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>@[if os_name in ['windows']]true@[else]false@[end if]</parentCredentials>
+        <parentCredentials>@[if os_name in ['windows', 'windows-2025']]true@[else]false@[end if]</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>

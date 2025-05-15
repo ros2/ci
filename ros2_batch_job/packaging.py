@@ -104,6 +104,7 @@ def build_and_test_and_package(args, job, colcon_script):
 
     # create an archive
     folder_name = 'ros2-' + args.os
+    platform_name = platform.platform().lower()
     if args.os == 'linux':
         machine = sys.implementation._multiarch.split('-', 1)[0]
         archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, machine)
