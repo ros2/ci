@@ -544,7 +544,7 @@ def main(argv=None):
             for os_name in sorted(os_configs.keys()):
                 if os_name in ["windows-2025"]: 
                     # remove windows-2025 from ci_launcher
-                    break
+                    continue
                 os_specific_data[os_name] = dict(data)
                 os_specific_data[os_name].update(os_configs[os_name])
                 os_specific_data[os_name]['job_name'] = launch_prefix + 'ci_' + os_name
