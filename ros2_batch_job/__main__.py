@@ -386,7 +386,7 @@ def run(args, build_function, blacklisted_package_names=None):
 
     # Set the TERM env variable to coerce the output of Make to be colored.
     os.environ['TERM'] = os.environ.get('TERM', 'xterm-256color')
-    if args.os == 'windows':
+    if args.os == 'windows' or platform_name.startswith('windows'):
         # Set the ConEmuANSI env variable to trick some programs (vcs) into
         # printing ANSI color codes on Windows.
         os.environ['ConEmuANSI'] = 'ON'

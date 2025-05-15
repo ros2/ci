@@ -19,6 +19,8 @@ import shutil
 import sys
 import tarfile
 import zipfile
+import platform
+
 
 from .util import info
 
@@ -102,6 +104,7 @@ def build_and_test_and_package(args, job, colcon_script):
 
     # create an archive
     folder_name = 'ros2-' + args.os
+    platform_name = platform.platform().lower()
     if args.os == 'linux':
         machine = sys.implementation._multiarch.split('-', 1)[0]
         archive_path = 'ros2-package-%s-%s.tar.bz2' % (args.os, machine)
@@ -113,7 +116,7 @@ def build_and_test_and_package(args, job, colcon_script):
             return tarinfo
         with tarfile.open(archive_path, 'w:bz2') as h:
             h.add(args.installspace, arcname=folder_name, filter=exclude_filter)
-    elif args.os == 'windows':
+    elif args.os == 'windows' or platform_name.startswith('windows'):
         archive_path = 'ros2-package-windows-%s.zip' % platform.machine()
         with zipfile.ZipFile(archive_path, 'w') as zf:
             for dirname, subdirs, files in os.walk(args.installspace):

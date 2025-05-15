@@ -117,7 +117,7 @@ choices.remove(cmake_build_type)
           <defaultValue>@(build_args_default)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
-@[if os_name in ['windows']]@
+@[if os_name in ['windows', 'windows-2025']]@
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_VISUAL_STUDIO_VERSION</name>
           <description>Select the Visual Studio version.</description>

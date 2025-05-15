@@ -11,11 +11,11 @@
     num_to_keep=build_discard['num_to_keep'],
 ))@
 @[end if]@
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.29.5">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@@1.40.0">
       <projectUrl>@(ci_scripts_repository)/</projectUrl>
       <displayName />
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.31">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@332.va_1ee476d8f6d">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -52,7 +52,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@@4.0.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@@5.6.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -76,7 +76,7 @@
         <recursiveSubmodules>true</recursiveSubmodules>
         <trackingSubmodules>false</trackingSubmodules>
         <reference/>
-        <parentCredentials>@[if os_name in ['windows']]true@[else]false@[end if]</parentCredentials>
+        <parentCredentials>@[if os_name in ['windows', 'windows-2025']]true@[else]false@[end if]</parentCredentials>
         <shallow>false</shallow>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
@@ -95,9 +95,9 @@
 @[end if]</triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.70">
+        <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
           <script><![CDATA[build.setDescription("""\
 @[if 'linux' in os_name]@
 ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
@@ -231,7 +231,7 @@ echo "# BEGIN SECTION: Run packaging script"
 /usr/local/bin/python3 -u run_ros2_batch.py $CI_ARGS
 echo "# END SECTION"
 @[  end if]@
-@[elif os_name == 'windows']@
+@[elif os_name in ['windows', 'windows-2025']]@
 setlocal enableDelayedExpansion
 rmdir /S /Q ws workspace
 
@@ -342,7 +342,7 @@ echo "# END SECTION"
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@@1.0.5">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-@[if os_name not in ['windows']]@
+@[if os_name not in ['windows', 'windows-2025']]@
     <com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper plugin="ssh-agent@@376.v8933585c69d3">
       <credentialIds>
         <string>github-access-key</string>

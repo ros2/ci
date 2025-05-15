@@ -14,7 +14,7 @@
     num_to_keep=build_discard['num_to_keep'],
 ))@
 @[end if]@
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@1.31">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@332.va_1ee476d8f6d">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -50,9 +50,9 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@2.2">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1.70">
+        <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
           <script>// PREDICT TRIGGERED BUILDS AND GENERATE MARKDOWN FOR BUILD STATUS
 
 import jenkins.model.Jenkins
@@ -108,7 +108,7 @@ for (item in predicted_jobs) {
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[  end if]@
-@[  if os_name in ['windows']]@
+@[  if os_name in ['windows', 'windows-2025']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
