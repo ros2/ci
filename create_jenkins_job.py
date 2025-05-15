@@ -186,9 +186,10 @@ def main(argv=None):
         # This short name is preserved for historic reasons, but long-paths have been enabled on
         # windows containers and their hosts
         job_os_name = os_name
-        if os_name in ['windows', 'windows-2025']:
+        if os_name == 'windows':
             job_os_name = 'win'
-
+        if os_name == 'windows-2025':
+            job_os_name = 'win-2025'
         # configure manual triggered job
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
@@ -500,7 +501,7 @@ def main(argv=None):
 
         # configure nightly triggered job
         job_name = 'nightly_' + job_os_name + '_release'
-        if os_name in ['windows', 'windows-2025']:
+        if os_name in ['windows']:
             job_name = job_name[:15]
         create_job(os_name, job_name, 'ci_job.xml.em', {
             'cmake_build_type': 'Release',
@@ -510,7 +511,7 @@ def main(argv=None):
 
         # configure nightly triggered job with repeated testing
         job_name = 'nightly_' + job_os_name + '_repeated'
-        if os_name in ['windows', 'windows-2025']:
+        if os_name in ['windows']:
             job_name = job_name[:15]
         test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
         test_args_default = test_args_default.replace('--retest-until-pass', '--retest-until-fail')
