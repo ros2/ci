@@ -408,7 +408,6 @@ def main(argv=None):
         ]
 
         humble_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
-        iron_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
         jazzy_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
         kilted_testing_pkgs_for_quality_level = copy.copy(testing_pkgs_for_quality_level)
 
@@ -455,20 +454,6 @@ def main(argv=None):
                                       ' --packages-up-to ' + ' '.join(quality_level_pkgs + humble_testing_pkgs_for_quality_level),
                 'test_args_default': data['test_args_default'] +
                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + humble_testing_pkgs_for_quality_level),
-            })
-            # Add a coverage job targeting Iron.
-            create_job(os_name, 'nightly_' + os_name + '_iron_coverage', 'ci_job.xml.em', {
-                'cmake_build_type': 'Debug',
-                'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/iron/ros2.repos',
-                'enable_coverage_default': 'true',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-                'ros_distro': 'iron',
-                'ubuntu_distro': 'jammy',
-                'build_args_default': data['build_args_default'] +
-                                      ' --packages-up-to ' + ' '.join(quality_level_pkgs + iron_testing_pkgs_for_quality_level),
-                'test_args_default': data['test_args_default'] +
-                                     ' --packages-up-to ' + ' '.join(quality_level_pkgs + iron_testing_pkgs_for_quality_level),
             })
             # Add a coverage job targeting Jazzy.
             create_job(os_name, 'nightly_' + os_name + '_jazzy_coverage', 'ci_job.xml.em', {

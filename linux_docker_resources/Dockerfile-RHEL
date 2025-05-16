@@ -141,7 +141,7 @@ RUN dnf install \
     python3-matplotlib \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-mock; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-mypy; fi) \
-    $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron; then echo python3-netifaces; fi) \
+    $(if test ${ROS_DISTRO} = humble; then echo python3-netifaces; fi) \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-nose; fi) \
     python3-numpy \
     python3-osrf-pycommon \
@@ -172,7 +172,7 @@ RUN dnf install \
     spdlog-devel \
     sqlite-devel \
     tango-icon-theme \
-    $(if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = iron \); then echo tinyxml-devel; fi) \
+    $(if test \( ${ROS_DISTRO} = humble \); then echo tinyxml-devel; fi) \
     tinyxml2-devel \
     uncrustify \
     yaml-cpp-devel \
