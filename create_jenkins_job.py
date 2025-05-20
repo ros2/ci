@@ -433,6 +433,7 @@ def main(argv=None):
         if os_name == 'linux':
             create_job(os_name, 'nightly_' + os_name + '_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
+                'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
@@ -445,6 +446,7 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_humble_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/humble/ros2.repos',
+                'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
@@ -459,6 +461,7 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_jazzy_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos',
+                'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
@@ -473,6 +476,7 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_kilted_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/kilted/ros2.repos',
+                'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
                 'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
