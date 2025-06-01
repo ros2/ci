@@ -78,3 +78,6 @@ RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_secu
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 WORKDIR C:\ci
 CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml python run_ros2_batch.py %CI_ARGS%"
+
+COPY C:\pixi_ws\pixi.toml C:\ci\pixi.toml
+COPY C:\pixi_ws\pixi.lock C:\ci\pixi.lock
