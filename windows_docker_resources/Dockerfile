@@ -82,5 +82,7 @@ RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_secu
 WORKDIR C:\ci
 CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml python run_ros2_batch.py %CI_ARGS%"
 
+# Copy Pixi and preinstall setup files to be included in the final binary zip folder
 COPY C:\pixi_ws\pixi.toml C:\ci\pixi.toml
 COPY C:\pixi_ws\pixi.lock C:\ci\pixi.lock
+COPY preinstall_setup_windows.py C:\ci\preinstall_setup.py
