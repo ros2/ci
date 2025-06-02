@@ -1,3 +1,19 @@
+#!/usr/bin/env python3
+
+# Copyright 2015 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
 Name: preinstall_setup_windows.py
 
@@ -19,7 +35,10 @@ import sys
 import shutil
 
 def update_shebangs(folder, new_shebang):
-    """Replace shebang lines in all .py files under folder with a progress bar, excluding anything in .pixi folders."""
+    """
+    Replace shebang lines in all .py files under folder with a progress bar,
+       excluding anything in .pixi folders.
+    """
     py_files = []
     for root, _, files in os.walk(folder):
         # Skip any directory that contains '.pixi' in its path
@@ -57,7 +76,8 @@ def update_shebangs(folder, new_shebang):
 
 def update_colcon_python_executable_in_setup_files(folder, python_path):
     """
-    Update the hardcoded Python path in local_setup.ps1 and local_setup.bat to the given python_path.
+    Update the hardcoded Python path in local_setup.ps1 and local_setup.bat
+     to the given python_path.
     """
     ps1_path = os.path.join(folder, "local_setup.ps1")
     bat_path = os.path.join(folder, "local_setup.bat")
