@@ -18,7 +18,8 @@
 Name: preinstall_setup_windows.py
 
 Purpose: 
-A python script to update shebang lines in Python files to the current Python executable in a Pixi environment and directory. 
+A python script to update shebang lines in Python files to the current Python executable
+ in a Pixi environment and directory. 
 
 Instructions:
 1. Place this file inside the zipped release ROS 2 distro
