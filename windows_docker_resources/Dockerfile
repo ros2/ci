@@ -78,11 +78,10 @@ RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_conn
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-host-x64Win64.rtipkg
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg
 
+# Copy Pixi and preinstall setup files to be included in the final binary zip folder
+COPY C:\pixi_ws\pixi.toml C:\ci\pixi.toml
+COPY preinstall_setup_windows.py C:\ci\preinstall_setup.py
+
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 WORKDIR C:\ci
 CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml python run_ros2_batch.py %CI_ARGS%"
-
-# Copy Pixi and preinstall setup files to be included in the final binary zip folder
-COPY C:\pixi_ws\pixi.toml C:\ci\pixi.toml
-COPY C:\pixi_ws\pixi.lock C:\ci\pixi.lock
-COPY preinstall_setup_windows.py C:\ci\preinstall_setup.py
