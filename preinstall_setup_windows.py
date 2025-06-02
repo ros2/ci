@@ -5,8 +5,8 @@ Purpose:
 A python script to update shebang lines in Python files to the current Python executable in a Pixi Pixi environment and directory. 
 
 Instructions:
-1. Place this file inside the zipped release ROS2 distro
-2. Navigate to inside the ROS2 binary folder
+1. Place this file inside the zipped release ROS 2 distro
+2. Navigate to inside the ROS 2 binary folder
 3. In a command prompt, activate your Pixi (Conda) environment
 4. Run: python preinstall_setup_windows.py and wait until the script is done
 
