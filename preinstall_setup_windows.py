@@ -27,8 +27,9 @@ Instructions:
 3. In a command prompt, activate your Pixi (Conda) environment
 4. Run: python preinstall_setup_windows.py and wait until the script is done
 
-Author: Kimberly McGuire (Independent)*
-* co-authored with Github Copilot
+Author: Kimberly McGuire (Independent)
+Generated-by: GitHub Copilot GPT-4.1 (2025/05 release)
+
 """
 
 import os
