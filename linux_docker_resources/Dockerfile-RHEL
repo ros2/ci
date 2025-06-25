@@ -37,6 +37,7 @@ RUN dnf install \
     python3-colcon-python-setup-py \
     python3-colcon-recursive-crawl \
     python3-colcon-ros \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-colcon-ros-domain-id-coordinator; fi) \
     python3-colcon-test-result \
     python3-colcon-zsh \
     python3-devel \
