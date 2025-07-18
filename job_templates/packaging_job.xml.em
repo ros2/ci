@@ -296,6 +296,10 @@ if "!CI_TEST_ARGS!" NEQ "" (
 echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
+echo "# BEGIN SECTION: Copy standalone files to workspace"
+copy windows_docker_resources\preinstall_setup_windows.py "%cd%"
+echo "# END SECTION" 
+
 echo "# BEGIN SECTION: Run packaging script with DockerFile"
 rem Kill any running docker containers, which may be leftover from aborted jobs
 powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q)}"

@@ -119,6 +119,11 @@ def build_and_test_and_package(args, job, colcon_script):
     elif args.os == 'windows' or platform_name.startswith('windows'):
         archive_path = 'ros2-package-windows-%s.zip' % platform.machine()
         with zipfile.ZipFile(archive_path, 'w') as zf:
+            # Copy external files into the zip 
+            # See https://github.com/ros2/ros2/issues/1675 for motivation behind this.
+            zf.write("C:\pixi_ws\pixi.lock")
+            zf.write("C:\pixi_ws\pixi.toml")
+            zf.write("C:\ci\preinstall_setup_windows.py")
             for dirname, subdirs, files in os.walk(args.installspace):
                 arcname = os.path.join(
                     folder_name, os.path.relpath(dirname, start=args.installspace))
