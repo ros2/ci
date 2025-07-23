@@ -117,6 +117,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-numpy \
   python3-osrf-pycommon \
   python3-psutil \
+  python3-pydantic \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
