@@ -450,6 +450,15 @@ def run(args, build_function, blacklisted_package_names=None):
 
         colcon_script = which('colcon')
 
+        # Add workaround rviz_default_plugins resource utilization
+        with open('colcon.meta', 'w') as f:
+            f.writelines([
+                'names:',
+                '  rviz_default_plugins:',
+                '    build-dependencies:',
+                '      - rosbag2_performance_benchmarkin',
+            ])
+
         # Fetch colcon mixins
         if args.colcon_mixin_url:
             print('# BEGIN SUBSECTION: Fetch colcon mixins')
