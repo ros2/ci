@@ -150,7 +150,7 @@ RUN dnf install \
     python3-pillow \
     python3-psutil \
     python3-pycodestyle \
-    $(if test ${EL_RELEASE/.*/} = 8; then echo python3-pydantic; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-pydantic; fi) \
     python3-pydocstyle \
     python3-pydot \
     python3-pyflakes \
