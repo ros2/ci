@@ -18,6 +18,9 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
+# Enable long paths on folders
+RUN powershell -noexit "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force"
+
 # Download and install all versions of MSVC we support.
 # While this makes the images larger, it also means that we are certain to
 # reuse the Docker layer cache, which should speed everything up.
