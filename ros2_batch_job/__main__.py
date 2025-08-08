@@ -456,7 +456,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 'names:',
                 '  rviz_default_plugins:',
                 '    build-dependencies:',
-                '      - rosbag2_performance_benchmarkin',
+                '      - rosbag2_performance_benchmarking',
             ])
 
         # Fetch colcon mixins
