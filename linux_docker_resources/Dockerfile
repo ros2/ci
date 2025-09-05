@@ -60,6 +60,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
+  $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy -a ${ROS_DISTRO} != kilted; then echo libcli11-dev; fi) \
   $(if test ${UBUNTU_DISTRO} != noble; then echo libignition-cmake2-dev; fi) \
   $(if test ${UBUNTU_DISTRO} != noble; then echo libignition-math6-dev; fi) \
   liblz4-dev \
