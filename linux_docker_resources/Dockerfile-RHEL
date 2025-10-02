@@ -131,7 +131,7 @@ RUN dnf install \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-class-newline; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-comprehensions; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-deprecated; fi) \
-    python3-flake8-docstrings \
+    $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = kilted; then echo python3-flake8-docstrings; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-import-order; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-quotes; fi) \
     python3-importlib-metadata \
