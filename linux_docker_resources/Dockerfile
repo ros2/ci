@@ -104,7 +104,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-flake8-class-newline \
   python3-flake8-comprehensions \
   python3-flake8-deprecated \
-  python3-flake8-docstrings \
+  $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = kilted; then echo python3-flake8-docstrings; fi) \
   python3-flake8-import-order \
   python3-flake8-quotes \
   python3-importlib-metadata \
