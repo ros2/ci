@@ -63,7 +63,7 @@ choices.remove(ubuntu_distro)
             <a class="string-array">
               <string>@el_release</string>
 @{
-choices = ['9.2', '9.1', '9', '8']
+choices = ['9.6', '9.2', '9.1', '9', '8']
 choices.remove(el_release)
 }@
 @[for choice in choices]@
