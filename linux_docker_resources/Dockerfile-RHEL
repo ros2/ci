@@ -1,6 +1,6 @@
-FROM almalinux:8
+FROM almalinux:10
 ARG ROS_DISTRO=rolling
-ARG EL_RELEASE=8
+ARG EL_RELEASE=10
 
 # Pin $releasever
 RUN sed -i "s/\$releasever/${EL_RELEASE}/g" /etc/yum.repos.d/*.repo
@@ -17,7 +17,7 @@ RUN dnf install \
     git \
     glibc-langpack-en \
     make \
-    matchbox-window-manager \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo matchbox-window-manager; fi) \
     mesa-dri-drivers \
     net-tools \
     patch \
@@ -43,13 +43,13 @@ RUN dnf install \
     python3-devel \
     python3-jsonschema \
     python3-pip \
-    python3-rosdep \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-rosdep; fi) \
     python3-vcstool \
     python3-virtualenv \
     sudo \
     vim \
     wget \
-    xorg-x11-server-Xvfb \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo xorg-x11-server-Xvfb; fi) \
     --refresh -y
 
 # Try to update to any ROS packages currently in testing
@@ -62,7 +62,7 @@ RUN dnf update \
     --enablerepo=epel-testing --skip-broken --refresh -y
 
 # Initialize rosdep
-RUN rosdep init && rosdep update
+RUN $(if test ${EL_RELEASE/.*/} != 10; then rosdep init && rosdep update; fi)
 
 # Workaround for RHEL 9.7 transition
 RUN if test ${EL_RELEASE/.*/} = 9; then \
@@ -78,7 +78,7 @@ RUN dnf install \
     CUnit-devel \
     acl \
     $(if test ${EL_RELEASE/.*/} != 8; then echo asio-devel; fi) \
-    assimp-devel \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo assimp-devel; fi) \
     bison \
     boost-devel \
     bullet-devel \
@@ -111,9 +111,9 @@ RUN dnf install \
     libxml2 \
     libyaml-devel \
     libzstd-devel \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-tools; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-tools-devel; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo lttng-ust-devel; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo lttng-tools; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo lttng-tools-devel; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo lttng-ust-devel; fi) \
     lz4-devel \
     mesa-libGL-devel \
     mesa-libGLU-devel \
@@ -133,19 +133,19 @@ RUN dnf install \
     python3-devel \
     python3-empy \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-fastjsonschema; fi) \
-    python3-flake8 \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-blind-except; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-builtins; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-class-newline; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-comprehensions; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-deprecated; fi) \
-    $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = kilted; then echo python3-flake8-docstrings; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-import-order; fi) \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-flake8-quotes; fi) \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-flake8; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-blind-except; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-builtins; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-class-newline; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-comprehensions; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-deprecated; fi) \
+    $(if test ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = kilted; then if test ${EL_RELEASE/.*/} != 10; then echo python3-flake8-docstrings; fi; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-import-order; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-flake8-quotes; fi) \
     python3-importlib-metadata \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-importlib-resources; fi) \
     python3-lark-parser \
-    $(if test ${EL_RELEASE/.*/} != 8; then echo python3-lttng; fi) \
+    $(if test ${EL_RELEASE/.*/} != 8 -a ${EL_RELEASE/.*/} != 10; then echo python3-lttng; fi) \
     python3-lxml \
     python3-matplotlib \
     $(if test ${EL_RELEASE/.*/} = 8; then echo python3-mock; fi) \
@@ -159,9 +159,9 @@ RUN dnf install \
     python3-psutil \
     python3-pycodestyle \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-pydantic; fi) \
-    python3-pydocstyle \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-pydocstyle; fi) \
     python3-pydot \
-    python3-pyflakes \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-pyflakes; fi) \
     python3-pygraphviz \
     python3-pykdl \
     python3-pytest \
@@ -174,7 +174,7 @@ RUN dnf install \
     python3-qt5-devel \
     python3-rosdistro \
     python3-setuptools \
-    python3-sip-devel \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-sip-devel; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-types-pyyaml; fi) \
     qt5-qtbase \
     qt5-qtbase-devel \
@@ -187,7 +187,7 @@ RUN dnf install \
     tinyxml2-devel \
     uncrustify \
     yaml-cpp-devel \
-    yamllint \
+    $(if test ${EL_RELEASE/.*/} != 10; then echo yamllint; fi) \
     --refresh -y
 
 # Install dependencies of Connext and its installer
@@ -231,6 +231,11 @@ RUN if test ${EL_RELEASE/.*/} = 8; then \
   rm -f constraints.txt ; \
 fi
 
+# Install some missing pip packages for RHEL-10
+RUN if test ${EL_RELEASE/.*/} = 10; then \
+  python3 -m pip install flake8 flake8-blind-except flake8-builtins flake8-class-newline flake8-comprehensions flake8-deprecated flake8-import-order flake8-quotes pydocstyle pyflakes rosdep yamllint ; \
+fi
+
 # automatic invalidation once every day.
 RUN echo "@today_str"
 RUN dnf update --refresh -y
@@ -260,4 +265,4 @@ RUN chmod 755 /entry_point.sh
 
 ENTRYPOINT ["/entry_point.sh"]
 
-CMD ["matchbox-window-manager > /dev/null 2>&1 & python3 -u run_ros2_batch.py $CI_ARGS"]
+CMD ["if test ${EL_RELEASE/.*/} != 10; then matchbox-window-manager > /dev/null 2>&1 & fi; python3 -u run_ros2_batch.py $CI_ARGS"]

@@ -105,4 +105,9 @@ sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$GID:/" /etc/group
 chown -R ${UID}:${GID} "${ORIG_HOME}"
 echo "done."
 
-exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
+# RHEL 10 doesn't have X11
+if [ "${ID}" = "almalinux" -a "${VERSION_ID/.*/}" = "10" ]; then
+    exec sudo -H -u rosbuild -E -- /bin/sh -c "$*"
+else
+    exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
+fi
