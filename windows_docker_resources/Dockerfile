@@ -50,7 +50,7 @@ RUN echo "@today_str"
 # Install dependencies via pixi
 ARG ROS_DISTRO=rolling
 WORKDIR C:\pixi_ws
-RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/heads/%ROS_DISTRO%/pixi.toml -OutFile pixi.toml
+ADD https://raw.githubusercontent.com/ros2/ros2/${ROS_DISTRO}/pixi.toml pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
