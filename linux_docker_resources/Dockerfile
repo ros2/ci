@@ -42,7 +42,7 @@ RUN echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /et
 RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
 
 # Add the OSRF repositories to the apt sources list.
-RUN if test \( ${UBUNTU_DISTRO} != noble \); then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
+RUN if test \( ${UBUNTU_DISTRO} = jammy \); then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
 RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # automatic invalidation once every day.
@@ -60,8 +60,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
-  $(if test ${UBUNTU_DISTRO} != noble; then echo libignition-cmake2-dev; fi) \
-  $(if test ${UBUNTU_DISTRO} != noble; then echo libignition-math6-dev; fi) \
+  $(if test ${UBUNTU_DISTRO} = jammy; then echo libignition-cmake2-dev; fi) \
+  $(if test ${UBUNTU_DISTRO} = jammy; then echo libignition-math6-dev; fi) \
   liblz4-dev \
   liborocos-kdl-dev \
   libspdlog-dev \
