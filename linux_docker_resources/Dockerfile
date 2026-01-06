@@ -43,7 +43,7 @@ RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubu
 
 # Add the OSRF repositories to the apt sources list.
 RUN if test \( ${UBUNTU_DISTRO} = jammy \); then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
-RUN curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
+RUN if test \( ${UBUNTU_DISTRO} = jammy \); then curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
 
 # automatic invalidation once every day.
 RUN echo "@today_str"
