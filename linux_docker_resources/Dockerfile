@@ -36,11 +36,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   curl \
   gnupg2 \
   apt-transport-https
-
-# Add the ROS repositories to the apt sources list.
-RUN echo "deb http://repo.ros2.org/ubuntu/testing/ `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list
-RUN echo "Bust Cache for key update 2021-06-01" && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
-
+# Add the ROS repositories to the apt sources list, verifying checksums
+RUN curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | \
+    gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://repo.ros2.org/ubuntu/testing/ $UBUNTU_DISTRO main" \
+    > /etc/apt/sources.list.d/ros2-latest.list
 # Add the OSRF repositories to the apt sources list.
 RUN if test \( ${UBUNTU_DISTRO} = jammy \); then echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list; fi
 RUN if test \( ${UBUNTU_DISTRO} = jammy \); then curl --silent http://packages.osrfoundation.org/gazebo.key | apt-key add -
