@@ -73,6 +73,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libyaml-dev \
   libzstd-dev \
   $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo nlohmann-json3-dev; fi) \
+  procps \
   pybind11-dev \
   pydocstyle \
   python3-argcomplete \
