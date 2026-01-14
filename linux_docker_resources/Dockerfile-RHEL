@@ -115,6 +115,7 @@ RUN dnf install \
     openssl-devel \
     orocos-kdl-devel \
     pkgconfig \
+    procps-ng \
     $(if test ${EL_RELEASE/.*/} != 8; then echo pybind11-devel; fi) \
     python3-PyYAML \
     python3-argcomplete \
