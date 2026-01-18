@@ -99,6 +99,7 @@ use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYN
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMENTAL_REPOS_URL')}, <br/>
+pixi_toml_url: ${build.buildVariableResolver.resolve('CI_PIXI_TOML_URL')}, <br/>
 colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>

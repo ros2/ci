@@ -108,6 +108,7 @@ ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
+pixi_toml_url: ${build.buildVariableResolver.resolve('CI_PIXI_TOML_URL')}, <br/>
 use_connextdds: ${build.buildVariableResolver.resolve('CI_USE_CONNEXTDDS')}, <br/>
 use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>
 use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br/>
