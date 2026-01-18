@@ -18,6 +18,10 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
+# Set ROS distro value and pixi.toml url
+ARG ROS_DISTRO=rolling
+ARG PIXI_TOML_URL=https://raw.githubusercontent.com/ros2/ros2/refs/heads/%ROS_DISTRO%/pixi.toml
+
 # Enable long paths on folders
 RUN powershell -noexit "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force"
 
@@ -49,7 +53,7 @@ RUN echo "@today_str"
 
 # Install dependencies via pixi
 WORKDIR C:\pixi_ws
-RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/heads/%ROS_DISTRO%/pixi.toml -OutFile pixi.toml
+RUN powershell -noexit irm %PIXI_TOML_URL% -OutFile pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
