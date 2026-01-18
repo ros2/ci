@@ -4,6 +4,7 @@
     'property_parameter-definition_common',
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
+    default_pixi_toml_url=default_pixi_toml_url,
     supplemental_repos_url=supplemental_repos_url,
     ubuntu_distro=ubuntu_distro,
     el_release=el_release,
