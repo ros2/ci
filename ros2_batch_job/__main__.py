@@ -136,6 +136,9 @@ def get_args(sysargv=None):
         '--supplemental-repo-file-url', default=None,
         help="url of a .repos file to fetch and merge with the ros2.repos file")
     parser.add_argument(
+        '--pixi-toml-url', default=None,
+        help="url of a pixi.toml file to fetch and use as the build environment (only used for Windows)")
+    parser.add_argument(
         '--test-branch', default=None,
         help="branch to attempt to checkout before doing batch job")
     parser.add_argument(
