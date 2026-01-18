@@ -286,6 +286,10 @@ set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_ROS2_SUPPLEMENTAL_REPOS_URL!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --supplemental-repo-file-url !CI_ROS2_SUPPLEMENTAL_REPOS_URL!"
 )
+if "!CI_PIXI_TOML_URL!" EQU "" (
+  set "CI_PIXI_TOML_URL=@default_pixi_toml_url"
+)
+set "CI_ARGS=!CI_ARGS! --pixi-toml-url !CI_PIXI_TOML_URL!"
 if "!CI_ISOLATED!" == "true" (
   set "CI_ARGS=!CI_ARGS! --isolated"
 )
