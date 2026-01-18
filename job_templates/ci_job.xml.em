@@ -249,7 +249,7 @@ powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentV
 set /p RELEASE_VERSION=&lt; release_version.txt
 rem "Put current date in Dockerfile to force cache invalidation once per day"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@today_str', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO% --build-arg PIXI_TOML_URL=%CI_PIXI_TOML_URL%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
@@ -287,10 +287,6 @@ set "CI_ARGS=!CI_ARGS! --repo-file-url !CI_ROS2_REPOS_URL!"
 if "!CI_ROS2_SUPPLEMENTAL_REPOS_URL!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --supplemental-repo-file-url !CI_ROS2_SUPPLEMENTAL_REPOS_URL!"
 )
-if "!CI_PIXI_TOML_URL!" EQU "" (
-  set "CI_PIXI_TOML_URL=@default_pixi_toml_url"
-)
-set "CI_ARGS=!CI_ARGS! --pixi-toml-url !CI_PIXI_TOML_URL!"
 if "!CI_ISOLATED!" == "true" (
   set "CI_ARGS=!CI_ARGS! --isolated"
 )
