@@ -26,6 +26,7 @@
     'property_parameter-definition',
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
+    default_pixi_toml_url=default_pixi_toml_url,
     supplemental_repos_url=supplemental_repos_url,
     ignore_rmw_default=ignore_rmw_default,
     use_connext_debs_default=use_connext_debs_default,
@@ -98,6 +99,7 @@ use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYN
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMENTAL_REPOS_URL')}, <br/>
+pixi_toml_url: ${build.buildVariableResolver.resolve('CI_PIXI_TOML_URL')}, <br/>
 colcon_branch: ${build.buildVariableResolver.resolve('CI_COLCON_BRANCH')}, <br/>
 use_whitespace: ${build.buildVariableResolver.resolve('CI_USE_WHITESPACE_IN_PATHS')}, <br/>
 isolated: ${build.buildVariableResolver.resolve('CI_ISOLATED')}, <br/>
@@ -247,7 +249,7 @@ powershell $(Get-ItemProperty -Path 'HKLM:SOFTWARE\Microsoft\Windows NT\CurrentV
 set /p RELEASE_VERSION=&lt; release_version.txt
 rem "Put current date in Dockerfile to force cache invalidation once per day"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@today_str', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
-set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
+set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO% --build-arg PIXI_TOML_URL=%CI_PIXI_TOML_URL%
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
