@@ -33,6 +33,13 @@ Use this instead of the Custom .repos file if you want to add to the default rep
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>CI_PIXI_TOML_URL</name>
+          <description>Custom pixi.toml file URL to use instead of the default (@default_pixi_toml_url).
+The pixi.toml file defines the Pixi environment configuration for the build.</description>
+          <defaultValue>@default_pixi_toml_url</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>CI_COLCON_BRANCH</name>
           <description>Use a specific branch of the colcon repositories.
 If the branch doesn't exist fall back to the default branch.
