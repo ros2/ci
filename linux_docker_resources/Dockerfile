@@ -238,6 +238,21 @@ RUN apt-get update && apt-get install -y \
     libacl1-dev \
     libncurses5-dev
 
+# automatic invalidation once every day.
+RUN echo "@today_str"
+
+# Install build and test dependencies of ros1_bridge if there is a valid ROS 1 distro.
+RUN if test ${BRIDGE} = true -a -n "${ROS1_DISTRO}"; then apt-get update && apt-get install --no-install-recommends -y \
+    ros-${ROS1_DISTRO}-catkin \
+    ros-${ROS1_DISTRO}-common-msgs \
+    ros-${ROS1_DISTRO}-rosbash \
+    ros-${ROS1_DISTRO}-roscpp \
+    ros-${ROS1_DISTRO}-roslaunch \
+    ros-${ROS1_DISTRO}-rosmsg \
+    ros-${ROS1_DISTRO}-roscpp-tutorials \
+    ros-${ROS1_DISTRO}-rospy-tutorials \
+    ros-${ROS1_DISTRO}-tf2-msgs; fi
+
 # After all packages are installed, update ccache symlinks (see ros2/ci#326).
 # This command is supposed to be invoked whenever a new compiler is installed
 # but that isn't happening. So we invoke it here to make sure all compilers are
