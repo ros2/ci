@@ -17,7 +17,7 @@ RUN dnf install \
     git \
     glibc-langpack-en \
     make \
-    $(if test ${EL_RELEASE/.*/} != 10; then echo matchbox-window-manager; fi) \
+    matchbox-window-manager \
     mesa-dri-drivers \
     net-tools \
     patch \
@@ -49,7 +49,7 @@ RUN dnf install \
     sudo \
     vim \
     wget \
-    $(if test ${EL_RELEASE/.*/} = 10; then echo xwayland-run; else echo xorg-x11-server-Xvfb; fi) \
+    xorg-x11-server-Xvfb \
     --refresh -y
 
 # Try to update to any ROS packages currently in testing
@@ -152,7 +152,7 @@ RUN dnf install \
     python3-psutil \
     python3-pycodestyle \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-pydantic; fi) \
-    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-pydocstyle; fi) \
+    python3-pydocstyle \
     python3-pydot \
     python3-pyflakes \
     python3-pygraphviz \
@@ -167,7 +167,7 @@ RUN dnf install \
     python3-qt5-devel \
     python3-rosdistro \
     python3-setuptools \
-    $(if test ${EL_RELEASE/.*/} != 10; then echo python3-sip-devel; fi) \
+    python3-sip-devel \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-types-pyyaml; fi) \
     qt5-qtbase \
     qt5-qtbase-devel \
@@ -180,7 +180,7 @@ RUN dnf install \
     tinyxml2-devel \
     uncrustify \
     yaml-cpp-devel \
-    $(if test ${EL_RELEASE/.*/} != 10; then echo yamllint; fi) \
+    yamllint \
     --refresh -y
 
 # Install dependencies of Connext and its installer
@@ -222,9 +222,6 @@ RUN if test ${EL_RELEASE/.*/} = 8; then \
   echo -e "EmPy<4\ncryptography<=3.0\nflake8<5.0.0\nflake8-blind-except==0.1.1\nflake8-import-order==0.18.2\nlark==1.1.1\nmypy==0.942\npycodestyle==2.5.0\npyparsing==2.4.7\npytest==6.2.5\npytest-timeout==2.1.0\nsetuptools==59.6.0" > constraints.txt && \
   python3 -m pip install -c constraints.txt -U colcon-ros-domain-id-coordinator flake8-blind-except==0.1.1 flake8-builtins flake8-class-newline flake8-comprehensions flake8-deprecated flake8-import-order flake8-quotes mypy pycodestyle pytest pytest-rerunfailures==10.2 && \
   rm -f constraints.txt ; \
-elif test ${EL_RELEASE/.*/} = 10; then \
-  # Pydocstyle is deprecated and has been removed from RHEL 10
-  python3 -m pip install -U pydocstyle ; \
 fi
 
 # automatic invalidation once every day.
@@ -256,4 +253,4 @@ RUN chmod 755 /entry_point.sh
 
 ENTRYPOINT ["/entry_point.sh"]
 
-CMD ["if test ${EL_RELEASE/.*/} != 10; then matchbox-window-manager > /dev/null 2>&1 & fi; python3 -u run_ros2_batch.py $CI_ARGS"]
+CMD ["matchbox-window-manager > /dev/null 2>&1 & python3 -u run_ros2_batch.py $CI_ARGS"]

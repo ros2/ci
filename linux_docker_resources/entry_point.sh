@@ -105,9 +105,4 @@ sed -i -e "s/rosbuild:x:$ORIG_GID:/rosbuild:x:$GID:/" /etc/group
 chown -R ${UID}:${GID} "${ORIG_HOME}"
 echo "done."
 
-# Use Wayland on RHEL 10
-if [ "${ID}" = "almalinux" -a "${VERSION_ID/.*/}" = "10" ]; then
-    exec sudo -H -u rosbuild -E -- xwfb-run -n99 -s=-ac -s=-geometry -s=1280x1024 -- /bin/sh -c "$*"
-else
-    exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
-fi
+exec sudo -H -u rosbuild -E -- xvfb-run -s "-ac -screen 0 1280x1024x24" /bin/sh -c "$*"
