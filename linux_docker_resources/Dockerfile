@@ -226,7 +226,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \
     libgl1-mesa-dri \
-    libglapi-mesa \
     libosmesa6 \
     mesa-utils \
     xvfb \
