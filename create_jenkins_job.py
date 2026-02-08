@@ -40,7 +40,6 @@ except ImportError:
     sys.exit("Could not import symbol from ros_buildfarm, please update ros_buildfarm.")
 
 DEFAULT_REPOS_URL = 'https://raw.githubusercontent.com/ros2/ros2/rolling/ros2.repos'
-DEFAULT_PIXI_TOML_URL = 'https://raw.githubusercontent.com/ros2/ros2//rolling/pixi.toml'
 DEFAULT_MAIL_RECIPIENTS = 'ros2-buildfarm@googlegroups.com'
 PERIODIC_JOB_SPEC = '0 4 * * *'
 
@@ -109,7 +108,6 @@ def main(argv=None):
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
         'default_repos_url': DEFAULT_REPOS_URL,
         'supplemental_repos_url': '',
-        'default_pixi_toml_url': DEFAULT_PIXI_TOML_URL,
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'ignore_rmw_default': {'rmw_fastrtps_dynamic_cpp'},
@@ -448,7 +446,6 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_humble_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/humble/ros2.repos',
-                'default_pixi_toml_url': 'https://raw.githubusercontent.com/ros2/ros2/humble/pixi.toml',
                 'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -464,7 +461,6 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_jazzy_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos',
-                'default_pixi_toml_url': 'https://raw.githubusercontent.com/ros2/ros2/jazzy/pixi.toml',
                 'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
@@ -480,7 +476,6 @@ def main(argv=None):
             create_job(os_name, 'nightly_' + os_name + '_kilted_coverage', 'ci_job.xml.em', {
                 'cmake_build_type': 'Debug',
                 'default_repos_url': 'https://raw.githubusercontent.com/ros2/ros2/kilted/ros2.repos',
-                'default_pixi_toml_url': 'https://raw.githubusercontent.com/ros2/ros2/kilted/pixi.toml',
                 'disabled': True,
                 'enable_coverage_default': 'true',
                 'time_trigger_spec': PERIODIC_JOB_SPEC,
