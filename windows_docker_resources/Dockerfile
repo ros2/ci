@@ -53,7 +53,7 @@ RUN echo "@today_str"
 
 # Install dependencies via pixi
 WORKDIR C:\pixi_ws
-RUN powershell -noexit irm ${PIXI_TOML_URL} -OutFile pixi.toml
+RUN powershell -Command "Invoke-RestMethod -Uri $env:PIXI_TOML_URL -OutFile pixi.toml"
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
