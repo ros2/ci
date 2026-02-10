@@ -41,50 +41,92 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
     if [ -z "${IGNORE_CONNEXTDDS}" ]; then
         echo "Installing Connext..."
 
-        export CONNEXT_FULL_VERSION="7.3.0"
+        # Set Connext version, OpenSSL version and base/target architecture variables:
+        # - Lyrical/Rolling:
+        #     - Version: Connext 7.7.0
+        #     - OpenSSL version: 3.5.5
+        #     - Base architecture: x64Linux4gcc8.5.0
+        #     - Target architecture: x64Linux4gcc8.5.0
+        # - Kilted:
+        #     - Version: Connext 7.3.0
+        #     - OpenSSL version: 3.0.12
+        #     - Base architecture: x64Linux3gcc4.8.2
+        #     - Target architecture: x64Linux4gcc7.3.0
+        # - Humble/Jazzy:
+        #     - Version: Connext 6.0.1.25
+        #     - OpenSSL version: 1.1.1k
+        #     - Base architecture: x64Linux2.6gcc4.4.5
+        #     - Target architecture: x64Linux4gcc7.3.0
+        export CONNEXT_FULL_VERSION="7.7.0"
         export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
-        if [ "${ROS_DISTRO}" = "jazzy" ] || [ "${ROS_DISTRO}" = "humble" ]; then
-            export CONNEXT_FULL_VERSION="6.0.1.25"
-            export CONNEXT_DISPLAY_VERSION="${CONNEXT_FULL_VERSION%.*}"
-        fi
+        export OPENSSL_VERSION="3.5.5"
+        export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
+        export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
+        case "${ROS_DISTRO}" in
+            lyrical)
+                export CONNEXT_FULL_VERSION="7.7.0"
+                export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
+                export OPENSSL_VERSION="3.5.5"
+                export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
+                export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
+                ;;
+            kilted)
+                export CONNEXT_FULL_VERSION="7.3.0"
+                export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
+                export OPENSSL_VERSION="3.0.12"
+                export CONNEXT_BASE_ARCH="x64Linux4gcc7.3.0"
+                export CONNEXT_TARGET_ARCH="x64Linux3gcc4.8.2"
+                ;;
+            humble|jazzy)
+                export CONNEXT_FULL_VERSION="6.0.1.25"
+                export CONNEXT_DISPLAY_VERSION="${CONNEXT_FULL_VERSION%.*}"
+                export OPENSSL_VERSION="1.1.1k"
+                export CONNEXT_BASE_ARCH="x64Linux4gcc7.3.0"
+                export CONNEXT_TARGET_ARCH="x64Linux2.6gcc4.4.5"
+                ;;
+            *)
+                # Rolling case. Nothing to do.
+                ;;
+        esac
 
         case "${CI_ARGS}" in
           *--connext-debs*)
             echo "Using Debian package of Connext"
-            if test -r /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh; then
-                echo "Sourcing RTI setenv script /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh"
-                . /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh
+            if test -r /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_${CONNEXT_TARGET_ARCH}.sh; then
+                echo "Sourcing RTI setenv script /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_${CONNEXT_TARGET_ARCH}.sh"
+                . /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_${CONNEXT_TARGET_ARCH}.sh
             fi
             ;;
           *)
             echo "Installing Connext binaries off RTI website..."
             if test -x /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}-pro-host-x64Linux.run; then
                 rtipkg_list="\
-                /tmp/rticonnextdds-src/openssl-3.0.12-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
-                /tmp/rticonnextdds-src/openssl-3.0.12-${CONNEXT_FULL_VERSION}-target-x64Linux4gcc7.3.0.rtipkg \
-                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-host-openssl-3.0-x64Linux.rtipkg \
-                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-openssl-3.0-x64Linux4gcc7.3.0.rtipkg \
+                /tmp/rticonnextdds-src/openssl-${OPENSSL_VERSION}-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
+                /tmp/rticonnextdds-src/openssl-${OPENSSL_VERSION}-${CONNEXT_FULL_VERSION}-target-${CONNEXT_TARGET_ARCH}.rtipkg \
+                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-host-openssl-${OPENSSL_VERSION}-x64Linux.rtipkg \
+                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-openssl-${OPENSSL_VERSION}-${CONNEXT_TARGET_ARCH}.rtipkg \
                 "
-                connext_base_architecture="x64Linux3gcc4.8.2"
-                if [ "${CONNEXT_FULL_VERSION}" = "6.0.1.25" ]; then
+
+                if [ "${ROS_DISTRO}" = "humble" ] || [ "${ROS_DISTRO}" = "jazzy" ]; then
                     rtipkg_list="\
                     /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_FULL_VERSION}-pro-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/openssl-1.1.1k-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/openssl-${OPENSSL_VERSION}-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
                     /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-x64Linux4gcc7.3.0.rtipkg \
+                    /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-${CONNEXT_TARGET_ARCH}.rtipkg \
                     "
-                    connext_base_architecture="x64Linux2.6gcc4.4.5"
                 fi
-                python3 -u /tmp/rti_web_binaries_install_script.py /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}-pro-host-x64Linux.run \
-                    /home/rosbuild/rti_connext_dds-${CONNEXT_DISPLAY_VERSION} --rtipkg_paths \
-                    /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_FULL_VERSION}-pro-target-x64Linux4gcc7.3.0.rtipkg \
-                    $rtipkg_list
+                python3 -u /tmp/rti_web_binaries_install_script.py \
+                    /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}-pro-host-x64Linux.run \
+                    /home/rosbuild/rti_connext_dds-${CONNEXT_DISPLAY_VERSION} \
+                    --rtipkg_paths \
+                        /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_FULL_VERSION}-pro-target-${CONNEXT_TARGET_ARCH}.rtipkg \
+                        $rtipkg_list
                 if [ $? -ne 0 ]; then
                     echo "Connext not installed correctly (maybe you're on an ARM machine?)." >&2
                     exit 1
                 fi
                 export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}
-                export RTI_OPENSSL_LIBS=$CONNEXTDDS_DIR/resource/app/lib/${connext_base_architecture}
+                export RTI_OPENSSL_LIBS=$CONNEXTDDS_DIR/resource/app/lib/${CONNEXT_BASE_ARCH}
             else
                 echo "No connext installation files found found." >&2
                 exit 1
