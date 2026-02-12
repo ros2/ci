@@ -44,12 +44,9 @@ RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -Des
 ## Add the binary to the PATH
 RUN powershell -noexit "$bindir = Join-Path $Env:USERPROFILE\.pixi 'bin' ; $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true) ; $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) ; $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String)"
 
-# Increase MaxUserPort to 65534 (Max)
-RUN powershell -noexit Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters' -Name 'MaxUserPort' -Value 65534 -Type DWord -Force
-
-# Decrease TcpTimedWaitDelay to 30 seconds
-RUN powershell -noexit Set-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters' -Name 'TcpTimedWaitDelay' -Value 30 -Type DWord -Force
-
+RUN reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v TcpTimedWaitDelay /t REG_DWORD /d 30 /f && \
+    reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v MaxUserPort /t REG_DWORD /d 65534 /f
+    
 # Automatic invalidation once every day.
 RUN echo "@today_str"
 
