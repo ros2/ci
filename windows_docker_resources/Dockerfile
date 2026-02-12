@@ -34,6 +34,14 @@ RUN vs_buildtools_2019.exe --quiet --wait --norestart --add Microsoft.Component.
 RUN powershell -noexit irm https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools_2022.exe
 RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
 
+# Increase MaxUserPort to 65534 (Max)
+RUN powershell -noexit Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name 'MaxUserPort' -Value 65534 -Type DWord -Force
+
+# Decrease TcpTimedWaitDelay to 30 seconds
+RUN powershell -noexit Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name 'TcpTimedWaitDelay' -Value 30 -Type DWord -Force
+
+USER ContainerUser
+
 # Install pixi
 ## Fetch a pinned version
 RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.41.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
@@ -44,11 +52,6 @@ RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -Des
 ## Add the binary to the PATH
 RUN powershell -noexit "$bindir = Join-Path $Env:USERPROFILE\.pixi 'bin' ; $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true) ; $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) ; $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String)"
 
-# Increase MaxUserPort to 65534 (Max)
-RUN powershell -noexit Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name 'MaxUserPort' -Value 65534 -Type DWord -Force
-
-# Decrease TcpTimedWaitDelay to 30 seconds
-RUN powershell -noexit Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name 'TcpTimedWaitDelay' -Value 30 -Type DWord -Force
 
 # Automatic invalidation once every day.
 RUN echo "@today_str"
@@ -56,7 +59,6 @@ RUN echo "@today_str"
 # Install dependencies via pixi
 ARG ROS_DISTRO=rolling
 WORKDIR C:\pixi_ws
-USER ContainerUser
 
 RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/heads/%ROS_DISTRO%/pixi.toml -OutFile pixi.toml
 RUN pixi --color never --no-progress -q install
