@@ -5,7 +5,7 @@
 # To find this value run in powershell:
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=2009
-
+USER ContainerUser
 # In order to ensure the image is correctly compatible with the host system a
 # more precise version than the release id is required. To find this value run
 # the following in powershell.
