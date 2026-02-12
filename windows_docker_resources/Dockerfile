@@ -56,6 +56,8 @@ RUN echo "@today_str"
 # Install dependencies via pixi
 ARG ROS_DISTRO=rolling
 WORKDIR C:\pixi_ws
+USER ContainerUser
+
 RUN powershell -noexit irm https://raw.githubusercontent.com/ros2/ros2/refs/heads/%ROS_DISTRO%/pixi.toml -OutFile pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
@@ -90,6 +92,5 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR C:\ci
 
-USER ContainerUser
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%"
