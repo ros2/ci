@@ -5,7 +5,6 @@
 # To find this value run in powershell:
 # $(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
 ARG WINDOWS_RELEASE_ID=2009
-USER ContainerUser
 # In order to ensure the image is correctly compatible with the host system a
 # more precise version than the release id is required. To find this value run
 # the following in powershell.
@@ -17,6 +16,8 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
+
+USER ContainerUser
 
 # Enable long paths on folders
 RUN powershell -noexit "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force"
