@@ -95,6 +95,7 @@ ENV TEMP=C:\\TEMP
 ENV TMP=C:\\TEMP
 ENV PYTHONUNBUFFERED=1
 
+USER ContainerAdministrator
 WORKDIR C:\ci
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
