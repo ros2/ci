@@ -104,6 +104,7 @@ ubuntu_distro: ${build.buildVariableResolver.resolve('CI_UBUNTU_DISTRO')}, <br/>
 el_release: ${build.buildVariableResolver.resolve('CI_EL_RELEASE')}, <br/>
 @[end if]@
 ros_distro: ${build.buildVariableResolver.resolve('CI_ROS_DISTRO')}, <br/>
+pixi_toml_url: ${build.buildVariableResolver.resolve('CI_PIXI_TOML_URL')}, <br/>
 branch: ${build.buildVariableResolver.resolve('CI_BRANCH_TO_TEST')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
@@ -244,6 +245,9 @@ set /p RELEASE_VERSION=&lt; release_version.txt
 rem "Put current date in Dockerfile to force cache invalidation once per day"
 powershell "(Get-Content ${Env:DOCKERFILE}).replace('@@today_str', $(Get-Date).ToLongDateString()) | Set-Content ${Env:DOCKERFILE}"
 set BUILD_ARGS=--build-arg WINDOWS_RELEASE_VERSION=%RELEASE_VERSION% --build-arg ROS_DISTRO=%CI_ROS_DISTRO%
+if "!CI_PIXI_TOML_URL!" NEQ "" (
+  set "BUILD_ARGS=!BUILD_ARGS! --build-arg PIXI_TOML_URL=!CI_PIXI_TOML_URL!%"
+)
 docker build  %BUILD_ARGS% -t %CONTAINER_NAME% -f %DOCKERFILE% windows_docker_resources  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 
@@ -255,9 +259,6 @@ if "!CI_BRANCH_TO_TEST!" NEQ "" (
 )
 if "!CI_COLCON_BRANCH!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --colcon-branch !CI_COLCON_BRANCH!"
-)
-if "!CI_PIXI_TOML_URL!" NEQ "" (
-  set "BUILD_ARGS=!BUILD_ARGS! --build-arg PIXI_TOML_URL=!CI_PIXI_TOML_URL!%"
 )
 if "!CI_USE_CONNEXTDDS!" == "false" (
   set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_connextdds"
