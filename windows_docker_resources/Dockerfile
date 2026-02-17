@@ -44,6 +44,8 @@ RUN reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v MaxUser
 RUN netsh int ipv4 set dynamicport tcp start=1025 num=64510
 RUN netsh int ipv4 set dynamicport udp start=1025 num=64510
 
+
+RUN fsutil behavior query SymlinkEvaluation
 # Install pixi
 ## Fetch a pinned version
 RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.41.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
@@ -98,7 +100,6 @@ ENV TEMP=C:\\TEMP
 ENV TMP=C:\\TEMP
 ENV PYTHONUNBUFFERED=1
 
-USER ContainerUser
 WORKDIR C:\ci
 
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
