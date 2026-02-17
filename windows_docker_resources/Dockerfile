@@ -46,6 +46,7 @@ RUN netsh int ipv4 set dynamicport udp start=1025 num=64510
 
 
 RUN fsutil behavior query SymlinkEvaluation
+RUN RUN fsutil behavior set SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1
 # Install pixi
 ## Fetch a pinned version
 RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.41.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
