@@ -29,6 +29,7 @@
     ci_scripts_default_branch=ci_scripts_default_branch,
     default_repos_url=default_repos_url,
     supplemental_repos_url=supplemental_repos_url,
+    pixi_toml_url=pixi_toml_url,
     ubuntu_distro=ubuntu_distro,
     el_release=el_release,
     ros_distro=ros_distro,

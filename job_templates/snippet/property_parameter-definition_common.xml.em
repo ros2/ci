@@ -37,7 +37,7 @@ Use this instead of the Custom .repos file if you want to add to the default rep
           <description>Custom pixi.toml file URL to use instead of the default pixi.toml file.
 For example, copy the content of pixi.toml to use instead of the default in a gist, then pass the raw URL here. 
 The pixi.toml file defines the Pixi environment configuration for the build.</description>
-          <defaultValue></defaultValue>
+          <defaultValue>@(pixi_toml_url)</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
