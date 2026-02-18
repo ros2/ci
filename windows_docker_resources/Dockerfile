@@ -53,7 +53,8 @@ RUN echo "@today_str"
 
 # Install dependencies via pixi
 WORKDIR C:\pixi_ws
-RUN powershell -Command "Invoke-RestMethod -Uri $env:PIXI_TOML_URL -OutFile pixi.toml"
+RUN powershell -Command "if (-not $env:PIXI_TOML_URL.StartsWith('https://')) { Write-Error 'PIXI_TOML_URL must use HTTPS protocol'; exit 1 }"
+ADD ${PIXI_TOML_URL} pixi.toml
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
