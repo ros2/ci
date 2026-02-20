@@ -44,6 +44,8 @@ RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -Des
 ## Add the binary to the PATH
 RUN powershell -noexit "$bindir = Join-Path $Env:USERPROFILE\.pixi 'bin' ; $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true) ; $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) ; $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String)"
 
+RUN fsutil behavior query SymlinkEvaluation
+RUN fsutil behavior set SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1
 # Automatic invalidation once every day.
 RUN echo "@today_str"
 
