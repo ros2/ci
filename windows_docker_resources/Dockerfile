@@ -44,6 +44,16 @@ RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -Des
 ## Add the binary to the PATH
 RUN powershell -noexit "$bindir = Join-Path $Env:USERPROFILE\.pixi 'bin' ; $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true) ; $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) ; $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String)"
 
+# 1. Reduce TIME_WAIT from 240s (default) to 30s so ports are freed faster
+RUN reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v TcpTimedWaitDelay /t REG_DWORD /d 30 /f
+
+# 2. Increase the number of ephemeral ports to the maximum (65534)
+RUN reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v MaxUserPort /t REG_DWORD /d 65534 /f
+
+# 3. Expand the dynamic port range to use the new capacity
+RUN netsh int ipv4 set dynamicport tcp start=1025 num=64510
+RUN netsh int ipv4 set dynamicport udp start=1025 num=64510
+
 # Automatic invalidation once every day.
 RUN echo "@today_str"
 
