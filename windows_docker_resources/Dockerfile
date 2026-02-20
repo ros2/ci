@@ -99,7 +99,6 @@ RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_secu
 
 ENV TEMP=C:\\TEMP
 ENV TMP=C:\\TEMP
-ENV PYTHONUNBUFFERED=1
 
 WORKDIR C:\ci
 
