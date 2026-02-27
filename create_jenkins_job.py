@@ -108,6 +108,7 @@ def main(argv=None):
         'ci_scripts_default_branch': args.ci_scripts_default_branch,
         'default_repos_url': DEFAULT_REPOS_URL,
         'supplemental_repos_url': '',
+        'pixi_toml_url': '',
         'time_trigger_spec': '',
         'mailer_recipients': '',
         'ignore_rmw_default': {'rmw_fastrtps_dynamic_cpp'},
