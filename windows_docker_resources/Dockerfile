@@ -55,6 +55,7 @@ RUN echo "@today_str"
 WORKDIR C:\pixi_ws
 RUN powershell -Command "if (-not $env:PIXI_TOML_URL.StartsWith('https://')) { Write-Error 'PIXI_TOML_URL must use HTTPS protocol'; exit 1 }"
 ADD ${PIXI_TOML_URL} pixi.toml
+RUN powershell -Command "(Get-Item pixi.toml).LastWriteTime = Get-Date"
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
