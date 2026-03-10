@@ -25,8 +25,8 @@ echo "done."
 . /etc/os-release
 VERSION_ID_MAJOR=$(echo $VERSION_ID | sed 's/\..*//')
 
-# We only attempt to install Connext on Ubuntu amd64
-if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
+# We only attempt to install Connext on Ubuntu amd64 or aarch64
+if [ "${ID}" = "ubuntu" ]; then
     IGNORE_CONNEXTDDS=""
     ignore_rwm_seen="false"
     for arg in ${CI_ARGS} ; do
@@ -50,6 +50,7 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
 
         case "${CI_ARGS}" in
           *--connext-debs*)
+            # Installing Connext through Debian packages is supported on both x86_64 and aarch64 architectures. If we're on an unsupported architecture, skip the installation and exit with an error.
             echo "Using Debian package of Connext"
             if test -r /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh; then
                 echo "Sourcing RTI setenv script /opt/rti.com/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}/resource/scripts/rtisetenv_x64Linux4gcc7.3.0.sh"
@@ -57,6 +58,14 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
             fi
             ;;
           *)
+            # Support for installing Connext through the RTI website installers is only supported on
+            # x86_64 architecture. If we're on a different architecture, skip the installation and
+            # exit with an error.
+            if [ "${ARCH}" != "x86_64" ]; then
+                echo "Connext is only supported on amd64 architecture. Skipping Connext installation." >&2
+                exit 1
+            fi
+
             echo "Installing Connext binaries off RTI website..."
             if test -x /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}-pro-host-x64Linux.run; then
                 rtipkg_list="\
