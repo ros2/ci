@@ -180,7 +180,7 @@ RUN dnf install \
     tinyxml2-devel \
     uncrustify \
     yaml-cpp-devel \
-    $(if test ${EL_RELEASE/.*/} != 10; then echo yamllint; fi) \
+    yamllint \
     --refresh -y
 
 # Install dependencies of Connext and its installer
