@@ -217,7 +217,10 @@ def _run(cmd, exit_on_error=True, **kwargs):
         returncode = await protocol.complete
         future.set_result(returncode)
 
-    future = asyncio.Future()
+    if sys.version_info >= (3, 14):
+        future = get_loop().create_future()
+    else:
+        future = asyncio.Future()
     get_loop().run_until_complete(run_coroutine(future))
     retcode = future.result()
     if exit_on_error and retcode != 0:
