@@ -159,8 +159,6 @@ RUN \
 if test ${INSTALL_CONNEXT_DEBS} = true; then \
   if test \( ${PLATFORM} = x86 -a \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \) \); then \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
-  elif test \( ${PLATFORM} = x86 -a ${ROS_DISTRO} = kilted \); then \
-    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
   else \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
   fi; \
@@ -183,12 +181,6 @@ if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
-    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
-  done; \
-elif test ${ROS_DISTRO} = kilted; then \
-  for splitpkg in \
-    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
-    /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
 else \
