@@ -33,22 +33,20 @@ install_connextdds() {
         return 0
     fi
 
-    # Check if the "ignore-rmw" CI argument contains "rmw_connextdds".
-    IGNORE_CONNEXTDDS=""
+    # Check if the "ignore-rmw" CI argument contains "rmw_connextdds" and exit if it does.
     ignore_rwm_seen="false"
     for arg in ${CI_ARGS} ; do
         case $arg in
             ("--ignore-rmw") ignore_rmw_seen="true" ;;
             ("-"*) ignore_rmw_seen="false" ;;
-            (*) if [ $ignore_rmw_seen = "true" ] ; then [ $arg = "rmw_connextdds" ] && IGNORE_CONNEXTDDS="true" && break ; fi
+            (*)
+                if [ $ignore_rmw_seen = "true" ] && [ $arg = "rmw_connextdds" ]; then
+                    echo "Ignoring installation of Connext."
+                    return 0
+                fi
+                ;;
         esac
     done
-
-    # Install RTI Connext DDS if we didn't find 'rmw_connextdds' within the "ignore-rmw" option strings.
-    if [ -n "${IGNORE_CONNEXTDDS}" ]; then
-        echo "Ignoring installation of Connext."
-        return 0
-    fi
 
     echo "Installing Connext..."
     export CONNEXT_FULL_VERSION="7.3.0"
