@@ -175,8 +175,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 
 # Join the correct Connext version files based on the value of ROS_DISTRO.
-RUN \
-if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
+RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
