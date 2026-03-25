@@ -83,6 +83,10 @@ RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_conn
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-host-x64Win64.rtipkg
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg
 
+RUN IF NOT EXIST "C:\build_local" mkdir C:\build_local
+
+RUN IF NOT EXIST "C:\install_local" mkdir C:\install_local
+
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%"
+CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py --build-space C:\build_local --install-space C:\\install_local %CI_ARGS%"
