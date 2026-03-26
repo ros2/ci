@@ -153,12 +153,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 # merged use the fork with the fix.
 RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
-# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
-# install rti-connext-dds-6.0.1 else install rti-connext-dds-7.3.0-ros.
+# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy and
+# PLATFORM is x86, then install rti-connext-dds-6.0.1. Otherwise, install
+# rti-connext-dds-7.3.0-ros.
 RUN \
 if test ${INSTALL_CONNEXT_DEBS} = true; then \
-  if test \( ${PLATFORM} = x86 -a \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \) \); then \
-    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
+  if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
+    if test ${PLATFORM} = x86; then \
+      apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
+    fi; \
   else \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
   fi; \
