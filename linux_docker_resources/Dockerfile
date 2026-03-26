@@ -153,18 +153,22 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 # merged use the fork with the fix.
 RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
-# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
-# install rti-connext-dds-6.0.1 else install rti-connext-dds-7.3.0-ros.
-RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then \
+# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy and
+# PLATFORM is x86, then install rti-connext-dds-6.0.1. Otherwise, install
+# rti-connext-dds-7.3.0-ros.
+RUN \
+if test ${INSTALL_CONNEXT_DEBS} = true; then \
   if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
-    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
+    if test ${PLATFORM} = x86; then \
+      apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
+    fi; \
   else \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
   fi; \
-    fi
+fi
 
 # Install the RTI dependencies.
-RUN if test ${PLATFORM} = x86; then apt-get update && apt-get install --no-install-recommends -y default-jre-headless; fi
+RUN apt-get update && apt-get install --no-install-recommends -y default-jre-headless
 
 # Install dependencies for RTI web binaries install script.
 RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
@@ -181,13 +185,13 @@ RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-    else \
+else \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-    fi
+fi
 
 # Make the RTI Connext installation script executable. For any version of Connext.
 RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
