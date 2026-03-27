@@ -75,8 +75,9 @@ RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-host-x64Win64.exe --mode
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.5.5-7.7.0-host-x64Win64.rtipkg
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.5.5-7.7.0-target-x64Win64VS2017.rtipkg
 RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-target-x64Win64VS2017.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.7.0-host-x64Win64.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.7.0-target-x64Win64VS2017.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.7.0-host-openssl-3.5-x64Win64.rtipkg
+RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.7.0-target-openssl-3.5-x64Win64VS2017.rtipkg
+
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%"
