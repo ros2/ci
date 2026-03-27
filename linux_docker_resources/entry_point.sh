@@ -59,28 +59,31 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
         #     - Target architecture: x64Linux4gcc7.3.0
         export CONNEXT_FULL_VERSION="7.7.0"
         export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
-        export OPENSSL_VERSION="3.5.5"
+        export OPENSSL_FULL_VERSION="3.5.5"
+        export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
         export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
         export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
         case "${ROS_DISTRO}" in
             lyrical)
                 export CONNEXT_FULL_VERSION="7.7.0"
                 export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
-                export OPENSSL_VERSION="3.5.5"
+                export OPENSSL_FULL_VERSION="3.5.5"
+                export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
                 export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
                 export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
                 ;;
             kilted)
                 export CONNEXT_FULL_VERSION="7.3.0"
                 export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
-                export OPENSSL_VERSION="3.0.12"
+                export OPENSSL_FULL_VERSION="3.0.12"
+                export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
                 export CONNEXT_BASE_ARCH="x64Linux4gcc7.3.0"
                 export CONNEXT_TARGET_ARCH="x64Linux3gcc4.8.2"
                 ;;
             humble|jazzy)
                 export CONNEXT_FULL_VERSION="6.0.1.25"
                 export CONNEXT_DISPLAY_VERSION="${CONNEXT_FULL_VERSION%.*}"
-                export OPENSSL_VERSION="1.1.1k"
+                export OPENSSL_FULL_VERSION="1.1.1k"
                 export CONNEXT_BASE_ARCH="x64Linux4gcc7.3.0"
                 export CONNEXT_TARGET_ARCH="x64Linux2.6gcc4.4.5"
                 ;;
@@ -101,16 +104,16 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
             echo "Installing Connext binaries off RTI website..."
             if test -x /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}-pro-host-x64Linux.run; then
                 rtipkg_list="\
-                /tmp/rticonnextdds-src/openssl-${OPENSSL_VERSION}-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
-                /tmp/rticonnextdds-src/openssl-${OPENSSL_VERSION}-${CONNEXT_FULL_VERSION}-target-${CONNEXT_TARGET_ARCH}.rtipkg \
-                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-host-openssl-${OPENSSL_VERSION}-x64Linux.rtipkg \
-                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-openssl-${OPENSSL_VERSION}-${CONNEXT_TARGET_ARCH}.rtipkg \
+                /tmp/rticonnextdds-src/openssl-${OPENSSL_FULL_VERSION}-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
+                /tmp/rticonnextdds-src/openssl-${OPENSSL_FULL_VERSION}-${CONNEXT_FULL_VERSION}-target-${CONNEXT_TARGET_ARCH}.rtipkg \
+                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-host-openssl-${OPENSSL_DISPLAY_VERSION}-x64Linux.rtipkg \
+                /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-openssl-${OPENSSL_DISPLAY_VERSION}-${CONNEXT_TARGET_ARCH}.rtipkg \
                 "
 
                 if [ "${ROS_DISTRO}" = "humble" ] || [ "${ROS_DISTRO}" = "jazzy" ]; then
                     rtipkg_list="\
                     /tmp/rticonnextdds-src/rti_connext_dds-${CONNEXT_FULL_VERSION}-pro-host-x64Linux.rtipkg \
-                    /tmp/rticonnextdds-src/openssl-${OPENSSL_VERSION}-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
+                    /tmp/rticonnextdds-src/openssl-${OPENSSL_FULL_VERSION}-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
                     /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-host-x64Linux.rtipkg \
                     /tmp/rticonnextdds-src/rti_security_plugins-${CONNEXT_FULL_VERSION}-target-${CONNEXT_TARGET_ARCH}.rtipkg \
                     "
