@@ -156,12 +156,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
 # Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
-# install rti-connext-dds-6.0.1 else install rti-connext-dds-7.3.0-ros.
+# install rti-connext-dds-6.0.1 else if ROS_DISTRO is kilted install rti-connext-dds-7.3.0-ros
+# else install rti-connext-dds-7.7.0-ros.
 RUN if test \( ${PLATFORM} = x86 -a ${INSTALL_CONNEXT_DEBS} = true \); then \
   if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
-  else \
+  elif test ${ROS_DISTRO} = kilted; then \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
+  else \
+    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.7.0-ros; \
   fi; \
     fi
 
@@ -176,20 +179,27 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 
 # Join the correct Connext version files based on the value of ROS_DISTRO.
-RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
+RUN \
+if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-    else \
+elif test ${ROS_DISTRO} = kilted; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-    fi
+else \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.7.0-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.7.0-pro-target-x64Linux4gcc8.5.0.rtipkg; do \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+  done; \
+fi
 
 # Make the RTI Connext installation script executable. For any version of Connext.
 RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
