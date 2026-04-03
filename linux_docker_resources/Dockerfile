@@ -60,6 +60,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
+  libgmock-dev \
+  libgtest-dev \
   $(if test ${UBUNTU_DISTRO} = jammy; then echo libignition-cmake2-dev; fi) \
   $(if test ${UBUNTU_DISTRO} = jammy; then echo libignition-math6-dev; fi) \
   liblz4-dev \
