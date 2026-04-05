@@ -77,15 +77,15 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
                 export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
                 export OPENSSL_FULL_VERSION="3.0.12"
                 export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
-                export CONNEXT_BASE_ARCH="x64Linux4gcc7.3.0"
-                export CONNEXT_TARGET_ARCH="x64Linux3gcc4.8.2"
+                export CONNEXT_BASE_ARCH="x64Linux3gcc4.8.2"
+                export CONNEXT_TARGET_ARCH="x64Linux4gcc7.3.0"
                 ;;
             humble|jazzy)
                 export CONNEXT_FULL_VERSION="6.0.1.25"
                 export CONNEXT_DISPLAY_VERSION="${CONNEXT_FULL_VERSION%.*}"
                 export OPENSSL_FULL_VERSION="1.1.1k"
-                export CONNEXT_BASE_ARCH="x64Linux4gcc7.3.0"
-                export CONNEXT_TARGET_ARCH="x64Linux2.6gcc4.4.5"
+                export CONNEXT_BASE_ARCH="x64Linux2.6gcc4.4.5"
+                export CONNEXT_TARGET_ARCH="x64Linux4gcc7.3.0"
                 ;;
             *)
                 # Rolling case. Nothing to do.
