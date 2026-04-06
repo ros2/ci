@@ -13,13 +13,16 @@ ARG WINDOWS_RELEASE_ID=2009
 # Fall back to the Release ID
 ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 
+# Set ROS distro default value
+ARG ROS_DISTRO=rolling
+
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Set ROS distro value and pixi.toml url
-ARG ROS_DISTRO=rolling
+# Get ROS distro value and set pixi.toml url
+ARG ROS_DISTRO
 ARG PIXI_TOML_URL=https://raw.githubusercontent.com/ros2/ros2/refs/heads/${ROS_DISTRO}/pixi.toml
 
 # Enable long paths on folders
@@ -71,7 +74,7 @@ COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
 COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
 COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script.ps1
 
-RUN powershell -ExecutionPolicy Bypass -File C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO
+RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
