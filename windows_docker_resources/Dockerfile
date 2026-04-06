@@ -63,25 +63,15 @@ RUN pixi --color never --no-progress -q list
 RUN pixi --color never --no-progress -q run "pip install 'colcon-ros-domain-id-coordinator >= 0.2.3'"
 
 # Setup environment variables needed for Connext
+ENV ROS_DISTRO=${ROS_DISTRO}
 ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-ENV CONNEXTDDS_DIR C:\connext\rti_connext_dds-7.7.0
-ENV RTI_OPENSSL_BIN C:\connext\openssl-3.5.5\x64Win64VS2017\bin
-ENV RTI_OPENSSL_LIB C:\connext\openssl-3.5.5\x64Win64VS2017\lib
 
-# Copy over necessary Connext files into container
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
-RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-host-x64Win64.exe
-RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-target-x64Win64VS2017.rtipkg
-COPY rticonnextdds-license\rti_license.dat $RTI_LICENSE_FILE
+COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
+COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script.ps1
 
-# Install Connext
-RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.5.5-7.7.0-host-x64Win64.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.5.5-7.7.0-target-x64Win64VS2017.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_connext_dds-7.7.0-pro-target-x64Win64VS2017.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.7.0-host-openssl-3.5-x64Win64.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.7.0-target-openssl-3.5-x64Win64VS2017.rtipkg
+RUN powershell -ExecutionPolicy Bypass -File C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
