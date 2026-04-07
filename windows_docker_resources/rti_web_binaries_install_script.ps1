@@ -5,13 +5,29 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Invoke-CmdChecked {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Command,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Description
+    )
+
+    Write-Host $Description
+    cmd /c $Command
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Description failed with exit code $LASTEXITCODE. Command: $Command"
+    }
+}
+
 Write-Host "Installing Connext for ROS distro: $RosDistro"
 
 $connextRoot = "C:\connext"
 $tempRoot = "C:\TEMP\rticonnextdds-src"
 $licenseFile = "C:\connext\rti_license.dat"
 
-if ($true -or $RosDistro -eq "kilted") {
+if ($RosDistro -eq "kilted") {
     $ConnextVersion = "7.3.0"
     $OpenSslVersion = "3.0.12"
     $ConnextDir = "C:\connext\rti_connext_dds-7.3.0"
@@ -65,31 +81,27 @@ $hostInstallerBase = Join-Path $tempRoot $HostInstaller
 $targetInstallerBase = Join-Path $tempRoot $TargetInstaller
 
 Write-Host "Reassembling split installer files..."
-cmd /c "copy /b ${hostInstallerBase}.??? ${hostInstallerBase}"
-cmd /c "copy /b ${targetInstallerBase}.??? ${targetInstallerBase}"
+Invoke-CmdChecked -Description "Reassembling split Connext host installer files..." -Command "copy /b ${hostInstallerBase}.??? ${hostInstallerBase}"
+Invoke-CmdChecked -Description "Reassembling split Connext target installer files..." -Command "copy /b ${targetInstallerBase}.??? ${targetInstallerBase}"
 
 Write-Host "Installing Connext host package..."
-Start-Process -FilePath $hostInstallerBase `
+$hostInstallerProcess = Start-Process -FilePath $hostInstallerBase `
     -ArgumentList "--mode unattended --unattendedmodeui minimalWithDialogs --prefix $connextRoot" `
     -Wait `
-    -NoNewWindow
+    -NoNewWindow `
+    -PassThru
+
+if ($hostInstallerProcess.ExitCode -ne 0) {
+    throw "Installing Connext host package failed with exit code $($hostInstallerProcess.ExitCode)."
+}
 
 $rtipkginstall = Join-Path $ConnextDir "bin\rtipkginstall.bat"
 
-Write-Host "Installing OpenSSL host package..."
-cmd /c """$rtipkginstall"" -u ""$(Join-Path $tempRoot $OpenSslHostInstaller)"""
-
-Write-Host "Installing OpenSSL target package..."
-cmd /c """$rtipkginstall"" -u ""$(Join-Path $tempRoot $OpenSslTargetInstaller)"""
-
-Write-Host "Installing Connext target package..."
-cmd /c """$rtipkginstall"" -u ""$(Join-Path $tempRoot $TargetInstaller)"""
-
-Write-Host "Installing Security Plugins host package..."
-cmd /c """$rtipkginstall"" -u ""$(Join-Path $tempRoot $SecurityHostInstaller)"""
-
-Write-Host "Installing Security Plugins target package..."
-cmd /c """$rtipkginstall"" -u ""$(Join-Path $tempRoot $SecurityTargetInstaller)"""
+Invoke-CmdChecked -Description "Installing OpenSSL host package..." -Command """$rtipkginstall"" -u ""$(Join-Path $tempRoot $OpenSslHostInstaller)"""
+Invoke-CmdChecked -Description "Installing OpenSSL target package..." -Command """$rtipkginstall"" -u ""$(Join-Path $tempRoot $OpenSslTargetInstaller)"""
+Invoke-CmdChecked -Description "Installing Connext target package..." -Command """$rtipkginstall"" -u ""$(Join-Path $tempRoot $TargetInstaller)"""
+Invoke-CmdChecked -Description "Installing Security Plugins host package..." -Command """$rtipkginstall"" -u ""$(Join-Path $tempRoot $SecurityHostInstaller)"""
+Invoke-CmdChecked -Description "Installing Security Plugins target package..." -Command """$rtipkginstall"" -u ""$(Join-Path $tempRoot $SecurityTargetInstaller)"""
 
 Write-Host "Connext installation completed successfully."
 Write-Host "CONNEXTDDS_DIR=$ConnextDir"

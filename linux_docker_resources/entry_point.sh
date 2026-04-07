@@ -57,13 +57,21 @@ if [ "${ARCH}" = "x86_64" -a "${ID}" = "ubuntu" ]; then
         #     - OpenSSL version: 1.1.1k
         #     - Base architecture: x64Linux2.6gcc4.4.5
         #     - Target architecture: x64Linux4gcc7.3.0
-        export CONNEXT_FULL_VERSION="7.3.0"
+        export CONNEXT_FULL_VERSION="7.7.0"
         export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
-        export OPENSSL_FULL_VERSION="3.0.12"
+        export OPENSSL_FULL_VERSION="3.5.5"
         export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
-        export CONNEXT_BASE_ARCH="x64Linux3gcc4.8.2"
-        export CONNEXT_TARGET_ARCH="x64Linux4gcc7.3.0"
+        export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
+        export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
         case "${ROS_DISTRO}" in
+            lyrical)
+                export CONNEXT_FULL_VERSION="7.7.0"
+                export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
+                export OPENSSL_FULL_VERSION="3.5.5"
+                export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
+                export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
+                export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
+                ;;
             kilted)
                 export CONNEXT_FULL_VERSION="7.3.0"
                 export CONNEXT_DISPLAY_VERSION="$CONNEXT_FULL_VERSION"
