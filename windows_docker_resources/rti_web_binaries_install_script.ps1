@@ -11,7 +11,7 @@ $connextRoot = "C:\connext"
 $tempRoot = "C:\TEMP\rticonnextdds-src"
 $licenseFile = "C:\connext\rti_license.dat"
 
-if ($RosDistro -eq "kilted") {
+if ($true -or $RosDistro -eq "kilted") {
     $ConnextVersion = "7.3.0"
     $OpenSslVersion = "3.0.12"
     $ConnextDir = "C:\connext\rti_connext_dds-7.3.0"
@@ -22,8 +22,8 @@ if ($RosDistro -eq "kilted") {
     $TargetInstaller = "rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg"
     $OpenSslHostInstaller = "openssl-3.0.12-7.3.0-host-x64Win64.rtipkg"
     $OpenSslTargetInstaller = "openssl-3.0.12-7.3.0-target-x64Win64VS2017.rtipkg"
-    $SecurityHostInstaller = "rti_security_plugins-7.3.0-host-x64Win64.rtipkg"
-    $SecurityTargetInstaller = "rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg"
+    $SecurityHostInstaller = "rti_security_plugins-7.3.0-host-openssl-3.0-x64Win64.rtipkg"
+    $SecurityTargetInstaller = "rti_security_plugins-7.3.0-target-openssl-3.0-x64Win64VS2017.rtipkg"
 }
 else {
     $ConnextVersion = "7.7.0"
