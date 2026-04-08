@@ -226,7 +226,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libconsole-brid
 RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libxaw7-dev libxrandr-dev qtbase5-dev
 
 # Install build dependencies for rqt et al.
-RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev python3-pydot python3-pygraphviz
+# RUN apt-get update && apt-get install --no-install-recommends -y shiboken6 libshiboken6-dev libpyside6-dev python3-pyside6.qtcore python3-pyside6.qtgui python3-pyside6.qtwidgets python3-pyside6.qtsvg qt6-base-dev python3-pydot python3-pygraphviz
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libeigen3-dev
@@ -238,7 +238,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \
     libgl1-mesa-dri \
-    libglapi-mesa \
     libosmesa6 \
     mesa-utils \
     xvfb \
