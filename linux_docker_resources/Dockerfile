@@ -223,10 +223,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
 
 # Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libxaw7-dev libxrandr-dev qtbase5-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libxaw7-dev libxrandr-dev qtbase5-dev qt6-base-dev
 
 # Install build dependencies for rqt et al.
-RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev python3-pydot python3-pygraphviz
+RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev pyqt6-dev python3-pyqt5 python3-pyqt6 python3-pyqt5.qtsvg python3-pyqt6.qtsvg python3-sip-dev python3-pydot python3-pygraphviz python3-sipbuild python3-pyqtbuild pyqt6-dev-tools
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libeigen3-dev
