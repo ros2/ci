@@ -165,7 +165,6 @@ RUN dnf install \
     python3-pytest-runner \
     python3-pytest-timeout \
     python3-qt5-devel \
-    $(if test ${EL_RELEASE/.*/} -gt 9; then echo python3-qt6-devel python3-pyqt6-devel python3-pyqt6-sip sip6 PyQt-Builder; fi) \
     python3-rosdistro \
     python3-setuptools \
     $(if test ${EL_RELEASE/.*/} != 10; then echo python3-sip-devel; fi) \
@@ -173,9 +172,6 @@ RUN dnf install \
     qt5-qtbase \
     qt5-qtbase-devel \
     qt5-qtbase-gui \
-    qt6-qtbase \
-    qt6-qtbase-devel \
-    qt6-qtbase-gui \
     redhat-rpm-config \
     spdlog-devel \
     sqlite-devel \
