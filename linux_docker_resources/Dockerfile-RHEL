@@ -165,7 +165,7 @@ RUN dnf install \
     python3-pytest-runner \
     python3-pytest-timeout \
     $(if test ${EL_RELEASE/.*/} -le 9; then echo python3-qt5-devel; fi) \
-    $(if [ "${EL_RELEASE/.*/}" -eq 9 ] && { [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; }; then echo sip6; fi) \
+    $(if [ "${EL_RELEASE/.*/}" -eq 9 ] && { [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; }; then echo sip6 PyQt-Builder; fi) \
     $(if test ${EL_RELEASE/.*/} -gt 9; then echo python3-qt6-devel python3-pyqt6-devel python3-pyqt6-sip sip6 PyQt-Builder; fi) \
     python3-rosdistro \
     python3-setuptools \
