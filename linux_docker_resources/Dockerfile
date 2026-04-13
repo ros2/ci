@@ -223,7 +223,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
 
 # Install build dependencies for rviz et al.
-RUN $(if [ "$UBUNTU_DISTRO" != "jammy" ] && [ "$UBUNTU_DISTRO" != "noble" ]; then apt-get update && apt-get install --no-install-recommends -y qt6-base-dev; fi)
+RUN if [ "$UBUNTU_DISTRO" != "jammy" ] && [ "$UBUNTU_DISTRO" != "noble" ]; then apt-get update && apt-get install --no-install-recommends -y qt6-base-dev; fi
 # Install build dependencies for rqt et al.
 RUN if [ "$UBUNTU_DISTRO" = "jammy" ] || [ "$UBUNTU_DISTRO" = "noble" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt5-dev  python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev python3-pydot python3-pygraphviz python3-sipbuild python3-pyqtbuild; fi
 RUN if [ "$UBUNTU_DISTRO" != "jammy" ] && [ "$UBUNTU_DISTRO" != "noble" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt6-dev python3-pyqt6 python3-pyqt6.qtsvg pyqt6-dev-tools; fi
