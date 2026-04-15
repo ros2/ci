@@ -89,4 +89,4 @@ RUN IF NOT EXIST "C:\install_local" mkdir C:\install_local
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py --build-space C:\build_local --install-space C:\\install_local %CI_ARGS%"
+CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py  --install-space C:\\install_local %CI_ARGS%"
