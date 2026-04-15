@@ -18,6 +18,9 @@ ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
+USER ContainerAdministrator
+RUN git config --system core.symlinks true
+
 # Set ROS distro value and pixi.toml url
 ARG ROS_DISTRO=rolling
 ARG PIXI_TOML_URL=https://raw.githubusercontent.com/ros2/ros2/refs/heads/${ROS_DISTRO}/pixi.toml
