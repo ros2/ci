@@ -76,6 +76,9 @@ COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script
 
 RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
+RUN mkdir C:\temp\.ros
+ENV ROS_HOME=C:\temp\.ros
+
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
 CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%"
