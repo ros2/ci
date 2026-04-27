@@ -13,13 +13,16 @@ ARG WINDOWS_RELEASE_ID=2009
 # Fall back to the Release ID
 ARG WINDOWS_RELEASE_VERSION=$WINDOWS_RELEASE_ID
 
+# Set ROS distro default value
+ARG ROS_DISTRO=rolling
+
 # Indicates that the windows image will be used as the base image. Must be same or older than host.
 # --isolation=hyperv is needed for both build/run if the image id is older than the host id
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Set ROS distro value and pixi.toml url
-ARG ROS_DISTRO=rolling
+# Get ROS distro value and set pixi.toml url
+ARG ROS_DISTRO
 ARG PIXI_TOML_URL=https://raw.githubusercontent.com/ros2/ros2/refs/heads/${ROS_DISTRO}/pixi.toml
 
 # Enable long paths on folders
@@ -63,25 +66,15 @@ RUN pixi --color never --no-progress -q list
 RUN pixi --color never --no-progress -q run "pip install 'colcon-ros-domain-id-coordinator >= 0.2.3'"
 
 # Setup environment variables needed for Connext
+ENV ROS_DISTRO=${ROS_DISTRO}
 ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-ENV CONNEXTDDS_DIR C:\connext\rti_connext_dds-7.3.0
-ENV RTI_OPENSSL_BIN C:\connext\openssl-3.0.12\x64Win64VS2017\bin
-ENV RTI_OPENSSL_LIB C:\connext\openssl-3.0.12\x64Win64VS2017\lib
 
-# Copy over necessary Connext files into container
 RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
 COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
-RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-host-x64Win64.exe.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-host-x64Win64.exe
-RUN copy /b C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg.??? C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg
-COPY rticonnextdds-license\rti_license.dat $RTI_LICENSE_FILE
+COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
+COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script.ps1
 
-# Install Connext
-RUN C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-host-x64Win64.exe --mode unattended --unattendedmodeui minimalWithDialogs --prefix C:\connext
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-host-x64Win64.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\openssl-3.0.12-7.3.0-target-x64Win64VS2017.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_connext_dds-7.3.0-pro-target-x64Win64VS2017.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-host-x64Win64.rtipkg
-RUN %CONNEXTDDS_DIR%\bin\rtipkginstall.bat -u C:\TEMP\rticonnextdds-src\rti_security_plugins-7.3.0-target-x64Win64VS2017.rtipkg
+RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%

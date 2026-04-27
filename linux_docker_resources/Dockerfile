@@ -60,6 +60,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   libbenchmark-dev \
   libbullet-dev \
+  libgmock-dev \
+  libgtest-dev \
   $(if test ${UBUNTU_DISTRO} = jammy; then echo libignition-cmake2-dev; fi) \
   $(if test ${UBUNTU_DISTRO} = jammy; then echo libignition-math6-dev; fi) \
   liblz4-dev \
@@ -122,6 +124,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
+  python3-pytest-asyncio \
   python3-pytest-cov \
   python3-pytest-mock \
   python3-pytest-repeat \
@@ -153,17 +156,19 @@ RUN apt-get update && apt-get install --no-install-recommends -y lcov
 # merged use the fork with the fix.
 RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
 
-# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy and
-# PLATFORM is x86, then install rti-connext-dds-6.0.1. Otherwise, install
-# rti-connext-dds-7.3.0-ros.
+# Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
+# install rti-connext-dds-6.0.1 else if ROS_DISTRO is kilted install rti-connext-dds-7.3.0-ros
+# else install rti-connext-dds-7.7.0-ros.
 RUN \
 if test ${INSTALL_CONNEXT_DEBS} = true; then \
   if test \( ${ROS_DISTRO} = humble -o ${ROS_DISTRO} = jazzy \); then \
     if test ${PLATFORM} = x86; then \
       apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-6.0.1; \
     fi; \
-  else \
+  elif test ${ROS_DISTRO} = kilted; then \
     apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.3.0-ros; \
+  else \
+    apt-get update && RTI_NC_LICENSE_ACCEPTED=yes apt-get install -y rti-connext-dds-7.7.0-ros; \
   fi; \
 fi
 
@@ -178,17 +183,24 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-pexpect
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 
 # Join the correct Connext version files based on the value of ROS_DISTRO.
-RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
+RUN \
+if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-else \
+elif test ${ROS_DISTRO} = kilted; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+  done; \
+else \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.7.0-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.7.0-pro-target-x64Linux4gcc8.5.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
 fi
@@ -215,10 +227,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y libopencv-dev
 RUN apt-get update && apt-get install --no-install-recommends -y libconsole-bridge-dev
 
 # Install build dependencies for rviz et al.
-RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libxaw7-dev libxrandr-dev qtbase5-dev
+RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev libcurl4-openssl-dev libfreetype6-dev libgles2-mesa-dev libglu1-mesa-dev libxaw7-dev libxrandr-dev
 
+RUN if [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y qt6-base-dev; fi
 # Install build dependencies for rqt et al.
-RUN apt-get update && apt-get install --no-install-recommends -y pyqt5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev python3-pydot python3-pygraphviz
+RUN if [ "$ROS_DISTRO" != "rolling" ] && [ "$ROS_DISTRO" != "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt5-dev qtbase5-dev python3-pyqt5 python3-pyqt5.qtsvg; fi
+RUN if [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt6-dev python3-pyqt6 python3-pyqt6.qtsvg pyqt6-dev-tools; fi
+RUN apt-get update && apt-get install --no-install-recommends -y python3-sip-dev python3-pydot python3-pygraphviz python3-pyqtbuild python3-sipbuild
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libeigen3-dev

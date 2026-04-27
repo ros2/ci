@@ -158,20 +158,22 @@ RUN dnf install \
     python3-pygraphviz \
     python3-pykdl \
     python3-pytest \
+    $(if test ${EL_RELEASE/.*/} -gt 9; then echo python3-pytest-asyncio; fi) \
     python3-pytest-cov \
     python3-pytest-mock \
     python3-pytest-repeat \
     python3-pytest-rerunfailures \
     python3-pytest-runner \
     python3-pytest-timeout \
-    python3-qt5-devel \
+    $(if test ${EL_RELEASE/.*/} -le 9; then echo python3-qt5-devel; fi) \
+    $(if [ "${EL_RELEASE/.*/}" -eq 9 ] && { [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; }; then echo sip6 PyQt-builder; fi) \
+    $(if test ${EL_RELEASE/.*/} -gt 9; then echo python3-pyqt6-devel python3-pyqt6-sip sip6 PyQt-builder; fi) \
     python3-rosdistro \
     python3-setuptools \
     $(if test ${EL_RELEASE/.*/} != 10; then echo python3-sip-devel; fi) \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-types-pyyaml; fi) \
-    qt5-qtbase \
-    qt5-qtbase-devel \
-    qt5-qtbase-gui \
+    $(if test ${EL_RELEASE/.*/} -le 9; then echo qt5-qtbase qt5-qtbase-devel qt5-qtbase-gui; fi) \
+    $(if test ${EL_RELEASE/.*/} -gt 9; then echo qt6-qtbase qt6-qtbase-devel qt6-qtbase-gui; fi) \
     redhat-rpm-config \
     spdlog-devel \
     sqlite-devel \
@@ -194,20 +196,27 @@ RUN dnf install \
 COPY rticonnextdds-src/ /tmp/rticonnextdds-src
 
 # Join the correct Connext version files based on the value of ROS_DISTRO.
-RUN if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
+RUN \
+if test ${ROS_DISTRO} = jazzy -o ${ROS_DISTRO} = humble; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-host-x64Linux.rtipkg \
     /tmp/rticonnextdds-src/rti_connext_dds-6.0.1.25-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-    else \
+elif test ${ROS_DISTRO} = kilted; then \
   for splitpkg in \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-host-x64Linux.run \
     /tmp/rticonnextdds-src/rti_connext_dds-7.3.0-pro-target-x64Linux4gcc7.3.0.rtipkg; do \
     cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
   done; \
-    fi
+else \
+  for splitpkg in \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.7.0-pro-host-x64Linux.run \
+    /tmp/rticonnextdds-src/rti_connext_dds-7.7.0-pro-target-x64Linux4gcc8.5.0.rtipkg; do \
+    cat $(echo ${splitpkg}.0?? | sort) > $splitpkg; \
+  done; \
+fi
 
 # Make the RTI Connext installation script executable. For any version of Connext.
 RUN chmod 755 /tmp/rticonnextdds-src/rti_connext_dds-*-pro-host-x64Linux.run
