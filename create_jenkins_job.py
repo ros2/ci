@@ -122,7 +122,7 @@ def main(argv=None):
         'dont_notify_every_unstable_build': 'false',
         'build_timeout_mins': 600,
         'ubuntu_distro': 'noble',
-        'el_release': '9',
+        'el_release': '10',
         'ros_distro': 'rolling',
     }
 
