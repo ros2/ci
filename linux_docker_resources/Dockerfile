@@ -228,9 +228,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y libassimp-dev l
 
 RUN if [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y qt6-base-dev; fi
 # Install build dependencies for rqt et al.
-RUN if [ "$ROS_DISTRO" != "rolling" ] && [ "$ROS_DISTRO" != "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt5-dev qtbase5-dev python3-pyqt5 python3-pyqt5.qtsvg; fi
+RUN if [ "$ROS_DISTRO" != "rolling" ] && [ "$ROS_DISTRO" != "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt5-dev qtbase5-dev python3-pyqt5 python3-pyqt5.qtsvg python3-sip-dev; fi
 RUN if [ "$ROS_DISTRO" = "rolling" ] || [ "$ROS_DISTRO" = "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y pyqt6-dev python3-pyqt6 python3-pyqt6.qtsvg pyqt6-dev-tools; fi
-RUN apt-get update && apt-get install --no-install-recommends -y python3-sip-dev python3-pydot python3-pygraphviz python3-pyqtbuild python3-sipbuild
+RUN apt-get update && apt-get install --no-install-recommends -y python3-pydot python3-pygraphviz python3-pyqtbuild python3-sipbuild
 
 # Install dependencies for robot_model and robot_state_publisher
 RUN apt-get update && apt-get install --no-install-recommends -y libeigen3-dev
@@ -242,11 +242,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-dev
 # Install dependencies for RViz visual tests
 RUN apt-get update && apt-get install --no-install-recommends -y \
     libgl1-mesa-dri \
-    libglapi-mesa \
     libosmesa6 \
     mesa-utils \
     xvfb \
     matchbox-window-manager
+    
+RUN if [ "$ROS_DISTRO" != "rolling" ] && [ "$ROS_DISTRO" != "lyrical" ]; then apt-get update && apt-get libglapi-mesa ; fi
 
 # Install dependencies for iceoryx
 RUN apt-get update && apt-get install -y \
