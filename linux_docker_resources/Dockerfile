@@ -247,7 +247,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     xvfb \
     matchbox-window-manager
     
-RUN if [ "$ROS_DISTRO" != "rolling" ] && [ "$ROS_DISTRO" != "lyrical" ]; then apt-get update && apt-get libglapi-mesa ; fi
+RUN if [ "$ROS_DISTRO" != "rolling" ] && [ "$ROS_DISTRO" != "lyrical" ]; then apt-get update && apt-get install --no-install-recommends -y libglapi-mesa ; fi
 
 # Install dependencies for iceoryx
 RUN apt-get update && apt-get install -y \
