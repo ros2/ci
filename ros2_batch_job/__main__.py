@@ -285,7 +285,7 @@ def build_and_test(args, job, colcon_script):
 
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
     if args.os == 'windows':
-        cmake_args.extend(['-G', 'Ninja'])
+        cmake_args.extend(['-G', 'Ninja', '-DCMAKE_OBJECT_PATH_MAX=400'])
     cmake_build_type = args.cmake_build_type
     if args.os == 'windows' and not cmake_build_type:
         # Ninja is single-config and requires an explicit CMAKE_BUILD_TYPE.
