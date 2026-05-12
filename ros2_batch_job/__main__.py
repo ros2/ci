@@ -284,6 +284,8 @@ def build_and_test(args, job, colcon_script):
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
+    if args.os == 'windows':
+        cmake_args.extend(['-G', 'Ninja'])
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
