@@ -80,9 +80,23 @@ if (-not (Test-Path "C:\TEMP")) {
 $hostInstallerBase = Join-Path $tempRoot $HostInstaller
 $targetInstallerBase = Join-Path $tempRoot $TargetInstaller
 
-Write-Host "Reassembling split installer files..."
-Invoke-CmdChecked -Description "Reassembling split Connext host installer files..." -Command "copy /b ${hostInstallerBase}.??? ${hostInstallerBase}"
-Invoke-CmdChecked -Description "Reassembling split Connext target installer files..." -Command "copy /b ${targetInstallerBase}.??? ${targetInstallerBase}"
+Write-Host "Reassembling split installer files in parallel..."
+$reassembleJobs = @(
+    Start-Job -ScriptBlock {
+        cmd /c "copy /b ""$using:hostInstallerBase.???"" ""$using:hostInstallerBase"""
+        if ($LASTEXITCODE -ne 0) { throw "Reassembling host installer failed with exit code $LASTEXITCODE." }
+    },
+    Start-Job -ScriptBlock {
+        cmd /c "copy /b ""$using:targetInstallerBase.???"" ""$using:targetInstallerBase"""
+        if ($LASTEXITCODE -ne 0) { throw "Reassembling target installer failed with exit code $LASTEXITCODE." }
+    }
+)
+$reassembleJobs | Wait-Job | Receive-Job
+$failedReassemble = $reassembleJobs | Where-Object { $_.State -eq 'Failed' }
+$reassembleJobs | Remove-Job
+if ($failedReassemble) {
+    throw "One or more installer reassembly jobs failed."
+}
 
 Write-Host "Installing Connext host package..."
 $hostInstallerProcess = Start-Process -FilePath $hostInstallerBase `
