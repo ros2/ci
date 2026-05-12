@@ -81,16 +81,15 @@ $hostInstallerBase = Join-Path $tempRoot $HostInstaller
 $targetInstallerBase = Join-Path $tempRoot $TargetInstaller
 
 Write-Host "Reassembling split installer files in parallel..."
-$reassembleJobs = @(
-    Start-Job -ScriptBlock {
-        cmd /c "copy /b ""$using:hostInstallerBase.???"" ""$using:hostInstallerBase"""
-        if ($LASTEXITCODE -ne 0) { throw "Reassembling host installer failed with exit code $LASTEXITCODE." }
-    },
-    Start-Job -ScriptBlock {
-        cmd /c "copy /b ""$using:targetInstallerBase.???"" ""$using:targetInstallerBase"""
-        if ($LASTEXITCODE -ne 0) { throw "Reassembling target installer failed with exit code $LASTEXITCODE." }
-    }
-)
+$reassembleJobs = @()
+$reassembleJobs += Start-Job -ScriptBlock {
+    cmd /c "copy /b ""$using:hostInstallerBase.???"" ""$using:hostInstallerBase"""
+    if ($LASTEXITCODE -ne 0) { throw "Reassembling host installer failed with exit code $LASTEXITCODE." }
+}
+$reassembleJobs += Start-Job -ScriptBlock {
+    cmd /c "copy /b ""$using:targetInstallerBase.???"" ""$using:targetInstallerBase"""
+    if ($LASTEXITCODE -ne 0) { throw "Reassembling target installer failed with exit code $LASTEXITCODE." }
+}
 $reassembleJobs | Wait-Job | Receive-Job
 $failedReassemble = $reassembleJobs | Where-Object { $_.State -eq 'Failed' }
 $reassembleJobs | Remove-Job
