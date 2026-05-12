@@ -286,9 +286,15 @@ def build_and_test(args, job, colcon_script):
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
     if args.os == 'windows':
         cmake_args.extend(['-G', 'Ninja'])
-    if args.cmake_build_type:
-        cmake_args.append(
-            '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    cmake_build_type = args.cmake_build_type
+    if args.os == 'windows' and not cmake_build_type:
+        # Ninja is single-config and requires an explicit CMAKE_BUILD_TYPE.
+        # Without one, cmake defaults to Debug (/MDd), which defines _DEBUG
+        # and causes the linker to require python312_d.lib — not shipped by
+        # standard Python. RelWithDebInfo matches what the VS generator used
+        cmake_build_type = 'RelWithDebInfo'
+    if cmake_build_type:
+        cmake_args.append('-DCMAKE_BUILD_TYPE=' + cmake_build_type)
     if compile_with_clang:
         cmake_args.extend(
             ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])
