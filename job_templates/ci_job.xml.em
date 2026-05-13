@@ -324,6 +324,15 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
 docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b !ERRORLEVEL!
+
+rem Lower vEthernet (nat) interface metric and ensure it wins the 224.0.0.0/4 route election.
+rem On WS2025 the adapter defaults to InterfaceMetric 5000, losing to physical NICs (~276 total).
+rem Process-isolated containers cannot reach physical NICs from their HNS compartment, so
+rem IP_ADD_MEMBERSHIP with INADDR_ANY fails (WSAENOBUFS). PersistentStore is unavailable on
+rem virtual adapters, so this runs each job (idempotent; vEthernet (nat) is transient anyway).
+powershell -Command "Set-NetIPInterface -InterfaceAlias 'vEthernet (nat)' -AddressFamily IPv4 -InterfaceMetric 15 -ErrorAction SilentlyContinue"
+powershell -Command "$idx = (Get-NetIPInterface -InterfaceAlias 'vEthernet (nat)' -AddressFamily IPv4 -ErrorAction SilentlyContinue).ifIndex; if ($idx) { Get-NetRoute -InterfaceIndex $idx -DestinationPrefix '224.0.0.0/4' -ErrorAction SilentlyContinue | Remove-NetRoute -Confirm:$false -ErrorAction SilentlyContinue; New-NetRoute -InterfaceIndex $idx -DestinationPrefix '224.0.0.0/4' -NextHop '0.0.0.0' -RouteMetric 1 -AddressFamily IPv4 | Out-Null }"
+
 docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 @[else]@
