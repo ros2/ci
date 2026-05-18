@@ -77,5 +77,6 @@ COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script
 RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
 WORKDIR C:\ci
+COPY setup_multicast.ps1 C:\setup_multicast.ps1
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%"
+CMD powershell -File C:\setup_multicast.ps1 && pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%
