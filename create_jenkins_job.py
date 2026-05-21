@@ -146,7 +146,8 @@ def main(argv=None):
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
-            'ignore_rmw_default': data['ignore_rmw_default'] | {'rmw_connextdds'},
+            'ignore_rmw_default': data['ignore_rmw_default'],
+            'use_connext_debs_default': 'true',
             'test_args_default': re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(mimick|\2)"', data['test_args_default']),
         },
         'linux-rhel': {
@@ -206,8 +207,6 @@ def main(argv=None):
 
         # configure a manual version of the packaging job
         ignore_rmw_default_packaging = set()
-        if os_name in ['linux-aarch64']:
-            ignore_rmw_default_packaging |= {'rmw_connextdds'}
         create_job(os_name, 'ci_packaging_' + os_name, 'packaging_job.xml.em', {
             'cmake_build_type': 'RelWithDebInfo',
             'label_expression': packaging_label_expression,
