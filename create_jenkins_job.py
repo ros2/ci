@@ -121,8 +121,8 @@ def main(argv=None):
         'enable_coverage_default': 'false',
         'dont_notify_every_unstable_build': 'false',
         'build_timeout_mins': 600,
-        'ubuntu_distro': 'noble',
-        'el_release': '9',
+        'ubuntu_distro': 'resolute',
+        'el_release': '10',
         'ros_distro': 'rolling',
     }
 
