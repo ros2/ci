@@ -146,7 +146,6 @@ def main(argv=None):
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
-            'ignore_rmw_default': data['ignore_rmw_default'],
             'use_connext_debs_default': 'true',
             'test_args_default': re.sub(r'(--ctest-args +-LE +)"?([^ "]+)"?', r'\1"(mimick|\2)"', data['test_args_default']),
         },
