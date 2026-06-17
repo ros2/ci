@@ -14,7 +14,7 @@ export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
 export UID=${UID:=$ORIG_UID}
 export GID=${GID:=$ORIG_GID}
 
-ARCH=`uname -i`
+ARCH=`uname -m`
 
 ORIG_HOME=$(echo $ORIGPASSWD | cut -f6 -d:)
 
