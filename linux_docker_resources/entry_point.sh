@@ -74,7 +74,13 @@ install_connextdds() {
     export OPENSSL_FULL_VERSION="3.5.5"
     export OPENSSL_DISPLAY_VERSION="${OPENSSL_FULL_VERSION%.*}"
     export CONNEXT_BASE_ARCH="x64Linux4gcc8.5.0"
-    export CONNEXT_TARGET_ARCH="$CONNEXT_BASE_ARCH"
+    if [ "$ARCH" = "x86_64" ]; then
+        CONNEXT_TARGET_ARCH="x64Linux4gcc8.5.0"
+    else
+        CONNEXT_TARGET_ARCH="armv8Linux4gcc8.5.0"
+    fi
+    export CONNEXT_TARGET_ARCH
+
     case "${ROS_DISTRO}" in
         lyrical)
             export CONNEXT_FULL_VERSION="7.7.0"
