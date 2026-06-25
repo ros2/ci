@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>
@@ -51,6 +51,20 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+  <hudson.tasks.Shell>
+    <command>
+      #!/bin/bash
+      REGEX="^(jazzy|humble|kilted)$"
+
+      if [[ "$CI_ROS_DISTRO" =~ $REGEX ]]; then
+        echo "$CI_ROS_DISTRO targets an EOL Windows version. Skipping Windows CI"
+        rm -f trigger_win_build.properties 
+      else
+        echo "Trigger Windows build for $CI_ROS_DISTRO" >> trigger_win_build.properties 
+      fi
+    </command>
+    <configuredLocalRules/>
+  </hudson.tasks.Shell>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
         <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
@@ -118,6 +132,14 @@ for (item in predicted_jobs) {
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+            <!-- Prevent runs for EOL Windows distros, this matches the shell step above -->
+              <propertiesFile>trigger_win_build.properties</propertiesFile>
+              <failTriggerOnMissing>true</failTriggerOnMissing>
+              <textParamValueOnNewLine>false</textParamValueOnNewLine>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
 @[  end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
