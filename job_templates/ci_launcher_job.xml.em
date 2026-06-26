@@ -75,9 +75,19 @@ def predict_build_number(job_name) {
   return build_number
 }
 
+def rosDistro = build?.buildVariables?.get("CI_ROS_DISTRO") ?: ""
+def skipWindows = rosDistro ==~ /^(jazzy|humble|kilted)$/
+
 predicted_jobs = [:]
+
 @[for os_name, os_data in os_specific_data.items()]@
+@[  if os_name in ['windows', 'windows-2025']]@
+if (!skipWindows) {
+  predicted_jobs["@(os_name)"] = new Tuple("@(os_data['job_name'])", predict_build_number("@(os_data['job_name'])"))
+}
+@[  else]@
 predicted_jobs["@(os_name)"] = new Tuple("@(os_data['job_name'])", predict_build_number("@(os_data['job_name'])"))
+@[  end if]@
 @[end for]@
 
 for (item in predicted_jobs) {
