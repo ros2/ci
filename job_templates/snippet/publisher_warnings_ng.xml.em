@@ -31,7 +31,7 @@
       <reportEncoding></reportEncoding>
       <skipSymbolicLinks>false</skipSymbolicLinks>
     </io.jenkins.plugins.analysis.warnings.ClangTidy>
-@[elif os_name in ['windows', 'windows-2025']]@
+@[elif os_name in ['windows']]@
     <io.jenkins.plugins.analysis.warnings.MsBuild>
       <id></id>
       <name></name>
