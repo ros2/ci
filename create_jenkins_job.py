@@ -138,11 +138,6 @@ def main(argv=None):
             'shell_type': 'BatchFile',
             'use_isolated_default': 'false',
         },
-        'windows-2025': {
-            'label_expression': 'windows-2025-container',
-            'shell_type': 'BatchFile',
-            'use_isolated_default': 'false',
-        },
         'linux-aarch64': {
             'label_expression': 'linux_aarch64',
             'shell_type': 'Shell',
@@ -189,8 +184,6 @@ def main(argv=None):
         job_os_name = os_name
         if os_name == 'windows':
             job_os_name = 'win'
-        if os_name == 'windows-2025':
-            job_os_name = 'win-2025'
         # configure manual triggered job
         create_job(os_name, 'ci_' + os_name, 'ci_job.xml.em', {
             'cmake_build_type': 'None',
@@ -232,7 +225,7 @@ def main(argv=None):
         })
 
         # configure nightly triggered job
-        if not os_name in ['windows', 'windows-2025']:
+        if not os_name in ['windows']:
             job_name = 'nightly_' + job_os_name + '_debug'
             debug_build_args = data['build_args_default']
             create_job(os_name, job_name, 'ci_job.xml.em', {
@@ -531,9 +524,6 @@ def main(argv=None):
             os_specific_data = collections.OrderedDict()
             
             for os_name in sorted(os_configs.keys()):
-                if os_name in ["windows-2025"]: 
-                    # remove windows-2025 from ci_launcher
-                    continue
                 os_specific_data[os_name] = dict(data)
                 os_specific_data[os_name].update(os_configs[os_name])
                 os_specific_data[os_name]['job_name'] = launch_prefix + 'ci_' + os_name

@@ -98,7 +98,7 @@ for (item in predicted_jobs) {
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
             <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
-@[  if os_name in ['windows', 'windows-2025']]@
+@[  if os_name in ['windows']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
                 <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
