@@ -53,6 +53,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 RUN apt-get update && apt-get install --no-install-recommends -y python3-lark python3-opencv
 
 # Install build and test dependencies of ROS 2 packages.
+# pytest-asyncio 0.18.1 on Ubuntu 22.04 is incompatible with Humble CI (-Werror).
+# Keep it disabled for Humble to avoid breaking pytest initialization.
 RUN apt-get update && apt-get install --no-install-recommends -y \
   $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo cargo; fi) \
   clang-format \
@@ -124,7 +126,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
-  python3-pytest-asyncio \
+  $(if test ${ROS_DISTRO} != humble; then echo python3-pytest-asyncio; fi) \
   python3-pytest-cov \
   python3-pytest-mock \
   python3-pytest-repeat \
