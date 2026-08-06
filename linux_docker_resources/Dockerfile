@@ -124,7 +124,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
-  python3-pytest-asyncio \
+  $(if test ${ROS_DISTRO} != humble; then echo python3-pytest-asyncio; fi) \
   python3-pytest-cov \
   python3-pytest-mock \
   python3-pytest-repeat \
