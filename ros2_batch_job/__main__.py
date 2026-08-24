@@ -284,9 +284,29 @@ def build_and_test(args, job, colcon_script):
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
+    if args.os == 'windows':
+        # Generate Ninja build files rather than letting colcon fall back to
+        # the Visual Studio generator.  CMake only honors
+        # CMAKE_<LANG>_COMPILER_LAUNCHER for the Ninja and Makefile generators
+        # and silently ignores it for Visual Studio, so this is what makes the
+        # compiler cache set up in WindowsBatchJob.pre() take effect at all.
+        cmake_args.append('-GNinja')
+        # try_compile() and try_run() build with CMAKE_TRY_COMPILE_CONFIGURATION,
+        # which defaults to Debug.  On MSVC that means '/Zi /Od /RTC1', and
+        # sccache refuses to cache anything compiled with /Zi.  The feature
+        # checks across a workspace this size are hundreds of compilations that
+        # would otherwise all miss.
+        cmake_args.append('-DCMAKE_TRY_COMPILE_CONFIGURATION=Release')
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    elif args.os == 'windows':
+        # Ninja is a single configuration generator, so the build type has to
+        # be named at configure time.  With the Visual Studio generator colcon
+        # built '--config Release' whenever no CMAKE_BUILD_TYPE was set, so say
+        # Release explicitly and keep producing what this job produced before
+        # the generator changed.
+        cmake_args.append('-DCMAKE_BUILD_TYPE=Release')
     if compile_with_clang:
         cmake_args.extend(
             ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])

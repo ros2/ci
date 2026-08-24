@@ -19,18 +19,77 @@ from ..batch_job import BatchJob
 from ..util import info
 from ..util import warn
 
+# Kept in the image by pixi.toml, see windows_docker_resources/README.md.
+SCCACHE_EXECUTABLE = 'sccache'
+
+# sccache's default is 10G.  A full ROS 2 workspace does not need that much and
+# the agents run several jobs, each with a cache directory of its own.
+DEFAULT_SCCACHE_CACHE_SIZE = '8G'
+
 
 class WindowsBatchJob(BatchJob):
     def __init__(self, args):
         self.args = args
+        self.use_sccache = False
         # The BatchJob constructor will set self.run and self.python
         BatchJob.__init__(self)
 
     def pre(self):
-        pass
+        # The Linux jobs get their compiler cache by putting /usr/lib/ccache on
+        # the PATH, where the symlinks in it masquerade as the compilers.  There
+        # is no equivalent on Windows, so the cache has to be named to CMake
+        # instead, which is what CMAKE_<LANG>_COMPILER_LAUNCHER does.
+        if shutil.which(SCCACHE_EXECUTABLE) is None:
+            warn('sccache does not appear to be installed; '
+                 'building without a compiler cache')
+            return
+        self.use_sccache = True
+
+        # Set as environment variables rather than passed as -D on the colcon
+        # command line, because CMake initializes CMAKE_<LANG>_COMPILER_LAUNCHER
+        # from the environment variable of the same name.  That is what carries
+        # the cache into the vendor packages: ament_vendor and
+        # ExternalProject_Add run nested CMake configures that forward only a
+        # fixed list of variables, and the launchers are not among them, so
+        # with -D alone every vendored package still compiles uncached.
+        os.environ['CMAKE_C_COMPILER_LAUNCHER'] = SCCACHE_EXECUTABLE
+        os.environ['CMAKE_CXX_COMPILER_LAUNCHER'] = SCCACHE_EXECUTABLE
+
+        # CMAKE_<LANG>_COMPILER_LAUNCHER only reaches the C and C++ compilers.
+        # zenoh_cpp_vendor builds several hundred Rust crates through cargo,
+        # so wrap rustc as well.  sccache refuses to cache incremental
+        # compilation, hence CARGO_INCREMENTAL.
+        os.environ['RUSTC_WRAPPER'] = SCCACHE_EXECUTABLE
+        os.environ['CARGO_INCREMENTAL'] = '0'
+
+        # SCCACHE_DIR is pointed at a directory mounted in from the agent by the
+        # job template, so that the cache outlives the container.  When it is
+        # not set -- a local run, say -- sccache falls back to a directory under
+        # the profile and the cache is still worth having within one build.
+        os.environ.setdefault('SCCACHE_CACHE_SIZE', DEFAULT_SCCACHE_CACHE_SIZE)
+        info("Using sccache with SCCACHE_DIR='{0}' and SCCACHE_CACHE_SIZE='{1}'"
+             .format(
+                 os.environ.get('SCCACHE_DIR', '<unset>'),
+                 os.environ['SCCACHE_CACHE_SIZE']))
+
+        # Starts the server, which picks up the environment set above.  Every
+        # sccache the build invokes afterwards talks to this one process.
+        print('# BEGIN SUBSECTION: sccache stats (before)')
+        self.run([SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
+        print('# END SUBSECTION')
 
     def post(self):
-        pass
+        if not self.use_sccache:
+            return
+        print('# BEGIN SUBSECTION: sccache stats (after)')
+        # 'Non-cacheable compilations' and 'Cache errors' are the numbers to
+        # watch here: they are compilations the cache could not help with, and
+        # they are how a silently ineffective cache shows up.
+        self.run([SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
+        # Flush the server so that the cache directory the agent keeps is
+        # consistent for the next build that mounts it.
+        self.run([SCCACHE_EXECUTABLE, '--stop-server'], exit_on_error=False)
+        print('# END SUBSECTION')
 
     def show_env(self):
         # Show the env

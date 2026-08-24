@@ -7,6 +7,27 @@ They are stored separately from this repository so they can be referenced both b
 Thus, in order to update dependencies for this ROS 2 CI, the only required step is to open a PR to the appropriate pixi.toml file on https://github.com/ros2/ros2 .
 Once that PR has been approved and merged, subsequent builds on ROS 2 CI will automatically fetch that dependency file.
 
+## The compiler cache
+
+Windows CI builds generate Ninja build files rather than a Visual Studio solution, and run every MSVC and `rustc` invocation through [sccache](https://github.com/mozilla/sccache).
+Both `ninja` and `sccache` come from the same pixi.toml as everything else.
+
+The two pieces have to go together.
+CMake only honours `CMAKE_<LANG>_COMPILER_LAUNCHER` for the Ninja and Makefile generators; with the Visual Studio generator that colcon otherwise selects on Windows, the setting is accepted and then ignored, and nothing is cached.
+
+`WindowsBatchJob.pre()` exports the settings rather than passing them as `-D` on the colcon command line.
+That is deliberate, and it is what gets the cache to the vendor packages: CMake initialises `CMAKE_<LANG>_COMPILER_LAUNCHER` from the environment variable of the same name, so an exported value also reaches the nested configures that `ament_vendor` and `ExternalProject_Add` run.
+`ament_vendor` forwards a fixed list of variables to its sub-builds and the launchers are not on it, so with `-D` alone every vendored package would still compile uncached.
+
+`CMAKE_<LANG>_COMPILER_LAUNCHER` only covers the C and C++ compilers, so `RUSTC_WRAPPER` is exported too: `zenoh_cpp_vendor` builds several hundred Rust crates through cargo.
+`CARGO_INCREMENTAL` is turned off alongside it because sccache refuses to cache incremental compilation.
+
+The cache lives in a directory on the agent, one per job, which the job template mounts into the container at `C:\sccache`.
+This mirrors the `$HOME/.ccache` mount the Linux jobs use, with the difference that the directory is not shared between jobs: ccache locks its cache and is safe to share, whereas each sccache server keeps its index in memory, so two servers over one directory evict each other's entries.
+
+Each build prints `sccache --show-stats` before and after.
+Watch `Non-cacheable compilations` and `Cache errors` there as well as the hit rate -- a cache that is being bypassed rather than missing shows up in those two counters.
+
 ## Testing locally
 
 Do the following on your own machine or VM.
@@ -34,6 +55,13 @@ set CI_ARGS=--force-ansi-color --workspace-path C:\J\workspace\ci_windows --igno
 Run the docker container with these arguments
 ```
 docker run --isolation=process --rm -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "C:\J\workspace\ci_windows":"C:\ci" ros2_windows_ci
+```
+
+Without `-e SCCACHE_DIR` the compiler cache still runs, but it lives inside the container and is discarded with it.
+To keep it across runs the way CI does, create a directory and mount it as well.
+
+```
+docker run --isolation=process --rm -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -e SCCACHE_DIR=C:\sccache -v "C:\J\sccache\ci_windows":"C:\sccache" -v "C:\J\workspace\ci_windows":"C:\ci" ros2_windows_ci
 ```
 
 rclcpp may not be the correct package to test for your change.
