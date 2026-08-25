@@ -33,6 +33,14 @@ class WindowsBatchJob(BatchJob):
         self.use_sccache = False
         # The BatchJob constructor will set self.run and self.python
         BatchJob.__init__(self)
+        # setup_env() pushes a runner that prefixes every command with
+        # 'env.bat', a generated script that supplies the Visual Studio
+        # environment and exists only in the workspace directory.  post() runs
+        # after run() has left that directory, so a command sent through that
+        # runner fails with "'env.bat' is not recognized".  sccache needs
+        # neither the directory nor the Visual Studio environment, so hold on
+        # to the unwrapped runner and report through that instead.
+        self.run_without_env_bat = self.run
 
     def pre(self):
         # The Linux jobs get their compiler cache by putting /usr/lib/ccache on
@@ -88,7 +96,8 @@ class WindowsBatchJob(BatchJob):
         # Starts the server, which picks up the environment set above.  Every
         # sccache the build invokes afterwards talks to this one process.
         print('# BEGIN SUBSECTION: sccache stats (before)')
-        self.run([SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
+        self.run_without_env_bat(
+            [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
         print('# END SUBSECTION')
 
     def post(self):
@@ -98,10 +107,12 @@ class WindowsBatchJob(BatchJob):
         # 'Non-cacheable compilations' and 'Cache errors' are the numbers to
         # watch here: they are compilations the cache could not help with, and
         # they are how a silently ineffective cache shows up.
-        self.run([SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
+        self.run_without_env_bat(
+            [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
         # Flush the server so that the cache directory the agent keeps is
         # consistent for the next build that mounts it.
-        self.run([SCCACHE_EXECUTABLE, '--stop-server'], exit_on_error=False)
+        self.run_without_env_bat(
+            [SCCACHE_EXECUTABLE, '--stop-server'], exit_on_error=False)
         print('# END SUBSECTION')
 
     def show_env(self):
