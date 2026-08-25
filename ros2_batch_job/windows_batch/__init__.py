@@ -62,14 +62,27 @@ class WindowsBatchJob(BatchJob):
         os.environ['RUSTC_WRAPPER'] = SCCACHE_EXECUTABLE
         os.environ['CARGO_INCREMENTAL'] = '0'
 
-        # SCCACHE_DIR is pointed at a directory mounted in from the agent by the
-        # job template, so that the cache outlives the container.  When it is
-        # not set -- a local run, say -- sccache falls back to a directory under
-        # the profile and the cache is still worth having within one build.
+        # Keep the cache where it will still be there next time.  The working
+        # directory here is the Jenkins workspace, bind mounted into the
+        # container from the agent, and run() below removes only the 'ws'
+        # subdirectory of it, so a sibling directory outlives the container.
+        # Every Jenkins job has a workspace of its own, which is what keeps two
+        # jobs from sharing one cache: ccache locks its cache and is safe to
+        # share, whereas each sccache server holds its index in memory, so two
+        # servers over one directory evict each other's entries.
+        #
+        # Deliberately not a mount added to the job template.  A Jenkins job's
+        # build steps live in Jenkins, written there by create_jenkins_job.py,
+        # so a template change reaches a running job only once someone pushes
+        # the job configuration -- whereas everything here takes effect as soon
+        # as CI_SCRIPTS_BRANCH points at it.  Wiping the workspace clears the
+        # cache, which is a reasonable way to ask for a cold build.
+        os.environ.setdefault(
+            'SCCACHE_DIR', os.path.join(os.getcwd(), '.sccache'))
         os.environ.setdefault('SCCACHE_CACHE_SIZE', DEFAULT_SCCACHE_CACHE_SIZE)
         info("Using sccache with SCCACHE_DIR='{0}' and SCCACHE_CACHE_SIZE='{1}'"
              .format(
-                 os.environ.get('SCCACHE_DIR', '<unset>'),
+                 os.environ['SCCACHE_DIR'],
                  os.environ['SCCACHE_CACHE_SIZE']))
 
         # Starts the server, which picks up the environment set above.  Every

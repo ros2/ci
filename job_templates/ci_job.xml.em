@@ -317,20 +317,6 @@ if "!CI_TEST_ARGS!" NEQ "" (
 echo Using args: !CI_ARGS!
 echo "# END SECTION"
 
-echo "# BEGIN SECTION: Prepare the compiler cache"
-rem Keep the sccache directory on the agent so that the cache outlives the
-rem container, the same way the Linux jobs keep $HOME/.ccache.
-rem
-rem Per job rather than one directory shared by all of them: ccache locks its
-rem cache and is safe to share, but each sccache server holds its index in
-rem memory, so two servers over one directory evict each other's entries and
-rem the size accounting drifts.  Jobs also do not have much to share -- a
-rem Debug job and a Release job hash differently on every compilation anyway.
-set "SCCACHE_HOST_DIR=%USERPROFILE%\.sccache\%JOB_NAME%"
-if not exist "!SCCACHE_HOST_DIR!" mkdir "!SCCACHE_HOST_DIR!"
-echo Compiler cache directory on the agent: !SCCACHE_HOST_DIR!
-echo "# END SECTION"
-
 echo "# BEGIN SECTION: Run DockerFile"
 rem Kill any running docker containers, which may be leftover from aborted jobs
 powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q)}"
@@ -338,7 +324,7 @@ powershell -Command "if ($(docker ps -q) -ne $null) { docker stop $(docker ps -q
 rem If isolated_network doesn't already exist, create it
 set NETWORK_NAME=isolated_network
 docker network inspect %NETWORK_NAME% 2>nul 1>nul || docker network create -d nat -o com.docker.network.bridge.enable_icc=false %NETWORK_NAME%  || exit /b !ERRORLEVEL!
-docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -e SCCACHE_DIR=C:\sccache -v "!SCCACHE_HOST_DIR!":"C:\sccache" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
+docker run --isolation=process --rm --net=%NETWORK_NAME% -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "%cd%":"C:\ci" %CONTAINER_NAME%  || exit /b !ERRORLEVEL!
 echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
