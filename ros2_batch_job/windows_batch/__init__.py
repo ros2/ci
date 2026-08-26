@@ -112,7 +112,49 @@ class WindowsBatchJob(BatchJob):
             [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
         print('# END SUBSECTION')
 
+        self._report_long_path_support()
         self._map_workspace_drive()
+
+    def _report_long_path_support(self):
+        """
+        Report whether long paths are in effect, and turn them on if not.
+
+        The image sets LongPathsEnabled while it is being built, but under
+        the CurrentControlSet branch, which Windows regenerates from
+        ControlSet001 when a container starts -- so the value may not survive
+        into the container that actually runs the build.  That would explain
+        why build 744 could not create a 261 character object path here while
+        the same file compiles at 272 characters on a developer machine with
+        long paths genuinely enabled.
+
+        Print both keys before and after, so the log says plainly which of the
+        two is true rather than leaving it to inference.
+        """
+        key = r'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem'
+        boot_key = r'HKLM:\SYSTEM\ControlSet001\Control\FileSystem'
+        print('# BEGIN SUBSECTION: long path support')
+        report = (
+            "$k='{0}'; $b='{1}';"
+            " foreach ($p in @($k, $b)) {{"
+            "   $v = (Get-ItemProperty -Path $p -Name LongPathsEnabled"
+            "         -ErrorAction SilentlyContinue).LongPathsEnabled;"
+            "   Write-Output ($p + ' LongPathsEnabled=' + $v) }}"
+        ).format(key, boot_key)
+        enable = (
+            "New-ItemProperty -Path '{0}' -Name LongPathsEnabled -Value 1"
+            " -PropertyType DWORD -Force | Out-Null"
+        ).format(key)
+        self.run_without_env_bat(
+            ['powershell', '-NoProfile', '-Command', '"%s"' % report],
+            exit_on_error=False, shell=True)
+        self.run_without_env_bat(
+            ['powershell', '-NoProfile', '-Command', '"%s"' % enable],
+            exit_on_error=False, shell=True)
+        info('re-read after enabling at runtime:')
+        self.run_without_env_bat(
+            ['powershell', '-NoProfile', '-Command', '"%s"' % report],
+            exit_on_error=False, shell=True)
+        print('# END SUBSECTION')
 
     def _map_workspace_drive(self):
         """
