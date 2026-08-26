@@ -53,15 +53,15 @@
   <builders>
   <hudson.tasks.Shell>
     <command>
-      #!/bin/bash
-      REGEX="^(jazzy|humble|kilted)$"
-
-      if [[ "$CI_ROS_DISTRO" =~ $REGEX ]]; then
-        echo "$CI_ROS_DISTRO targets an EOL Windows version. Skipping Windows CI"
-        rm -f trigger_win_build.properties 
-      else
-        echo "Trigger Windows build for $CI_ROS_DISTRO" >> trigger_win_build.properties 
-      fi
+      case "$CI_ROS_DISTRO" in
+          jazzy|humble|kilted)
+            echo "$CI_ROS_DISTRO targets an EOL Windows version. Skipping Windows CI"
+            rm -f trigger_win_build.properties 
+          ;;
+          *)
+            echo "Trigger Windows build for $CI_ROS_DISTRO" >> trigger_win_build.properties 
+          ;;
+      esac
     </command>
     <configuredLocalRules/>
   </hudson.tasks.Shell>
