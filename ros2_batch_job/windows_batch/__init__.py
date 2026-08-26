@@ -26,6 +26,10 @@ SCCACHE_EXECUTABLE = 'sccache'
 # the agents run several jobs, each with a cache directory of its own.
 DEFAULT_SCCACHE_CACHE_SIZE = '8G'
 
+# Drive letter the workspace is mapped onto, to keep object paths inside
+# MAX_PATH.  See _map_workspace_drive().
+WORKSPACE_DRIVE = 'W:'
+
 
 class WindowsBatchJob(BatchJob):
     def __init__(self, args):
@@ -107,6 +111,41 @@ class WindowsBatchJob(BatchJob):
         self.run_without_env_bat(
             [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
         print('# END SUBSECTION')
+
+        self._map_workspace_drive()
+
+    def _map_workspace_drive(self):
+        """
+        Map the workspace onto a drive letter so object paths fit MAX_PATH.
+
+        Windows stops at 260 characters and the Ninja generator spends about
+        37 more of them per object file than the Visual Studio generator did,
+        which is enough to break the longest rosidl generated sources.  Substing
+        the workspace onto a drive root replaces a long 'C:/ci/ws/' style
+        prefix with a two character one,
+        and paired with the one character build space it buys back ten
+        characters -- the difference between 260 and 250 on the file build 744
+        died compiling.
+
+        run() has already created the workspace by the time pre() is called,
+        and has not yet entered it, so redirecting args.workspace here is
+        enough to make everything downstream use the mapped drive.
+        """
+        target = os.path.abspath(self.args.workspace)
+        # A mapping may survive from an aborted job; replacing it is fine
+        # because it would point at this same workspace.
+        self.run_without_env_bat(
+            ['subst', WORKSPACE_DRIVE, '/D'], exit_on_error=False)
+        rc = self.run_without_env_bat(
+            ['subst', WORKSPACE_DRIVE, '"%s"' % target],
+            exit_on_error=False, shell=True)
+        mapped = WORKSPACE_DRIVE + os.sep
+        if rc != 0 or not os.path.isdir(mapped):
+            warn('could not map {0} onto {1}; building from the long path, '
+                 'which may overrun MAX_PATH'.format(target, WORKSPACE_DRIVE))
+            return
+        info('Mapped {0} onto {1}'.format(target, mapped))
+        self.args.workspace = mapped
 
     def post(self):
         if not self.use_sccache:

@@ -83,6 +83,21 @@ colcon_space_defaults = {
     'installspace': 'install',
 }
 
+if os.name == 'nt':
+    # Every character here is spent again on every object file, and Windows
+    # gives us 260 of them.  The Ninja generator writes objects to
+    # 'CMakeFiles/<target>.dir/<hash>/<source>.obj', where the Visual Studio
+    # generator wrote '<target>.dir/<config>/<source>.obj' -- about 37
+    # characters more, which is enough to push the longest rosidl generated
+    # sources over the limit.  Build 744 died on one at exactly 260:
+    #
+    #   fatal error C1083: Cannot open compiler generated file: ''
+    #
+    # The build space is the only one of the three that objects are written
+    # under, so it is the one worth shortening.  See also the drive mapping in
+    # WindowsBatchJob.pre().
+    colcon_space_defaults['buildspace'] = 'b'
+
 def main(sysargv=None):
     args = get_args(sysargv=sysargv)
     blacklisted_package_names = []
