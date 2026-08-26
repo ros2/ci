@@ -56,10 +56,10 @@
       case "$CI_ROS_DISTRO" in
           jazzy|humble|kilted)
             echo "$CI_ROS_DISTRO targets an EOL Windows version. Skipping Windows CI"
-            rm -f trigger_win_build.properties 
+            rm -f "${PWD}/trigger_win_build.properties"
           ;;
           *)
-            echo "Trigger Windows build for $CI_ROS_DISTRO" >> trigger_win_build.properties 
+            echo "Trigger Windows build for $CI_ROS_DISTRO" >> "${PWD}/trigger_win_build.properties"
           ;;
       esac
     </command>
@@ -89,16 +89,33 @@ def predict_build_number(job_name) {
   return build_number
 }
 
+def get_windows_props_file(job_name = "test_ci_launcher") {
+  try {
+    def build = Jenkins.instance.getItemByFullName(job_name)?.lastBuild
+    if (build?.workspace) {
+      return new File(build.workspace.absolutePath, 'trigger_win_build.properties')
+    }
+  } catch (Exception e) {
+    // Fall through to fallback
+  }
+  return new File("/var/lib/jenkins/workspace/${job_name}", 'trigger_win_build.properties')
+}
+
 predicted_jobs = [:]
 @[for os_name, os_data in os_specific_data.items()]@
 predicted_jobs["@(os_name)"] = new Tuple("@(os_data['job_name'])", predict_build_number("@(os_data['job_name'])"))
 @[end for]@
 
+def windowsPropsFile = get_windows_props_file()
+
 for (item in predicted_jobs) {
   name = item.key[0].toUpperCase() + item.key[1..-1].toLowerCase()
   job_name = item.value[0]
   build_number = item.value[1]
-  println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+
+  if(windowsPropsFile.exists() || item.key != "windows" ) {
+    println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+  }
 }
 </script>
           <sandbox>false</sandbox>
