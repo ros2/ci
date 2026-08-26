@@ -76,7 +76,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libzstd-dev \
   $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo nlohmann-json3-dev; fi) \
   procps \
-  nanobind-dev \
+  pybind11-dev \
+  nanobind-dev \ 
   pydocstyle \
   python3-argcomplete \
   python3-colcon-bash \
