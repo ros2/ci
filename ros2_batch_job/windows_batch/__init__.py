@@ -88,6 +88,14 @@ class WindowsBatchJob(BatchJob):
         os.environ.setdefault(
             'SCCACHE_DIR', os.path.join(os.getcwd(), '.sccache'))
         os.environ.setdefault('SCCACHE_CACHE_SIZE', DEFAULT_SCCACHE_CACHE_SIZE)
+        # Keep the server alive for the whole job.  It otherwise exits after
+        # SCCACHE_IDLE_TIMEOUT seconds without a client, 600 by default, and
+        # the statistics live in the server rather than in the cache directory
+        # -- so they are lost with it.  Build 743 spent 18 minutes running
+        # tests after the last compilation and post() then reported zeroes
+        # against a server it had just started itself, even though the build
+        # had gone 3x faster on a warm cache.
+        os.environ.setdefault('SCCACHE_IDLE_TIMEOUT', '0')
         info("Using sccache with SCCACHE_DIR='{0}' and SCCACHE_CACHE_SIZE='{1}'"
              .format(
                  os.environ['SCCACHE_DIR'],
