@@ -133,7 +133,6 @@ choices.remove(cmake_build_type)
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
               <string>2022</string>
-              <string>2019</string>
             </a>
           </choices>
         </hudson.model.ChoiceParameterDefinition>
