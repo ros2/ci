@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>
@@ -51,6 +51,20 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+  <hudson.tasks.Shell>
+    <command>
+      case "$CI_ROS_DISTRO" in
+          jazzy|humble|kilted)
+            echo "$CI_ROS_DISTRO targets an EOL Windows version. Skipping Windows CI"
+            rm -f "${PWD}/trigger_win_build.properties"
+          ;;
+          *)
+            echo "Trigger Windows build for $CI_ROS_DISTRO" >> "${PWD}/trigger_win_build.properties"
+          ;;
+      esac
+    </command>
+    <configuredLocalRules/>
+  </hudson.tasks.Shell>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
         <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
@@ -75,16 +89,33 @@ def predict_build_number(job_name) {
   return build_number
 }
 
+def get_windows_props_file(job_name = "test_ci_launcher") {
+  try {
+    def build = Jenkins.instance.getItemByFullName(job_name)?.lastBuild
+    if (build?.workspace) {
+      return new File(build.workspace.absolutePath, 'trigger_win_build.properties')
+    }
+  } catch (Exception e) {
+    // Fall through to fallback
+  }
+  return new File("/var/lib/jenkins/workspace/${job_name}", 'trigger_win_build.properties')
+}
+
 predicted_jobs = [:]
 @[for os_name, os_data in os_specific_data.items()]@
 predicted_jobs["@(os_name)"] = new Tuple("@(os_data['job_name'])", predict_build_number("@(os_data['job_name'])"))
 @[end for]@
 
+def windowsPropsFile = get_windows_props_file()
+
 for (item in predicted_jobs) {
   name = item.key[0].toUpperCase() + item.key[1..-1].toLowerCase()
   job_name = item.value[0]
   build_number = item.value[1]
-  println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+
+  if(windowsPropsFile.exists() || item.key != "windows" ) {
+    println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+  }
 }
 </script>
           <sandbox>false</sandbox>
@@ -118,6 +149,14 @@ for (item in predicted_jobs) {
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+            <!-- Prevent runs for EOL Windows distros, this matches the shell step above -->
+              <propertiesFile>trigger_win_build.properties</propertiesFile>
+              <failTriggerOnMissing>true</failTriggerOnMissing>
+              <textParamValueOnNewLine>false</textParamValueOnNewLine>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
 @[  end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
