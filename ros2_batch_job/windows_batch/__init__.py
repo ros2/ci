@@ -26,6 +26,28 @@ SCCACHE_EXECUTABLE = 'sccache'
 # the agents run several jobs, each with a cache directory of its own.
 DEFAULT_SCCACHE_CACHE_SIZE = '8G'
 
+# TEMP -- experiment only, not mergeable as written.
+#
+# colcon derives each package's build environment by generating a script that
+# dot-sources every dependency's package script plus all of that package's
+# hooks, then spawning a shell to dump the result.  On Windows that measured
+# 438 ms plus 60.5 ms per dependency, and the median ROS 2 package has 93
+# dependencies, so roughly six seconds elapse before the first compiler runs.
+#
+# This extension derives the same environment from the .dsv descriptors
+# in-process instead, registering at PRIORITY 400 so it outranks
+# colcon-powershell (300) and colcon-core's sh/bat (200) for command
+# environment generation only -- it creates no scripts of its own, and raises
+# SkipExtensionException on any descriptor it cannot evaluate, so colcon falls
+# back to the shell path and the build stays correct either way.
+#
+# Installed from a personal fork because it is not on conda-forge and so
+# cannot come from pixi.toml.  That is exactly why this cannot merge as is.
+# COLCON_DSV_ENV_DISABLE=1 turns it off without uninstalling it.
+COLCON_DSV_ENV_REQUIREMENT = (
+    'colcon-dsv-env @ git+https://github.com/mjcarroll/ros2'
+    '@mjcarroll/colcon-dsv-env#subdirectory=tools/colcon-dsv-env')
+
 # Drive letter the workspace is mapped onto, to keep object paths inside
 # MAX_PATH.  See _map_workspace_drive().
 WORKSPACE_DRIVE = 'W:'
@@ -112,8 +134,24 @@ class WindowsBatchJob(BatchJob):
             [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
         print('# END SUBSECTION')
 
+        self._install_dsv_command_environment()
         self._report_long_path_support()
         self._map_workspace_drive()
+
+    def _install_dsv_command_environment(self):
+        """Install the .dsv command environment extension, if it will."""
+        print('# BEGIN SUBSECTION: colcon .dsv command environment')
+        rc = self.run_without_env_bat(
+            ['"%s"' % self.python, '-m', 'pip', 'install', '--no-deps',
+             '"%s"' % COLCON_DSV_ENV_REQUIREMENT],
+            exit_on_error=False, shell=True)
+        if rc:
+            warn('could not install colcon-dsv-env; colcon will derive each '
+                 'command environment by spawning a shell, as before')
+        else:
+            info('colcon will derive command environments from .dsv '
+                 'descriptors')
+        print('# END SUBSECTION')
 
     def _report_long_path_support(self):
         """
