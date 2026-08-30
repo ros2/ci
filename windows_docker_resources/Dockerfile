@@ -58,9 +58,6 @@ RUN powershell -Command "(Get-Item pixi.toml).LastWriteTime = Get-Date"
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
-# Ensure required colcon-ros-domain-id-coordinator version
-RUN pixi --color never --no-progress -q run "pip install colcon-ros-domain-id-coordinator>=0.2.3"
-
 # Setup environment variables needed for Connext
 ENV ROS_DISTRO=${ROS_DISTRO}
 ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
