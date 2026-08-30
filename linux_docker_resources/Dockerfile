@@ -98,6 +98,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-colcon-ros-domain-id-coordinator \
   python3-colcon-test-result \
   python3-colcon-zsh \
+  python3-colorama \
   python3-coverage \
   python3-cryptography \
   python3-fastjsonschema \

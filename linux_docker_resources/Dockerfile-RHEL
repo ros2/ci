@@ -126,6 +126,7 @@ RUN dnf install \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-babeltrace; fi) \
     python3-cairo \
     python3-catkin_pkg \
+    python3-colorama \
     python3-cryptography \
     python3-devel \
     python3-empy \
