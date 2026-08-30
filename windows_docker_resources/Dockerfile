@@ -59,7 +59,7 @@ RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
 
 # Ensure required colcon-ros-domain-id-coordinator version
-RUN pixi --color never --no-progress -q run "pip install 'colcon-ros-domain-id-coordinator >= 0.2.3'"
+RUN pixi --color never --no-progress -q run "pip install colcon-ros-domain-id-coordinator>=0.2.3"
 
 # Setup environment variables needed for Connext
 ENV ROS_DISTRO=${ROS_DISTRO}
