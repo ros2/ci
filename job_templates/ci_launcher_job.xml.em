@@ -3,7 +3,6 @@
   <actions/>
   <description>
     Launches a build of the CI job for each supported platform with the same set of parameters.
-    Use of RTI Connext will always be disabled on aarch64 jobs.
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -130,16 +129,6 @@ for (item in predicted_jobs) {
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
             <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
-@[  if os_name in ['linux-aarch64']]@
-            <hudson.plugins.parameterizedtrigger.BooleanParameters>
-              <configs>
-                <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
-                  <name>CI_USE_CONNEXTDDS</name>
-                  <value>false</value>
-                </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
-              </configs>
-            </hudson.plugins.parameterizedtrigger.BooleanParameters>
-@[  end if]@
 @[  if os_name in ['windows']]@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
               <configs>
