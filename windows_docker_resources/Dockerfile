@@ -39,9 +39,9 @@ RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.
 
 # Install pixi
 ## Fetch a pinned version
-RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.41.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
+RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.78.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
 ## Check that the checksum matches
-RUN powershell -noexit "if ((get-filehash pixi-x86_64-pc-windows-msvc.zip -Algorithm SHA256).hash -ne '16b1b83f2d6f04a990ef7c6eea2bb45d2e846d122be312ca3f5f1b14be7cdc6d') { exit 1 }"
+RUN powershell -noexit "if ((get-filehash pixi-x86_64-pc-windows-msvc.zip -Algorithm SHA256).hash -ne '0655d6e11aa1dae56067f266d48b3c5815c02ed0031d5f3e96a1b0b81e1555b4') { exit 1 }"
 ## Extract the binary
 RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -DestinationPath (Join-Path $Env:USERPROFILE\.pixi 'bin') -Force
 ## Add the binary to the PATH
@@ -57,9 +57,6 @@ ADD ${PIXI_TOML_URL} pixi.toml
 RUN powershell -Command "(Get-Item pixi.toml).LastWriteTime = Get-Date"
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
-
-# Ensure required colcon-ros-domain-id-coordinator version
-RUN pixi --color never --no-progress -q run "pip install 'colcon-ros-domain-id-coordinator >= 0.2.3'"
 
 # Setup environment variables needed for Connext
 ENV ROS_DISTRO=${ROS_DISTRO}
