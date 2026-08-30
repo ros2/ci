@@ -41,7 +41,7 @@ RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.
 ## Fetch a pinned version
 RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.78.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
 ## Check that the checksum matches
-RUN powershell -noexit "if ((get-filehash pixi-x86_64-pc-windows-msvc.zip -Algorithm SHA256).hash -ne 'CB2C65ECFCD42889516C4331A43A0F74BF5836BECC590B442946583C37BABA85') { exit 1 }"
+RUN powershell -noexit "if ((get-filehash pixi-x86_64-pc-windows-msvc.zip -Algorithm SHA256).hash -ne '0655d6e11aa1dae56067f266d48b3c5815c02ed0031d5f3e96a1b0b81e1555b4') { exit 1 }"
 ## Extract the binary
 RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -DestinationPath (Join-Path $Env:USERPROFILE\.pixi 'bin') -Force
 ## Add the binary to the PATH
