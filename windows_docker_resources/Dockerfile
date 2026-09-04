@@ -34,24 +34,22 @@ RUN powershell -noexit "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\C
 # run_ros2_batch.py will source the appropriate one.
 
 # Install MSVC 2022
-RUN powershell -Command " \
-    Invoke-WebRequest https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools_2022.exe; \
-    Start-Process vs_buildtools_2022.exe -ArgumentList '--quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools' -Wait; \
+RUN powershell -Command " `
+    Invoke-WebRequest https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools_2022.exe; `
+    Start-Process vs_buildtools_2022.exe -ArgumentList '--quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools' -Wait; `
     Remove-Item vs_buildtools_2022.exe -Force"
 
 # Install pixi
 ## Fetch a pinned version
-# Install pixi (Consolidated into a single layer)
-RUN powershell -Command " \
-    Invoke-WebRequest https://github.com/prefix-dev/pixi/releases/download/v0.78.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi.zip; \
-    if ((Get-FileHash pixi.zip -Algorithm SHA256).Hash -ne '0655d6e11aa1dae56067f266d48b3c5815c02ed0031d5f3e96a1b0b81e1555b4') { exit 1 }; \
-    Expand-Archive -Path pixi.zip -DestinationPath (Join-Path $Env:USERPROFILE '.pixi\bin') -Force; \
-    $bindir = Join-Path $Env:USERPROFILE '.pixi\bin'; \
-    $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true); \
-    $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames); \
-    $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String); \
-    Remove-Item pixi.zip -Force" 
-
+RUN powershell -Command " `
+    Invoke-WebRequest https://github.com/prefix-dev/pixi/releases/download/v0.78.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi.zip; `
+    if ((Get-FileHash pixi.zip -Algorithm SHA256).Hash -ne '0655d6e11aa1dae56067f266d48b3c5815c02ed0031d5f3e96a1b0b81e1555b4') { exit 1 }; `
+    Expand-Archive -Path pixi.zip -DestinationPath (Join-Path $Env:USERPROFILE '.pixi\bin') -Force; `
+    $bindir = Join-Path $Env:USERPROFILE '.pixi\bin'; `
+    $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true); `
+    $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames); `
+    $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String); `
+    Remove-Item pixi.zip -Force"
 
 # Setup environment variables needed for Connext
 ENV ROS_DISTRO=${ROS_DISTRO}
