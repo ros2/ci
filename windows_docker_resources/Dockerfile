@@ -34,18 +34,33 @@ RUN powershell -noexit "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\C
 # run_ros2_batch.py will source the appropriate one.
 
 # Install MSVC 2022
-RUN powershell -noexit irm https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools_2022.exe
-RUN vs_buildtools_2022.exe --quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools
+RUN powershell -Command " \
+    Invoke-WebRequest https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools_2022.exe; \
+    Start-Process vs_buildtools_2022.exe -ArgumentList '--quiet --wait --norestart --add Microsoft.Component.MSBuild --add Microsoft.Net.Component.4.6.1.TargetingPack --add Microsoft.Net.Component.4.8.SDK --add Microsoft.VisualStudio.Component.CoreBuildTools --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.TextTemplating --add Microsoft.VisualStudio.Component.VC.CLI.Support --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.VC.CoreIde --add Microsoft.VisualStudio.Component.VC.Redist.14.Latest --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools' -Wait; \
+    Remove-Item vs_buildtools_2022.exe -Force"
 
 # Install pixi
 ## Fetch a pinned version
-RUN powershell -noexit irm https://github.com/prefix-dev/pixi/releases/download/v0.78.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi-x86_64-pc-windows-msvc.zip
-## Check that the checksum matches
-RUN powershell -noexit "if ((get-filehash pixi-x86_64-pc-windows-msvc.zip -Algorithm SHA256).hash -ne '0655d6e11aa1dae56067f266d48b3c5815c02ed0031d5f3e96a1b0b81e1555b4') { exit 1 }"
-## Extract the binary
-RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -DestinationPath (Join-Path $Env:USERPROFILE\.pixi 'bin') -Force
-## Add the binary to the PATH
-RUN powershell -noexit "$bindir = Join-Path $Env:USERPROFILE\.pixi 'bin' ; $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true) ; $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) ; $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String)"
+# Install pixi (Consolidated into a single layer)
+RUN powershell -Command " \
+    Invoke-WebRequest https://github.com/prefix-dev/pixi/releases/download/v0.78.0/pixi-x86_64-pc-windows-msvc.zip -OutFile pixi.zip; \
+    if ((Get-FileHash pixi.zip -Algorithm SHA256).Hash -ne '0655d6e11aa1dae56067f266d48b3c5815c02ed0031d5f3e96a1b0b81e1555b4') { exit 1 }; \
+    Expand-Archive -Path pixi.zip -DestinationPath (Join-Path $Env:USERPROFILE '.pixi\bin') -Force; \
+    $bindir = Join-Path $Env:USERPROFILE '.pixi\bin'; \
+    $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true); \
+    $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames); \
+    $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String); \
+    Remove-Item pixi.zip -Force" 
+
+
+# Setup environment variables needed for Connext
+ENV ROS_DISTRO=${ROS_DISTRO}
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+
+RUN --mount=type=bind,source=rticonnextdds-src,target=C:\TEMP\rticonnextdds-src `
+    --mount=type=bind,source=rti_web_binaries_install_script.ps1,target=C:\TEMP\rti_web_binaries_install_script.ps1 `
+    --mount=type=bind,source=rticonnextdds-license\rti_license.dat,target=C:\connext\rti_license.dat `
+    powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
 # Automatic invalidation once every day.
 RUN echo "@today_str"
@@ -55,19 +70,10 @@ WORKDIR C:\pixi_ws
 RUN powershell -Command "if (-not $env:PIXI_TOML_URL.StartsWith('https://')) { Write-Error 'PIXI_TOML_URL must use HTTPS protocol'; exit 1 }"
 ADD ${PIXI_TOML_URL} pixi.toml
 RUN powershell -Command "(Get-Item pixi.toml).LastWriteTime = Get-Date"
-RUN pixi --color never --no-progress -q install
+
+RUN --mount=type=cache,target=C:\pixi_cache pixi --color never --no-progress -q install
+
 RUN pixi --color never --no-progress -q list
-
-# Setup environment variables needed for Connext
-ENV ROS_DISTRO=${ROS_DISTRO}
-ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-
-RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
-COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
-COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
-COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script.ps1
-
-RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
