@@ -56,6 +56,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-lark py
 RUN apt-get update && apt-get install --no-install-recommends -y \
   $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo cargo; fi) \
   clang-format \
+  clang-tidy \
   cppcheck \
   git \
   libbenchmark-dev \
