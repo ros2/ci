@@ -108,6 +108,16 @@ for (item in predicted_jobs) {
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
 @[  end if]@
+@[  if os_data['use_connext_debs_default'] == 'true']@
+            <hudson.plugins.parameterizedtrigger.BooleanParameters>
+              <configs>
+                <hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
+                  <name>CI_USE_CONNEXT_DEBS</name>
+                  <value>@(os_data['use_connext_debs_default'])</value>
+                </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
+              </configs>
+            </hudson.plugins.parameterizedtrigger.BooleanParameters>
+@[  end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
           <condition>SUCCESS</condition>
