@@ -291,6 +291,12 @@ def build_and_test(args, job, colcon_script):
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
     if args.os == 'windows':
         cmake_args.append('-GNinja')
+        # try_compile() and try_run() build with
+        # CMAKE_TRY_COMPILE_CONFIGURATION, which defaults to Debug.  On MSVC
+        # that means '/Zi /Od /RTC1', and sccache refuses to cache anything
+        # compiled with /Zi.  The feature checks across a workspace this size
+        # are hundreds of compilations that would otherwise all miss.
+        cmake_args.append('-DCMAKE_TRY_COMPILE_CONFIGURATION=Release')
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
