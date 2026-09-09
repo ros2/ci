@@ -7,6 +7,11 @@ They are stored separately from this repository so they can be referenced both b
 Thus, in order to update dependencies for this ROS 2 CI, the only required step is to open a PR to the appropriate pixi.toml file on https://github.com/ros2/ros2 .
 Once that PR has been approved and merged, subsequent builds on ROS 2 CI will automatically fetch that dependency file.
 
+## Ninja
+
+Windows CI builds with Ninja, installed from the `buildfarm` pixi environment (hence `-e buildfarm` in the Dockerfile).
+To keep object paths under `MAX_PATH`, the workspace is `subst`ed onto `W:`.
+
 ## Testing locally
 
 Do the following on your own machine or VM.
