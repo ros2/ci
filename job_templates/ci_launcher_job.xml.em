@@ -51,9 +51,9 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@537.v741a_5a_f1b_581">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
+        <script plugin="script-security@@1415.v9a_f9b_3a_c253d">
           <script>// PREDICT TRIGGERED BUILDS AND GENERATE MARKDOWN FOR BUILD STATUS
 
 import jenkins.model.Jenkins
