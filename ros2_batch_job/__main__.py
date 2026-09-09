@@ -284,9 +284,14 @@ def build_and_test(args, job, colcon_script):
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
+    if args.os == 'windows':
+        cmake_args.append('-GNinja')
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    elif args.os == 'windows':
+        # Ninja is single configuration, so name the build type here.
+        cmake_args.append('-DCMAKE_BUILD_TYPE=Release')
     if compile_with_clang:
         cmake_args.extend(
             ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])
