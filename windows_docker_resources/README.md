@@ -21,6 +21,36 @@ Ninja writes object files to `CMakeFiles/<target>.dir/<hash>/<source>.obj`, wher
 The batch job therefore always shortens the build space to `b` and `subst`s the workspace onto `W:`, rather than relying on long path support being enabled.
 If the drive mapping fails the build still runs from the long path, with a warning.
 
+## The compiler cache
+
+Every MSVC and `rustc` invocation runs through [sccache](https://github.com/mozilla/sccache), which comes from the same `buildfarm` environment in pixi.toml as `ninja`.
+
+The cache depends on the Ninja generator described above.
+CMake honours `CMAKE_<LANG>_COMPILER_LAUNCHER` only for the Ninja and Makefile generators; under the Visual Studio generator the setting is accepted and then ignored, and nothing is cached.
+That is also why the packaging jobs get no cache: they stay on the Visual Studio generator, and they build RelWithDebInfo, which on MSVC means `/Zi` -- which sccache will not cache in any case.
+
+`WindowsBatchJob._setup_compiler_cache()` exports the settings rather than passing them as `-D` on the colcon command line.
+That is deliberate, and it is what gets the cache to the vendor packages: CMake initialises `CMAKE_<LANG>_COMPILER_LAUNCHER` from the environment variable of the same name, so an exported value also reaches the nested configures that `ament_vendor` and `ExternalProject_Add` run.
+`ament_vendor` forwards a fixed allow-list of variables to its sub-builds through a `-C` initial-cache file and the launchers are not on it, so with `-D` alone every vendored package would still compile uncached.
+
+`CMAKE_<LANG>_COMPILER_LAUNCHER` only covers the C and C++ compilers, so `RUSTC_WRAPPER` is exported too: `zenoh_cpp_vendor` builds several hundred Rust crates through cargo.
+`CARGO_INCREMENTAL` is turned off alongside it because sccache refuses to cache incremental compilation.
+
+`CMAKE_TRY_COMPILE_CONFIGURATION` is set to Release because `try_compile()` otherwise builds Debug, which on MSVC is `/Zi /Od /RTC1`; the feature checks across a workspace this size are hundreds of compilations that would all miss.
+
+The cache lives in `.sccache` beside the workspace, which is to say inside the Jenkins workspace that is bind mounted into the container.
+The batch job removes only the `ws` subdirectory of that on each build, so the cache survives from one build to the next, and since every Jenkins job has a workspace of its own, no two jobs share one.
+That last part matters: ccache locks its cache and is safe to share, whereas each sccache server keeps its index in memory, so two servers over one directory evict each other's entries.
+
+Wiping the workspace therefore also drops the cache, which is a reasonable way to ask for a cold build.
+
+Note that a mount added to `job_templates/ci_job.xml.em` would *not* be enough on its own.
+A Jenkins job's build steps live in Jenkins, put there by `create_jenkins_job.py`, so a change to the template only reaches a running job once someone pushes the job configuration.
+Anything under `ros2_batch_job/` takes effect as soon as `CI_SCRIPTS_BRANCH` points at it, which is why the cache directory is chosen there.
+
+Each build prints `sccache --show-stats` before and after.
+Watch `Non-cacheable compilations` and `Cache errors` there as well as the hit rate -- a cache that is being bypassed rather than missing shows up in those two counters.
+
 ## Testing locally
 
 Do the following on your own machine or VM.
@@ -49,6 +79,9 @@ Run the docker container with these arguments
 ```
 docker run --isolation=process --rm -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "C:\J\workspace\ci_windows":"C:\ci" ros2_windows_ci
 ```
+
+The compiler cache needs nothing extra here: it defaults to .sccache inside the mounted directory, so it persists across runs for as long as that directory does.
+Set -e SCCACHE_DIR to override it, and -e SCCACHE_CACHE_SIZE to change the 8G ceiling.
 
 rclcpp may not be the correct package to test for your change.
 Choose a package to test up to that adequately ensures your change works as intended.
