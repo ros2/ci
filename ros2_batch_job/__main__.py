@@ -211,6 +211,9 @@ def get_args(sysargv=None):
             raise Exception('Argument {} and "--white-space-in" cannot both be used'.format(name))
         elif space_directory is None:
             space_directory = colcon_space_defaults[name]
+            if name == 'buildspace' and os.name == 'nt':
+                # Keep Ninja's longer object paths under MAX_PATH.
+                space_directory = 'b'
             if name in args.white_space_in:
                 space_directory += ' space'
             setattr(args, name, space_directory)
@@ -284,9 +287,14 @@ def build_and_test(args, job, colcon_script):
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
+    if args.os == 'windows':
+        cmake_args.append('-GNinja')
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    elif args.os == 'windows':
+        # Ninja is single configuration, so name the build type here.
+        cmake_args.append('-DCMAKE_BUILD_TYPE=Release')
     if compile_with_clang:
         cmake_args.extend(
             ['-DCMAKE_C_COMPILER=/usr/bin/clang', '-DCMAKE_CXX_COMPILER=/usr/bin/clang++'])
