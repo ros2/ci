@@ -55,8 +55,11 @@ WORKDIR C:\pixi_ws
 RUN powershell -Command "if (-not $env:PIXI_TOML_URL.StartsWith('https://')) { Write-Error 'PIXI_TOML_URL must use HTTPS protocol'; exit 1 }"
 ADD ${PIXI_TOML_URL} pixi.toml
 RUN powershell -Command "(Get-Item pixi.toml).LastWriteTime = Get-Date"
-RUN pixi --color never --no-progress -q install
-RUN pixi --color never --no-progress -q list
+# The buildfarm environment is the default one plus the build tooling the
+# jobs need -- ninja, and the compiler cache that rides on it.  Installing
+# only that environment keeps the default one out of the image entirely.
+RUN pixi --color never --no-progress -q install -e buildfarm
+RUN pixi --color never --no-progress -q list -e buildfarm
 
 # Setup environment variables needed for Connext
 ENV ROS_DISTRO=${ROS_DISTRO}
@@ -71,4 +74,4 @@ RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_inst
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
-CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen python run_ros2_batch.py %CI_ARGS%"
+CMD "pixi run --manifest-path C:\pixi_ws\pixi.toml --frozen -e buildfarm python run_ros2_batch.py %CI_ARGS%"
