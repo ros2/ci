@@ -45,9 +45,13 @@ def find_template_files(root, suffix):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Update plugin="name@version" references in empy templates to match '
-                    'the versions declared in a plugins.rb-style attributes file.')
+                    'the versions declared in a plugins.rb-style attributes file. '
+                    'The plugins.rb versions can be regenerated from a live Jenkins server with '
+                    'https://github.com/osrf/chef-osrf/blob/latest/scripts/jenkins_plugins.rb '
+                    '(./scripts/jenkins_plugins.rb <Server> <User> <Password/Token>).')
     parser.add_argument('plugins_file', help='Path to a plugins.rb attributes file '
-                                              '(e.g. chef-osrf/cookbooks/ros2ci/attributes/plugins.rb)')
+                                              '(e.g. https://github.com/osrf/chef-osrf/blob/latest/'
+                                              'cookbooks/ros2ci/attributes/plugins.rb)')
     parser.add_argument('templates_dir', nargs='?', default='job_templates',
                          help='Directory to search recursively (default: job_templates)')
     parser.add_argument('--suffix', default='.xml.em', help='File suffix to match (default: .xml.em)')
