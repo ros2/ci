@@ -1,4 +1,4 @@
-<io.jenkins.plugins.coverage.metrics.steps.CoverageRecorder plugin="coverage@@1.16.1">
+<io.jenkins.plugins.coverage.metrics.steps.CoverageRecorder plugin="coverage@@3.3358.v9487dde48783">
 <tools class="java.util.ImmutableCollections$List12" resolves-to="java.util.CollSer" serialization="custom">
 <java.util.CollSer>
 <default>
@@ -6,7 +6,7 @@
 </default>
 <int>1</int>
 <io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
-<jenkins plugin="plugin-util-api@@5.1.0"/>
+<jenkins plugin="plugin-util-api@@7.1341.v039f146993d9"/>
 <pattern>ws/build*/**/*coverage.xml</pattern>
 <parser>COBERTURA</parser>
 </io.jenkins.plugins.coverage.metrics.steps.CoverageTool>
@@ -55,7 +55,7 @@
 <tag>2</tag>	
 </default>
 <int>1</int>
-<io.jenkins.plugins.prism.SourceCodeDirectory plugin="prism-api@@1.29.0-18">
+<io.jenkins.plugins.prism.SourceCodeDirectory plugin="prism-api@@1.30.0-741.v034eb_0b_0a_a_fa_">
 <path>ws</path>
 </io.jenkins.plugins.prism.SourceCodeDirectory>
 </java.util.CollSer>
