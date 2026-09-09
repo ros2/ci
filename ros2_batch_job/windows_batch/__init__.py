@@ -19,6 +19,9 @@ from ..batch_job import BatchJob
 from ..util import info
 from ..util import warn
 
+# Drive letter the workspace is mapped onto.
+WORKSPACE_DRIVE = 'W:'
+
 
 class WindowsBatchJob(BatchJob):
     def __init__(self, args):
@@ -27,7 +30,22 @@ class WindowsBatchJob(BatchJob):
         BatchJob.__init__(self)
 
     def pre(self):
-        pass
+        self._map_workspace_drive()
+
+    def _map_workspace_drive(self):
+        """Map the workspace onto a drive letter, to shorten object paths."""
+        target = os.path.abspath(self.args.workspace)
+        self.run(['subst', WORKSPACE_DRIVE, '/D'], exit_on_error=False)
+        rc = self.run(
+            ['subst', WORKSPACE_DRIVE, '"%s"' % target],
+            exit_on_error=False, shell=True)
+        mapped = WORKSPACE_DRIVE + os.sep
+        if rc != 0 or not os.path.isdir(mapped):
+            warn('could not map {0} onto {1}; building from the long path, '
+                 'which may overrun MAX_PATH'.format(target, WORKSPACE_DRIVE))
+            return
+        info('Mapped {0} onto {1}'.format(target, mapped))
+        self.args.workspace = mapped
 
     def post(self):
         pass

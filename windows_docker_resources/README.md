@@ -7,6 +7,20 @@ They are stored separately from this repository so they can be referenced both b
 Thus, in order to update dependencies for this ROS 2 CI, the only required step is to open a PR to the appropriate pixi.toml file on https://github.com/ros2/ros2 .
 Once that PR has been approved and merged, subsequent builds on ROS 2 CI will automatically fetch that dependency file.
 
+## The Ninja generator
+
+Windows CI builds generate Ninja build files rather than a Visual Studio solution.
+The `ninja` binary comes from the same pixi.toml as everything else, out of the `buildfarm` environment, which is why the image installs and runs `-e buildfarm` rather than the default one.
+
+Ninja is a single configuration generator, so the build type is chosen at configure time.
+Jobs that pass `--cmake-build-type` are unaffected; the rest now say `Release` explicitly, which is what colcon was already building with `--config Release` under the Visual Studio generator.
+
+The packaging jobs are deliberately left on the Visual Studio generator.
+
+Ninja writes object files to `CMakeFiles/<target>.dir/<hash>/<source>.obj`, where the Visual Studio generator wrote `<target>.dir/<config>/<source>.obj` -- roughly 37 characters more per object, which is enough to push the longest rosidl generated sources past `MAX_PATH`.
+The batch job therefore always shortens the build space to `b` and `subst`s the workspace onto `W:`, rather than relying on long path support being enabled.
+If the drive mapping fails the build still runs from the long path, with a warning.
+
 ## Testing locally
 
 Do the following on your own machine or VM.
