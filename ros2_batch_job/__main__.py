@@ -286,6 +286,8 @@ def build_and_test(args, job, colcon_script):
     cmake_args = ['-DBUILD_TESTING=ON', '--no-warn-unused-cli']
     if args.os == 'windows':
         cmake_args.append('-GNinja')
+        # try_compile() defaults to Debug, and sccache can't cache its /Zi.
+        cmake_args.append('-DCMAKE_TRY_COMPILE_CONFIGURATION=Release')
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)

@@ -19,17 +19,52 @@ from ..batch_job import BatchJob
 from ..util import info
 from ..util import warn
 
+SCCACHE_EXECUTABLE = 'sccache'
+DEFAULT_SCCACHE_CACHE_SIZE = '8G'
 WORKSPACE_DRIVE = 'W:'
 
 
 class WindowsBatchJob(BatchJob):
     def __init__(self, args):
         self.args = args
+        self.use_sccache = False
         # The BatchJob constructor will set self.run and self.python
         BatchJob.__init__(self)
+        # post() runs outside the workspace, where env.bat does not exist.
+        self.run_without_env_bat = self.run
 
     def pre(self):
+        self._setup_compiler_cache()
         self._map_workspace_drive()
+
+    def _setup_compiler_cache(self):
+        if shutil.which(SCCACHE_EXECUTABLE) is None:
+            warn('sccache does not appear to be installed; '
+                 'building without a compiler cache')
+            return
+        self.use_sccache = True
+
+        # Exported rather than passed as -D, so ament_vendor sub-builds see them.
+        os.environ['CMAKE_C_COMPILER_LAUNCHER'] = SCCACHE_EXECUTABLE
+        os.environ['CMAKE_CXX_COMPILER_LAUNCHER'] = SCCACHE_EXECUTABLE
+        os.environ['RUSTC_WRAPPER'] = SCCACHE_EXECUTABLE
+        os.environ['CARGO_INCREMENTAL'] = '0'
+
+        # The Jenkins workspace outlives the container; run() only removes 'ws'.
+        os.environ.setdefault(
+            'SCCACHE_DIR', os.path.join(os.getcwd(), '.sccache'))
+        os.environ.setdefault('SCCACHE_CACHE_SIZE', DEFAULT_SCCACHE_CACHE_SIZE)
+        # Keep the server, and its stats, alive until post().
+        os.environ.setdefault('SCCACHE_IDLE_TIMEOUT', '0')
+        info("Using sccache with SCCACHE_DIR='{0}' and SCCACHE_CACHE_SIZE='{1}'"
+             .format(
+                 os.environ['SCCACHE_DIR'],
+                 os.environ['SCCACHE_CACHE_SIZE']))
+
+        print('# BEGIN SUBSECTION: sccache stats (before)')
+        self.run_without_env_bat(
+            [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
+        print('# END SUBSECTION')
 
     def _map_workspace_drive(self):
         """Map the workspace onto a drive letter, to shorten object paths."""
@@ -47,7 +82,14 @@ class WindowsBatchJob(BatchJob):
         self.args.workspace = mapped
 
     def post(self):
-        pass
+        if not self.use_sccache:
+            return
+        print('# BEGIN SUBSECTION: sccache stats (after)')
+        self.run_without_env_bat(
+            [SCCACHE_EXECUTABLE, '--show-stats'], exit_on_error=False)
+        self.run_without_env_bat(
+            [SCCACHE_EXECUTABLE, '--stop-server'], exit_on_error=False)
+        print('# END SUBSECTION')
 
     def show_env(self):
         # Show the env
