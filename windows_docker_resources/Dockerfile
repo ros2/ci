@@ -21,10 +21,6 @@ ARG ROS_DISTRO=rolling
 # Use --isolation=process if you need to build in a mounted volume
 FROM mcr.microsoft.com/windows/server:$WINDOWS_RELEASE_VERSION
 
-# Get ROS distro value and set pixi.toml url
-ARG ROS_DISTRO
-ARG PIXI_TOML_URL=https://raw.githubusercontent.com/ros2/ros2/refs/heads/${ROS_DISTRO}/pixi.toml
-
 # Enable long paths on folders
 RUN powershell -noexit "New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force"
 
@@ -47,27 +43,29 @@ RUN powershell -noexit Expand-Archive -Path pixi-x86_64-pc-windows-msvc.zip -Des
 ## Add the binary to the PATH
 RUN powershell -noexit "$bindir = Join-Path $Env:USERPROFILE\.pixi 'bin' ; $pathkey = (Get-Item -Path 'HKCU:').OpenSubKey('Environment', $true) ; $oldpath = $pathkey.GetValue('PATH', $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) ; $pathkey.SetValue('PATH', \"$bindir;$oldpath\", [Microsoft.Win32.RegistryValueKind]::String)"
 
-# Automatic invalidation once every day.
+ARG ROS_DISTRO
+
+# Setup environment variables needed for Connext
+ENV ROS_DISTRO=${ROS_DISTRO}
+ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
+
+COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
+COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
+COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script.ps1
+
+RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
+
+# Automatic invalidation of the pixi environment once every day.
 RUN echo "@today_str"
 
 # Install dependencies via pixi
+ARG PIXI_TOML_URL=https://raw.githubusercontent.com/ros2/ros2/refs/heads/${ROS_DISTRO}/pixi.toml
 WORKDIR C:\pixi_ws
 RUN powershell -Command "if (-not $env:PIXI_TOML_URL.StartsWith('https://')) { Write-Error 'PIXI_TOML_URL must use HTTPS protocol'; exit 1 }"
 ADD ${PIXI_TOML_URL} pixi.toml
 RUN powershell -Command "(Get-Item pixi.toml).LastWriteTime = Get-Date"
 RUN pixi --color never --no-progress -q install
 RUN pixi --color never --no-progress -q list
-
-# Setup environment variables needed for Connext
-ENV ROS_DISTRO=${ROS_DISTRO}
-ENV RTI_LICENSE_FILE C:\connext\rti_license.dat
-
-RUN IF NOT EXIST "C:\TEMP" mkdir C:\TEMP
-COPY rticonnextdds-src\ C:\TEMP\rticonnextdds-src
-COPY rticonnextdds-license\rti_license.dat C:\connext\rti_license.dat
-COPY rti_web_binaries_install_script.ps1 C:\TEMP\rti_web_binaries_install_script.ps1
-
-RUN powershell -ExecutionPolicy Bypass -Command "& C:\TEMP\rti_web_binaries_install_script.ps1 -RosDistro $env:ROS_DISTRO"
 
 WORKDIR C:\ci
 # Note that this *must* be in shell form, not exec form, so Docker on Windows appropriately substitutes %CI_ARGS%
