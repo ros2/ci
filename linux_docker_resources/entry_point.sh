@@ -175,10 +175,12 @@ install_connextdds() {
             fi
             export CONNEXTDDS_DIR=/home/rosbuild/rti_connext_dds-${CONNEXT_DISPLAY_VERSION}
             export RTI_OPENSSL_LIBS=$CONNEXTDDS_DIR/resource/app/lib/${CONNEXT_BASE_ARCH}
-            mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
-            export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
             ;;
     esac
+
+    # Use a proper license for testing.
+    mv /tmp/rti_license.dat /home/rosbuild/rti_license.dat
+    export RTI_LICENSE_FILE=/home/rosbuild/rti_license.dat
     return 0
 }
 
