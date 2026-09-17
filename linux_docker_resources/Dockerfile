@@ -56,6 +56,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3-lark py
 RUN apt-get update && apt-get install --no-install-recommends -y \
   $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo cargo; fi) \
   clang-format \
+  clang-tidy \
   cppcheck \
   git \
   libbenchmark-dev \
@@ -98,6 +99,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-colcon-ros-domain-id-coordinator \
   python3-colcon-test-result \
   python3-colcon-zsh \
+  python3-colorama \
   python3-coverage \
   python3-cryptography \
   python3-fastjsonschema \
@@ -124,7 +126,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   python3-pyflakes \
   python3-pykdl \
   python3-pyparsing \
-  python3-pytest-asyncio \
+  $(if test ${ROS_DISTRO} != humble; then echo python3-pytest-asyncio; fi) \
   python3-pytest-cov \
   python3-pytest-mock \
   python3-pytest-repeat \

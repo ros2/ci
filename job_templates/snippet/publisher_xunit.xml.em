@@ -1,4 +1,4 @@
-    <xunit plugin="xunit@@3.1.5">
+    <xunit plugin="xunit@@3.1.7">
       <types>
 @[for prefix in ['ws/build', 'work space/build space']]@
         <CTestType>
