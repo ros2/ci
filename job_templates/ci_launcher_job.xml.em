@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>
@@ -13,7 +13,7 @@
     num_to_keep=build_discard['num_to_keep'],
 ))@
 @[end if]@
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@332.va_1ee476d8f6d">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@@338.va_0a_b_50e29397">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -50,9 +50,9 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@457.v99900cb_85593">
+    <hudson.plugins.groovy.SystemGroovy plugin="groovy@@537.v741a_5a_f1b_581">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
-        <script plugin="script-security@@1369.v9b_98a_4e95b_2d">
+        <script plugin="script-security@@1415.v9a_f9b_3a_c253d">
           <script>// PREDICT TRIGGERED BUILDS AND GENERATE MARKDOWN FOR BUILD STATUS
 
 import jenkins.model.Jenkins
@@ -83,7 +83,10 @@ for (item in predicted_jobs) {
   name = item.key[0].toUpperCase() + item.key[1..-1].toLowerCase()
   job_name = item.value[0]
   build_number = item.value[1]
-  println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+
+  if(windowsPropsFile.exists() || item.key != "windows" ) {
+    println "* ${name} [![Build Status](http://ci.ros2.org/buildStatus/icon?job=${job_name}&amp;build=${build_number})](http://ci.ros2.org/job/${job_name}/${build_number}/)"
+  }
 }
 </script>
           <sandbox>false</sandbox>
@@ -93,7 +96,7 @@ for (item in predicted_jobs) {
   </builders>
   <publishers>
 @[for os_name, os_data in os_specific_data.items()]@
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@2.35.2">
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@@893.va_383a_9b_a_4c11">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
