@@ -42,6 +42,38 @@
 @[else]@
 @{assert False, 'Unknown os_name: ' + os_name}@
 @[end if]@
+    <io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+        <id></id>
+        <name></name>
+        <pattern>*/log/test_*/*/stderr.log</pattern>
+        <reportEncoding></reportEncoding>
+        <skipSymbolicLinks>false</skipSymbolicLinks>
+        <parserId>foonathan-memory-leaks</parserId>
+    </io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+    <io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+        <id></id>
+        <name></name>
+        <pattern>*/log/test_*/*/stderr.log</pattern>
+        <reportEncoding></reportEncoding>
+        <skipSymbolicLinks>false</skipSymbolicLinks>
+        <parserId>pytest-warnings</parserId>
+    </io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+    <io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+        <id></id>
+        <name></name>
+        <pattern>*/log/test_*/*/stderr.log</pattern>
+        <reportEncoding></reportEncoding>
+        <skipSymbolicLinks>false</skipSymbolicLinks>
+        <parserId>pytest-warnings-with-location</parserId>
+    </io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+    <io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
+        <id></id>
+        <name></name>
+        <pattern>*/log/test_*/*/stderr.log</pattern>
+        <reportEncoding></reportEncoding>
+        <skipSymbolicLinks>false</skipSymbolicLinks>
+        <parserId>python-deprecation-warnings</parserId>
+    </io.jenkins.plugins.analysis.warnings.groovy.GroovyScript>
   </analysisTools>
   <sourceCodeEncoding></sourceCodeEncoding>
   <sourceDirectory></sourceDirectory>
