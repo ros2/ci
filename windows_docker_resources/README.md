@@ -12,6 +12,12 @@ Once that PR has been approved and merged, subsequent builds on ROS 2 CI will au
 Windows CI builds with Ninja, installed from the `buildfarm` pixi environment (hence `-e buildfarm` in the Dockerfile).
 To keep object paths under `MAX_PATH`, the workspace is `subst`ed onto `W:`.
 
+## Compiler cache
+
+Compilations go through sccache, also from the `buildfarm` environment; see `WindowsBatchJob._setup_compiler_cache()`.
+The cache is `.sccache` in the Jenkins workspace, so it persists between builds of a job; wiping the workspace clears it.
+Each build prints `sccache --show-stats` before and after.
+
 ## Testing locally
 
 Do the following on your own machine or VM.
@@ -40,6 +46,8 @@ Run the docker container with these arguments
 ```
 docker run --isolation=process --rm -e ROS_DOMAIN_ID=1 -e CI_ARGS="%CI_ARGS%" -v "C:\J\workspace\ci_windows":"C:\ci" ros2_windows_ci
 ```
+
+The compiler cache defaults to `.sccache` in the mounted directory; set `-e SCCACHE_DIR` to override it.
 
 rclcpp may not be the correct package to test for your change.
 Choose a package to test up to that adequately ensures your change works as intended.
