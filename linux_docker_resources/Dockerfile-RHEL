@@ -121,6 +121,7 @@ RUN dnf install \
     pkgconfig \
     procps-ng \
     $(if test ${EL_RELEASE/.*/} != 8; then echo pybind11-devel; fi) \
+    $(if test ${EL_RELEASE/.*/} > 9; then echo python3-nanobind; fi) \
     python3-PyYAML \
     python3-argcomplete \
     $(if test ${EL_RELEASE/.*/} != 8; then echo python3-babeltrace; fi) \
