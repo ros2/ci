@@ -21,6 +21,14 @@ from ..util import warn
 
 WORKSPACE_DRIVE = 'W:'
 
+# TEMP -- experiment only, not mergeable as written.  colcon/colcon-core#748
+# derives each package's command environment from the .dsv descriptors instead
+# of spawning a shell; it is unreleased, so it cannot come from pixi.toml the
+# way ninja and sccache do.
+COLCON_CORE_REQUIREMENT = (
+    'colcon-core @ git+https://github.com/mjcarroll/colcon-core'
+    '@mjcarroll/dsv-command-environment')
+
 
 class WindowsBatchJob(BatchJob):
     def __init__(self, args):
@@ -29,7 +37,24 @@ class WindowsBatchJob(BatchJob):
         BatchJob.__init__(self)
 
     def pre(self):
+        self._install_dsv_command_environment()
         self._map_workspace_drive()
+
+    def _install_dsv_command_environment(self):
+        """Install the colcon-core branch deriving the environment itself."""
+        print('# BEGIN SUBSECTION: colcon .dsv command environment')
+        rc = self.run(
+            ['"%s"' % self.python, '-m', 'pip', 'install', '--no-deps',
+             '--force-reinstall', '"%s"' % COLCON_CORE_REQUIREMENT],
+            exit_on_error=False, shell=True)
+        if rc:
+            warn('could not install {0}; colcon will derive each command '
+                 'environment by spawning a shell, as before'.format(
+                     COLCON_CORE_REQUIREMENT))
+        else:
+            info('colcon will derive command environments from .dsv '
+                 'descriptors')
+        print('# END SUBSECTION')
 
     def _map_workspace_drive(self):
         """Map the workspace onto a drive letter, to shorten object paths."""
