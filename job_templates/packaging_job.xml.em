@@ -147,9 +147,6 @@ fi
 if [ "$CI_USE_FASTRTPS_STATIC" = "false" ]; then
   export CI_ARGS="$CI_ARGS --ignore-rmw rmw_fastrtps_cpp"
 fi
-if [ "$CI_USE_FASTRTPS_DYNAMIC" = "false" ]; then
-  export CI_ARGS="$CI_ARGS --ignore-rmw rmw_fastrtps_dynamic_cpp"
-fi
 if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg INSTALL_CONNEXT_DEBS=$CI_USE_CONNEXT_DEBS"
   export CI_ARGS="$CI_ARGS --connext-debs"
@@ -269,9 +266,6 @@ if "!CI_USE_CYCLONEDDS!" == "false" (
 )
 if "!CI_USE_FASTRTPS_STATIC!" == "false" (
   set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_cpp"
-)
-if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_dynamic_cpp"
 )
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"
