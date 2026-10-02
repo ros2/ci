@@ -556,12 +556,7 @@ def run(args, build_function, blacklisted_package_names=None):
                 'rosidl_typesupport_fastrtps_c',
                 'rosidl_typesupport_fastrtps_cpp',
             ]
-        if 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
-            blacklisted_package_names += [
-                'rmw_fastrtps_dynamic_cpp',
-            ]
         if ('rmw_fastrtps_cpp' in args.ignore_rmw and
-            'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw and
             # TODO(asorbini) Ideally `rmw_connextdds` would only depend on `fastcdr`
             # via `rosidl_typesupport_fastrtps_c[pp]`, but they depend on `fastrtps`.
             'rmw_connextdds' in args.ignore_rmw):
@@ -569,10 +564,6 @@ def run(args, build_function, blacklisted_package_names=None):
                 'fastrtps',
                 'fastrtps_cmake_module',
                 'rosidl_dynamic_typesupport_fastrtps',
-            ]
-        if 'rmw_fastrtps_cpp' in args.ignore_rmw and 'rmw_fastrtps_dynamic_cpp' in args.ignore_rmw:
-            blacklisted_package_names += [
-                'rmw_fastrtps_shared_cpp',
             ]
 
         # Allow the batch job to push custom sourcing onto the run command
