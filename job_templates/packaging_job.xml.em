@@ -37,7 +37,7 @@
     cmake_build_type=cmake_build_type,
     build_args_default=build_args_default,
     os_name=os_name,
-    use_isolated_default=False,
+    use_isolated_default='false',
 ))@
 @(SNIPPET(
     'property_parameter-definition_rmw_implementations',
@@ -317,6 +317,7 @@ echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]</command>
+      <configuredLocalRules />
     </hudson.tasks.@(shell_type)>
   </builders>
   <publishers>
@@ -337,6 +338,7 @@ echo "# END SECTION"
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
       <caseSensitive>true</caseSensitive>
+      <followSymlinks>true</followSymlinks>
     </hudson.tasks.ArtifactArchiver>
 @[if mailer_recipients]@
     <hudson.tasks.Mailer plugin="mailer@@534.v1b_36f5864073">
@@ -357,6 +359,7 @@ echo "# END SECTION"
         <string>github-access-key</string>
       </credentialIds>
       <ignoreMissing>false</ignoreMissing>
+      <timeout>1</timeout>
     </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
 @[end if]@
   </buildWrappers>

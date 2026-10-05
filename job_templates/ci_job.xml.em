@@ -329,6 +329,7 @@ echo "# END SECTION"
 @[else]@
 @{ assert False, 'Unknown os_name: ' + os_name }@
 @[end if]</command>
+      <configuredLocalRules />
     </hudson.tasks.@(shell_type)>
   </builders>
   <publishers>
@@ -350,7 +351,7 @@ echo "# END SECTION"
     </hudson.tasks.Mailer>
 @[end if]@
   </publishers>
-<buildWrappers>
+  <buildWrappers>
 @[if build_timeout_mins]@
     <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@@1.41">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
@@ -371,6 +372,7 @@ echo "# END SECTION"
         <string>github-access-key</string>
       </credentialIds>
       <ignoreMissing>false</ignoreMissing>
+      <timeout>1</timeout>
     </com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper>
 @[end if]@
   </buildWrappers>

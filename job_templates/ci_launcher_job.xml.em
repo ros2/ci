@@ -50,8 +50,8 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-  <hudson.tasks.Shell>
-    <command>
+    <hudson.tasks.Shell>
+      <command>
       case "$CI_ROS_DISTRO" in
           jazzy|humble|kilted)
             echo "$CI_ROS_DISTRO targets an EOL Windows version. Skipping Windows CI"
@@ -62,8 +62,8 @@
           ;;
       esac
     </command>
-    <configuredLocalRules/>
-  </hudson.tasks.Shell>
+      <configuredLocalRules />
+    </hudson.tasks.Shell>
     <hudson.plugins.groovy.SystemGroovy plugin="groovy@@537.v741a_5a_f1b_581">
       <source class="hudson.plugins.groovy.StringSystemScriptSource">
         <script plugin="script-security@@1415.v9a_f9b_3a_c253d">
@@ -149,7 +149,7 @@ for (item in predicted_jobs) {
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
             <hudson.plugins.parameterizedtrigger.FileBuildParameters>
-            <!-- Prevent runs for EOL Windows distros, this matches the shell step above -->
+@# Prevent runs for EOL Windows distros, this matches the shell step above
               <propertiesFile>trigger_win_build.properties</propertiesFile>
               <failTriggerOnMissing>true</failTriggerOnMissing>
               <textParamValueOnNewLine>false</textParamValueOnNewLine>

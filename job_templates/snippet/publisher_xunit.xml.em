@@ -42,6 +42,8 @@
         <testTimeMargin>3000</testTimeMargin>
         <sleepTime>0</sleepTime>
         <reduceLog>false</reduceLog>
+        <followSymlink>true</followSymlink>
+        <skipPublishingChecks>false</skipPublishingChecks>
       </extraConfiguration>
       <testDataPublishers class="empty-set"/>
     </xunit>
