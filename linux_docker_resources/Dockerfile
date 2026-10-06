@@ -78,7 +78,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   $(if test ${ROS_DISTRO} != humble -a ${ROS_DISTRO} != jazzy; then echo nlohmann-json3-dev; fi) \
   procps \
   pybind11-dev \
-  nanobind-dev \ 
+  $(if test ${UBUNTU_DISTRO} != jammy; then echo nanobind-dev; fi) \
   pydocstyle \
   python3-argcomplete \
   python3-colcon-bash \
