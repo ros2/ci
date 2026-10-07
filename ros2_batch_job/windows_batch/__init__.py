@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
 import os
 import shutil
 
@@ -34,6 +35,7 @@ class WindowsBatchJob(BatchJob):
     def _map_workspace_drive(self):
         """Map the workspace onto a drive letter, to shorten object paths."""
         target = os.path.abspath(self.args.workspace)
+        self._real_workspace = target
         self.run(['subst', WORKSPACE_DRIVE, '/D'], exit_on_error=False)
         rc = self.run(
             ['subst', WORKSPACE_DRIVE, '"%s"' % target],
@@ -47,7 +49,24 @@ class WindowsBatchJob(BatchJob):
         self.args.workspace = mapped
 
     def post(self):
-        pass
+        self._unmap_log_paths()
+
+    def _unmap_log_paths(self):
+        """Point paths in the build logs back at the real workspace.
+
+        The warnings publishers cannot resolve files under the subst drive.
+        """
+        real = getattr(self, '_real_workspace', None)
+        if real is None:
+            return
+        pattern = os.path.join(real, 'log', 'build_*', '*', 'stdout_stderr.log')
+        for path in glob.glob(pattern):
+            with open(path, 'r', encoding='utf-8', errors='replace', newline='') as f:
+                text = f.read()
+            for sep in ('\\', '/'):
+                text = text.replace(WORKSPACE_DRIVE + sep, real.rstrip('\\') + sep)
+            with open(path, 'w', encoding='utf-8', newline='') as f:
+                f.write(text)
 
     def show_env(self):
         # Show the env
