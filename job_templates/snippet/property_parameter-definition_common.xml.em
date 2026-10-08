@@ -129,12 +129,12 @@ choices.remove(cmake_build_type)
         <hudson.model.ChoiceParameterDefinition>
           <name>CI_VISUAL_STUDIO_VERSION</name>
           <description>Select the Visual Studio version.</description>
-          <defaultValue>2022</defaultValue>
           <choices class="java.util.Arrays$ArrayList">
             <a class="string-array">
               <string>2022</string>
             </a>
           </choices>
+          <defaultValue>2022</defaultValue>
         </hudson.model.ChoiceParameterDefinition>
 @[end if]@
         <hudson.model.BooleanParameterDefinition>
