@@ -138,6 +138,14 @@ for (item in predicted_jobs) {
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
+            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+@# Prevent runs for EOL Windows distros, this matches the shell step above
+              <propertiesFile>trigger_win_build.properties</propertiesFile>
+              <failTriggerOnMissing>true</failTriggerOnMissing>
+              <textParamValueOnNewLine>false</textParamValueOnNewLine>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
+            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
 @[  end if]@
 @[  if os_data['use_connext_debs_default'] == 'true']@
             <hudson.plugins.parameterizedtrigger.BooleanParameters>
@@ -148,14 +156,6 @@ for (item in predicted_jobs) {
                 </hudson.plugins.parameterizedtrigger.BooleanParameterConfig>
               </configs>
             </hudson.plugins.parameterizedtrigger.BooleanParameters>
-            <hudson.plugins.parameterizedtrigger.FileBuildParameters>
-@# Prevent runs for EOL Windows distros, this matches the shell step above
-              <propertiesFile>trigger_win_build.properties</propertiesFile>
-              <failTriggerOnMissing>true</failTriggerOnMissing>
-              <textParamValueOnNewLine>false</textParamValueOnNewLine>
-              <useMatrixChild>false</useMatrixChild>
-              <onlyExactRuns>false</onlyExactRuns>
-            </hudson.plugins.parameterizedtrigger.FileBuildParameters>
 @[  end if]@
           </configs>
           <projects>@(os_data['job_name'])</projects>
