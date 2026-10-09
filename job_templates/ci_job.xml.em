@@ -95,7 +95,6 @@ use_connextdds: ${build.buildVariableResolver.resolve('CI_USE_CONNEXTDDS')}, <br
 use_connext_debs: ${build.buildVariableResolver.resolve('CI_USE_CONNEXT_DEBS')}, <br/>
 use_cyclonedds: ${build.buildVariableResolver.resolve('CI_USE_CYCLONEDDS')}, <br/>
 use_fastrtps_static: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_STATIC')}, <br/>
-use_fastrtps_dynamic: ${build.buildVariableResolver.resolve('CI_USE_FASTRTPS_DYNAMIC')}, <br/>
 ci_branch: ${build.buildVariableResolver.resolve('CI_SCRIPTS_BRANCH')}, <br/>
 repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_REPOS_URL')}, <br/>
 supplemental_repos_url: ${build.buildVariableResolver.resolve('CI_ROS2_SUPPLEMENTAL_REPOS_URL')}, <br/>
@@ -142,9 +141,6 @@ if [ "$CI_USE_CYCLONEDDS" = "false" ]; then
 fi
 if [ "$CI_USE_FASTRTPS_STATIC" = "false" ]; then
   export CI_ARGS="$CI_ARGS --ignore-rmw rmw_fastrtps_cpp"
-fi
-if [ "$CI_USE_FASTRTPS_DYNAMIC" = "false" ]; then
-  export CI_ARGS="$CI_ARGS --ignore-rmw rmw_fastrtps_dynamic_cpp"
 fi
 if [ "$CI_USE_CONNEXT_DEBS" = "true" ]; then
   export CI_ARGS="$CI_ARGS --connext-debs"
@@ -276,9 +272,6 @@ if "!CI_USE_CYCLONEDDS!" == "false" (
 )
 if "!CI_USE_FASTRTPS_STATIC!" == "false" (
   set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_cpp"
-)
-if "!CI_USE_FASTRTPS_DYNAMIC!" == "false" (
-  set "CI_ARGS=!CI_ARGS! --ignore-rmw rmw_fastrtps_dynamic_cpp"
 )
 if "!CI_USE_CONNEXT_DEBS!" == "true" (
   set "CI_ARGS=!CI_ARGS! --connext-debs"

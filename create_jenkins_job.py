@@ -111,7 +111,7 @@ def main(argv=None):
         'pixi_toml_url': '',
         'time_trigger_spec': '',
         'mailer_recipients': '',
-        'ignore_rmw_default': {'rmw_fastrtps_dynamic_cpp'},
+        'ignore_rmw_default': {''},
         'use_connext_debs_default': 'false',
         'use_isolated_default': 'true',
         'colcon_mixin_url': 'https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml',
