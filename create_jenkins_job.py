@@ -249,35 +249,6 @@ def main(argv=None):
                 'test_args_default': data['test_args_default'] + ' --packages-up-to rcpputils',
             })
 
-        # configure jobs for compiling with clang+libcxx on linux
-        if os_name == 'linux':
-            # Make sure to force building vendor packages, since we need these to have been built by
-            # clang as well to link successfully.
-            clang_libcxx_build_args = data['build_args_default'].replace('--cmake-args',
-                '--cmake-args -DFORCE_BUILD_VENDOR_PKG=ON') + \
-                ' --mixin clang-libcxx --packages-skip intra_process_demo qt_gui_cpp rqt_gui_cpp qt_gui_core rqt'
-            # Only running tests from the lowest-level C package to ensure "working" binaries are generated.
-            # We do not want to test more than this as we observe issues with the clang libcxx standard library
-            # we don't plan to tackle for now. The important part of the jobs is to make sure the code compiles
-            # without emitting thread-safety related warnings.
-            clang_libcxx_test_args = data['test_args_default'].replace(' --retest-until-pass 2', '') + ' --packages-select rcutils'
-            # nightly job
-            create_job(os_name, 'nightly_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
-                'cmake_build_type': 'Debug',
-                'compile_with_clang_default': 'true',
-                'time_trigger_spec': PERIODIC_JOB_SPEC,
-                'mailer_recipients': DEFAULT_MAIL_RECIPIENTS + ' ros-contributions@amazon.com',
-                'build_args_default': clang_libcxx_build_args,
-                'test_args_default': clang_libcxx_test_args,
-            })
-            # manually triggered job
-            create_job(os_name, 'ci_' + os_name + '_clang_libcxx', 'ci_job.xml.em', {
-                'cmake_build_type': 'None',
-                'compile_with_clang_default': 'true',
-                'build_args_default': clang_libcxx_build_args,
-                'test_args_default': clang_libcxx_test_args + ' --executor sequential',
-            })
-
         # configure nightly job for testing rmw/rcl based packages with thread sanitizer on linux
         if os_name == 'linux':
             tsan_build_args = data['build_args_default'].replace('--cmake-args',
