@@ -505,18 +505,6 @@ def main(argv=None):
             'test_args_default': test_args_default,
         })
 
-        # configure nightly triggered job for excluded test
-        job_name = 'nightly_' + job_os_name + '_xfail'
-        test_args_default = os_configs.get(os_name, data).get('test_args_default', data['test_args_default'])
-        test_args_default = re.sub(r'--ctest-args +-LE +"?[^ "]+"?', r'--ctest-args -L xfail', test_args_default)
-        test_args_default = test_args_default.replace('--pytest-args -m "not xfail"', '--pytest-args -m xfail --runxfail')
-        create_job(os_name, job_name, 'ci_job.xml.em', {
-            'cmake_build_type': 'None',
-            'time_trigger_spec': PERIODIC_JOB_SPEC,
-            'mailer_recipients': DEFAULT_MAIL_RECIPIENTS,
-            'test_args_default': test_args_default,
-        })
-
     # configure the launch job
     for launch_prefix in ('', 'test_'):
         launcher_job_name = launch_prefix + 'ci_launcher'
