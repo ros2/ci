@@ -37,6 +37,19 @@ class LinuxBatchJob(BatchJob):
             self.use_ccache = True
             os.environ['PATH'] = ccache_exe_dir + os.pathsep +\
                 os.environ.get('PATH', '')
+            # The Docker image is rebuilt from scratch on every job, so the
+            # compiler binary's mtime changes even when its content (and the
+            # apt package providing it) hasn't. ccache's default
+            # compiler_check=mtime treats that as a different compiler and
+            # discards the whole cache, turning any Docker layer-cache miss
+            # into a full, uncached rebuild of every package in the job.
+            os.environ['CCACHE_COMPILERCHECK'] = 'content'
+            # Required for ccache to cache compilations that consume a
+            # precompiled header (e.g. rviz_default_plugins/rviz_common);
+            # without it every PCH-using translation unit is uncacheable
+            # ("Could not use precompiled header"). See ccache(1),
+            # PRECOMPILED HEADERS.
+            os.environ['CCACHE_SLOPPINESS'] = 'pch_defines,time_macros'
             print('# BEGIN SUBSECTION: ccache stats (before)')
             self.run(['ccache', '-s'])
             print('# END SUBSECTION')
