@@ -78,7 +78,13 @@
       <skipPostProcessing>false</skipPostProcessing>
       <skipDeltaCalculation>false</skipDeltaCalculation>
       <icon />
-      <qualityGates />
+      <qualityGates>
+        <io.jenkins.plugins.analysis.core.util.WarningsQualityGate>
+          <threshold>1.0</threshold>
+          <criticality>UNSTABLE</criticality>
+          <type>TOTAL</type>
+        </io.jenkins.plugins.analysis.core.util.WarningsQualityGate>
+      </qualityGates>
       <trendChartType>AGGREGATION_TOOLS</trendChartType>
       <scm />
       <sourcePathPrefix />
