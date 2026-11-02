@@ -39,7 +39,6 @@
     build_args_default=build_args_default,
     test_args_default=test_args_default,
     compile_with_clang_default=compile_with_clang_default,
-    enable_coverage_default=enable_coverage_default,
     os_name=os_name,
 ))@
   </properties>
@@ -109,8 +108,7 @@ colcon_mixin_url: ${build.buildVariableResolver.resolve('CI_COLCON_MIXIN_URL')},
 cmake_build_type: ${build.buildVariableResolver.resolve('CI_CMAKE_BUILD_TYPE')}, <br/>
 build_args: ${build.buildVariableResolver.resolve('CI_BUILD_ARGS')}, <br/>
 test_args: ${build.buildVariableResolver.resolve('CI_TEST_ARGS')}, <br/>
-compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}, <br/>
-coverage: ${build.buildVariableResolver.resolve('CI_ENABLE_COVERAGE')}\
+compile_with_clang: ${build.buildVariableResolver.resolve('CI_COMPILE_WITH_CLANG')}\
 """);]]>
         </script>
           <sandbox>false</sandbox>
@@ -165,9 +163,6 @@ fi
 if [ "$CI_COMPILE_WITH_CLANG" = "true" ]; then
   export CI_ARGS="$CI_ARGS --compile-with-clang"
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg COMPILE_WITH_CLANG=$CI_COMPILE_WITH_CLANG"
-fi
-if [ "$CI_ENABLE_COVERAGE" = "true" ]; then
-  export CI_ARGS="$CI_ARGS --coverage"
 fi
 if [ -n "${CI_ROS_DISTRO+x}" ]; then
   export DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} --build-arg ROS_DISTRO=${CI_ROS_DISTRO}"
@@ -295,9 +290,6 @@ if "!CI_CMAKE_BUILD_TYPE!" NEQ "None" (
 if "!CI_COMPILE_WITH_CLANG!" == "true" (
   set "CI_ARGS=!CI_ARGS! --compile-with-clang"
 )
-if "!CI_ENABLE_COVERAGE!" == "true" (
-  set "CI_ARGS=!CI_ARGS! --coverage"
-)
 set "CI_ARGS=!CI_ARGS! --visual-studio-version !CI_VISUAL_STUDIO_VERSION!"
 if "!CI_BUILD_ARGS!" NEQ "" (
   set "CI_ARGS=!CI_ARGS! --build-args !CI_BUILD_ARGS!"
@@ -329,9 +321,6 @@ echo "# END SECTION"
 @(SNIPPET(
     'publisher_warnings_ng',
     os_name=os_name,
-))@
-@(SNIPPET(
-    'publisher_cobertura',
 ))@
 @(SNIPPET(
     'publisher_xunit',
