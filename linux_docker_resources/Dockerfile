@@ -151,14 +151,6 @@ RUN if test \( ${ROS_DISTRO} = humble \); then \
 # Install clang if build arg is true
 RUN if test ${COMPILE_WITH_CLANG} = true; then apt-get update && apt-get install --no-install-recommends -y clang libc++-dev libc++abi-dev; fi
 
-# Install coverage build dependencies.
-RUN apt-get update && apt-get install --no-install-recommends -y lcov
-
-# There is a bug in upstream lcov-to-cobertura-xml with newer versions of lcov.  There is an
-# open PR for it in https://github.com/eriwen/lcov-to-cobertura-xml/pull/55, but until that is
-# merged use the fork with the fix.
-RUN pip3 install -U git+https://github.com/ahcorde/lcov-to-cobertura-xml@master
-
 # Install the Connext binary from the OSRF repositories. if ROS_DISTRO is humble or jazzy
 # install rti-connext-dds-6.0.1 else if ROS_DISTRO is kilted install rti-connext-dds-7.3.0-ros
 # else install rti-connext-dds-7.7.0-ros.

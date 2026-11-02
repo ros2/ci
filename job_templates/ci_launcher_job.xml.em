@@ -37,7 +37,6 @@
     build_args_default=build_args_default,
     test_args_default=test_args_default,
     compile_with_clang_default=compile_with_clang_default,
-    enable_coverage_default=enable_coverage_default,
     os_name=None,
 ))@
   </properties>

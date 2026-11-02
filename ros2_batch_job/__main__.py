@@ -75,8 +75,6 @@ if sys.platform != 'win32':
         PipPackage('colcon-zsh', 'colcon_zsh', ''),
     ]
 
-gcov_flags = '--coverage'
-
 colcon_space_defaults = {
     'sourcespace': 'src',
     'buildspace': 'build',
@@ -177,9 +175,6 @@ def get_args(sysargv=None):
         '--compile-with-clang', default=False, action='store_true',
         help="compile with clang instead of gcc")
     parser.add_argument(
-        '--coverage', default=False, action='store_true',
-        help="enable collection of coverage statistics")
-    parser.add_argument(
         '--workspace-path', default=None,
         help="base path of the workspace")
     parser.add_argument(
@@ -216,60 +211,6 @@ def get_args(sysargv=None):
             setattr(args, name, space_directory)
     return args
 
-def get_lcov_version():
-    try:
-        result = subprocess.run(['lcov', '--version'],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                text=True, check=True)
-        version_output = result.stdout.strip().replace('lcov: LCOV version ', '')
-        return version_output
-    except subprocess.CalledProcessError as e:
-        return ""
-
-def process_coverage(args, job):
-    print('# BEGIN SUBSECTION: coverage analysis')
-    # Capture all gdca/gcno files (all them inside buildspace)
-    coverage_file = os.path.join(args.buildspace, 'coverage.info')
-
-    version = get_lcov_version()
-    lcov_arguments = []
-    if version.startswith('2'):
-        lcov_arguments = ['--ignore-errors', 'inconsistent,inconsistent',
-                          '--ignore-errors', 'mismatch,mismatch',
-                          '--ignore-errors', 'negative,negative',
-                          '--ignore-errors', 'unused,unused',
-                          '--ignore-errors', 'empty,empty']
-
-    cmd = [
-        'lcov',
-        '--capture',
-        '--directory', args.buildspace,
-        '--output', str(coverage_file)] + lcov_arguments
-    print(cmd)
-    subprocess.run(cmd, check=True)
-    # Filter out system coverage and test code
-    cmd = [
-        'lcov',
-        '--remove', coverage_file,
-        '--output', coverage_file,
-        '/usr/*',  # no system files in reports
-        '/home/rosbuild/*',  # remove rti_connext installed in rosbuild
-        '*/test/*',
-        '*/tests/*',
-        '*gtest_vendor*',
-        '*gmock_vendor*'] + lcov_arguments
-    print(cmd)
-    subprocess.run(cmd, check=True)
-    # Transform results to the cobertura format
-    outfile = os.path.join(args.buildspace, 'coverage.xml')
-    print('Writing coverage.xml report at path {}'.format(outfile))
-    cmd = ['lcov_cobertura', coverage_file, '--output', outfile]
-    subprocess.run(cmd, check=True)
-
-    print('# END SUBSECTION')
-    return 0
-
 
 def build_and_test(args, job, colcon_script):
     compile_with_clang = args.compile_with_clang and args.os == 'linux'
@@ -302,18 +243,6 @@ def build_and_test(args, job, colcon_script):
         cmd.append('--cmake-args')
         cmd.extend(cmake_args)
 
-    if args.coverage:
-        if args.os == 'linux':
-            ament_cmake_args = [
-                '-DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} ' + gcov_flags + '"',
-                '-DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} ' + gcov_flags + '"']
-            if '--ament-cmake-args' in cmd:
-                index = cmd.index('--ament-cmake-args')
-                cmd[index + 1:index + 1] = ament_cmake_args
-            else:
-                cmd.append('--ament-cmake-args')
-                cmd.extend(ament_cmake_args)
-
     ret_build = job.run(cmd, shell=True)
     info("colcon build returned: '{0}'".format(ret_build))
     print('# END SUBSECTION')
@@ -330,8 +259,6 @@ def build_and_test(args, job, colcon_script):
     ]
     if not args.isolated:
         test_cmd.append('--merge-install')
-    if args.coverage:
-        test_cmd.append('--pytest-with-coverage')
     test_cmd.extend(args.test_args)
 
     ret_test = job.run(test_cmd, exit_on_error=False, shell=True)
@@ -357,9 +284,6 @@ def build_and_test(args, job, colcon_script):
     )
     info("colcon test-result returned: '{0}'".format(ret_test_results))
     print('# END SUBSECTION')
-    if args.coverage and args.os == 'linux':
-        process_coverage(args, job)
-
     # Uncomment this line to failing tests a failrue of this command.
     # return 0 if ret_test == 0 and ret_testr == 0 else 1
     return 0

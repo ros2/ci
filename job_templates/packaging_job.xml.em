@@ -319,9 +319,6 @@ echo "# END SECTION"
     os_name=os_name,
 ))@
 @(SNIPPET(
-    'publisher_cobertura',
-))@
-@(SNIPPET(
     'publisher_xunit',
 ))@
     <hudson.tasks.ArtifactArchiver>
