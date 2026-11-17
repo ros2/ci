@@ -1,0 +1,2 @@
+[colcon_core.event_handler]
+console_cohesion_on_failure = colcon_console_on_failure.event_handler.console_cohesion_on_failure:ConsoleCohesionOnFailureEventHandler

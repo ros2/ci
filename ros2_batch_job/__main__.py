@@ -379,15 +379,15 @@ def run(args, build_function, blacklisted_package_names=None):
 
         colcon_script = which('colcon')
 
-        # Install the event handler that only prints output of unsuccessful jobs
-        print('# BEGIN SUBSECTION: install colcon-console-on-failure')
+        # Make the event handler that only prints output of unsuccessful jobs
+        # available to colcon. The directory ships its own .dist-info, so putting
+        # it on PYTHONPATH registers the entry point without a pip install (which
+        # would need wheel or a newer setuptools than some images provide).
         console_on_failure_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__), '..', 'colcon_console_on_failure'))
-        job.run(
-            ['"%s"' % job.python, '-m', 'pip', 'install', '--no-deps',
-             '--no-build-isolation', '"%s"' % console_on_failure_path],
-            shell=True)
-        print('# END SUBSECTION')
+        os.environ['PYTHONPATH'] = os.pathsep.join(
+            [console_on_failure_path] +
+            ([os.environ['PYTHONPATH']] if os.environ.get('PYTHONPATH') else []))
 
         # Fetch colcon mixins
         if args.colcon_mixin_url:

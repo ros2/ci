@@ -1,0 +1,4 @@
+Metadata-Version: 2.1
+Name: colcon-console-on-failure
+Version: 0.1.0
+Summary: colcon event handler that prints a job's output only when the job was unsuccessful
