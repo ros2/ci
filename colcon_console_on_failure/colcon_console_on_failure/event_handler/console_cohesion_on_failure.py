@@ -27,7 +27,12 @@ class ConsoleCohesionOnFailureEventHandler(EventHandlerExtensionPoint):
     - the tests had to be retried, i.e. a flaky test (ctest was re-invoked
       with ``--rerun-failed``, or pytest printed ``RERUN``).
 
-    Output of all other jobs is discarded.
+    For all other jobs only the stderr output (if any) is printed, so that
+    warnings stay visible; stdout is discarded.
+
+    Each printed block is wrapped in ``# BEGIN SUBSECTION`` /
+    ``# END SUBSECTION`` markers so that it folds on its own in the Jenkins
+    console.
     """
 
     # disabled by default, enable with `--event-handlers
@@ -43,6 +48,7 @@ class ConsoleCohesionOnFailureEventHandler(EventHandlerExtensionPoint):
             EventHandlerExtensionPoint.EXTENSION_POINT_VERSION, '^1.0')
         self.enabled = ConsoleCohesionOnFailureEventHandler.ENABLED_BY_DEFAULT
         self._lines = defaultdict(list)
+        self._stderr_lines = defaultdict(list)
         self._reasons = defaultdict(list)
 
     def __call__(self, event):  # noqa: D102
@@ -51,6 +57,8 @@ class ConsoleCohesionOnFailureEventHandler(EventHandlerExtensionPoint):
         if isinstance(data, (StdoutLine, StderrLine)):
             job = event[1]
             self._lines[job].append(data.line)
+            if isinstance(data, StderrLine):
+                self._stderr_lines[job].append(data.line)
             if (
                 PYTEST_RERUN_MARKER in data.line
                 and 'flaky test (pytest rerun)' not in self._reasons[job]
@@ -71,11 +79,27 @@ class ConsoleCohesionOnFailureEventHandler(EventHandlerExtensionPoint):
         elif isinstance(data, JobEnded):
             job = event[1]
             lines = self._lines.pop(job, [])
+            stderr_lines = self._stderr_lines.pop(job, [])
             reasons = self._reasons.pop(job, [])
-            if data.rc and data.rc != SIGINT_RESULT:
+            if data.rc == SIGINT_RESULT:
+                return
+            if data.rc:
                 reasons.insert(0, 'return code {}'.format(data.rc))
-            if lines and reasons and data.rc != SIGINT_RESULT:
-                msg = '--- output: {} ({})\n'.format(
-                    data.identifier, ', '.join(reasons)) + \
-                    b''.join(lines).decode(errors='replace') + '---'
-                print(msg, flush=True)
+            if reasons:
+                if lines:
+                    self._print_block(
+                        'output', data.identifier, reasons, lines)
+            elif stderr_lines:
+                self._print_block(
+                    'stderr', data.identifier, [], stderr_lines)
+
+    @staticmethod
+    def _print_block(kind, identifier, reasons, lines):
+        title = '{}: {}'.format(kind, identifier)
+        if reasons:
+            title += ' ({})'.format(', '.join(reasons))
+        msg = '# BEGIN SUBSECTION: {}\n'.format(title) + \
+            '--- {}\n'.format(title) + \
+            b''.join(lines).decode(errors='replace') + \
+            '---\n# END SUBSECTION'
+        print(msg, flush=True)
