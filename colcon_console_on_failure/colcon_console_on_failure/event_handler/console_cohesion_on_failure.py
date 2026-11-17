@@ -29,10 +29,6 @@ class ConsoleCohesionOnFailureEventHandler(EventHandlerExtensionPoint):
 
     For all other jobs only the stderr output (if any) is printed, so that
     warnings stay visible; stdout is discarded.
-
-    Each printed block is wrapped in ``# BEGIN SUBSECTION`` /
-    ``# END SUBSECTION`` markers so that it folds on its own in the Jenkins
-    console.
     """
 
     # disabled by default, enable with `--event-handlers
@@ -98,8 +94,6 @@ class ConsoleCohesionOnFailureEventHandler(EventHandlerExtensionPoint):
         title = '{}: {}'.format(kind, identifier)
         if reasons:
             title += ' ({})'.format(', '.join(reasons))
-        msg = '# BEGIN SUBSECTION: {}\n'.format(title) + \
-            '--- {}\n'.format(title) + \
-            b''.join(lines).decode(errors='replace') + \
-            '---\n# END SUBSECTION'
+        msg = '--- {}\n'.format(title) + \
+            b''.join(lines).decode(errors='replace') + '---'
         print(msg, flush=True)
