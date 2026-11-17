@@ -384,8 +384,8 @@ def run(args, build_function, blacklisted_package_names=None):
         console_on_failure_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__), '..', 'colcon_console_on_failure'))
         job.run(
-            ['"%s"' % job.python, '-m', 'pip', 'install', '-U',
-             '"%s"' % console_on_failure_path],
+            ['"%s"' % job.python, '-m', 'pip', 'install', '--no-deps',
+             '--no-build-isolation', '"%s"' % console_on_failure_path],
             shell=True)
         print('# END SUBSECTION')
 
