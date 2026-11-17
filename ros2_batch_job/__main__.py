@@ -379,6 +379,16 @@ def run(args, build_function, blacklisted_package_names=None):
 
         colcon_script = which('colcon')
 
+        # Install the event handler that only prints output of unsuccessful jobs
+        print('# BEGIN SUBSECTION: install colcon-console-on-failure')
+        console_on_failure_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), '..', 'colcon_console_on_failure'))
+        job.run(
+            ['"%s"' % job.python, '-m', 'pip', 'install', '-U',
+             '"%s"' % console_on_failure_path],
+            shell=True)
+        print('# END SUBSECTION')
+
         # Fetch colcon mixins
         if args.colcon_mixin_url:
             print('# BEGIN SUBSECTION: Fetch colcon mixins')

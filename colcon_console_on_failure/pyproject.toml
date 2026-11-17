@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "colcon-console-on-failure"
+version = "0.1.0"
+description = "colcon event handler that prints a job's output only when the job was unsuccessful"
+requires-python = ">=3.6"
+dependencies = ["colcon-core", "colcon-output"]
+
+[project.entry-points."colcon_core.event_handler"]
+console_cohesion_on_failure = "colcon_console_on_failure.event_handler.console_cohesion_on_failure:ConsoleCohesionOnFailureEventHandler"
+
+[tool.setuptools.packages.find]
+include = ["colcon_console_on_failure*"]
