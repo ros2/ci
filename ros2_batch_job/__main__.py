@@ -20,6 +20,7 @@ import platform
 from shutil import which
 import subprocess
 import sys
+import tarfile
 import time
 
 # Make sure we're using Python3
@@ -289,6 +290,26 @@ def build_and_test(args, job, colcon_script):
     return 0
 
 
+def archive_colcon_logs(archive_name='colcon_logs.tar.gz', log_dir='log'):
+    """
+    Compress the colcon log directory (relative to the cwd) into one file.
+
+    The console only shows output of unsuccessful packages, so the complete
+    per-package logs are kept as a single build artifact instead. Never
+    fails the job.
+    """
+    try:
+        if not os.path.isdir(log_dir):
+            print("No colcon log directory '{0}' to archive".format(log_dir))
+            return
+        with tarfile.open(archive_name, 'w:gz', compresslevel=6) as archive:
+            archive.add(log_dir)
+        print("Archived '{0}' to '{1}' ({2:.1f} MiB)".format(
+            log_dir, archive_name, os.path.getsize(archive_name) / (1024 * 1024)))
+    except Exception as e:  # noqa: B902
+        print("Failed to archive colcon logs: {0}".format(e))
+
+
 def run(args, build_function, blacklisted_package_names=None):
     if blacklisted_package_names is None:
         blacklisted_package_names = []
@@ -519,7 +540,10 @@ def run(args, build_function, blacklisted_package_names=None):
                         pass
             print('# END SUBSECTION')
 
-        rc = build_function(args, job, colcon_script)
+        try:
+            rc = build_function(args, job, colcon_script)
+        finally:
+            archive_colcon_logs()
 
     job.post()
     return rc
