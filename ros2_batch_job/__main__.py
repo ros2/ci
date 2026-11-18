@@ -304,8 +304,17 @@ def archive_colcon_logs(archive_name='colcon_logs.tar.gz', log_dir='log'):
             return
         with tarfile.open(archive_name, 'w:gz', compresslevel=6) as archive:
             archive.add(log_dir)
-        print("Archived '{0}' to '{1}' ({2:.1f} MiB)".format(
-            log_dir, archive_name, os.path.getsize(archive_name) / (1024 * 1024)))
+        with tarfile.open(archive_name, 'r:gz') as archive:
+            members = [m for m in archive.getmembers() if m.isfile()]
+        print('# BEGIN SUBSECTION: archived colcon logs')
+        for member in members:
+            print('{0:>12}  {1}'.format(member.size, member.name))
+        print('# END SUBSECTION')
+        print("Archived {0} files from '{1}' to '{2}' ({3:.1f} MiB compressed, "
+              "{4:.1f} MiB uncompressed)".format(
+                  len(members), log_dir, archive_name,
+                  os.path.getsize(archive_name) / (1024 * 1024),
+                  sum(m.size for m in members) / (1024 * 1024)))
     except Exception as e:  # noqa: B902
         print("Failed to archive colcon logs: {0}".format(e))
 
