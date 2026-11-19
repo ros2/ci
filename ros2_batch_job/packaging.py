@@ -37,9 +37,14 @@ def build_and_test_and_package(args, job, colcon_script):
         args.build_args
 
     cmake_args = ['-DBUILD_TESTING=OFF', '--no-warn-unused-cli']
+    if args.os == 'windows':
+        cmake_args.append('-GNinja')
     if args.cmake_build_type:
         cmake_args.append(
             '-DCMAKE_BUILD_TYPE=' + args.cmake_build_type)
+    elif args.os == 'windows':
+        # Ninja is single configuration, so name the build type here.
+        cmake_args.append('-DCMAKE_BUILD_TYPE=Release')
     if '--cmake-args' in cmd:
         index = cmd.index('--cmake-args')
         cmd[index + 1:index + 1] = cmake_args
