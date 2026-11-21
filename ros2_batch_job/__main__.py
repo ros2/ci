@@ -20,6 +20,7 @@ import platform
 from shutil import which
 import subprocess
 import sys
+import tarfile
 import time
 
 # Make sure we're using Python3
@@ -289,6 +290,35 @@ def build_and_test(args, job, colcon_script):
     return 0
 
 
+def archive_colcon_logs(archive_name='colcon_logs.tar.gz', log_dir='log'):
+    """
+    Compress the colcon log directory (relative to the cwd) into one file.
+
+    The console only shows output of unsuccessful packages, so the complete
+    per-package logs are kept as a single build artifact instead. Never
+    fails the job.
+    """
+    try:
+        if not os.path.isdir(log_dir):
+            print("No colcon log directory '{0}' to archive".format(log_dir))
+            return
+        with tarfile.open(archive_name, 'w:gz', compresslevel=6) as archive:
+            archive.add(log_dir)
+        with tarfile.open(archive_name, 'r:gz') as archive:
+            members = [m for m in archive.getmembers() if m.isfile()]
+        print('# BEGIN SUBSECTION: archived colcon logs')
+        for member in members:
+            print('{0:>12}  {1}'.format(member.size, member.name))
+        print('# END SUBSECTION')
+        print("Archived {0} files from '{1}' to '{2}' ({3:.1f} MiB compressed, "
+              "{4:.1f} MiB uncompressed)".format(
+                  len(members), log_dir, archive_name,
+                  os.path.getsize(archive_name) / (1024 * 1024),
+                  sum(m.size for m in members) / (1024 * 1024)))
+    except Exception as e:  # noqa: B902
+        print("Failed to archive colcon logs: {0}".format(e))
+
+
 def run(args, build_function, blacklisted_package_names=None):
     if blacklisted_package_names is None:
         blacklisted_package_names = []
@@ -378,6 +408,16 @@ def run(args, build_function, blacklisted_package_names=None):
             print('# END SUBSECTION')
 
         colcon_script = which('colcon')
+
+        # Make the event handler that only prints output of unsuccessful jobs
+        # available to colcon. The directory ships its own .dist-info, so putting
+        # it on PYTHONPATH registers the entry point without a pip install (which
+        # would need wheel or a newer setuptools than some images provide).
+        console_on_failure_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), '..', 'colcon_console_on_failure'))
+        os.environ['PYTHONPATH'] = os.pathsep.join(
+            [console_on_failure_path] +
+            ([os.environ['PYTHONPATH']] if os.environ.get('PYTHONPATH') else []))
 
         # Fetch colcon mixins
         if args.colcon_mixin_url:
@@ -509,7 +549,10 @@ def run(args, build_function, blacklisted_package_names=None):
                         pass
             print('# END SUBSECTION')
 
-        rc = build_function(args, job, colcon_script)
+        try:
+            rc = build_function(args, job, colcon_script)
+        finally:
+            archive_colcon_logs()
 
     job.post()
     return rc

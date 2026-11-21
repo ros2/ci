@@ -325,6 +325,15 @@ echo "# END SECTION"
 @(SNIPPET(
     'publisher_xunit',
 ))@
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ws/colcon_logs.tar.gz,work space/colcon_logs.tar.gz</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+      <followSymlinks>false</followSymlinks>
+    </hudson.tasks.ArtifactArchiver>
 @[if mailer_recipients]@
     <hudson.tasks.Mailer plugin="mailer@@534.v1b_36f5864073">
       <recipients>@(mailer_recipients)</recipients>
